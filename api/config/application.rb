@@ -25,14 +25,18 @@ module App
     config.load_defaults 6.0
 
     config.generators do |g|
+      g.template_engine false
+      g.javascripts false
+      g.stylesheets false
+      g.helper false
       g.test_framework :rspec,
         fixtures: true,
+        fixture_replacement: :factory_bot,
         view_specs: false,
         helper_specs: false,
         routing_specs: false,
-        controller_specs: true,
-        request_specs: false
-      g.fixture_replacement :factory_girl, dir: "spec/factories"
+        controller_specs: false,
+        request_specs: true
     end
 
     # Settings in config/environments/* take precedence over those specified here.
@@ -44,5 +48,7 @@ module App
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    ##フラッシュが使えるようになる。
+    config.middleware.use ActionDispatch::Flash
   end
 end
