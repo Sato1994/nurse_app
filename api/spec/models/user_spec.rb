@@ -71,7 +71,7 @@ RSpec.describe User, type: :model do
   end
 
   it "すべてのオリジナルカラムが入力可能な状態" do
-    user = build(:user, image: "mochimugi", wanted: true, sex: true, age: 20, year: 20, profile: "モチムギ" )
+    user = build(:user, address: "mochimugi", image: "mochimugi", wanted: true, sex: true, age: 20, year: 20, profile: "モチムギ" )
     user.valid?
     expect(user).to be_valid
   end

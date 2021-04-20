@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+class Host < ActiveRecord::Base
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable, :trackable
+  include DeviseTokenAuth::Concerns::User
+
+  before_save { self.email = email.downcase }
+
+  validates :name, presence: true, length: { maximum: 40 }
+  validates :email, presence: true, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
+  # validates :address,
+  # validates :image,
+  validates :wanted, exclusion: { in: [nil] }
+  validates :profile, length: { maximum: 300 }
+end
