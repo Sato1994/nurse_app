@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   validates :email, presence: true, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
   validates :wanted, exclusion: { in: [nil] } ##presence: trueは内部でblank?メゾットを使用するためbooleanには合わない。
   # validates :sex
+  # validates :address
+  # validates :image
   validates :profile, length: { maximum: 150 }
   validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 20, less_than_or_equal_to: 60, allow_nil: true }
   validates :year, numericality: { only_integer: true, less_than: 40, allow_nil: true }
