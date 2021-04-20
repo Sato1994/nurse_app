@@ -1,26 +1,26 @@
 require 'rails_helper'
 
-RSpec.describe "user登録", type: :request do
-  describe "POST /api/user" do
+RSpec.describe "host登録", type: :request do
+  describe "POST /api/host" do
     it "有効な値を入力した場合ユーザ登録できる" do
-      post '/api/user', params: attributes_for(:user)
+      post '/api/host', params: attributes_for(:host)
       expect(response.status).to eq(200)
     end
   end
 
-  describe "POST　/api/user/sign_in" do
-    let(:user) { create(:user) }
+  describe "POST　/api/host/sign_in" do
+    let(:host) { create(:host) }
     it " email,passwordでログインできるか" do
       login
       expect(response.status).to eq(200)
     end
   end
 
-  describe "DELETE /api/user/sign_out" do
-    let(:user) { create(:user) }
+  describe "DELETE /api/host/sign_out" do
+    let(:host) { create(:host) }
     it "uid,client,access-tokenを送信するとログアウトできる" do
       login
-      delete '/api/user/sign_out', headers: {
+      delete '/api/host/sign_out', headers: {
                                             uid: response.headers["uid"], 
                                             client: response.headers["client"], 
                                             "access-token": response.headers["access-token"]}
@@ -29,13 +29,13 @@ RSpec.describe "user登録", type: :request do
 
     it "headersがない場合ログアウトできない" do
       login
-      delete '/api/user/sign_out'
+      delete '/api/host/sign_out'
       expect(response.status).to eq(404)
     end
   end
 
   def login
-    post '/api/user/sign_in', params: {email: user.email, password: user.password }
+    post '/api/host/sign_in', params: {email: host.email, password: host.password }
   end
 end
 
