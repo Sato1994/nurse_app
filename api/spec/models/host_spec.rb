@@ -24,10 +24,10 @@ RSpec.describe Host, type: :model do
     end
 
     it "重複した場合無効" do
-      create(:host)
-      host = build(:host)
-      host.valid?
-      expect(host.errors[:email]).to include("has already been taken")
+      host1 =create(:host)
+      host2 = build(:host, email: host1.email)
+      host2.valid?
+      expect(host2.errors[:email]).to include("has already been taken")
     end
   end
   

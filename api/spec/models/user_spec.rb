@@ -24,10 +24,10 @@ RSpec.describe User, type: :model do
     end
 
     it "重複した場合無効" do
-      create(:user)
-      user = build(:user)
-      user.valid?
-      expect(user.errors[:email]).to include("has already been taken")
+      user1 = create(:user)
+      user2 = build(:user, email: user1.email)
+      user2.valid?
+      expect(user2.errors[:email]).to include("has already been taken")
     end
   end
   
