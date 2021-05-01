@@ -36,7 +36,7 @@ class DeviseTokenAuthCreateHosts < ActiveRecord::Migration[6.0]
       t.string   :current_sign_in_ip
       t.string   :last_sign_in_ip
 
-      ## User Info
+      ## Host Info
       t.string :name, null: false
       t.string :email, null: false, unique: true
       t.string :address

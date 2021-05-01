@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2021_04_17_170452) do
     t.string "email", null: false
     t.string "address"
     t.string "image"
+    # boolean型にはdeafault,nullを設定した方がよい。https://qiita.com/jnchito/items/a342b64cd998e5c4ef3d
     t.boolean "wanted", default: false, null: false
     t.boolean "sex", default: false, null: false
     t.integer "age"
