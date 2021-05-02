@@ -6,4 +6,6 @@ json.array! @users do |user|
   json.year user.year
   json.image user.image
   json.profile user.profile
+  json.id user.id
+  json.uid user.uid
 end

@@ -4,6 +4,11 @@
     <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
       <h1 class="title-font font-medium text-3xl text-gray-900">全く新しい転職サイトへようこそ</h1>
       <p class="leading-relaxed mt-4">NRSEUPは全く新しい転職マッチングサイトです。</p>
+      
+      <router-link to="/users">Usersへ</router-link> |
+
+
+
     </div>
     <div class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
       <h2 class="text-gray-900 text-lg font-medium title-font mb-1">登録する</h2>
