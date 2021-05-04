@@ -4,8 +4,6 @@
     <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
       <h1 class="title-font font-medium text-3xl text-gray-900">全く新しい転職サイトへようこそ</h1>
       <p class="leading-relaxed mt-4">NRSEUPは全く新しい転職マッチングサイトです。</p>
-      
-      <router-link to="/users">Usersへ</router-link> |
 
 
 
@@ -77,11 +75,14 @@ export default {
         password: this.state.password,
         password_confirmation: this.state.password_confirmation
       })
-      .then(function (response) {
-        console.log(response)
+      // axiosはPromiseをサポートしてるから簡潔にかける
+      //.then(function (response) {と書いてしまった。アロー関数とではスコープが異なる  https://wemo.tech/904
+      .then((response) => {
+        this.$router.push({ name: 'Hosts' })
+        console.log('せいこうです', response)
         })
-      .catch(function (error) {
-        console.log(error)
+      .catch((error) => {
+        console.log('えらーです', error)
        })
       } else {
         axios.post('http://localhost:3000/api/host', {
@@ -90,11 +91,12 @@ export default {
         password: this.state.password,
         password_confirmation: this.state.password_confirmation
       })
-      .then(function (response) {
-        console.log(response)
+      .then((response) => {
+        console.log('せいこうです', response )
+        this.$router.push({ name: 'Users' })
         })
-      .catch(function (error) {
-        console.log(error)
+      .catch((error) => {
+        console.log('えらーです',error)
        })
       }
       

@@ -15,7 +15,7 @@
             </svg>
           </div>
           <div class="flex flex-col items-center text-center justify-center">
-            <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">Phoebe Caulfield</h2>
+            <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">ID:{{$route.params.id}}</h2>
             <div class="w-12 h-1 bg-pink-500 rounded mt-2 mb-4"></div>
             <p class="text-base">Raclette knausgaard hella meggs normcore williamsburg enamel pin sartorial venmo tbh hot chicken gentrify portland.</p>
           </div>
