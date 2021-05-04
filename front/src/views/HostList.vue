@@ -3,23 +3,25 @@
 <section class="text-gray-600 body-font">
   <div class="container px-5 py-24 mx-auto">
     <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">看護師一覧。ぜひみてね。</h1>
-      <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">看護師の一覧ですよ。気になった人がいたら声かけみてね。</p>
+      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">病院一覧。ぜひみてね。</h1>
+      <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">病院の一覧ですよ。気になる病院があれば面接しようね。</p>
+
+       <router-link to="/">Welcomeへ</router-link> |
 
 
 
     </div>
     <div class="flex flex-wrap -m-4">
 
-      <div v-for="user in users" :key="user.id" class="xl:w-1/3 md:w-1/2 p-4">
+      <div v-for="host in hosts" :key="host.id" class="xl:w-1/3 md:w-1/2 p-4">
         <div class="border border-gray-200 p-6 rounded-lg">
           <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-6 h-6" viewBox="0 0 24 24">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
             </svg>
           </div>
-          <h2 class="text-lg text-gray-900 font-medium title-font mb-2"><router-link :to="{ name: 'User', params: { id: user.id }}">{{user.name}}</router-link></h2>
-          <p class="leading-relaxed text-base">{{user.profile}}わざと長いプロフィールを書きますけど、日本語がめちゃくちゃにならないように頑張ります。もちとむぎという名前の犬を買っております。かわいいですよ。指をかんできますが気にしないでくださいね。</p>
+          <h2 class="text-lg text-gray-900 font-medium title-font mb-2">JA取手総合医療センター</h2>
+          <p class="leading-relaxed text-base">{{host.profile}}わざと長いプロフィールを書きますけど、日本語がめちゃくちゃにならないように頑張ります。もちとむぎという名前の犬を買っております。かわいいですよ。指をかんできますが気にしないでくださいね。</p>
         </div>
       </div>
 
@@ -38,13 +40,13 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      users: [],
+      hosts: [],
     }
   },
   mounted: function() {
-    axios.get('http://localhost:3000/api/users')
+    axios.get('http://localhost:3000/api/hosts')
     .then(response => {
-      this.users = response.data
+      this.hosts = response.data
     })
     .catch(error => {
       console.log(error)
