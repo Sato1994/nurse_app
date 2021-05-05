@@ -11,15 +11,15 @@
     </div>
     <div class="flex flex-wrap -m-4">
 
-      <div v-for="user in users" :key="user.id" class="xl:w-1/3 md:w-1/2 p-4">
+      <div v-for="target in targets" :key="target.id" class="xl:w-1/3 md:w-1/2 p-4">
         <div class="border border-gray-200 p-6 rounded-lg">
           <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-6 h-6" viewBox="0 0 24 24">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
             </svg>
           </div>
-          <h2 class="text-lg text-gray-900 font-medium title-font mb-2"><router-link :to="{ name: 'User', params: { id: user.id }}">{{user.name}}</router-link></h2>
-          <p class="leading-relaxed text-base">{{user.profile}}わざと長いプロフィールを書きますけど、日本語がめちゃくちゃにならないように頑張ります。もちとむぎという名前の犬を買っております。かわいいですよ。指をかんできますが気にしないでくださいね。</p>
+          <h2 class="text-lg text-gray-900 font-medium title-font mb-2"><router-link :to="{ name: 'User', params: { id: target.id }}">{{target.name}}</router-link></h2>
+          <p class="leading-relaxed text-base">{{target.profile}}わざと長いプロフィールを書きますけど、日本語がめちゃくちゃにならないように頑張ります。もちとむぎという名前の犬を買っております。かわいいですよ。指をかんできますが気にしないでくださいね。</p>
         </div>
       </div>
 
@@ -38,13 +38,14 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      users: [],
+      targets: [],
+      targetURL: 'User'
     }
   },
-  mounted: function() {
+  mounted() {
     axios.get('http://localhost:3000/api/users')
     .then(response => {
-      this.users = response.data
+      this.targets = response.data
     })
     .catch(error => {
       console.log(error)

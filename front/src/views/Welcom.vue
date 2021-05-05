@@ -44,39 +44,48 @@
 <script>
 // import { reactive } from 'vue'
 import axios from 'axios'
+
 // export default で囲むことで、外部からも参照できるようにする。
+
 export default {
   data() {
     return {
-      isUser: true,
       registrationMessage: '病院として登録する',
       nameMessage: '名前',
-      state: {
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: ''
-      }
+    }
+  },
+
+  // created関数はインスタンスが作成された後で実行される処理を記述する
+
+  created() {
+    this.isUser = true
+    this.state = {
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: ''
     }
   },
   methods: {
-    userOrHost: function() {
+    userOrHost() {
       this.isUser = !this.isUser
-      this.registrationMessage = (this.isUser === true) ? '病院として登録する' : '看護師として登録する'
-      this.nameMessage = (this.isUser === true) ? '名前' : '病院名'
+      this.registrationMessage = this.isUser ? '病院として登録する' : '看護師として登録する'
+      this.nameMessage = this.isUser ? '名前' : '病院名'
 
       console.log(this.isUser)
     },
     createState() {
-      if (this.isUser === true) {
+      if (this.isUser) {
         axios.post('http://localhost:3000/api/user', {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
         password_confirmation: this.state.password_confirmation
       })
+
       // axiosはPromiseをサポートしてるから簡潔にかける
       //.then(function (response) {と書いてしまった。アロー関数とではスコープが異なる  https://wemo.tech/904
+      
       .then((response) => {
         this.$router.push({ name: 'Hosts' })
         console.log('せいこうです', response)
