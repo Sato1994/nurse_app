@@ -18,22 +18,44 @@
       
       <div class="relative mb-1">
         <label for="name" class="leading-7 text-sm text-gray-600">{{nameMessage}}</label>
-        <input v-model="state.name" type="text" id="name" name="name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model="target.name" type="text" id="name" name="name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
       </div>
       <div class="relative mb-1">
         <label for="email" class="leading-7 text-sm text-gray-600">メールアドレス</label>
-        <input v-model="state.email" type="email" id="email" name="email" placeholder="info@sample.com" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model="target.email" type="email" id="email" name="email" placeholder="info@sample.com" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
       </div>   
+
+
+      <!--Host登録時のみ表示-->
+      <div v-if="!isUser">
+        <div class="relative mb-1">
+          <label for="address" class="leading-7 text-sm text-gray-600">住所</label>
+          <input v-model="target.address" type="text" id="address" name="address" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        </div>
+
+        <div class="relative mb-1">
+          <label for="profile" class="leading-7 text-sm text-gray-600">紹介文</label>
+          <textarea v-model="target.profile" type="text" id="profile" name="profile" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"></textarea>
+        </div>
+      </div>
+
+
+
 
       <div class="relative mb-1">
         <label for="password" class="leading-7 text-sm text-gray-600">パスワード</label>
-        <input v-model="state.password" type="password" id="password" name="password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model="target.password" type="password" id="password" name="password" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
       </div>
       <div class="relative mb-1">
         <label for="password_confirmation" class="leading-7 text-sm text-gray-600">パスワード確認用</label>
-        <input v-model="state.password_confirmation" type="password" id="password_confirmation" name="password_confirmation" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model="target.password_confirmation" type="password" id="password_confirmation" name="password_confirmation" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
       </div>
-      <button @click="createState" class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">登録してみる</button>
+
+      <input v-model="target.wanted" type="checkbox" id="wanted" name="wanted" />登録後すぐに募集を開始しますか？
+
+
+
+      <button @click="createTarget" class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">登録してみる</button>
       <p class="text-xs text-gray-500 mt-3">ユーザ登録後すぐに詳しい条件を登録できます♪</p>
     </div>
   </div>
@@ -52,18 +74,10 @@ export default {
     return {
       registrationMessage: '病院として登録する',
       nameMessage: '名前',
-    }
-  },
+      isUser: true,
+      target: [],
+      URL: 'http://localhost:3000/api/user'
 
-  // created関数はインスタンスが作成された後で実行される処理を記述する
-
-  created() {
-    this.isUser = true
-    this.state = {
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
     }
   },
   methods: {
@@ -71,64 +85,49 @@ export default {
       this.isUser = !this.isUser
       this.registrationMessage = this.isUser ? '病院として登録する' : '看護師として登録する'
       this.nameMessage = this.isUser ? '名前' : '病院名'
+      this.URL = this.isUser ? 'http://localhost:3000/api/user' : 'http://localhost:3000/api/host'
 
       console.log(this.isUser)
     },
-    createState() {
-      if (this.isUser) {
-        axios.post('http://localhost:3000/api/user', {
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password,
-        password_confirmation: this.state.password_confirmation
-      })
-
-      // axiosはPromiseをサポートしてるから簡潔にかける
-      //.then(function (response) {と書いてしまった。アロー関数とではスコープが異なる  https://wemo.tech/904
-      
-      .then((response) => {
-        this.$router.push({ name: 'Hosts' })
-        console.log('せいこうです', response)
-        })
-      .catch((error) => {
-        console.log('えらーです', error)
-       })
-      } else {
-        axios.post('http://localhost:3000/api/host', {
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password,
-        password_confirmation: this.state.password_confirmation
+    createTarget() {
+        // axiosはPromiseをサポートしてるから簡潔にかける
+        //.then(function (response) {と書いてしまい、thisがundefined。アロー関数とではスコープが異なる  https://wemo.tech/904
+        axios.post(this.URL, {
+        name: this.target.name,
+        email: this.target.email,
+        password: this.target.password,
+        password_confirmation: this.target.password_confirmation,
+        address: this.target.address,
+        profile: this.target.profile,
+        wanted: this.target.wanted,
       })
       .then((response) => {
-        console.log('せいこうです', response )
-        this.$router.push({ name: 'Users' })
+        this.$router.push({ name: 'Home' })
+        console.log('登録成功', response)
         })
       .catch((error) => {
-        console.log('えらーです',error)
-       })
-      }
-      
+        console.log('登録失敗', error)
+       }) 
     }
   }
 
 
 
   // setup() {
-  //   const state = {}
-  //   let state = reactive({
+  //   const target = {}
+  //   let target = reactive({
   //     isUser: false
   //   })
   //   function userOrHost() {
   //     this.isUser = !this.isUser
   //     console.log(this.isUser)
   //   }
-  //   function createstate() {
+  //   function createtarget() {
   //     axios.post('http://localhost:3000/api/user', {
-  //       name: state.name,
-  //       email: state.email,
-  //       password: state.password,
-  //       password_confirmation: state.password_confirmation
+  //       name: target.name,
+  //       email: target.email,
+  //       password: target.password,
+  //       password_confirmation: target.password_confirmation
   //     })
   //     .then(function (response) {
   //       console.log(response)
@@ -138,9 +137,9 @@ export default {
   //     })
   //   }
   //   return {
-  //     createstate,
-  //     state,
-  //     state,
+  //     createtarget,
+  //     target,
+  //     target,
   //     userOrHost
   //   }
   // }
