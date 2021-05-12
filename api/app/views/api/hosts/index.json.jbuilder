@@ -5,4 +5,5 @@ json.array! @hosts do |host|
   json.profile host.profile
   json.id host.id
   json.uid host.uid
+  json.wanted host.wanted
 end

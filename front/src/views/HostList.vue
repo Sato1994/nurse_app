@@ -6,10 +6,6 @@
       <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">病院一覧。ぜひみてね。</h1>
       <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">病院の一覧ですよ。気になる病院があれば面接しようね。</p>
 
-       <router-link to="/">Welcomeへ</router-link> |
-
-
-
     </div>
     <div class="flex flex-wrap -m-4">
 
@@ -20,7 +16,7 @@
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
             </svg>
           </div>
-          <h2 class="text-lg text-gray-900 font-medium title-font mb-2">JA取手総合医療センター</h2>
+          <h2 class="text-lg text-gray-900 font-medium title-font mb-2">{{host.name}}</h2>
           <p class="leading-relaxed text-base">{{host.profile}}わざと長いプロフィールを書きますけど、日本語がめちゃくちゃにならないように頑張ります。もちとむぎという名前の犬を買っております。かわいいですよ。指をかんできますが気にしないでくださいね。</p>
         </div>
       </div>
@@ -43,7 +39,7 @@ export default {
       hosts: [],
     }
   },
-  mounted: function() {
+  mounted() {
     axios.get('http://localhost:3000/api/hosts')
     .then(response => {
       this.hosts = response.data

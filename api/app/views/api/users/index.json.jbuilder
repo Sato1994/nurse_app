@@ -8,4 +8,6 @@ json.array! @users do |user|
   json.profile user.profile
   json.id user.id
   json.uid user.uid
+  json.wanted user.wanted
+
 end
