@@ -30,6 +30,29 @@ RSpec.describe Host, type: :model do
       expect(host2.errors[:email]).to include("has already been taken")
     end
   end
+
+  describe "myid" do
+    it "なければ無効" do
+      host = build(:host, myid: nil)
+      host.valid?
+      expect(host.errors[:myid]).to include("can't be blank")
+    end
+
+    it "15字を超える場合無効" do
+      host = build(:host, myid: "a" * 16)
+      host.valid?
+      expect(host.errors[:myid]).to include("is too long (maximum is 15 characters)")
+    end
+
+    it "重複した場合無効" do
+      host1 =create(:host)
+      host2 = build(:host, myid: host1.myid)
+      host2.valid?
+      expect(host2.errors[:myid]).to include("has already been taken")
+    end
+  end
+
+    
   
   it "passwordがなければ無効" do
     host = build(:host, password: nil)
@@ -38,7 +61,7 @@ RSpec.describe Host, type: :model do
   end
     
 
-  it "nameとemailとpasswordとがあれば有効" do
+  it "nameとemailとpasswordとmyidがあれば有効" do
     host = build(:host)
     host.valid?
     expect(host).to be_valid

@@ -15,4 +15,5 @@ class Host < ActiveRecord::Base
   # validates :image,
   validates :wanted, exclusion: { in: [nil] }
   validates :profile, length: { maximum: 300 }
+  validates :myid, presence: true, format: { with: /\A[a-zA-Z0-9]+\z/ }, length: { maximum: 15 }, uniqueness: { case_sensitive: true }
 end
