@@ -1,15 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignUp from '../views/auth/SignUp.vue'
-import User from '../views/User.vue'
-import Top from '../views/Top.vue'
+import Home from '../views/Home.vue'
 import SignIn from '../views/auth/SignIn.vue'
+import UserIndividual from '../views/UserIndividual.vue'
+import NotFound from '../views/NotFound.vue'
 
 
 const routes = [
   {
     path: '/',
-    name: 'Top',
-    component: Top
+    redirect: '/home',
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home
   },
   {
     path: '/signup',
@@ -22,9 +27,14 @@ const routes = [
     component: SignIn
   },
   {
-    path: '/user/:id',
-    name: 'User',
-    component: User
+    path: '/:myid',
+    name: 'UserIndividual',
+    component: UserIndividual
+  },
+  {
+    path: '/notfound',
+    name: 'NotFound',
+    component: NotFound,
   },
 
 

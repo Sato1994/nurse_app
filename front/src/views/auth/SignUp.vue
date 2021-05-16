@@ -109,7 +109,7 @@ export default {
         myid: this.target.myid,
       })
       .then((response) => {
-        this.$router.push({ name: 'Top' })
+        this.$router.push({ name: 'Home' })
         console.log('登録成功', response)
         })
       .catch((error) => {

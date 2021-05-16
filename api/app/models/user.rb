@@ -7,6 +7,14 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
 
+  # 個人のページのURLをmyidにする。
+  def to_param
+    myid
+  end
+
+
+
+
   before_save { self.email = email.downcase }
 
   validates :name, presence: true, length: { maximum: 20 }
