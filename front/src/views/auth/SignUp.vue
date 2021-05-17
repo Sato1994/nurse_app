@@ -70,11 +70,9 @@
 
 
 <script>
-// import { reactive } from 'vue'
 import axios from 'axios'
 
-// export default で囲むことで、外部からも参照できるようにする。
-
+// export default で囲むことで、外部からも参照できるようにする
 export default {
   data() {
     return {
@@ -109,6 +107,11 @@ export default {
         myid: this.target.myid,
       })
       .then((response) => {
+        //ローカルストレージに access-token等を保存
+        localStorage.setItem('access-token', response.headers['access-token'])
+        localStorage.setItem('client', response.headers['client'])
+        localStorage.setItem('uid', response.headers['uid'])
+
         this.$router.push({ name: 'Home' })
         console.log('登録成功', response)
         })
