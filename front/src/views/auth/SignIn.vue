@@ -58,7 +58,13 @@ export default {
         password: this.target.password
       })
       .then((response) => {
-        this.$router.push({ name: 'Top' })
+        //ローカルストレージに access-token等を保存
+        localStorage.setItem('access-token', response.headers['access-token'])
+        localStorage.setItem('client', response.headers['client'])
+        localStorage.setItem('uid', response.headers['uid'])
+
+
+        this.$router.push({ name: 'Home' })
         console.log(this.isUser + 'としてログイン成功', response)
         })
       .catch((error) => {
