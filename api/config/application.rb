@@ -21,6 +21,12 @@ Bundler.require(*Rails.groups)
 
 module App
   class Application < Rails::Application
+
+
+    #DeprecationのWARNINGの非表示。
+    ActiveSupport::Deprecation.silenced = true
+
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 

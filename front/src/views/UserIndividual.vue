@@ -15,7 +15,23 @@
             </svg>
           </div>
           <div class="flex flex-col items-center text-center justify-center">
-            <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">ID:{{$route.params.id}}</h2>
+
+
+
+
+
+
+            <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">ID:{{target.myid}}</h2>
+            <router-link :to="{ name: 'UserIndividual', params: { myid: 'newman' }}">newmanのページ</router-link>
+            <router-link :to="{ name: 'UserIndividual', params: { myid: 'secondman' }}">secondmanのページ</router-link>
+
+
+
+
+
+
+
+
             <div class="w-12 h-1 bg-pink-500 rounded mt-2 mb-4"></div>
             <p class="text-base">Raclette knausgaard hella meggs normcore williamsburg enamel pin sartorial venmo tbh hot chicken gentrify portland.</p>
           </div>
@@ -37,12 +53,50 @@
 
 </template>
 
+
 <script>
+import axios from 'axios'
+
 export default {
 
+  data() {
+    return {
+      target:{}
+    }
+  },
 
 
 
+
+  mounted() {
+    // $route.params.myidで遷移元のparamsを受け取れる。
+    // URLに適当に入力されてもmyidがないならnotfound表示。
+    axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
+    .then(response => {
+        this.target = response.data
+        console.log('getしてtargetに入れました',this.$route.params.myid, response.data)
+    })
+    .catch(error => {
+      if (error.response.status === 404) {
+        this.$router.replace({path: '/notfound'})
+        console.log('404エラーでnotfound表示',error.response.status, error)
+      }else{
+      console.log('404エラー以外なのでnotfound表示は無し。',error.response.status, error)
+      }
+    })
+  },
+
+  // 同じコンポーネントを使用しているとURLを変更しても遷移されない問題を解決
+  watch: {
+    $route() {
+      axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
+      .then(response => {
+        this.target = response.data
+        console.log('watchでtarget更新',)
+    })
+      console.log('watch', this.$route.params.myid)
+    }
+  }
   
 }
 

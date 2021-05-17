@@ -1,23 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Welcom from '../views/Welcom.vue'
-import User from '../views/User.vue'
+import SignUp from '../views/auth/SignUp.vue'
 import Home from '../views/Home.vue'
+import SignIn from '../views/auth/SignIn.vue'
+import UserIndividual from '../views/UserIndividual.vue'
+import NotFound from '../views/NotFound.vue'
+
 
 const routes = [
   {
     path: '/',
-    name: 'Welcom',
-    component: Welcom
+    redirect: '/home',
   },
   {
     path: '/home',
     name: 'Home',
-    component: Home,
+    component: Home
   },
   {
-    path: '/user/:id',
-    name: 'User',
-    component: User
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: SignIn
+  },
+  {
+    path: '/:myid',
+    name: 'UserIndividual',
+    component: UserIndividual
+  },
+  {
+    path: '/notfound',
+    name: 'NotFound',
+    component: NotFound,
   },
 
 

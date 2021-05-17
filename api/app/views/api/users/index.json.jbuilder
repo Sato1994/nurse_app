@@ -9,5 +9,6 @@ json.array! @users do |user|
   json.id user.id
   json.uid user.uid
   json.wanted user.wanted
+  json.myid user.myid
 
 end

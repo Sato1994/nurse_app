@@ -30,7 +30,30 @@ RSpec.describe User, type: :model do
       expect(user2.errors[:email]).to include("has already been taken")
     end
   end
-  
+
+  describe "myid" do
+    it "なければ無効" do
+      user = build(:user, myid: nil)
+      user.valid?
+      expect(user.errors[:myid]).to include("can't be blank")
+    end
+
+    it "15字を超える場合無効" do
+      user = build(:user, myid: "a" * 16)
+      user.valid?
+      expect(user.errors[:myid]).to include("is too long (maximum is 15 characters)")
+    end
+
+    it "重複した場合無効" do
+      user1 =create(:user)
+      user2 = build(:user, myid: user1.myid)
+      user2.valid?
+      expect(user2.errors[:myid]).to include("has already been taken")
+    end
+  end
+
+
+
   it "passwordがなければ無効" do
     user = build(:user, password: nil)
     user.valid?
@@ -38,7 +61,7 @@ RSpec.describe User, type: :model do
   end
     
 
-  it "nameとemailとpasswordとがあれば有効" do
+  it "nameとemailとpasswordとmyidがあれば有効" do
     user = build(:user)
     user.valid?
     expect(user).to be_valid

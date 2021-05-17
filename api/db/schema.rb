@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_17_170452) do
+ActiveRecord::Schema.define(version: 2021_05_14_011041) do
 
   create_table "hosts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -38,8 +38,10 @@ ActiveRecord::Schema.define(version: 2021_04_17_170452) do
     t.text "tokens"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "myid", null: false
     t.index ["confirmation_token"], name: "index_hosts_on_confirmation_token", unique: true
     t.index ["email"], name: "index_hosts_on_email", unique: true
+    t.index ["myid"], name: "index_hosts_on_myid", unique: true
     t.index ["reset_password_token"], name: "index_hosts_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_hosts_on_uid_and_provider", unique: true
   end
@@ -65,7 +67,6 @@ ActiveRecord::Schema.define(version: 2021_04_17_170452) do
     t.string "email", null: false
     t.string "address"
     t.string "image"
-    # boolean型にはdeafault,nullを設定した方がよい。https://qiita.com/jnchito/items/a342b64cd998e5c4ef3d
     t.boolean "wanted", default: false, null: false
     t.boolean "sex", default: false, null: false
     t.integer "age"
@@ -74,8 +75,10 @@ ActiveRecord::Schema.define(version: 2021_04_17_170452) do
     t.text "tokens"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "myid", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["myid"], name: "index_users_on_myid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end

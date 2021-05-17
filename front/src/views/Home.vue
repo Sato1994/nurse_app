@@ -3,8 +3,8 @@
 <section class="text-gray-600 body-font">
   <div class="container px-5 py-24 mx-auto">
     <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Home.vueは病院一覧</h1>
-      <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">病院一覧です</p>
+      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Home.vue、今は看護師一覧</h1>
+      <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">一覧です</p>
     </div>
 
 
@@ -35,7 +35,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:3000/api/hosts')
+    axios.get('http://localhost:3000/api/users')
     .then(response => {
       this.targets = response.data
       console.log(response.data)
