@@ -2,8 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SignUp from '../views/auth/SignUp.vue'
 import Home from '../views/Home.vue'
 import SignIn from '../views/auth/SignIn.vue'
+import SignOut from '../views/auth/SignOut.vue'
 import UserIndividual from '../views/UserIndividual.vue'
 import NotFound from '../views/NotFound.vue'
+
 
 
 const routes = [
@@ -27,16 +29,20 @@ const routes = [
     component: SignIn
   },
   {
-    path: '/:myid',
-    name: 'UserIndividual',
-    component: UserIndividual
+    path: '/logout',
+    name: 'SignOut',
+    component: SignOut,
   },
   {
     path: '/notfound',
     name: 'NotFound',
     component: NotFound,
   },
-
+  {
+    path: '/:myid',
+    name: 'UserIndividual',
+    component: UserIndividual
+  },
 
 ]
 
