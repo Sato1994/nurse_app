@@ -3,6 +3,7 @@ import SignUp from '../views/auth/SignUp.vue'
 import Home from '../views/Home.vue'
 import SignIn from '../views/auth/SignIn.vue'
 import SignOut from '../views/auth/SignOut.vue'
+import Edit from '../views/Edit.vue'
 import UserIndividual from '../views/UserIndividual.vue'
 import NotFound from '../views/NotFound.vue'
 
@@ -32,6 +33,11 @@ const routes = [
     path: '/logout',
     name: 'SignOut',
     component: SignOut,
+  },
+  {
+    path: '/edit/:myid',
+    name: 'Edit',
+    component: Edit,
   },
   {
     path: '/notfound',

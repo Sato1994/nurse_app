@@ -63,6 +63,10 @@ export default {
         localStorage.setItem('client', response.headers['client'])
         localStorage.setItem('uid', response.headers['uid'])
 
+         //vuexにtargetのresponse.dataを挿入
+        this.$store.dispatch('targetSave', response.data.data)
+        console.log('state.target→',this.$store.state.target)
+
 
         this.$router.push({ name: 'Home' })
         console.log(this.isUser + 'としてログイン成功', response)
