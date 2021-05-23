@@ -1,4 +1,6 @@
 import { createStore } from 'vuex'
+// vuexのデータをlocalstorageへ自動的に保存してくれるプラグイン
+import createPersistedState from 'vuex-persistedstate'
 
 export const store = createStore({
 
@@ -21,7 +23,9 @@ export const store = createStore({
       context.commit('targetSave', target)
       console.log('this is context→', context)
     }
-  }
+  },
+
+  plugins: [createPersistedState()]
 
 
 })
