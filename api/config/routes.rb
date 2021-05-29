@@ -11,6 +11,11 @@ Rails.application.routes.draw do
       registrations: 'api/host/registrations'
     }
   end
+
+  namespace :api do
+    resources :skills
+  end
+
 end
 
 

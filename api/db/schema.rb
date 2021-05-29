@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_14_011041) do
+ActiveRecord::Schema.define(version: 2021_05_26_024006) do
 
   create_table "hosts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -44,6 +44,13 @@ ActiveRecord::Schema.define(version: 2021_05_14_011041) do
     t.index ["myid"], name: "index_hosts_on_myid", unique: true
     t.index ["reset_password_token"], name: "index_hosts_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_hosts_on_uid_and_provider", unique: true
+  end
+
+  create_table "skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_skills_on_name", unique: true
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
