@@ -7,6 +7,9 @@ class Host < ActiveRecord::Base
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
 
+  has_many :host_skills, dependent: :destroy
+  has_many :hosts, through: :host_skills
+
   before_save { self.email = email.downcase }
 
   validates :name, presence: true, length: { maximum: 40 }
