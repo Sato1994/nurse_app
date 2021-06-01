@@ -13,10 +13,11 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    resources :skills
+    resources :skills do
+      #shallow: trueでidを必要としないアクションだけをネスト外に書いたのと同じことにできる。
+      resources :user_skills, only: [:create, :destroy], shallow: true
+    end
+
   end
 
 end
-
-
-

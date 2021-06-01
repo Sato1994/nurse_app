@@ -21,22 +21,23 @@ RSpec.describe "Api::Skills", type: :request do
     context "要素が有効な場合" do
       it "登録できる" do
         post "/api/skills", params: {skill: {name: "むぎ"}}
-        expect(Skill.all.count). to eq(1)
+        expect(Skill.count).to eq(1)
       end
     end
 
     context "要素が無効な場合" do
       it "登録できない" do
         post "/api/skills", params: {skill: {name: " "}}
-        expect(Skill.all.count). to eq(0)
+        expect(Skill.count).to eq(0)
       end
     end
   end
 
   describe "PUT /update" do
+    let(:skill) {create(:skill)}
+
     context "要素が有効な場合" do
       it "更新される" do
-        skill = create(:skill)
         put "/api/skills/#{skill.id}",params: {skill: {name: "もち"}}
         expect(skill.reload.name).to eq("もち")
       end
@@ -44,7 +45,6 @@ RSpec.describe "Api::Skills", type: :request do
 
     context "要素が無効な場合" do
       it "更新されない" do
-        skill = create(:skill)
         put "/api/skills/#{skill.id}", params: {skill: {name: " "}}
         expect(skill.reload.name).to eq(skill.name)
       end
@@ -52,8 +52,8 @@ RSpec.describe "Api::Skills", type: :request do
   end
 
   describe "DELETE /destroy" do
+    let(:skill) {create(:skill)}
     it "削除される" do
-      skill = create(:skill)
       delete "/api/skills/#{skill.id}"
       expect(response.status).to eq(204) 
     end
