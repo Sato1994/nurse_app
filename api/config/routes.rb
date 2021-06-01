@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :skills do
       #shallow: trueでidを必要としないアクションだけをネスト外に書いたのと同じことにできる。
       resources :user_skills, only: [:create, :destroy], shallow: true
+      resources :host_skills, only: [:create, :destroy], shallow: true
     end
 
   end
