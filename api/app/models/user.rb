@@ -7,6 +7,9 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
 
+  has_many :user_skills, dependent: :destroy
+  has_many :skills, through: :user_skills
+
   # 個人のページのURLをmyidにする。
   def to_param
     myid

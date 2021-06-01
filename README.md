@@ -21,3 +21,5 @@ signoutでdevise_token_authの機能によりaccess-token等が無効になる�
 
 vuexにsignup,signin後にresponse.data.dataをvuexに保存
 ユーザEditではvuexからデータを引き出している。
+
+user_skillは,userかskillを削除されたら自動的に消える

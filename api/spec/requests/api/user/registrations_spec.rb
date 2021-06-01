@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "user登録", type: :request do
   describe "POST /api/user" do
     it "有効な値を入力した場合ユーザ登録できる" do
+      #attributes_for(:***)値をハッシュで生成する
       post '/api/user', params: attributes_for(:user)
       expect(response.status).to eq(200)
     end
