@@ -22,8 +22,6 @@
 
 
             <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">ID:{{target.myid}}</h2>
-            <router-link :to="{ name: 'UserIndividual', params: { myid: 'newman' }}">newmanのページ</router-link>
-            <router-link :to="{ name: 'UserIndividual', params: { myid: 'secondman' }}">secondmanのページ</router-link>
 
 
             <div class="w-12 h-1 bg-pink-500 rounded mt-2 mb-4"></div>
@@ -42,7 +40,11 @@
 
         </div>
         <div class="sm:w-2/3 sm:pl-8 sm:py-8 sm:border-l border-gray-200 sm:border-t-0 border-t mt-4 pt-4 sm:mt-0 text-center sm:text-left">
-          <p class="leading-relaxed text-lg mb-4">Meggings portland fingerstache lyft, post-ironic fixie man bun banh mi umami everyday carry hexagon locavore direct trade art party. Locavore small batch listicle gastropub farm-to-table lumbersexual salvia messenger bag. Coloring book flannel truffaut craft beer drinking vinegar sartorial, disrupt fashion axe normcore meh butcher. Portland 90's scenester vexillologist forage post-ironic asymmetrical, chartreuse disrupt butcher paleo intelligentsia pabst before they sold out four loko. 3 wolf moon brooklyn.</p>
+          <div class="inline-block rounded-full text-white bg-yellow-400 hover:bg-yellow-500 duration-300 text-xs font-bold mr-1
+                      md:mr-2 mb-2 px-2 md:px-4 py-1 opacity-90 hover:opacity-100" v-for="skill of skills" :key="skill.name">
+            <Label :skill="skill" />
+          </div>
+          <p class="leading-relaxed text-lg mb-4">{{target.profile}}</p>
           <a class="text-pink-500 inline-flex items-center">Learn More
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
               <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -61,12 +63,16 @@
 
 <script>
 import axios from 'axios'
+import Label from '@/components/atoms/Label.vue'
 
 export default {
-
+  components: {
+    Label
+  },
   data() {
     return {
-      target:{}
+      target: {},
+      skills: []
     }
   },
 
@@ -78,8 +84,10 @@ export default {
     // URLに適当に入力されてもmyidがないならnotfound表示。
     axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
     .then(response => {
-        this.target = response.data
-        console.log('getしてtargetに入れました',this.$route.params.myid, response.data)
+        this.target = response.data.user
+        this.skills = response.data.skills
+        console.log("target→", response.data.user)
+        console.log("skills→", response.data.skills)
     })
     .catch(error => {
       if (error.response.status === 404) {
@@ -96,8 +104,9 @@ export default {
     $route() {
       axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
       .then(response => {
-        this.target = response.data
-        console.log('watchでtarget更新',)
+        this.target = response.data.user
+        this.skill = response.data.skills
+        console.log('watchでtargetとskill更新',)
     })
       console.log('watch', this.$route.params.myid)
     }
