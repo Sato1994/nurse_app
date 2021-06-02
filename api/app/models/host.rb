@@ -8,7 +8,11 @@ class Host < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :host_skills, dependent: :destroy
-  has_many :hosts, through: :host_skills
+  has_many :skills, through: :host_skills
+
+  def to_param
+    myid
+  end
 
   before_save { self.email = email.downcase }
 
