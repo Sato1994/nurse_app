@@ -1,6 +1,6 @@
 <template>
 
-<section class="text-gray-600 body-font">
+<section class="text-gray-600">
   <div class="container px-5 py-24 mx-auto flex flex-col">
     <div class="lg:w-4/6 mx-auto">
       <div class="rounded-lg h-64 overflow-hidden">
@@ -36,14 +36,19 @@
             <router-link :to="{ name: 'Edit', params: { myid: target.myid }}" class="inline-flex text-white bg-pink-500 border-0 py-2 px-6 focus:outline-none hover:bg-pink-600 rounded text-lg">プロフィールを編集</router-link>
           </div>
 
-
-
         </div>
+
         <div class="sm:w-2/3 sm:pl-8 sm:py-8 sm:border-l border-gray-200 sm:border-t-0 border-t mt-4 pt-4 sm:mt-0 text-center sm:text-left">
-          <div class="inline-block rounded-full text-white bg-yellow-400 hover:bg-yellow-500 duration-300 text-xs font-bold mr-1
-                      md:mr-2 mb-2 px-2 md:px-4 py-1 opacity-90 hover:opacity-100" v-for="skill of skills" :key="skill.name">
-            <Label :skill="skill" />
+          <div  v-for="targetSkill of targetSkills" :key="targetSkill.name" class="inline-block rounded-full text-white bg-yellow-400 hover:bg-yellow-500 duration-300 text-xs font-bold mr-1
+                      md:mr-2 mb-2 px-2 md:px-4 py-1 opacity-90 hover:opacity-100" >
+            <Label :text="targetSkill.name" />
           </div>
+
+
+          <button @click="openModal" class="bg-gray-200">スキルを追加する</button>
+          <SkillList :targetSkills="targetSkills" v-show="showContent" @close-button-click="closeModal"></SkillList>
+
+
           <p class="leading-relaxed text-lg mb-4">{{target.profile}}</p>
           <a class="text-pink-500 inline-flex items-center">Learn More
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
@@ -51,6 +56,7 @@
             </svg>
           </a>
         </div>
+
       </div>
     </div>
   </div>
@@ -64,30 +70,49 @@
 <script>
 import axios from 'axios'
 import Label from '@/components/atoms/Label.vue'
+import SkillList from '@/views/modal/SkillList.vue'
 
 export default {
   components: {
-    Label
+    Label,
+    SkillList,
   },
   data() {
     return {
-      target: {},
-      skills: []
+      // target: {},
+      // targetSkills: [],
+      showContent: false,
     }
   },
 
+  methods: {
+    openModal() {
+      this.showContent = true
+    },
+    closeModal() {
+      this.showContent = false
+    }
+  },
+  computed: {
+    target() {
+      return this.$store.getters['target/getTarget']
+    },
+    targetSkills() {
+      return this.$store.getters['target/getSkills']
+    },
 
-
+  },
 
   mounted() {
     // $route.params.myidで遷移元のparamsを受け取れる。
     // URLに適当に入力されてもmyidがないならnotfound表示。
     axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
     .then(response => {
-        this.target = response.data.user
-        this.skills = response.data.skills
-        console.log("target→", response.data.user)
-        console.log("skills→", response.data.skills)
+        // this.target = response.data.user
+        // this.targetSkills = response.data.target_skills
+        this.$store.dispatch('target/saveTarget', response.data.user)
+        this.$store.dispatch('target/saveSkills', response.data.target_skills)
+        console.log('れすぽんすでーた',response.data)
     })
     .catch(error => {
       if (error.response.status === 404) {
@@ -100,17 +125,17 @@ export default {
   },
 
   // 同じコンポーネントを使用しているとURLを変更しても遷移されない問題を解決
-  watch: {
-    $route() {
-      axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
-      .then(response => {
-        this.target = response.data.user
-        this.skill = response.data.skills
-        console.log('watchでtargetとskill更新',)
-    })
-      console.log('watch', this.$route.params.myid)
-    }
-  }
+  // watch: {
+  //   $route() {
+  //     axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
+  //     .then(response => {
+  //       this.target = response.data.user
+  //       this.targetSkill = response.data.skills
+  //       console.log('URLが変更されたのでwatchが作動',)
+  //   })
+  //     console.log('watch', this.$route.params.myid)
+  //   }
+  // }
   
 }
 

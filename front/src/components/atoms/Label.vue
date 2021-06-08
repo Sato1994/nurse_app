@@ -1,7 +1,7 @@
 <template>
 
     <a href="#">
-        {{skill.name}}
+        {{text}}
     </a>
 
 
@@ -12,7 +12,7 @@
 export default {
 
 	props: {
-		skill: Object,
+		text: String,
 	}
 
 }
