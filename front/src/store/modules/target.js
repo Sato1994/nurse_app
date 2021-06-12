@@ -29,10 +29,14 @@ export default {
   },
 
   getters: {
-    getTarget: (state) => state.target,
+    getTarget: state => {
+      return state.target
+    },
     // ここで諸々算出できる
 
-    getSkills: (state) => state.skills,
+    getSkills: state => {
+      return state.skills
+    },
 
   }
 

@@ -46,7 +46,7 @@
 
 
           <button @click="openModal" class="bg-gray-200">スキルを追加する</button>
-          <SkillList :targetSkills="targetSkills" v-show="showContent" @close-button-click="closeModal"></SkillList>
+          <SkillList :targetSkills="targetSkills" v-show="showContent" @close-button-click="closeModal" @add-skill-button-click="pushTargetSkill" @remove-skill-button-click="removeTargetSkill"></SkillList>
 
 
           <p class="leading-relaxed text-lg mb-4">{{target.profile}}</p>
@@ -79,10 +79,26 @@ export default {
   },
   data() {
     return {
-      // target: {},
-      // targetSkills: [],
+      target: {},
+      targetSkills: [],
       showContent: false,
     }
+  },
+
+  mounted() {
+    //axiosでユーザ詳細を取得しvuexへ保存。ユーザ詳細と登録済みスキルをdata(),vuexに代入。
+
+    // $route.params.myidで遷移元のparamsを受け取れる。
+    // URLに適当に入力されてもmyidがないならnotfound表示。
+    axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
+    .then(response => {
+        this.$store.dispatch('target/saveSkills', response.data.target_skills)
+        this.targetSkills = response.data.target_skills
+        console.log(response.data)
+    })
+    .catch(error => {
+      console.log(error)
+    })
   },
 
   methods: {
@@ -91,28 +107,19 @@ export default {
     },
     closeModal() {
       this.showContent = false
-    }
-  },
-  computed: {
-    target() {
-      return this.$store.getters['target/getTarget']
     },
-    targetSkills() {
-      return this.$store.getters['target/getSkills']
+    //スキル登録した際に再描写させる
+    pushTargetSkill(newSkill) {
+      this.targetSkills.push(newSkill)
     },
-
-  },
-
-  mounted() {
-    // $route.params.myidで遷移元のparamsを受け取れる。
-    // URLに適当に入力されてもmyidがないならnotfound表示。
-    axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
-    .then(response => {
-        // this.target = response.data.user
-        // this.targetSkills = response.data.target_skills
-        this.$store.dispatch('target/saveTarget', response.data.user)
-        this.$store.dispatch('target/saveSkills', response.data.target_skills)
-        console.log('れすぽんすでーた',response.data)
+    //スキル登録解除した際に再描写させる
+    // axiosで一度サーバから情報をとりvuexに
+    removeTargetSkill() {
+      axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
+           .then(response => {
+             this.$store.dispatch('target/saveSkills', response.data.target_skills)
+             this.targetSkills = response.data.target_skills
+            console.log('れすぽんすでーた',response.data)
     })
     .catch(error => {
       if (error.response.status === 404) {
@@ -122,21 +129,18 @@ export default {
       console.log('404エラー以外なのでnotfound表示は無し。',error.response.status, error)
       }
     })
-  },
+    }
 
-  // 同じコンポーネントを使用しているとURLを変更しても遷移されない問題を解決
-  // watch: {
-  //   $route() {
-  //     axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
-  //     .then(response => {
-  //       this.target = response.data.user
-  //       this.targetSkill = response.data.skills
-  //       console.log('URLが変更されたのでwatchが作動',)
-  //   })
-  //     console.log('watch', this.$route.params.myid)
-  //   }
-  // }
-  
+  },
+  // computed: {
+  //   target() {
+  //     return this.$store.getters['target/getTarget']
+  //   },
+  //   targetSkills() {
+  //     return this.$store.getters['target/getSkills']
+  //   },
+
+  // },
 }
 
 </script>

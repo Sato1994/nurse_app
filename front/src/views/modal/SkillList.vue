@@ -13,18 +13,18 @@
     <div class=" flex-col px-6 py-5 bg-gray-50">
       <h1>現在の所持スキル</h1>
       <div v-for="targetSkill of targetSkills" :key="targetSkill.name" class="inline-block rounded-full text-white bg-yellow-400 hover:bg-yellow-500 duration-300 text-xs font-bold mr-1 md:mr-2 mb-2 px-2 md:px-4 py-1 opacity-90 hover:opacity-100">
-      <Label :text="targetSkill.name" />
+      <Label :text="targetSkill.name" @click="removeTargetSkill(targetSkill.id)" />
       </div>
     </div>
 
     <div class=" border-t border-gray-200 flex-col px-6 py-5 bg-gray-50">
-      <SearchBox placeholder="スキルを検索" />
+      <SearchBox  @change="changeValue" placeholder="スキルを検索" />
     </div>
 
     <div class=" border-t border-gray-200 flex-col px-6 py-5 bg-gray-50">
       <h1>未登録スキル一覧</h1>
       <div v-for="unselectedSkill of unselectedSkills" :key="unselectedSkill.name" class="inline-block rounded-full text-white bg-yellow-400 hover:bg-yellow-500 duration-300 text-xs font-bold mr-1 md:mr-2 mb-2 px-2 md:px-4 py-1 opacity-90 hover:opacity-100">
-      <Label :text="unselectedSkill.name" />
+          <Label :text="unselectedSkill.name" @click="addTargetSkill(unselectedSkill.id)" />
       </div>
     </div>
 
@@ -50,6 +50,14 @@ export default {
     SearchBox,
     Button,
   },
+  data() {
+    return {
+      uid: localStorage.getItem("uid"),
+      access_token: localStorage.getItem("access-token"),
+      client: localStorage.getItem("client"),
+      value: ""
+    }
+  },
   props: {
     targetSkills: Object
   },
@@ -57,9 +65,45 @@ export default {
     closeModal() {
       this.$emit('close-button-click')
     },
-  //   stopPropagation() {
-  //     event.stopPropagation()
-  //   }
+    changeValue(newValue) {
+      this.value = newValue
+    },
+    addTargetSkill(e) {
+      console.log(this.uid, this.access_token, this.client)
+      axios.post(`http://localhost:3000/api/skills/${e}/user_skills`, {}, {
+        headers: {
+          uid: this.uid,
+          'access-token': this.access_token,
+          client: this.client,
+          'content-type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response.data)
+
+        this.$emit('add-skill-button-click', response.data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    },
+    removeTargetSkill(e) {
+      axios.delete(`http://localhost:3000/api/user_skills/${e}`, {
+        headers: {
+          uid: this.uid,
+          'access-token': this.access_token,
+          client: this.client,
+          'content-type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response.data)
+        this.$emit('remove-skill-button-click', response.data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    },
   },
 
   mounted() {
@@ -78,18 +122,10 @@ export default {
     const userSkills  = this.$store.getters['target/getSkills']
     const allSkills = this.$store.getters['skill/getAllSkills']
     const unselectedSkills = allSkills.filter(obj => !userSkills.map(obj=>obj.id).includes(obj.id))
-    return unselectedSkills
+    const searchedSkills = unselectedSkills.filter(obj => (obj.name).includes(this.value))
+    return searchedSkills
     }
   }
-
-
-
 }
 
 </script>
-
-
-
-<style>
-
-</style>

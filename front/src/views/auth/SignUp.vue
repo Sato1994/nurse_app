@@ -113,7 +113,7 @@ export default {
         localStorage.setItem('uid', response.headers['uid'])
 
         //vuexにtargetのresponse.dataを挿入
-        this.$store.dispatch('targetSave', response.data.data)
+        this.$store.dispatch('saveTarget', response.data.data)
         console.log('state.target→',this.$store.state.target)
 
         this.$router.push({ name: 'Home' })
