@@ -11,6 +11,7 @@ class Api::UsersController < ApplicationController
     # !で、レコードが見つからない場合nilでなくて404を発生させられる。
     # 個人のページのURLをmyidにする。
     @user = User.find_by!(myid: params[:id])
+    @skills = @user.skills
     render "show", formats: :json, handlers: :jbuilder
   end
 end

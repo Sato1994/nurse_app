@@ -8,7 +8,7 @@
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
         </svg>
       </div>
-      <h2 class="text-lg text-gray-900 font-medium title-font mb-2"><router-link :to="{ name: 'UserIndividual', params: { myid: target.myid }}">{{target.myid}}まいID</router-link></h2>
+      <h2 class="text-lg text-gray-900 font-medium title-font mb-2"><router-link :to="{ name: 'UserIndividual', params: { myid: target.myid }}">{{target.myid}}</router-link></h2>
       <p class="leading-snung text-base">住所：{{target.address}}</p>
       <p class="leading-snung text-base">募集中？{{target.wanted === true ? '募集中' : '募集してません'}}</p>
       <p class="leading-snung text-base">プロフィール：{{target.profile}}</p>

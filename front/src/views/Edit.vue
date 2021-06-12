@@ -56,27 +56,22 @@
   </div>
 </section>
 
-
-
-
 </template>
-
-
-
 
 <script>
 import axios from 'axios'
 export default {
 
-  data() {
-    return {
-      target: {}
-    }
-  },
+  // data() {
+  //   return {
+  //     target: {}
+  //   }
+  // },
 
-  created() {
-    this.target = this.$store.state.target
-    console.log('createdしてdateにtarget代入しました。')
+  computed: {
+    target() {
+      return this.$store.getters['target/getTarget']
+    }
   },
 
   methods: {
@@ -100,8 +95,8 @@ export default {
       })
       .then((response) => {
         //vuexのtargetをresponse.dataを使って更新
-        this.$store.dispatch('targetSave', response.data.data)
-        console.log('targetsaveでvuexを更新→', response.data.data)
+        this.$store.dispatch('target/saveTarget', response.data.data)
+        console.log('れすぽんすでーた',response.data)
         this.$router.push( {name: 'UserIndividual', params: { myid: response.data.data.myid }})
         })
       .catch((error) => {
@@ -109,11 +104,5 @@ export default {
        })
     }
   }
-
-
-
 }
-
-
-
 </script>
