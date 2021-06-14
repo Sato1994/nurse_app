@@ -93,6 +93,7 @@ export default {
     axios.get(`http://localhost:3000/api/users/${this.$route.params.myid}`)
     .then(response => {
         this.$store.dispatch('target/saveSkills', response.data.target_skills)
+        this.target = response.data.user
         this.targetSkills = response.data.target_skills
         console.log(response.data)
     })

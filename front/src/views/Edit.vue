@@ -13,7 +13,8 @@
 
       <div class="relative mb-4">
         <label for="address" class="leading-7 text-sm text-gray-600">住所</label>
-        <input v-model="target.address" type="text" id="address" name="address" class="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model ="postalCode" @input="getAddress(postalCode)" placeholder="郵便番号を入力してください" class="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        <input v-model="target.address" readonly type="text" id="address" name="address" class="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
       </div>
 
       <div class="relative mb-4">
@@ -62,16 +63,14 @@
 import axios from 'axios'
 export default {
 
-  // data() {
-  //   return {
-  //     target: {}
-  //   }
-  // },
-
-  computed: {
-    target() {
-      return this.$store.getters['target/getTarget']
+  data() {
+    return {
+      target: {},
+      postalCode: "",
     }
+  },
+  mounted() {
+    this.target = this.$store.getters['target/getTarget']
   },
 
   methods: {
@@ -102,6 +101,17 @@ export default {
       .catch((error) => {
         console.log(error)
        })
+    },
+    getAddress(postalCode) {
+      axios.get(`https://api.zipaddress.net/?zipcode=${postalCode}`)
+      .then(response => {
+        console.log(response.data)
+        this.target.address = response.data.data.fullAddress
+      })
+      .catch(error => {
+        console.log(error)
+
+      })
     }
   }
 }
