@@ -20,5 +20,10 @@ Rails.application.routes.draw do
     end
 
   end
+  namespace :api do
+    resources :agreements, only: [:index, :show, :update, :destroy]
+  end
 
+  post 'api/agreements/user/:user_id', to: 'api/agreements#create'
+  post 'api/agreements/host/:host_id', to: 'api/agreements#create'
 end

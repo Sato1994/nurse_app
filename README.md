@@ -23,3 +23,12 @@ vuexにsignup,signin後にresponse.data.dataをvuexに保存
 ユーザEditではvuexからデータを引き出している。
 
 user_skillは,userかskillを削除されたら自動的に消える
+
+
+
+ステータスコード統一
+
+201  createでリソースを作成成功
+204　destroyで消去し返すものがないけど成功
+
+400  入力が不足していてリクエストが失敗

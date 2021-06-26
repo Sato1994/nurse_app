@@ -9,6 +9,8 @@ class Host < ActiveRecord::Base
 
   has_many :host_skills, dependent: :destroy
   has_many :skills, through: :host_skills
+  has_many :agreements
+  has_many :users, through: :agreements
 
   def to_param
     myid
