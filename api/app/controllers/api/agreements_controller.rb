@@ -1,7 +1,16 @@
 class Api::AgreementsController < ApplicationController
 
   def index
-    @agreements = Agreement.all
+    #ログイン者が関与しているagreementsのうちstateが0の現在時刻より6時間以内ののものは全削除し、一覧表示
+    if api_user_signed_in?
+      Agreement.where('user_id = ? && start_time < ? && state = ?', current_api_user.id, Time.current + 6.hour, 0).destroy_all
+      @agreements = Agreement.where(user_id: current_api_user.id)
+    elsif api_host_signed_in?
+      Agreement.where('host_id = ? && start_time < ? && state = ?', current_api_host.id, Time.current + 6.hour, 0).destroy_all
+      @agreements = Agreement.where(host_id: current_api_host.id)
+    else
+      @agreements = nil
+    end
     render "index", formats: :json, handlers: :jbuilder
   end
 
@@ -23,9 +32,8 @@ class Api::AgreementsController < ApplicationController
         render json: agreement.errors, status: 400
       end
     else
-      render body: :nil, status: 400
+      render body: nil, status: 400
     end
-
   end
 
   def show
@@ -63,18 +71,14 @@ class Api::AgreementsController < ApplicationController
 
   private
 
-
-  # def agreement_params
-  #   params.require(:agreement).permit(:start_time, :finish_time, :states).merge(user: current_api_user, host: @host)
-  # end
-
   def agreement_user_signed_in_params
-    params.require(:agreement).permit(:state).merge(user: current_api_user, host: @host, start_time: Time.current, finish_time: Time.current)
+    params.require(:agreement).permit(:state).merge(user: @user, host: current_api_host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
 
   def agreement_host_signed_in_params
-    params.require(:agreement).permit(:state).merge(user: @user, host: current_api_host, start_time: Time.current, finish_time: Time.current)
+    params.require(:agreement).permit(:state).merge(user: @user, host: current_api_host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
+
 
 
 
