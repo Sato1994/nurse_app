@@ -49,11 +49,17 @@ RSpec.describe Agreement, type: :model do
         expect(agreement.errors[:finish_time]).to include("勤務時間は1～18時間までです。")
       end
     end
-    context "勤務時間の重複" do
-      it "同一userが含まれるなら無効" do
+    context "同一userが含まれる勤務時間の重複" do
+      it "既存のagreementのstateが5なら有効" do
+        agreement = create(:agreement, state: 5)
+        user = agreement.user
+        new = build(:agreement, user: user)
+        expect(new).to be_valid
+      end
+      it "既存のagreementのstateが5以外なら無効" do
         agreement = create(:agreement)
         user = agreement.user
-        new = build(:agreement, user_id: user.id)
+        new = build(:agreement, user: user)
         new.valid?
         expect(new.errors[:start_time]).to include("勤務時間が他の勤務時間と重複しています。")
       end
