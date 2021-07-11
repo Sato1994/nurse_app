@@ -30,7 +30,7 @@ RSpec.describe FreeTime, type: :model do
       end
 
       it "1時間未満なら無効" do
-        ft = build(:free_time, finish_time: Time.current + 20.hour - 1.second )
+        ft = build(:free_time, finish_time: Time.current + 21.hour - 1.second )
         ft.valid?
         expect(ft.errors[:start_time]).to include("登録時間は最低1時間以上です。")
       end
