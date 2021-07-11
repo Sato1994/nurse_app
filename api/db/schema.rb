@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_11_015008) do
+ActiveRecord::Schema.define(version: 2021_07_11_040302) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name", null: false
@@ -114,6 +114,17 @@ ActiveRecord::Schema.define(version: 2021_07_11_015008) do
     t.index ["name"], name: "index_skills_on_name", unique: true
   end
 
+  create_table "user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.datetime "start_time", null: false
+    t.datetime "finish_time", null: false
+    t.bigint "user_id", null: false
+    t.bigint "host_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["host_id"], name: "index_user_requests_on_host_id"
+    t.index ["user_id"], name: "index_user_requests_on_user_id"
+  end
+
   create_table "user_skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "skill_id", null: false
@@ -168,6 +179,8 @@ ActiveRecord::Schema.define(version: 2021_07_11_015008) do
   add_foreign_key "host_skills", "hosts"
   add_foreign_key "host_skills", "skills"
   add_foreign_key "recruitment_times", "hosts"
+  add_foreign_key "user_requests", "hosts"
+  add_foreign_key "user_requests", "users"
   add_foreign_key "user_skills", "skills"
   add_foreign_key "user_skills", "users"
 end
