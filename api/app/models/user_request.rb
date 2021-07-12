@@ -10,6 +10,7 @@ class UserRequest < ApplicationRecord
   validate :is_the_request_included_in_the_recruitment_time
   validate :duplication_of_user_request_for_same_user
   validate :user_request_has_some_hours_grace
+  validate :limitation_of_user_request_hours
 
 
 
@@ -29,6 +30,12 @@ class UserRequest < ApplicationRecord
   def user_request_has_some_hours_grace
     unless start_time > (Time.current + 7.hour)
       errors.add(:start_time, "申請時間は現時刻より7時間以上の猶予が必要です。")
+    end
+  end
+
+  def limitation_of_user_request_hours
+    unless finish_time >= (start_time + 1.hour)
+      errors.add(:start_time, "申請時間は最低1時間以上です。")
     end
   end
 
