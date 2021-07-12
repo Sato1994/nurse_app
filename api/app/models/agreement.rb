@@ -9,7 +9,7 @@ class Agreement < ApplicationRecord
   validates :state, inclusion: { in: %w(申請中 勤務期間前 勤務期間中 勤務完了 変更申請中 キャンセル済) }
 
   validate :limitation_of_working_hours
-  validate :start_time_has_some_hours_grace
+  validate :agreement_has_some_hours_grace
   validate :duplication_of_work_hours_for_same_user
 
   enum state: { 申請中: 0, 勤務期間前: 1, 勤務期間中: 2, 勤務完了: 3, 変更申請中: 4, キャンセル済: 5 }
@@ -20,16 +20,15 @@ class Agreement < ApplicationRecord
     end
   end
 
-  def start_time_has_some_hours_grace
-    unless start_time > (Time.current + 12.hour)
-      errors.add(:start_time, "勤務開始時間は現在時刻より12時間以上の猶予が必要です。")
+  def agreement_has_some_hours_grace
+    unless start_time > (Time.current + 6.hour)
+      errors.add(:start_time, "勤務開始時間は現在時刻より6時間以上の猶予が必要です。")
     end
   end
 
   def duplication_of_work_hours_for_same_user
-    result = Agreement.where('finish_time >= ? && ? >= start_time && user_id = ? && state != ?', start_time, finish_time, user_id, 5)
-    unless result.blank?
-       errors.add(:start_time, "勤務時間が他の勤務時間と重複しています。")
+    if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ? && state != ?', start_time, finish_time, user_id, 5).exists?
+      errors.add(:start_time, "勤務時間が他の勤務時間と重複しています。")
     end
   end
 end

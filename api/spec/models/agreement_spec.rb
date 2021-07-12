@@ -18,15 +18,15 @@ RSpec.describe Agreement, type: :model do
   end
 
   describe "start_time" do
-    it "作成時点で勤務開始まで12時間以上あれば有効" do
-      agreement = build(:agreement, start_time: Time.current + 12.hour + 1.second, finish_time: Time.current + 20.hour)
+    it "作成時点で勤務開始まで6時間以上あれば有効" do
+      agreement = build(:agreement, start_time: Time.current + 6.hour + 1.second, finish_time: Time.current + 20.hour)
       expect(agreement).to be_valid
     end
 
-    it "作成時点で勤務開始ちょうど12時間前ならば無効" do
-      agreement = build(:agreement, start_time: Time.current + 12.hour)
+    it "作成時点で勤務開始ちょうど6時間前ならば無効" do
+      agreement = build(:agreement, start_time: Time.current + 6.hour)
       agreement.valid?
-      expect(agreement.errors[:start_time]).to include("勤務開始時間は現在時刻より12時間以上の猶予が必要です。")
+      expect(agreement.errors[:start_time]).to include("勤務開始時間は現在時刻より6時間以上の猶予が必要です。")
     end
   end
 
