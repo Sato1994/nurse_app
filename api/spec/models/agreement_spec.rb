@@ -50,13 +50,13 @@ RSpec.describe Agreement, type: :model do
       end
     end
     context "同一userが含まれる勤務時間の重複" do
-      it "既存のagreementのstateが5なら有効" do
-        agreement = create(:agreement, state: 5)
+      it "既存のagreementのstateが4なら有効" do
+        agreement = create(:agreement, state: 4)
         user = agreement.user
         new = build(:agreement, user: user)
         expect(new).to be_valid
       end
-      it "既存のagreementのstateが5以外なら無効" do
+      it "既存のagreementのstateが4以外なら無効" do
         agreement = create(:agreement)
         user = agreement.user
         new = build(:agreement, user: user)
