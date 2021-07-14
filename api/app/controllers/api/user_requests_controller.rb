@@ -13,11 +13,11 @@ class Api::UserRequestsController < ApplicationController
   #     Agreement.where('user_id = ? && finish_time < ? && (state = 1 || 2)', current_api_user.id, Time.current).update_all(state: 3)
   #     @agreements =Agreement.where('user_id = ?', current_api_user.id)
 
-  #   elsif api_host_signed_in?
-  #     Agreement.where('host_id = ? && start_time < ? && state = ?', current_api_host.id, Time.current + 6.hour, 0).destroy_all
-  #     Agreement.where('host_id = ? && start_time <= ? && ? <= finish_time && state = 1', current_api_host.id, Time.current, Time.current).update_all(state: 2)
-  #     Agreement.where('host_id = ? && finish_time < ? && (state = 1 || 2)', current_api_host.id, Time.current).update_all(state: 3)
-  #     @agreements =Agreement.where('host_id = ?', current_api_host.id)
+  #   elsif api_user_signed_in?
+  #     Agreement.where('user_id = ? && start_time < ? && state = ?', current_api_user.id, Time.current + 6.hour, 0).destroy_all
+  #     Agreement.where('user_id = ? && start_time <= ? && ? <= finish_time && state = 1', current_api_user.id, Time.current, Time.current).update_all(state: 2)
+  #     Agreement.where('user_id = ? && finish_time < ? && (state = 1 || 2)', current_api_user.id, Time.current).update_all(state: 3)
+  #     @agreements =Agreement.where('user_id = ?', current_api_user.id)
   #   else
   #     render body: nil, status: 401
   #     return
@@ -25,4 +25,23 @@ class Api::UserRequestsController < ApplicationController
   #   render "index", formats: :json, handlers: :jbuilder
   # end
   #############################################################
+
+  def create
+    @host = Host.find(params[:host_id])
+    user_request = UserRequest.new(user_request_params)
+    if user_request.save
+      render json: user_request, status: 201
+    else
+      render json: user_request.errors, status: 400
+    end
+  end
+
+  private
+
+  def user_request_params
+    params.permit(:user_request).merge(host: @host, user: current_api_user, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+  end
+
+
+
 end
