@@ -2,11 +2,18 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
 
+  publicRuntimeConfig: {
+    baseURL: process.env.BASE_URL || 'http://locahost:3000',
+    apiURL: process.env.API_URL || 'http://localhost:3333',
+  },
+  privateRuntimeConfig: {
+
+  },
 
 
   server: {
     port: 8080,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
 
   },
 
@@ -60,16 +67,31 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
 
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    // proxy: true
+  },
+
+
+  // proxy: {
+  //   '/': {
+  //     target: 'http://nurse_app_web_1:3000',
+  //     // pathRewrite: {
+  //     //   '^/api/': '/api/',
+  //     // }
+  //   }
+  // },
+
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
