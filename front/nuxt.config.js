@@ -2,13 +2,13 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
 
-  publicRuntimeConfig: {
-    baseURL: process.env.BASE_URL || 'http://locahost:3000',
-    apiURL: process.env.API_URL || 'http://localhost:3333',
-  },
-  privateRuntimeConfig: {
+  // publicRuntimeConfig: {
+  //   baseURL: process.env.BASE_URL || 'http://locahost:3000',
+  //   apiURL: process.env.API_URL || 'http://localhost:3333',
+  // },
+  // privateRuntimeConfig: {
 
-  },
+  // },
 
 
   server: {
@@ -73,18 +73,15 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // proxy: true
+    proxy: true
   },
 
 
-  // proxy: {
-  //   '/': {
-  //     target: 'http://nurse_app_web_1:3000',
-  //     // pathRewrite: {
-  //     //   '^/api/': '/api/',
-  //     // }
-  //   }
-  // },
+  proxy: {
+    '/api/': {
+      target: 'http://web:3000',
+    }
+  },
 
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
