@@ -16,7 +16,7 @@
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
 
-    <v-card-title>Cafe Badilico</v-card-title>
+    <v-card-title>{{target.name}}@{{target.myid}}</v-card-title>
 
     <v-card-text>
       <v-row
@@ -38,10 +38,11 @@
       </v-row>
 
       <div class="my-4 text-subtitle-1">
-        $ • Italian, Cafe
+        {{target.address}}
+        {{$route.params.id}}
       </div>
 
-      <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.</div>
+      <div>{{target.profile}}</div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
@@ -81,6 +82,8 @@
     data: () => ({
       loading: false,
       selection: 1,
+      // target: []
+      
     }),
 
     methods: {
@@ -90,5 +93,15 @@
         setTimeout(() => (this.loading = false), 2000)
       },
     },
+    mounted( ) {
+      const id = this.$route.params.id
+      this.$store.dispatch('target/getTarget', id)
+    },
+    computed: {
+      target() {
+        return this.$store.getters['target/setTarget']
+        
+      }
+    }
   }
 </script>

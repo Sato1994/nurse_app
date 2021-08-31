@@ -10,16 +10,14 @@ import axios from 'axios'
       TargetCards
     },
 
-
-
-    // asyncData () {
-    //   return axios.get('http://web:3000/api/hosts')
-    //   .then(response => {
-    //     return {
-    //       targets: response.data
-    //     }
-    //   })
-    // },
+    asyncData () {
+      return axios.get('http://web:3000/api/hosts')
+      .then(response => {
+        return {
+          targets: response.data
+        }
+      })
+    },
 
 
     data() {
@@ -30,20 +28,8 @@ import axios from 'axios'
         'Profile',
         'Updates',
         ],
-        targets: []
       }
     },
-
-    mounted() {
-      axios.get('http://localhost:3000/api/hosts')
-      .then(response => {
-        this.targets = response.data
-      })
-      
-    },
-
-
-
 
   }
 </script>
