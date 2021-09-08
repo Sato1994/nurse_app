@@ -78,11 +78,12 @@
 </template>
 
 <script>
+import axios from 'axios'
   export default {
     data: () => ({
       loading: false,
       selection: 1,
-      // target: []
+      target: []
       
     }),
 
@@ -94,14 +95,19 @@
       },
     },
     mounted( ) {
-      const id = this.$route.params.id
-      this.$store.dispatch('target/getTarget', id)
+      const myid = this.$route.params.id
+      axios.get(`http://localhost:3000/api/users/${myid}`)
+      .then((response) => {
+        this.target = response.data.user
+      })
     },
-    computed: {
-      target() {
-        return this.$store.getters['target/setTarget']
-        
-      }
-    }
   }
+
+
+
+// 自分のプロフィールページならmyInfo登録する処理書きたい
+
+
+
+
 </script>

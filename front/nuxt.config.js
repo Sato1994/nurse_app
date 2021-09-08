@@ -50,6 +50,10 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    {
+      src: '~/plugins/main.js',
+      mode: 'client'
+    }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -67,7 +71,8 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/proxy'
+    '@nuxtjs/proxy',
+    '@nuxtjs/auth',
   ],
 
 
@@ -81,6 +86,30 @@ export default {
     '/api/': {
       target: 'http://web:3000',
     }
+  },
+
+  auth: {
+    redirect: {
+      login: '/',
+      logout: '/',
+      home: '/user/_id',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '',
+            method: '',
+            propertyName: 'token'
+          },
+          logout: {
+            url: '',
+            method: '',
+          },
+        }
+      },
+    },
+
   },
 
 
