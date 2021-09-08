@@ -5,48 +5,18 @@
     lazy-validation
   >
     <v-text-field
-      v-model="myInfo.name"
-      :counter="10"
-      :rules="nameRules"
-      label="名前（フルネーム）"
-      required
-    ></v-text-field>
-
-    <v-text-field
-      v-model="myInfo.myid"
-      label="サイト内ID"
-      required
-    ></v-text-field>
-
-
-
-    <v-text-field
-      v-model="myInfo.email"
+      v-model="auth.email"
       :rules="emailRules"
       label="メールアドレス"
       required
     ></v-text-field>
 
     <v-text-field
-      v-model="myInfo.password"
+      v-model="auth.password"
       label="パスワード"
       required
     ></v-text-field>
 
-
-    <v-text-field
-      v-model="myInfo.password_confirmation"
-      label="パスワード確認用"
-      required
-    ></v-text-field>
-    
-
-    <v-checkbox
-      v-model="checkbox"
-      :rules="[v => !!v || 'You must agree to continue!']"
-      label="Do you agree?"
-      required
-    ></v-checkbox>
 
     <v-btn
       :disabled="!valid"
@@ -74,9 +44,9 @@
 
     <v-btn
       color="success"
-      @click="signUp"
+      @click="signIn"
     >
-    登録する
+    ログイン
     </v-btn>
   </v-form>
 </template>
@@ -85,33 +55,19 @@
 import axios from 'axios'
   export default {
 
-    // name, email, password, confirmation, myid
     data: () => ({
-      myInfo: {
-        name: '',
+      auth: {
         email: '',
-        myid: '',
         password: '',
-        password_confirmation: '',
       },
 
       valid: true,
-      nameRules: [
-        v => !!v || '名前は必須です',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters',
-      ],
+   
       emailRules: [
         v => !!v || 'メールアドレスは必須です',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
-      select: null,
-      items: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4',
-      ],
-      checkbox: false,
+    
     }),
 
     methods: {
@@ -124,13 +80,12 @@ import axios from 'axios'
       resetValidation () {
         this.$refs.form.resetValidation()
       },
-      signUp() {
-        axios.post('http://localhost:3000/api/user', this.myInfo)
+      signIn() {
+        axios.post('http://localhost:3000/api/host/sign_in', this.auth)
         .then((response) => {
-          this.$router.push(`/user/${this.myInfo.myid}`)
-          console.log('こんそるろぐ', response.data.data)
-          this.$store.dispatch('myInfo/saveMyInfoAsUser', response.data.data)
-          this.$modal.hide('user-modal')
+          this.$router.push(`/host/${response.data.data.myid}`)
+          this.$modal.hide('host-auth-modal')
+          this.$store.dispatch('myInfo/saveMyInfoAsHost', response.data.data)
 
 
           const accessToken = response.headers['access-token']
@@ -140,11 +95,27 @@ import axios from 'axios'
 
 
 
+
+
+          console.log('こんそるろぐ', response.data.data)
         })
         .catch((error) => {
-          console.log('登録失敗', error)
+          console.log('認証失敗', error)
         }) 
       }
     },
+
+
+
+
+
+
+
   }
+
+
+
+
 </script>
+
+

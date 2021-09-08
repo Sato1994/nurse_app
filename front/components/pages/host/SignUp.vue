@@ -18,14 +18,29 @@
       required
     ></v-text-field>
 
-
-
     <v-text-field
       v-model="myInfo.email"
       :rules="emailRules"
       label="メールアドレス"
       required
     ></v-text-field>
+
+    <v-text-field
+      v-model="myInfo.address"
+      label="住所"
+      required
+    ></v-text-field>
+
+
+    <v-textarea
+      v-model="myInfo.profile"
+      label="紹介文"
+      required
+    ></v-textarea>
+
+    
+
+
 
     <v-text-field
       v-model="myInfo.password"
@@ -41,12 +56,6 @@
     ></v-text-field>
     
 
-    <v-checkbox
-      v-model="checkbox"
-      :rules="[v => !!v || 'You must agree to continue!']"
-      label="Do you agree?"
-      required
-    ></v-checkbox>
 
     <v-btn
       :disabled="!valid"
@@ -82,15 +91,18 @@
 </template>
 
 <script>
+
+// name, email, address, profile, password, password_confirmation, myid,
 import axios from 'axios'
   export default {
 
-    // name, email, password, confirmation, myid
     data: () => ({
       myInfo: {
         name: '',
         email: '',
         myid: '',
+        address: '',
+        profile: '',
         password: '',
         password_confirmation: '',
       },
@@ -125,18 +137,18 @@ import axios from 'axios'
         this.$refs.form.resetValidation()
       },
       signUp() {
-        axios.post('http://localhost:3000/api/user', this.myInfo)
+        axios.post('http://localhost:3000/api/host', this.myInfo)
         .then((response) => {
-          this.$router.push(`/user/${this.myInfo.myid}`)
+          this.$router.push(`/host/${this.myInfo.myid}`)
           console.log('こんそるろぐ', response.data.data)
-          this.$store.dispatch('myInfo/saveMyInfoAsUser', response.data.data)
-          this.$modal.hide('user-modal')
-
+          this.$store.dispatch('myInfo/saveMyInfoAsHost', response.data.data)
+          this.$modal.hide('host-modal')
 
           const accessToken = response.headers['access-token']
           const client = response.headers.client
           const uid = response.headers.uid
           this.$store.dispatch('myInfo/saveAuthInfo', {accessToken, client, uid })
+
 
 
 

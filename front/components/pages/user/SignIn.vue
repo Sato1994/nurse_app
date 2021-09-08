@@ -55,7 +55,7 @@
 import axios from 'axios'
   export default {
 
-    // name, email, password, confirmation, myid
+
     data: () => ({
       auth: {
         email: '',
@@ -86,12 +86,12 @@ import axios from 'axios'
         .then((response) => {
           this.$router.push(`/user/${response.data.data.myid}`)
           this.$modal.hide('auth-modal')
+          this.$store.dispatch('myInfo/saveMyInfoAsUser', response.data.data)
 
 
           const accessToken = response.headers['access-token']
           const client = response.headers.client
           const uid = response.headers.uid
-          console.log('ヘッダー図',accessToken)
           this.$store.dispatch('myInfo/saveAuthInfo', {accessToken, client, uid })
 
 
@@ -99,7 +99,6 @@ import axios from 'axios'
 
 
           console.log('こんそるろぐ', response.data.data)
-          // this.$store.dispatch('myInfo/saveMyinfo', response.data.data)
         })
         .catch((error) => {
           console.log('認証失敗', error)

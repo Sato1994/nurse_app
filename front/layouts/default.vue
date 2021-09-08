@@ -3,6 +3,15 @@
     <v-main>
       <template>
         <v-app id="inspire">
+
+        ★デバッグ用★
+        ★Userとしてログイン中？{{$store.state.myInfo.user}}★
+        ★myInfo→{{$store.state.myInfo.myInfo}}★
+        ★header情報{{$store.state.myInfo.authInfo}}★
+
+
+
+
         <v-app-bar
           app
           color="white"
@@ -26,12 +35,12 @@
               </template>
               <v-card width="300">
                 <v-list dark>
-                  <v-list-item @click="openAuthModal">
+                  <v-list-item @click="openUserAuthModal">
                     <v-list-item-avatar>
                       <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                      <v-list-item-title>ログイン</v-list-item-title>
+                      <v-list-item-title>看護師としてログイン</v-list-item-title>
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-btn
@@ -43,6 +52,30 @@
                     </v-list-item-action>
                   </v-list-item>
                 </v-list>
+
+
+                <v-list dark>
+                  <v-list-item @click="openHostAuthModal">
+                    <v-list-item-avatar>
+                      <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title>病院としてログイン</v-list-item-title>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-btn
+                        icon
+                        @click="menu = false"
+                      >
+                        <v-icon>mdi-close-circle</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+
+
+
+
                 <v-list>
                   <v-list-item @click="openUserModal">
                     <v-list-item-action>
@@ -51,6 +84,20 @@
                     <v-list-item-title>看護師として登録する</v-list-item-title>
                   </v-list-item>
                 </v-list>
+
+
+                <v-list>
+                  <v-list-item @click="openHostModal">
+                    <v-list-item-action>
+                      <v-icon>mdi-briefcase</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-title>病院として登録する</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+
+
+
+
               </v-card>
             </v-menu>
             <v-btn
@@ -112,11 +159,19 @@
                   >
                     <v-container>
                     <modal name="user-modal" height="auto">
-                      <SignUp />
+                      <SignUpAsUser />
                     </modal>
 
-                    <modal name="auth-modal" height="auto">
-                      <SignIn />
+                    <modal name="host-modal" height="auto" :scrollable="true">
+                      <SignUpAsHost />
+                    </modal>
+
+                    <modal name="user-auth-modal" height="auto">
+                      <SignInAsUser />
+                    </modal>
+
+                    <modal name="host-auth-modal" height="auto">
+                      <SignInAsHost />
                     </modal>
 
                       <Nuxt />
@@ -133,12 +188,18 @@
 </template>
 
 <script>
-import SignUp from '@/components/pages/user/SignUp.vue'
-import SignIn from '@/components/pages/user/SignIn.vue'
+import SignUpAsUser from '@/components/pages/user/SignUp.vue'
+import SignUpAsHost from '@/components/pages/host/SignUp.vue'
+import SignInAsUser from '@/components/pages/user/SignIn.vue'
+import SignInAsHost from '@/components/pages/host/SignIn.vue'
   export default {
     components: {
-      SignUp,
-      SignIn,
+      SignUpAsUser,
+      SignUpAsHost,
+      SignInAsUser,
+      SignInAsHost,
+      
+
     },
 
     data: () => ({
@@ -155,9 +216,18 @@ import SignIn from '@/components/pages/user/SignIn.vue'
       openUserModal() {
         this.$modal.show('user-modal')
       },
-      openAuthModal() {
-        this.$modal.show('auth-modal')
-      }
+      openHostModal() {
+        this.$modal.show('host-modal')
+      },
+      openUserAuthModal() {
+        this.$modal.show('user-auth-modal')
+      },
+      openHostAuthModal() {
+        this.$modal.show('host-auth-modal')
+      },
+      
+
+
     }
 
 
