@@ -1,5 +1,7 @@
 // import axios from 'axios'
 
+// export const strict = false
+
 export const state = () => ({
   myInfo: [],
   authInfo: [],
@@ -31,6 +33,17 @@ export const actions = {
     context.commit('saveAuthInfo', authInfo)
   }
 }
+
+export const getters = {
+  getAuthInfo(state) {
+    return state.authInfo
+  },
+  getMyInfo(state) {
+    return state.myInfo
+  }
+}
+
+
 
 
 // export const actions = {
