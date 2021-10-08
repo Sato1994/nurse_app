@@ -17,9 +17,9 @@ class Api::UserSkillsController < ApplicationController
     skill = Skill.find(params[:id])
     if user_skill.user_id == current_api_user.id
       if user_skill.destroy
-        render body: nil, status: :no_content
+        render json: skill, status: 200
       else
-        rende json: user_skill.errors, status: :bad_request
+        render json: user_skill.errors, status: :bad_request
       end
     else
       render body: nil, status: :bad_request

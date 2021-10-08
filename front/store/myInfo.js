@@ -5,7 +5,8 @@
 export const state = () => ({
   myInfo: [],
   authInfo: [],
-  user: true
+  user: true,
+  mySkills: [],
 })
 
 export const mutations = {
@@ -18,7 +19,20 @@ export const mutations = {
   },
   saveAuthInfo(state, authInfo) {
     state.authInfo = authInfo
+  },
+  saveMySkills(state, mySkills) {
+    state.mySkills = mySkills
+  },
+  addNewSkill(state, newSkill) {
+    state.mySkills.push(newSkill)
+  },
+  removeMySkill(state, selectedSkill) {
+    const target = state.mySkills.find(skill => skill.id === selectedSkill.id)
+    const index = state.mySkills.indexOf(target)
+    state.mySkills.splice(index, 1)
   }
+
+
 }
 
 export const actions = {
@@ -31,7 +45,18 @@ export const actions = {
   },
   saveAuthInfo(context, authInfo) {
     context.commit('saveAuthInfo', authInfo)
-  }
+  },
+
+  saveMySkills(context, mySkills) {
+    context.commit('saveMySkills', mySkills)
+  },
+  addNewSkill(context, newSkill) {
+    context.commit('addNewSkill', newSkill)
+  },
+  removeMySkill(context, selectedSkill) {
+    context.commit('removeMySkill', selectedSkill)
+  },
+
 }
 
 export const getters = {
@@ -40,6 +65,9 @@ export const getters = {
   },
   getMyInfo(state) {
     return state.myInfo
+  },
+  getMySkills(state) {
+    return state.mySkills
   }
 }
 

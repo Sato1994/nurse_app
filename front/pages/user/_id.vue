@@ -45,25 +45,31 @@
       <Edit @edit-button-click="redraw" />
     </modal>
 
+    <modal name="skill-list-modal" height="auto" :scrollable="true">
+      <SkillList
+        :mySkills="mySkills"
+        @add-skill-button-click="addMySkill"
+        @remove-skill-button-click="removeMySkill"
+      />
+    </modal>
+
     <v-divider class="mx-4"></v-divider>
 
     <v-card-title>私の獲得スキル</v-card-title>
 
     <v-card-text>
-      <v-chip-group
-        v-model="selection"
-        active-class="deep-purple accent-4 white--text"
-        column
-      >
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
+      <div>
+        <li v-for="skill in mySkills" :key="skill.id">
+          {{ skill.name }}
+        </li>
+      </div>
     </v-card-text>
+
+    <v-card-actions>
+      <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
+        獲得スキルを編集
+      </v-btn>
+    </v-card-actions>
 
     <v-card-actions>
       <v-btn color="deep-purple lighten-2" text @click="openEditModal">
@@ -76,27 +82,46 @@
 <script>
 import axios from "axios";
 import Edit from "@/components/pages/user/Edit.vue";
+import SkillList from "@/components/pages/modal/SkillList.vue";
 export default {
   components: {
     Edit,
+    SkillList,
   },
 
   data: () => ({
-    selection: 1,
     target: [],
+    // mySkills: [],
   }),
+  computed: {
+    mySkills() {
+      return this.$store.getters["myInfo/getMySkills"];
+    },
+  },
   mounted() {
     const myid = this.$route.params.id;
     axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
       this.target = response.data.user;
+      // this.mySkills = response.data.target_skills;
+      this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills);
     });
   },
+
   methods: {
     openEditModal() {
       this.$modal.show("edit-modal");
     },
+    openSkillListModal() {
+      this.$modal.show("skill-list-modal");
+    },
     redraw(e) {
       this.target = e;
+    },
+    addMySkill(newSkill) {
+      this.$store.dispatch("myInfo/addNewSkill", newSkill);
+    },
+    removeMySkill(selectedSkill) {
+      this.$store.dispatch("myInfo/removeMySkill", selectedSkill);
     },
   },
 };
