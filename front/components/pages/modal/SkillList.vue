@@ -1,15 +1,24 @@
 <template>
   <v-card>
     <v-card-title>取得済みスキル一覧</v-card-title>
+
+    <v-text-field
+      hide-details
+      prepend-icon="mdi-magnify"
+      single-line
+      placeholder="スキルを検索"
+      v-model="inputValue"
+    ></v-text-field>
+
     <v-card-text>
       <div class="text-center">
         <v-chip
-          @click="removeMySkill(skill.id)"
           v-for="skill in mySkills"
           :key="skill.id"
           class="ma-1"
           color="orange"
           text-color="white"
+          @click="removeMySkill(skill.id)"
         >
           {{ skill.name }}
         </v-chip>
@@ -20,12 +29,12 @@
     <v-card-text>
       <div class="text-center">
         <v-chip
-          @click="addMySkill(unselectedSkill.id)"
           v-for="unselectedSkill in unselectedSkills"
           :key="unselectedSkill.id"
           class="ma-1"
           color="orange"
           text-color="white"
+          @click="addMySkill(unselectedSkill.id)"
         >
           {{ unselectedSkill.name }}
         </v-chip>
@@ -38,14 +47,19 @@
 import axios from "axios";
 
 export default {
+  props: {
+    mySkills: {
+      type: Array,
+      default: null,
+    },
+  },
   data: () => ({
-    // mySkills: [],
     uid: "",
     access_token: "",
     client: "",
 
     skills: [],
-    // value: "",
+    inputValue: "",
   }),
   computed: {
     unselectedSkills() {
@@ -53,15 +67,11 @@ export default {
       const unselectedSkills = this.skills.filter(
         (obj) => !mySkills.map((obj) => obj.id).includes(obj.id)
       );
-      // const searchedSkills = unselectedSkills.filter((obj) =>
-      //   obj.name.includes(this.value)
-      // );
-      // return searchedSkills;
-      return unselectedSkills;
+      const searchedSkills = unselectedSkills.filter((obj) =>
+        obj.name.includes(this.inputValue)
+      );
+      return searchedSkills;
     },
-  },
-  props: {
-    mySkills: Array,
   },
 
   mounted() {
