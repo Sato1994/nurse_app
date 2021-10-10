@@ -2,11 +2,18 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
 
+  // publicRuntimeConfig: {
+  //   baseURL: process.env.BASE_URL || 'http://locahost:3000',
+  //   apiURL: process.env.API_URL || 'http://localhost:3333',
+  // },
+  // privateRuntimeConfig: {
+
+  // },
 
 
   server: {
     port: 8080,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
 
   },
 
@@ -43,6 +50,10 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    {
+      src: '~/plugins/main.js',
+      mode: 'client'
+    }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -60,16 +71,53 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/proxy',
+    '@nuxtjs/auth',
   ],
 
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    proxy: true
+  },
+
+
+  proxy: {
+    '/api/': {
+      target: 'http://web:3000',
+    }
+  },
+
+  auth: {
+    redirect: {
+      login: '/',
+      logout: '/',
+      home: '/user/_id',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '',
+            method: '',
+            propertyName: 'token'
+          },
+          logout: {
+            url: '',
+            method: '',
+          },
+        }
+      },
+    },
+
+  },
+
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
