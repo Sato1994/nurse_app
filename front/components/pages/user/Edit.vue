@@ -8,10 +8,14 @@
       required
     ></v-text-field>
 
+    <v-text-field v-model="postalCode" label="郵便番号" required></v-text-field>
+    <v-btn color="success" @click="getAddress"> 住所を検索する</v-btn>
+
     <v-text-field
       v-model="copiedMyInfo.address"
       label="住所"
       required
+      disabled
     ></v-text-field>
 
     <v-text-field
@@ -57,6 +61,7 @@ export default {
     // myInfo: {},
     copiedMyInfo: {},
     authInfo: {},
+    postalCode: "",
     valid: true,
     nameRules: [
       (v) => !!v || "名前は必須です",
@@ -97,6 +102,17 @@ export default {
         })
         .catch((error) => {
           console.log("登録失敗", error);
+        });
+    },
+    getAddress() {
+      axios
+        .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
+        .then((response) => {
+          console.log(response.data);
+          this.copiedMyInfo.address = response.data.data.fullAddress;
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
   },
