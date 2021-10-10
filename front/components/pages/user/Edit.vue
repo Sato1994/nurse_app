@@ -1,33 +1,45 @@
 <template>
   <v-form ref="form" v-model="valid" lazy-validation>
     <v-text-field
-      v-model="myInfo.name"
+      v-model="copiedMyInfo.name"
       :counter="10"
       :rules="nameRules"
       label="名前（フルネーム）"
       required
     ></v-text-field>
 
-    <v-text-field v-model="myInfo.address" label="住所" required></v-text-field>
-
-    <v-text-field v-model="myInfo.age" label="年齢" required></v-text-field>
+    <v-text-field
+      v-model="copiedMyInfo.address"
+      label="住所"
+      required
+    ></v-text-field>
 
     <v-text-field
-      v-model="myInfo.year"
+      v-model="copiedMyInfo.age"
+      label="年齢"
+      required
+    ></v-text-field>
+
+    <v-text-field
+      v-model="copiedMyInfo.year"
       label="経験年数"
       required
     ></v-text-field>
 
-    <v-textarea v-model="myInfo.profile" label="紹介文" required></v-textarea>
+    <v-textarea
+      v-model="copiedMyInfo.profile"
+      label="紹介文"
+      required
+    ></v-textarea>
 
     <v-text-field
-      v-model="myInfo.myid"
+      v-model="copiedMyInfo.myid"
       label="サイト内ID"
       required
     ></v-text-field>
 
     <v-select
-      v-model="myInfo.sex"
+      v-model="copiedMyInfo.sex"
       :items="sex"
       color="pink"
       label="性別"
@@ -42,12 +54,9 @@
 import axios from "axios";
 export default {
   data: () => ({
-    myInfo: {},
-    authInfo: {
-      // uid: '',
-      // accessToken: '',
-      // client: ''
-    },
+    // myInfo: {},
+    copiedMyInfo: {},
+    authInfo: {},
     valid: true,
     nameRules: [
       (v) => !!v || "名前は必須です",
@@ -55,18 +64,23 @@ export default {
     ],
     sex: ["男性", "女性"],
   }),
-  // props: {
-  //   target: Object,
+  // computed: {
+  //   copiedMyInfo() {
+  //     const myInfo = this.$store.getters["myInfo/getMyInfo"];
+  //     const copied = Object.assign({}, myInfo);
+  //     return copied;
+  //   },
   // },
   mounted() {
     this.authInfo = this.$store.getters["myInfo/getAuthInfo"];
-    // this.myInfo = this.$store.getters['myInfo/getMyInfo']
+    const myInfo = this.$store.getters["myInfo/getMyInfo"];
+    this.copiedMyInfo = Object.assign({}, myInfo);
   },
 
   methods: {
     editUser() {
       axios
-        .put("http://localhost:3000/api/user", this.myInfo, {
+        .put("http://localhost:3000/api/user", this.copiedMyInfo, {
           headers: {
             "Content-Type": "application/json",
             uid: this.authInfo.uid,
@@ -78,7 +92,7 @@ export default {
           this.$router.push(`/user/${response.data.data.myid}`);
           this.$modal.hide("edit-modal");
           console.log("こんそるろぐ", response.data);
-          // this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
+          this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
           this.$emit("edit-button-click", response.data.data);
         })
         .catch((error) => {

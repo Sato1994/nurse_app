@@ -42,7 +42,7 @@
     </v-card-text>
 
     <modal name="edit-modal" height="auto" :scrollable="true">
-      <Edit @edit-button-click="redraw" />
+      <Edit />
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
@@ -114,9 +114,9 @@ export default {
     openSkillListModal() {
       this.$modal.show("skill-list-modal");
     },
-    redraw(e) {
-      this.target = e;
-    },
+    // redraw(e) {
+    //   this.target = e;
+    // },
     addMySkill(newSkill) {
       this.$store.dispatch("myInfo/addNewSkill", newSkill);
     },
