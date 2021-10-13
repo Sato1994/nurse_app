@@ -2,14 +2,6 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
 
-  // publicRuntimeConfig: {
-  //   baseURL: process.env.BASE_URL || 'http://locahost:3000',
-  //   apiURL: process.env.API_URL || 'http://localhost:3333',
-  // },
-  // privateRuntimeConfig: {
-
-  // },
-
 
   server: {
     port: 8080,
@@ -72,45 +64,23 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
-    '@nuxtjs/auth',
+    'cookie-universal-nuxt'
   ],
 
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    proxy: true
+    // proxy: true
+    baseURL: 'http://web:3000'
   },
 
 
-  proxy: {
-    '/api/': {
-      target: 'http://web:3000',
-    }
-  },
+  // proxy: {
+  //   '/api/': {
+  //     target: 'http://web:3000',
+  //   }
+  // },
 
-  auth: {
-    redirect: {
-      login: '/',
-      logout: '/',
-      home: '/user/_id',
-    },
-    strategies: {
-      local: {
-        endpoints: {
-          login: {
-            url: '',
-            method: '',
-            propertyName: 'token'
-          },
-          logout: {
-            url: '',
-            method: '',
-          },
-        }
-      },
-    },
-
-  },
 
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
