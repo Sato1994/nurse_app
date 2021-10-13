@@ -45,6 +45,10 @@ export default {
     {
       src: '~/plugins/main.js',
       mode: 'client'
+    },
+    {
+      src: '~/plugins/persistedstate.js',
+      ssr: false
     }
   ],
 
