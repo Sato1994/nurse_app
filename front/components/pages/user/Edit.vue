@@ -77,7 +77,7 @@ export default {
   //   },
   // },
   mounted() {
-    this.authInfo = this.$store.getters["myInfo/getAuthInfo"];
+    this.authInfo = this.$cookies.get("authInfo");
     const myInfo = this.$store.getters["myInfo/getMyInfo"];
     this.copiedMyInfo = Object.assign({}, myInfo);
   },
@@ -86,19 +86,14 @@ export default {
     editUser() {
       axios
         .put("http://localhost:3000/api/user", this.copiedMyInfo, {
-          headers: {
-            "Content-Type": "application/json",
-            uid: this.authInfo.uid,
-            "access-token": this.authInfo.accessToken,
-            client: this.authInfo.client,
-          },
+          headers: this.authInfo,
         })
         .then((response) => {
           this.$router.push(`/user/${response.data.data.myid}`);
           this.$modal.hide("edit-modal");
-          console.log("こんそるろぐ", response.data);
+          console.log("editのresponse", response.data);
           this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
-          this.$emit("edit-button-click", response.data.data);
+          // this.$emit("edit-button-click", response.data.data);
         })
         .catch((error) => {
           console.log("登録失敗", error);
