@@ -3,8 +3,9 @@
     <v-main>
       <template>
         <v-app id="inspire">
-          ★デバッグ用★ ★Userとしてログイン中？{{ $store.state.myInfo.user }}★
+          ★デバッグ用★ ★Userかhostか？{{ this.$cookies.get("user") }}★
           ★myInfo→{{ $store.state.myInfo.myInfo }}★
+          {{ this.$cookies.get("authInfo") }}
 
           <v-app-bar app color="white" flat>
             <v-container class="py-0 fill-height">
@@ -174,6 +175,24 @@ export default {
     menu: false,
   }),
 
+  // リロードの旅に認証tokenを検証しエラーなら再ログインが必要にする
+  created() {
+    this.$axios
+      .get(
+        `http://localhost:3000/api/${this.$cookies.get("user")}/validate_token`,
+        {
+          headers: this.$cookies.get("authInfo"),
+        }
+      )
+      .then((response) => {
+        console.log("せいこう", response);
+        this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data);
+      })
+      .catch((error) => {
+        console.log("defaultでえらー", error);
+        this.$cookies.removeAll();
+      });
+  },
   methods: {
     openUserModal() {
       this.$modal.show("user-modal");

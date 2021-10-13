@@ -46,10 +46,6 @@ export default {
       src: '~/plugins/main.js',
       mode: 'client'
     },
-    {
-      src: '~/plugins/persistedstate.js',
-      ssr: false
-    }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -69,6 +69,9 @@ export default {
           // cookieへ認証tokenをセット
           this.$cookies.set("authInfo", authInfo);
 
+          // cookieへuser or hostセット
+          this.$cookies.set("user", "user");
+
           this.$router.push(`/user/${response.data.data.myid}`);
           this.$modal.hide("user-auth-modal");
           this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);

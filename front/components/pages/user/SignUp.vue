@@ -93,7 +93,7 @@ export default {
       axios
         .post("http://localhost:3000/api/user", this.myInfo)
         .then((response) => {
-          this.$router.push(`/user/${this.myInfo.myid}`);
+          this.$router.push(`/user/${response.data.data.myid}`);
 
           console.log("signUpのresponse", response.data.data);
 
@@ -109,6 +109,8 @@ export default {
 
           // cookieへ認証tokenをセット
           this.$cookies.set("authInfo", authInfo);
+          // cookieへuser or hostセット
+          this.$cookies.set("user", "user");
         })
         .catch((error) => {
           console.log("登録失敗", error);
