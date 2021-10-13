@@ -60,21 +60,14 @@ export default {
       axios
         .post("http://localhost:3000/api/user/sign_in", this.auth)
         .then((response) => {
-          const accessToken = response.headers["access-token"];
-          const client = response.headers.client;
-          const uid = response.headers.uid;
+          const authInfo = {
+            "access-token": response.headers["access-token"],
+            client: response.headers.client,
+            uid: response.headers.uid,
+          };
 
           // cookieへ認証tokenをセット
-          this.$cookies.set("access-token", accessToken);
-          this.$cookies.set("uid", uid);
-          this.$cookies.set("client", client);
-
-          // storeに認証tokenをセット.いらいないかも
-          // this.$store.dispatch("myInfo/saveAuthInfo", {
-          //   accessToken,
-          //   client,
-          //   uid,
-          // });
+          this.$cookies.set("authInfo", authInfo);
 
           this.$router.push(`/user/${response.data.data.myid}`);
           this.$modal.hide("auth-modal");

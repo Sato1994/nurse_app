@@ -101,14 +101,14 @@ export default {
 
           this.$modal.hide("user-modal");
 
-          const accessToken = response.headers["access-token"];
-          const client = response.headers.client;
-          const uid = response.headers.uid;
+          const authInfo = {
+            "access-token": response.headers["access-token"],
+            client: response.headers.client,
+            uid: response.headers.uid,
+          };
 
           // cookieへ認証tokenをセット
-          this.$cookies.set("access-token", accessToken);
-          this.$cookies.set("uid", uid);
-          this.$cookies.set("client", client);
+          this.$cookies.set("authInfo", authInfo);
         })
         .catch((error) => {
           console.log("登録失敗", error);
