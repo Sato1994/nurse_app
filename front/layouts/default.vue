@@ -3,111 +3,92 @@
     <v-main>
       <template>
         <v-app id="inspire">
+          ★デバッグ用★ ★Userとしてログイン中？{{ $store.state.myInfo.user }}★
+          ★myInfo→{{ $store.state.myInfo.myInfo }}★
 
-        ★デバッグ用★
-        ★Userとしてログイン中？{{$store.state.myInfo.user}}★
-        ★myInfo→{{$store.state.myInfo.myInfo}}★
-        ★header情報{{$store.state.myInfo.authInfo}}★
-
-
-
-
-        <v-app-bar
-          app
-          color="white"
-          flat
-        >
-          <v-container class="py-0 fill-height">
-            <v-menu
-              v-model="menu"
-              bottom
-              right
-              transition="scale-transition"
-              origin="top left"
-            >
-              <template v-slot:activator="{ on }">
-                <v-avatar
+          <v-app-bar app color="white" flat>
+            <v-container class="py-0 fill-height">
+              <v-menu
+                v-model="menu"
+                bottom
+                right
+                transition="scale-transition"
+                origin="top left"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-avatar
                     v-on="on"
                     class="mr-10"
                     color="grey darken-1"
                     size="40"
-                ></v-avatar>
-              </template>
-              <v-card width="300">
-                <v-list dark>
-                  <v-list-item @click="openUserAuthModal">
-                    <v-list-item-avatar>
-                      <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>看護師としてログイン</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-btn
-                        icon
-                        @click="menu = false"
+                  ></v-avatar>
+                </template>
+                <v-card width="300">
+                  <v-list dark>
+                    <v-list-item @click="openUserAuthModal">
+                      <v-list-item-avatar>
+                        <v-img
+                          src="https://cdn.vuetifyjs.com/images/john.png"
+                        ></v-img>
+                      </v-list-item-avatar>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          >看護師としてログイン</v-list-item-title
+                        >
+                      </v-list-item-content>
+                      <v-list-item-action>
+                        <v-btn icon @click="menu = false">
+                          <v-icon>mdi-close-circle</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
+
+                  <v-list dark>
+                    <v-list-item @click="openHostAuthModal">
+                      <v-list-item-avatar>
+                        <v-img
+                          src="https://cdn.vuetifyjs.com/images/john.png"
+                        ></v-img>
+                      </v-list-item-avatar>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          >病院としてログイン</v-list-item-title
+                        >
+                      </v-list-item-content>
+                      <v-list-item-action>
+                        <v-btn icon @click="menu = false">
+                          <v-icon>mdi-close-circle</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
+
+                  <v-list>
+                    <v-list-item @click="openUserModal">
+                      <v-list-item-action>
+                        <v-icon>mdi-briefcase</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-title
+                        >看護師として登録する</v-list-item-title
                       >
-                        <v-icon>mdi-close-circle</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
+                    </v-list-item>
+                  </v-list>
 
-
-                <v-list dark>
-                  <v-list-item @click="openHostAuthModal">
-                    <v-list-item-avatar>
-                      <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>病院としてログイン</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-btn
-                        icon
-                        @click="menu = false"
-                      >
-                        <v-icon>mdi-close-circle</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
-
-
-
-
-                <v-list>
-                  <v-list-item @click="openUserModal">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>看護師として登録する</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-
-
-                <v-list>
-                  <v-list-item @click="openHostModal">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>病院として登録する</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-
-
-
-
-              </v-card>
-            </v-menu>
-            <v-btn
-              v-for="link in links"
-              :key="link"
-              text
-            >
-              {{ link }}
-            </v-btn>
-            <v-spacer></v-spacer>
+                  <v-list>
+                    <v-list-item @click="openHostModal">
+                      <v-list-item-action>
+                        <v-icon>mdi-briefcase</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-title>病院として登録する</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-menu>
+              <v-btn v-for="link in links" :key="link" text>
+                {{ link }}
+              </v-btn>
+              <v-spacer></v-spacer>
               <v-responsive max-width="260">
                 <v-text-field
                   dense
@@ -125,11 +106,7 @@
                 <v-col cols="2">
                   <v-sheet rounded="lg">
                     <v-list color="transparent">
-                      <v-list-item
-                        v-for="n in 5"
-                        :key="n"
-                        link
-                      >
+                      <v-list-item v-for="n in 5" :key="n" link>
                         <v-list-item-content>
                           <v-list-item-title>
                             List Item {{ n }}
@@ -139,40 +116,32 @@
 
                       <v-divider class="my-2"></v-divider>
 
-                      <v-list-item
-                        link
-                        color="grey lighten-4"
-                      >
+                      <v-list-item link color="grey lighten-4">
                         <v-list-item-content>
-                          <v-list-item-title>
-                            Refresh
-                          </v-list-item-title>
+                          <v-list-item-title> Refresh </v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
                   </v-sheet>
                 </v-col>
                 <v-col>
-                  <v-sheet
-                    min-height="70vh"
-                    rounded="lg"
-                  >
+                  <v-sheet min-height="70vh" rounded="lg">
                     <v-container>
-                    <modal name="user-modal" height="auto">
-                      <SignUpAsUser />
-                    </modal>
+                      <modal name="user-modal" height="auto">
+                        <SignUpAsUser />
+                      </modal>
 
-                    <modal name="host-modal" height="auto" :scrollable="true">
-                      <SignUpAsHost />
-                    </modal>
+                      <modal name="host-modal" height="auto" :scrollable="true">
+                        <SignUpAsHost />
+                      </modal>
 
-                    <modal name="user-auth-modal" height="auto">
-                      <SignInAsUser />
-                    </modal>
+                      <modal name="user-auth-modal" height="auto">
+                        <SignInAsUser />
+                      </modal>
 
-                    <modal name="host-auth-modal" height="auto">
-                      <SignInAsHost />
-                    </modal>
+                      <modal name="host-auth-modal" height="auto">
+                        <SignInAsHost />
+                      </modal>
 
                       <Nuxt />
                     </v-container>
@@ -188,48 +157,36 @@
 </template>
 
 <script>
-import SignUpAsUser from '@/components/pages/user/SignUp.vue'
-import SignUpAsHost from '@/components/pages/host/SignUp.vue'
-import SignInAsUser from '@/components/pages/user/SignIn.vue'
-import SignInAsHost from '@/components/pages/host/SignIn.vue'
-  export default {
-    components: {
-      SignUpAsUser,
-      SignUpAsHost,
-      SignInAsUser,
-      SignInAsHost,
-      
+import SignUpAsUser from "@/components/pages/user/SignUp.vue";
+import SignUpAsHost from "@/components/pages/host/SignUp.vue";
+import SignInAsUser from "@/components/pages/user/SignIn.vue";
+import SignInAsHost from "@/components/pages/host/SignIn.vue";
+export default {
+  components: {
+    SignUpAsUser,
+    SignUpAsHost,
+    SignInAsUser,
+    SignInAsHost,
+  },
 
+  data: () => ({
+    links: ["Dashboard", "Messages", "Profile", "Updates"],
+    menu: false,
+  }),
+
+  methods: {
+    openUserModal() {
+      this.$modal.show("user-modal");
     },
-
-    data: () => ({
-      links: [
-        'Dashboard',
-        'Messages',
-        'Profile',
-        'Updates',
-      ], 
-      menu: false,
-    }),
-    
-    methods: {
-      openUserModal() {
-        this.$modal.show('user-modal')
-      },
-      openHostModal() {
-        this.$modal.show('host-modal')
-      },
-      openUserAuthModal() {
-        this.$modal.show('user-auth-modal')
-      },
-      openHostAuthModal() {
-        this.$modal.show('host-auth-modal')
-      },
-      
-
-
-    }
-
-
-  }
+    openHostModal() {
+      this.$modal.show("host-modal");
+    },
+    openUserAuthModal() {
+      this.$modal.show("user-auth-modal");
+    },
+    openHostAuthModal() {
+      this.$modal.show("host-auth-modal");
+    },
+  },
+};
 </script>

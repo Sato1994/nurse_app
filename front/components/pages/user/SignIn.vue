@@ -70,7 +70,7 @@ export default {
           this.$cookies.set("authInfo", authInfo);
 
           this.$router.push(`/user/${response.data.data.myid}`);
-          this.$modal.hide("auth-modal");
+          this.$modal.hide("user-auth-modal");
           this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
 
           console.log("こんそるろぐ", response.data.data);
