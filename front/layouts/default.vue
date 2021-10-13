@@ -84,6 +84,15 @@
                       <v-list-item-title>病院として登録する</v-list-item-title>
                     </v-list-item>
                   </v-list>
+
+                  <v-list>
+                    <v-list-item @click="logout">
+                      <v-list-item-action>
+                        <v-icon>mdi-briefcase</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-title>ログアウト</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
                 </v-card>
               </v-menu>
               <v-btn v-for="link in links" :key="link" text>
@@ -194,6 +203,11 @@ export default {
       });
   },
   methods: {
+    logout() {
+      this.$cookies.removeAll();
+      this.$router.push("/");
+      this.$store.dispatch("myInfo/logout");
+    },
     openUserModal() {
       this.$modal.show("user-modal");
     },
