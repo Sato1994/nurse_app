@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    :loading="loading"
-    class="mx-auto"
-  >
+  <v-card class="mx-auto">
     <template slot="progress">
       <v-progress-linear
         color="deep-purple"
@@ -16,13 +13,10 @@
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
 
-    <v-card-title>{{target.name}}@{{target.myid}}</v-card-title>
+    <v-card-title>{{ target.name }}@{{ target.myid }}</v-card-title>
 
     <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
+      <v-row align="center" class="mx-0">
         <v-rating
           :value="4.5"
           color="amber"
@@ -32,82 +26,84 @@
           size="14"
         ></v-rating>
 
-        <div class="grey--text ms-4">
-          4.5 (413)
-        </div>
+        <div class="grey--text ms-4">4.5 (413)</div>
       </v-row>
 
       <div class="my-4 text-subtitle-1">
-        {{target.address}}
-       
+        {{ target.address }}
       </div>
 
-      <div>{{target.profile}}</div>
+      <div class="my-4 text-subtitle-1">
+        {{ target.wanted = true ? " 募集中": "募集していません"}}
+      </div>
+
+      <div>{{ target.profile }}</div>
     </v-card-text>
+
+    <modal name="edit-modal" height="auto" :scrollable="true">
+      <Edit />
+    </modal>
+
+    <modal name="skill-list-modal" height="auto" :scrollable="true">
+      <SkillList />
+    </modal>
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>Tonight's availability</v-card-title>
+    <v-card-title>就業に必須なスキル</v-card-title>
 
     <v-card-text>
-      <v-chip-group
-        v-model="selection"
-        active-class="deep-purple accent-4 white--text"
-        column
-      >
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
+      <div>
+        <li v-for="skill in targetSkills" :key="skill.id">
+          {{ skill.name }}
+        </li>
+      </div>
     </v-card-text>
 
     <v-card-actions>
-      <v-btn
-        color="deep-purple lighten-2"
-        text
-        @click="reserve"
-      >
-        Reserve
+      <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
+        必須スキルを編集
+      </v-btn>
+    </v-card-actions>
+
+    <v-card-actions>
+      <v-btn color="deep-purple lighten-2" text @click="openEditModal">
+        プロフィールを編集
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
-  export default {
-    data: () => ({
-      loading: false,
-      selection: 1,
-      target: []
-      
-    }),
+import Edit from "@/components/pages/host/Edit.vue";
+import SkillList from "@/components/pages/modal/SkillList.vue";
+export default {
+  components: {
+    Edit,
+    SkillList,
+  },
 
-    methods: {
-      reserve () {
-        this.loading = true
+  data: () => ({
+    target: [],
+    targetSkills: [],
+  }),
+  
+  created() {
+    const myid = this.$route.params.id;
+    this.$axios.get(`http://localhost:3000/api/hosts/${myid}`).then((response) => {
+      this.target = response.data.host;
+      this.targetSkills = response.data.target_skills;
+    });
+  },
 
-        setTimeout(() => (this.loading = false), 2000)
-      },
+  methods: {
+    openEditModal() {
+      this.$modal.show("edit-modal");
     },
-    mounted( ) {
-      const myid = this.$route.params.id
-      axios.get(`http://localhost:3000/api/hosts/${myid}`)
-      .then((response) => {
-        this.target = response.data.host
-      })
+    openSkillListModal() {
+      this.$modal.show("skill-list-modal");
     },
-  }
-
-
-
-// 自分のプロフィールページならmyInfo登録する処理書きたい
-
-
-
+  },
+};
 
 </script>

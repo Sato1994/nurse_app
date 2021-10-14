@@ -21,7 +21,7 @@
 
     <v-btn color="warning" @click="resetValidation"> Reset Validation </v-btn>
 
-    <v-btn color="success" @click="signIn"> 登録する </v-btn>
+    <v-btn color="success" @click="signIn"> ログイン </v-btn>
   </v-form>
 </template>
 
@@ -53,9 +53,6 @@ export default {
       this.$refs.form.resetValidation();
     },
 
-    // サインインでやること。
-    // axiosで登録しaccess token等をcookieへ保存し_id.vueへ。
-    //
     signIn() {
       axios
         .post("http://localhost:3000/api/user/sign_in", this.auth)
@@ -74,7 +71,7 @@ export default {
 
           this.$router.push(`/user/${response.data.data.myid}`);
           this.$modal.hide("user-auth-modal");
-          this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
+          this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
 
           console.log("こんそるろぐ", response.data.data);
 

@@ -15,19 +15,6 @@
       v-model="copiedMyInfo.address"
       label="住所"
       required
-      disabled
-    ></v-text-field>
-
-    <v-text-field
-      v-model="copiedMyInfo.age"
-      label="年齢"
-      required
-    ></v-text-field>
-
-    <v-text-field
-      v-model="copiedMyInfo.year"
-      label="経験年数"
-      required
     ></v-text-field>
 
     <v-textarea
@@ -42,13 +29,11 @@
       required
     ></v-text-field>
 
-    <v-select
-      v-model="copiedMyInfo.sex"
-      :items="sex"
-      color="pink"
-      label="性別"
-      required
-    ></v-select>
+      <v-switch
+      v-model="copiedMyInfo.wanted"
+      label="募集中かどうか"
+      ></v-switch>
+
 
     <v-btn color="success" @click="editUser"> 登録する </v-btn>
   </v-form>
@@ -67,7 +52,6 @@ export default {
       (v) => !!v || "名前は必須です",
       (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
     ],
-    sex: ["男性", "女性"],
   }),
   // computed: {
   //   copiedMyInfo() {
@@ -79,17 +63,18 @@ export default {
   mounted() {
     this.authInfo = this.$cookies.get("authInfo");
     const myInfo = this.$store.getters["myInfo/getMyInfo"];
+    // storeから直接とってきたものをいじると怒られる
     this.copiedMyInfo = Object.assign({}, myInfo);
   },
 
   methods: {
     editUser() {
       axios
-        .put("http://localhost:3000/api/user", this.copiedMyInfo, {
+        .put("http://localhost:3000/api/host", this.copiedMyInfo, {
           headers: this.authInfo,
         })
         .then((response) => {
-          this.$router.push(`/user/${response.data.data.myid}`);
+          this.$router.push(`/host/${response.data.data.myid}`);
           this.$modal.hide("edit-modal");
           console.log("editのresponse", response.data);
           this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
