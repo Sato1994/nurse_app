@@ -83,21 +83,35 @@ import axios from 'axios'
       signIn() {
         axios.post('http://localhost:3000/api/host/sign_in', this.auth)
         .then((response) => {
+          const authInfo = {
+            "access-token": response.headers["access-token"],
+            client: response.headers.client,
+            uid: response.headers.uid,
+          }
+
+          // cookieへ認証tokenをセット
+          this.$cookies.set("authInfo", authInfo);
+
+          // cookieへuser or hostセット
+          this.$cookies.set("user", "host");
+
+
+
+
+
+
+
+
           this.$router.push(`/host/${response.data.data.myid}`)
           this.$modal.hide('host-auth-modal')
-          this.$store.dispatch('myInfo/saveMyInfoAsHost', response.data.data)
+          this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
 
+          console.log("こんそるろぐ", response.data.data);
 
-          const accessToken = response.headers['access-token']
-          const client = response.headers.client
-          const uid = response.headers.uid
-          this.$store.dispatch('myInfo/saveAuthInfo', {accessToken, client, uid })
-
-
-
-
-
-          console.log('こんそるろぐ', response.data.data)
+          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+            .then((response) => {
+              this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+            });
         })
         .catch((error) => {
           console.log('認証失敗', error)

@@ -81,7 +81,7 @@ export default {
     addMySkill(e) {
       axios
         .post(
-          `http://localhost:3000/api/skills/${e}/user_skills`,
+          `http://localhost:3000/api/skills/${e}/${this.$cookies.get('user')}_skills`,
           {},
           {
             headers: this.$cookies.get('authInfo'),
@@ -97,7 +97,7 @@ export default {
     },
     removeMySkill(e) {
       axios
-        .delete(`http://localhost:3000/api/user_skills/${e}`, {
+        .delete(`http://localhost:3000/api/${this.$cookies.get('user')}_skills/${e}`, {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {

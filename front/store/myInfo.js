@@ -8,10 +8,7 @@ export const state = () => ({
 })
 
 export const mutations = {
-  saveMyInfoAsUser(state, myInfo) {
-    state.myInfo = myInfo
-  },
-  saveMyInfoAsHost(state, myInfo) {
+  saveMyInfo(state, myInfo) {
     state.myInfo = myInfo
   },
   saveMySkills(state, mySkills) {
@@ -34,13 +31,10 @@ export const mutations = {
 }
 
 export const actions = {
-  saveMyInfoAsUser(context, myInfo) {
-    context.commit('saveMyInfoAsUser', myInfo)
+  saveMyInfo(context, myInfo) {
+    context.commit('saveMyInfo', myInfo)
   }
   ,
-  saveMyInfoAsHost(context, myInfo) {
-    context.commit('saveMyInfoAsHost', myInfo)
-  },
   saveMySkills(context, mySkills) {
     context.commit('saveMySkills', mySkills)
   },

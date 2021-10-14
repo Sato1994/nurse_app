@@ -96,7 +96,7 @@ export default {
 
           console.log("signUpのresponse", response.data.data);
 
-          this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
+          this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
 
           this.$modal.hide("user-modal");
 
