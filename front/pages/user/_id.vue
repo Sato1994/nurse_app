@@ -46,11 +46,7 @@
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
-      <SkillList
-        :mySkills="mySkills"
-        @add-skill-button-click="addMySkill"
-        @remove-skill-button-click="removeMySkill"
-      />
+      <SkillList />
     </modal>
 
     <v-divider class="mx-4"></v-divider>
@@ -59,7 +55,7 @@
 
     <v-card-text>
       <div>
-        <li v-for="skill in mySkills" :key="skill.id">
+        <li v-for="skill in targetSkills" :key="skill.id">
           {{ skill.name }}
         </li>
       </div>
@@ -91,19 +87,14 @@ export default {
 
   data: () => ({
     target: [],
-    // mySkills: [],
+    targetSkills: [],
   }),
-  computed: {
-    mySkills() {
-      return this.$store.getters["myInfo/getMySkills"];
-    },
-  },
-  mounted() {
+  
+  created() {
     const myid = this.$route.params.id;
     axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
       this.target = response.data.user;
-      // this.mySkills = response.data.target_skills;
-      this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills);
+      this.targetSkills = response.data.target_skills;
     });
   },
 
@@ -114,17 +105,7 @@ export default {
     openSkillListModal() {
       this.$modal.show("skill-list-modal");
     },
-    // redraw(e) {
-    //   this.target = e;
-    // },
-    addMySkill(newSkill) {
-      this.$store.dispatch("myInfo/addNewSkill", newSkill);
-    },
-    removeMySkill(selectedSkill) {
-      this.$store.dispatch("myInfo/removeMySkill", selectedSkill);
-    },
   },
 };
 
-// 自分のプロフィールページならmyInfo登録する処理書きたい
 </script>

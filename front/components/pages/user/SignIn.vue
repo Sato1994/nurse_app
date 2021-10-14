@@ -77,6 +77,11 @@ export default {
           this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data.data);
 
           console.log("こんそるろぐ", response.data.data);
+
+          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+            .then((response) => {
+              this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+            });
         })
         .catch((error) => {
           console.log("認証失敗", error);

@@ -47,25 +47,15 @@
 import axios from "axios";
 
 export default {
-  props: {
-    mySkills: {
-      type: Array,
-      default: null,
-    },
-  },
   data: () => ({
-    uid: "",
-    access_token: "",
-    client: "",
-
-    skills: [],
+    mySkills: [],
+    allSkills: [],
     inputValue: "",
   }),
   computed: {
     unselectedSkills() {
-      const mySkills = this.$store.getters["myInfo/getMySkills"];
-      const unselectedSkills = this.skills.filter(
-        (obj) => !mySkills.map((obj) => obj.id).includes(obj.id)
+      const unselectedSkills = this.allSkills.filter(
+        (obj) => !this.mySkills.map((obj) => obj.id).includes(obj.id)
       );
       const searchedSkills = unselectedSkills.filter((obj) =>
         obj.name.includes(this.inputValue)
@@ -75,15 +65,12 @@ export default {
   },
 
   mounted() {
-    const auth = this.$store.getters["myInfo/getAuthInfo"];
-    this.uid = auth.uid;
-    this.access_token = auth.accessToken;
-    this.client = auth.client;
+    this.mySkills = this.$store.getters["myInfo/getMySkills"];
     axios
       .get("http://localhost:3000/api/skills")
       .then((response) => {
-        this.skills = response.data;
-        console.log("skillsをセット", response.data);
+        this.allSkills = response.data;
+        console.log("allSkillsをセット", response.data);
       })
       .catch((error) => {
         console.log("computedでエラー", error);
@@ -97,18 +84,12 @@ export default {
           `http://localhost:3000/api/skills/${e}/user_skills`,
           {},
           {
-            headers: {
-              uid: this.uid,
-              "access-token": this.access_token,
-              client: this.client,
-              "content-type": "application/json",
-            },
+            headers: this.$cookies.get('authInfo'),
           }
         )
         .then((response) => {
           console.log(response.data);
-
-          this.$emit("add-skill-button-click", response.data);
+          this.$store.dispatch("myInfo/addNewSkill", response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -117,16 +98,11 @@ export default {
     removeMySkill(e) {
       axios
         .delete(`http://localhost:3000/api/user_skills/${e}`, {
-          headers: {
-            uid: this.uid,
-            "access-token": this.access_token,
-            client: this.client,
-            "content-type": "application/json",
-          },
+          headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
           console.log(response.data);
-          this.$emit("remove-skill-button-click", response.data);
+           this.$store.dispatch("myInfo/removeMySkill", response.data);
         })
         .catch((error) => {
           console.log(error);
