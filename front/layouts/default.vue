@@ -194,8 +194,14 @@ export default {
         }
       )
       .then((response) => {
-        console.log("せいこう", response);
+        console.log("せいこう", response.data);
         this.$store.dispatch("myInfo/saveMyInfoAsUser", response.data);
+
+        this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+          .then((response) => {
+            console.log('skillのほうのresponse', response.data)
+            this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+        });
       })
       .catch((error) => {
         console.log("defaultでえらー", error);

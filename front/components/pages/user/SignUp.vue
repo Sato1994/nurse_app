@@ -55,7 +55,6 @@
 <script>
 import axios from "axios";
 export default {
-  // name, email, password, confirmation, myid
   data: () => ({
     myInfo: {
       name: "",
@@ -111,6 +110,11 @@ export default {
           this.$cookies.set("authInfo", authInfo);
           // cookieへuser or hostセット
           this.$cookies.set("user", "user");
+
+          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+           .then((response) => {
+            this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+           });
         })
         .catch((error) => {
           console.log("登録失敗", error);
