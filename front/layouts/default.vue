@@ -4,8 +4,8 @@
       <template>
         <v-app id="inspire">
           ★デバッグ用★ ★Userかhostか？{{ this.$cookies.get("user") }}★
-          ★myInfo→{{ $store.state.myInfo.myInfo }}★
-          {{ this.$cookies.get("authInfo") }}
+          ★myInfo→{{ $store.state.myInfo }}★
+          ★cookies→{{ this.$cookies.get("authInfo") }}
 
           <v-app-bar app color="white" flat>
             <v-container class="py-0 fill-height">
@@ -95,8 +95,17 @@
                   </v-list>
                 </v-card>
               </v-menu>
-              <v-btn v-for="link in links" :key="link" text>
-                {{ link }}
+              <v-btn to="/times" nuxt text>
+              募集時間の登録
+              </v-btn>
+              <v-btn :to="mypageURL" nuxt text>
+              マイページ
+              </v-btn>
+              <v-btn text>
+              何か
+              </v-btn>
+              <v-btn text>
+              何か
               </v-btn>
               <v-spacer></v-spacer>
               <v-responsive max-width="260">
@@ -180,9 +189,13 @@ export default {
   },
 
   data: () => ({
-    links: ["Dashboard", "Messages", "Profile", "Updates"],
     menu: false,
   }),
+  computed: {
+    mypageURL() {
+      return `/${this.$cookies.get('user')}/${this.$store.state.myInfo.myInfo.myid}`
+    }
+  },
 
   // リロードの旅に認証tokenを検証しエラーなら再ログインが必要にする
   created() {
@@ -194,8 +207,8 @@ export default {
         }
       )
       .then((response) => {
-        console.log("せいこう", response.data);
-        this.$store.dispatch("myInfo/saveMyInfo", response.data);
+        console.log("せいこう", response.data.data);
+        this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
 
         this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
           .then((response) => {

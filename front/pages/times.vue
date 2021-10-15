@@ -1,4 +1,12 @@
 <template>
+
+
+
+
+
+
+
+
   <v-card
     class="mx-auto"
     max-width=""
@@ -112,12 +120,12 @@ export default {
     minuteList: ['00','15', '30', '45'],
 
     startTime: {},
-    finishTime: {}
-
-
-
-
+    finishTime: {},
+    myFreeTimes: [],
   }),
+  created() {
+    this.$axios.get('')
+  }
   computed: {
     stringStartTime() {
      return `${this.startTime.year}-${this.startTime.month}-${this.startTime.day}T${this.startTime.hour}:${this.startTime.minute}:00`
