@@ -12,6 +12,8 @@ class Api::UsersController < ApplicationController
     # 個人のページのURLをmyidにする。
     @user = User.find_by!(myid: params[:id])
     @skills = @user.skills
+
+    @free_times = @user.free_times
     render "show", formats: :json, handlers: :jbuilder
   end
 end
