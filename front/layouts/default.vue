@@ -3,9 +3,9 @@
     <v-main>
       <template>
         <v-app id="inspire">
-          ★デバッグ用★ ★Userかhostか？{{ this.$cookies.get("user") }}★
-          ★myInfo→{{ $store.state.myInfo }}★
-          ★cookies→{{ this.$cookies.get("authInfo") }}
+          ★デバッグ用★ ★Userかhostか？{{ $cookies.get("user") }}★
+          ★myInfo→{{ $store.state.myInfo.myInfo }}★
+          ★cookies→{{ $cookies.get("authInfo") }}
 
           <v-app-bar app color="white" flat>
             <v-container class="py-0 fill-height">
@@ -16,12 +16,13 @@
                 transition="scale-transition"
                 origin="top left"
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-avatar
-                    v-on="on"
+                    
                     class="mr-10"
                     color="grey darken-1"
                     size="40"
+                    v-on="on"
                   ></v-avatar>
                 </template>
                 <v-card width="300">
@@ -214,6 +215,7 @@ export default {
           .then((response) => {
             console.log('skillのほうのresponse', response.data)
             this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+            this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
         });
       })
       .catch((error) => {

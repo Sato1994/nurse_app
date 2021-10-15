@@ -114,6 +114,7 @@ export default {
           this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
            .then((response) => {
             this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+            this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
            });
         })
         .catch((error) => {
