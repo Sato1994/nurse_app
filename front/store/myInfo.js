@@ -3,8 +3,10 @@
 // export const strict = false
 
 export const state = () => ({
-  myInfo: [],
+  myInfo: {},
   mySkills: [],
+  myTimes: [],
+
 })
 
 export const mutations = {
@@ -13,6 +15,9 @@ export const mutations = {
   },
   saveMySkills(state, mySkills) {
     state.mySkills = mySkills
+  },
+  saveMyTimes(state, myTimes) {
+    state.myTimes = myTimes
   },
   addNewSkill(state, newSkill) {
     state.mySkills.push(newSkill)
@@ -33,8 +38,10 @@ export const mutations = {
 export const actions = {
   saveMyInfo(context, myInfo) {
     context.commit('saveMyInfo', myInfo)
-  }
-  ,
+  },
+  saveMyTimes(context, myTimes) {
+    context.commit('saveMyTimes', myTimes)
+  },
   saveMySkills(context, mySkills) {
     context.commit('saveMySkills', mySkills)
   },
@@ -59,6 +66,9 @@ export const getters = {
   },
   getMySkills(state) {
     return state.mySkills
+  },
+  getMyTimes(state) {
+    return state.myTimes
   }
 }
 

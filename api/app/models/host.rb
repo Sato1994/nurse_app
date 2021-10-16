@@ -11,6 +11,7 @@ class Host < ActiveRecord::Base
   has_many :skills, through: :host_skills
   has_many :agreements
   has_many :users, through: :agreements
+  has_many :recruitment_times, dependent: :destroy
 
   def to_param
     myid
