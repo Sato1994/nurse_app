@@ -1,17 +1,10 @@
 <template>
-
-
-
-
-
-
-
-
   <v-card
     class="mx-auto"
     max-width=""
     outlined
   >
+  募集をかけたい期間を登録するとオファーが来るかもしれません！
     <v-list-item three-line>
       <v-list-item-content>
         <div class="text-overline mb-4">
@@ -100,9 +93,34 @@
       >
       登録
       </v-btn>
+<v-card
+    class="mx-auto"
+    max-width=""
+    tile
+  >
+    <v-list dense>
+      <v-subheader>Timeの登録一覧</v-subheader>
+      <v-list-item-group
+        v-for="(time) in formedMyTimes"
+          :key="time.decordTime"
+          color="primary"
+      >
+        <v-list-item
+          
+        >
+          <v-list-item-icon>
+            <v-icon v-text="icon"></v-icon>
+          </v-list-item-icon>
+          
+          <v-list-item-content>
 
-      {{stringStartTime}}
-      {{stringFinishTime}}
+            <v-list-item-title v-text="time.decordTime"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+      </v-list-item-group>
+    </v-list>
+  </v-card>
 
    
   </v-card>
@@ -121,22 +139,31 @@ export default {
 
     startTime: {},
     finishTime: {},
-    myFreeTimes: [],
+    icon: 'mdi-clock'
   }),
-  created() {
-    this.$axios.get('')
-  }
+
   computed: {
     stringStartTime() {
      return `${this.startTime.year}-${this.startTime.month}-${this.startTime.day}T${this.startTime.hour}:${this.startTime.minute}:00`
     },
     stringFinishTime() {
       return `${this.finishTime.year}-${this.finishTime.month}-${this.finishTime.day}T${this.finishTime.hour}:${this.finishTime.minute}:00`
+    },
+    formedMyTimes() {
+      const myTimes = this.$store.getters["myInfo/getMyTimes"].map(obj=> {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {id: obj.id, decordTime: `${s.getFullYear()}年${s.getMonth()}月${s.getDay()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth()}月${f.getDay()}日${f.getHours()}時${f.getMinutes()}分`}
+        return newObject
+      })
+      return myTimes
     }
   },
+ 
+
   methods: {
     register() {
-      this.$axios.post('/api/free_times', {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
+      this.$axios.post(`/api/${this.$cookies.get('user') === 'user' ? 'free_times' : 'recruitment_times'}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
       {headers: this.$cookies.get('authInfo')})
       .then((response) => {
         console.log('とりあえず成功', response.data)

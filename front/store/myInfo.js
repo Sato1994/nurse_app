@@ -66,6 +66,9 @@ export const getters = {
   },
   getMySkills(state) {
     return state.mySkills
+  },
+  getMyTimes(state) {
+    return state.myTimes
   }
 }
 
