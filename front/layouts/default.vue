@@ -102,8 +102,8 @@
               <v-btn :to="mypageURL" nuxt text>
               マイページ
               </v-btn>
-              <v-btn text>
-              何か
+              <v-btn to="/" nuxt text>
+              ホーム
               </v-btn>
               <v-btn text>
               何か
