@@ -114,7 +114,7 @@
           
           <v-list-item-content>
 
-            <v-list-item-title v-text="time.decordTime"></v-list-item-title>
+            <v-list-item-title v-text="time.formedTime"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
