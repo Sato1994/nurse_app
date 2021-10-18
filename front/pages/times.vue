@@ -102,7 +102,7 @@
       <v-subheader>Timeの登録一覧</v-subheader>
       <v-list-item-group
         v-for="(time) in formedMyTimes"
-          :key="time.decordTime"
+          :key="time.formedTime"
           color="primary"
       >
         <v-list-item
@@ -153,7 +153,7 @@ export default {
       const myTimes = this.$store.getters["myInfo/getMyTimes"].map(obj=> {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
-        const newObject = {id: obj.id, decordTime: `${s.getFullYear()}年${s.getMonth()}月${s.getDay()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth()}月${f.getDay()}日${f.getHours()}時${f.getMinutes()}分`}
+        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth()}月${s.getDay()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth()}月${f.getDay()}日${f.getHours()}時${f.getMinutes()}分`}
         return newObject
       })
       return myTimes

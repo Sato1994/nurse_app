@@ -60,6 +60,22 @@
       </div>
     </v-card-text>
 
+    <v-list dense>
+      <v-subheader>相手のTimes一覧</v-subheader>
+      <v-list-item-group
+        v-for="time in formedTargetTimes"
+          :key="time.formedTime"
+          color="primary"
+      >
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title v-text="time.formedTime"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+      </v-list-item-group>
+    </v-list>
+
     <v-card-actions>
       <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
         必須スキルを編集
@@ -86,6 +102,7 @@ export default {
   data: () => ({
     target: [],
     targetSkills: [],
+    targetTimes: [],
   }),
   
   created() {
@@ -93,7 +110,21 @@ export default {
     this.$axios.get(`http://localhost:3000/api/hosts/${myid}`).then((response) => {
       this.target = response.data.host;
       this.targetSkills = response.data.target_skills;
+      this.targetTimes = response.data.target_times
     });
+  },
+
+  computed: {
+    formedTargetTimes() {
+      const targetTimes = this.targetTimes.map(obj => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth()}月${s.getDay()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth()}月${f.getDay()}日${f.getHours()}時${f.getMinutes()}分`}
+        return newObject
+      })
+      return targetTimes
+    }
+
   },
 
   methods: {
