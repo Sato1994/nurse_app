@@ -94,6 +94,16 @@
                       <v-list-item-title>ログアウト</v-list-item-title>
                     </v-list-item>
                   </v-list>
+
+                  <v-list>
+                    <v-list-item @click="deactivate">
+                      <v-list-item-action>
+                        <v-icon>mdi-briefcase</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-title>アカウント削除</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+
                 </v-card>
               </v-menu>
               <v-btn to="/times" nuxt text>
@@ -228,6 +238,18 @@ export default {
       this.$cookies.removeAll();
       this.$router.push("/");
       this.$store.dispatch("myInfo/logout");
+    },
+    deactivate() {
+      this.$axios.delete(`/api/${this.$cookies.get('user')}`, {headers: this.$cookies.get('authInfo')})
+      .then((response) => {
+        this.$cookies.removeAll()
+        this.$router.push('/')
+        this.$store.dispatch('myInfo/logout')
+        console.log('deactivate成功', response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     },
     openUserModal() {
       this.$modal.show("user-modal");
