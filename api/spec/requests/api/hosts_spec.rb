@@ -18,9 +18,9 @@ RSpec.describe "api::hosts", type: :request do
 
   describe "GET /show" do
     let(:host_skill) {create(:host_skill)}
-    it "responseにはhostとhost.skillsとhost.recruitment_timesが入る" do
+    it "responseには5つの配列が入る" do
       get "/api/hosts/#{host_skill.host.myid}"
-      expect(json.count).to eq(3)
+      expect(json.count).to eq(5)
     end
   end
 end

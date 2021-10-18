@@ -111,11 +111,11 @@ export default {
           // cookieへuser or hostセット
           this.$cookies.set("user", "user");
 
-          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
-           .then((response) => {
-            this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
-            this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
-           });
+          // this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+          //  .then((response) => {
+          //   this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
+          //   this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
+          //  });
         })
         .catch((error) => {
           console.log("登録失敗", error);

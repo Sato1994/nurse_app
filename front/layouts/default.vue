@@ -218,14 +218,14 @@ export default {
         }
       )
       .then((response) => {
-        console.log("せいこう", response.data.data);
         this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
-
-        this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+        this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}` ,{headers: this.$cookies.get('authInfo')})
           .then((response) => {
-            console.log('skillのほうのresponse', response.data)
+            console.log('/users/myidのやつ', response.data)
             this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
             this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
+            this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
+            this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
         });
       })
       .catch((error) => {
