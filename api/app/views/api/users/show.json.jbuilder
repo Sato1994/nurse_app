@@ -1,5 +1,5 @@
 json.user do
-  json.extract! @user, :myid, :name, :address, :image, :wanted, :sex, :age, :year, :profile, :created_at
+  json.extract! @user, :id, :myid, :name, :address, :image, :wanted, :sex, :age, :year, :profile, :created_at
 end
 
 # objectをArrayに包む

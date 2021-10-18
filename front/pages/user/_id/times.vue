@@ -4,7 +4,7 @@
     max-width=""
     outlined
   >
-  募集をかけたい期間を登録するとオファーが来るかもしれません！
+  オファーをしましょう！！！
     <v-list-item three-line>
       <v-list-item-content>
         <div class="text-overline mb-4">
@@ -91,7 +91,7 @@
         color="red"
         @click="register"
       >
-      登録
+      この時間でオファー！
       </v-btn>
 <v-card
     class="mx-auto"
@@ -101,7 +101,7 @@
     <v-list dense>
       <v-subheader>Timeの登録一覧</v-subheader>
       <v-list-item-group
-        v-for="(time) in formedMyTimes"
+        v-for="time in formedTargetTimes"
           :key="time.formedTime"
           color="primary"
       >
@@ -121,11 +121,9 @@
       </v-list-item-group>
     </v-list>
   </v-card>
-  {{$store.getters["myInfo/getMyTimes"]}}
 
    
   </v-card>
-  
 </template>
 
 <script>
@@ -138,10 +136,22 @@ export default {
     dayList: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12','13','14','15'],
     hourList: ['00','01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12','13','14','15','16','17','18','19','20','21','22','23'],
     minuteList: ['00','15', '30', '45'],
+
     startTime: {},
     finishTime: {},
-    icon: 'mdi-clock'
+    icon: 'mdi-clock',
+    target: [],
+
+    targetTimes: []
   }),
+  created() {
+    const myid = this.$route.params.id
+    this.$axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
+      this.target = response.data.user
+      // this.targetSkills = response.data.target_skills;
+      this.targetTimes = response.data.target_times
+    });
+  },
 
   computed: {
     stringStartTime() {
@@ -150,27 +160,28 @@ export default {
     stringFinishTime() {
       return `${this.finishTime.year}-${this.finishTime.month}-${this.finishTime.day}T${this.finishTime.hour}:${this.finishTime.minute}:00`
     },
-    formedMyTimes() {
-      const myTimes = this.$store.getters["myInfo/getMyTimes"].map(obj=> {
+    formedTargetTimes() {
+      const targetTimes = this.targetTimes.map(obj=> {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
         const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth() +1}月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth() +1}月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`}
         return newObject
       })
-      return myTimes
+      return targetTimes
     }
   },
  
 
   methods: {
     register() {
-      this.$axios.post(`/api/${this.$cookies.get('user') === 'user' ? 'free_times' : 'recruitment_times'}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
+      this.$axios.post(`/api/host_requests/${this.target.id}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
       {headers: this.$cookies.get('authInfo')})
       .then((response) => {
-        console.log('とりあえず成功', response.data)
+        console.log('host_request成功', response.data)
+        this.$router.push(`/host/${this.$store.state.myInfo.myInfo.myid}`)
       })
       .catch((error) => {
-        console.log('とりあえず失敗', error)
+        console.log('host_request失敗', error)
       })
     }
   }

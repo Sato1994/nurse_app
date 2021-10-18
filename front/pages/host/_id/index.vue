@@ -61,13 +61,14 @@
     </v-card-text>
 
     <v-list dense>
-      <v-subheader>相手のTimes一覧</v-subheader>
+      <v-subheader>routes.params.idのTimes一覧</v-subheader>
       <v-list-item-group
         v-for="time in formedTargetTimes"
           :key="time.formedTime"
           color="primary"
       >
-        <v-list-item>
+        <v-list-item
+         @click="jumpTargetTimes">
           <v-list-item-content>
             <v-list-item-title v-text="time.formedTime"></v-list-item-title>
           </v-list-item-content>
@@ -119,7 +120,7 @@ export default {
       const targetTimes = this.targetTimes.map(obj => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
-        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth()}月${s.getDay()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth()}月${f.getDay()}日${f.getHours()}時${f.getMinutes()}分`}
+        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth() +1}月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth() +1}月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`}
         return newObject
       })
       return targetTimes
@@ -134,6 +135,9 @@ export default {
     openSkillListModal() {
       this.$modal.show("skill-list-modal");
     },
+    jumpTargetTimes() {
+      this.$router.push(`/host/${this.target.myid}/times`)
+    }
   },
 };
 
