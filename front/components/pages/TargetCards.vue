@@ -33,8 +33,10 @@
         <v-btn
           color="orange"
           text
+          :to="`/${targetPageURL}/${target.myid}`"
+          nuxt
         >
-          Share
+          気になる！！
         </v-btn>
 
         <v-btn
@@ -60,9 +62,12 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  computed: {
+    targetPageURL() {
+      return `${this.$cookies.get('user') === 'user' ? 'host' : 'user'}`
+    },
   }
-
- 
 
 }
 
