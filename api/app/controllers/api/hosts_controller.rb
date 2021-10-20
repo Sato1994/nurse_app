@@ -9,6 +9,7 @@ class Api::HostsController < ApplicationController
     if api_host_signed_in?
       if @host = current_api_host
         @requests = @host.host_requests
+        @offers = @host.user_requests
         @agreements = @host.agreements
       end
     end

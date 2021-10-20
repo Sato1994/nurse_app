@@ -107,6 +107,7 @@ import axios from 'axios'
               this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
               this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
               this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
+              this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
             });
         })
         .catch((error) => {

@@ -19,3 +19,6 @@ json.agreements do
   json.array! @agreements, :id, :start_time, :finish_time
 end
 
+json.offers do
+  json.array! @offers, :id, :start_time, :finish_time, :user, :host
+end

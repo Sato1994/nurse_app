@@ -8,10 +8,12 @@ class Host < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :host_skills, dependent: :destroy
+  has_many :user_requests, dependent: :destroy
   has_many :skills, through: :host_skills
   has_many :agreements
   has_many :users, through: :agreements
   has_many :recruitment_times, dependent: :destroy
+  has_many :host_requests, dependent: :destroy
 
   def to_param
     myid

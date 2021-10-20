@@ -228,6 +228,7 @@ export default {
             this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
             this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
             this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
+            this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
             this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
         });
       })

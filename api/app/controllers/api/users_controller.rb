@@ -13,6 +13,7 @@ class Api::UsersController < ApplicationController
     if api_user_signed_in?
       if @user = current_api_user
         @requests = @user.user_requests
+        @offers = @user.host_requests
         @agreements = @user.agreements
       end
     end
