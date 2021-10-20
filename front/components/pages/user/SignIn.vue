@@ -75,10 +75,13 @@ export default {
 
           console.log("こんそるろぐ", response.data.data);
 
-          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`, {headers: this.$cookies.get('authInfo')})
             .then((response) => {
               this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
               this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
+              this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
+              this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
+              this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
             });
         })
         .catch((error) => {

@@ -95,23 +95,19 @@ import axios from 'axios'
           // cookieへuser or hostセット
           this.$cookies.set("user", "host");
 
-
-
-
-
-
-
-
           this.$router.push(`/host/${response.data.data.myid}`)
           this.$modal.hide('host-auth-modal')
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
 
           console.log("こんそるろぐ", response.data.data);
 
-          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
+          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`, {headers: this.$cookies.get('authInfo')})
             .then((response) => {
               this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
               this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
+              this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
+              this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
+              this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
             });
         })
         .catch((error) => {

@@ -34,7 +34,8 @@
       </div>
 
       <div class="my-4 text-subtitle-1">
-        {{ target.wanted = true ? " 募集中": "募集していません"}}
+        {{ target.age }}歳 経験{{ target.year }}年
+        {{ (target.sex = true ? "  男性" : "  女性") }}
       </div>
 
       <div>{{ target.profile }}</div>
@@ -50,7 +51,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>就業に必須なスキル</v-card-title>
+    <v-card-title>私の獲得スキル</v-card-title>
 
     <v-card-text>
       <div>
@@ -60,9 +61,28 @@
       </div>
     </v-card-text>
 
+
+    <v-list dense>
+      <v-subheader>routes.params.idのTimes一覧</v-subheader>
+      <v-list-item-group
+        v-for="time in formedTargetTimes"
+          :key="time.formedTime"
+          color="primary"
+      >
+        <v-list-item
+        @click="jumpTargetTimes">
+          <v-list-item-content>
+            <v-list-item-title v-text="time.formedTime"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+      </v-list-item-group>
+    </v-list>
+
+
     <v-card-actions>
       <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
-        必須スキルを編集
+        獲得スキルを編集
       </v-btn>
     </v-card-actions>
 
@@ -75,7 +95,8 @@
 </template>
 
 <script>
-import Edit from "@/components/pages/host/Edit.vue";
+import axios from "axios";
+import Edit from "@/components/pages/user/Edit.vue";
 import SkillList from "@/components/pages/modal/SkillList.vue";
 export default {
   components: {
@@ -86,14 +107,29 @@ export default {
   data: () => ({
     target: [],
     targetSkills: [],
+    targetTimes: [],
   }),
   
   created() {
     const myid = this.$route.params.id;
-    this.$axios.get(`http://localhost:3000/api/hosts/${myid}`).then((response) => {
-      this.target = response.data.host;
+    axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
+      this.target = response.data.user;
       this.targetSkills = response.data.target_skills;
+      this.targetTimes = response.data.target_times
     });
+  },
+
+  computed: {
+    formedTargetTimes() {
+      const targetTimes = this.targetTimes.map(obj => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth() +1}月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth() +1}月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`}
+        return newObject
+      })
+      return targetTimes
+    }
+
   },
 
   methods: {
@@ -102,6 +138,9 @@ export default {
     },
     openSkillListModal() {
       this.$modal.show("skill-list-modal");
+    },
+    jumpTargetTimes() {
+      this.$router.push(`/user/${this.target.myid}/times`)
     },
   },
 };

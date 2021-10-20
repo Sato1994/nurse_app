@@ -9,9 +9,12 @@ class User < ActiveRecord::Base
 
   has_many :user_skills, dependent: :destroy
   has_many :skills, through: :user_skills
+  has_many :host_requests, dependent: :destroy
   has_many :agreements
   has_many :hosts, through: :agreements
   has_many :free_times, dependent: :destroy
+  has_many :user_requests, dependent: :destroy
+  
 
   # 個人のページのURLをmyidにする。
   def to_param

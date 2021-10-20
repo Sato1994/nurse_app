@@ -6,6 +6,9 @@ export const state = () => ({
   myInfo: {},
   mySkills: [],
   myTimes: [],
+  myRequests: [],
+  myAgreements: [],
+  myOffers: [],
 
 })
 
@@ -18,6 +21,15 @@ export const mutations = {
   },
   saveMyTimes(state, myTimes) {
     state.myTimes = myTimes
+  },
+  saveMyRequests(state, myRequests) {
+    state.myRequests = myRequests
+  },
+  saveMyOffers(state, myOffers) {
+    state.myOffers = myOffers
+  },
+  saveMyAgreements(state, myAgreements) {
+    state.myAgreements = myAgreements
   },
   addNewSkill(state, newSkill) {
     state.mySkills.push(newSkill)
@@ -45,6 +57,21 @@ export const actions = {
   saveMySkills(context, mySkills) {
     context.commit('saveMySkills', mySkills)
   },
+  saveMyRequests(context, myRequests) {
+    context.commit('saveMyRequests', myRequests)
+  },
+  saveMyOffers(context, myOffers) {
+    context.commit('saveMyOffers', myOffers)
+  },
+  saveMyAgreements(context, myAgreements) {
+    context.commit('saveMyAgreements', myAgreements)
+  },
+
+
+
+
+
+
   addNewSkill(context, newSkill) {
     context.commit('addNewSkill', newSkill)
   },
@@ -69,7 +96,13 @@ export const getters = {
   },
   getMyTimes(state) {
     return state.myTimes
-  }
+  },
+  getMyRequests(state) {
+    return state.myRequests
+  },
+  getMyOffers(state) {
+    return state.myOffers
+  },
 }
 
 
