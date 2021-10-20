@@ -4,8 +4,8 @@
       <template>
         <v-app id="inspire">
           ★デバッグ用★ ★Userかhostか？{{ $cookies.get("user") }}★
-          ★myInfo→{{ $store.state.myInfo.myInfo }}★
-          ★cookies→{{ $cookies.get("authInfo") }}
+          ★myInfo→{{ $store.state.myInfo.myInfo.name}}★
+          ★cookies→{{ $cookies.get("authInfo") == null ? '入ってない': '入ってる' }}
 
           <v-app-bar app color="white" flat>
             <v-container class="py-0 fill-height">
@@ -106,17 +106,17 @@
 
                 </v-card>
               </v-menu>
-              <v-btn to="/times" nuxt text>
-              募集時間の登録
-              </v-btn>
               <v-btn :to="mypageURL" nuxt text>
               マイページ
               </v-btn>
               <v-btn to="/" nuxt text>
-              ホーム
+              お相手一覧
               </v-btn>
-              <v-btn text>
-              何か
+              <v-btn to="/times" nuxt text>
+              募集時間の登録
+              </v-btn>
+              <v-btn :to="negotiationsURL" nuxt text>
+              リクエスト等
               </v-btn>
               <v-spacer></v-spacer>
               <v-responsive max-width="260">
@@ -205,7 +205,10 @@ export default {
   computed: {
     mypageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.myInfo.myInfo.myid}`
-    }
+    },
+    negotiationsURL() {
+      return `/${this.$cookies.get('user')}/${this.$store.state.myInfo.myInfo.myid}/negotiations`
+    },
   },
 
   // リロードの旅に認証tokenを検証しエラーなら再ログインが必要にする

@@ -87,6 +87,9 @@ export const getters = {
   },
   getMyTimes(state) {
     return state.myTimes
+  },
+  getMyRequests(state) {
+    return state.myRequests
   }
 }
 
