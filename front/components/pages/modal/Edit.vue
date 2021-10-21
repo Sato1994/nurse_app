@@ -19,6 +19,20 @@
     ></v-text-field>
 
     <v-text-field
+      v-model="copiedMyInfo.myid"
+      label="サイト内ID"
+      required
+    ></v-text-field>
+
+   <v-textarea
+      v-model="copiedMyInfo.profile"
+      label="紹介文"
+      required
+    ></v-textarea>
+
+
+    <!--userのみ-->
+    <v-text-field
       v-model="copiedMyInfo.age"
       label="年齢"
       required
@@ -30,18 +44,6 @@
       required
     ></v-text-field>
 
-    <v-textarea
-      v-model="copiedMyInfo.profile"
-      label="紹介文"
-      required
-    ></v-textarea>
-
-    <v-text-field
-      v-model="copiedMyInfo.myid"
-      label="サイト内ID"
-      required
-    ></v-text-field>
-
     <v-select
       v-model="copiedMyInfo.sex"
       :items="sex"
@@ -49,6 +51,15 @@
       label="性別"
       required
     ></v-select>
+
+    <!--hostのみ-->
+     <v-switch
+      v-model="copiedMyInfo.wanted"
+      label="募集中かどうか"
+      ></v-switch>
+
+
+
 
     <v-btn color="success" @click="editUser"> 登録する </v-btn>
   </v-form>
@@ -85,11 +96,11 @@ export default {
   methods: {
     editUser() {
       axios
-        .put("http://localhost:3000/api/user", this.copiedMyInfo, {
+        .put(`http://localhost:3000/api/${this.$cookies.get('user')}`, this.copiedMyInfo, {
           headers: this.authInfo,
         })
         .then((response) => {
-          this.$router.push(`/user/${response.data.data.myid}`);
+          this.$router.push(`/${this.$cookies.get('user')}/${response.data.data.myid}`);
           this.$modal.hide("edit-modal");
           console.log("editのresponse", response.data);
           this.$store.dispatch("myInfo/saveMyInfo", response.data.data);

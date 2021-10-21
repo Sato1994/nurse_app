@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import Edit from "@/components/pages/host/Edit.vue";
+import Edit from "@/components/pages/modal/Edit.vue";
 import SkillList from "@/components/pages/modal/SkillList.vue";
 export default {
   components: {
