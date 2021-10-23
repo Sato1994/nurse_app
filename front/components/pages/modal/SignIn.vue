@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import axios from 'axios'
   export default {
 
     data: () => ({
@@ -81,7 +80,7 @@ import axios from 'axios'
         this.$refs.form.resetValidation()
       },
       signIn() {
-        axios.post('http://localhost:3000/api/host/sign_in', this.auth)
+        this.$axios.post(`http://localhost:3000/api/${this.$cookies.get('user')}/sign_in`, this.auth)
         .then((response) => {
           const authInfo = {
             "access-token": response.headers["access-token"],
@@ -92,11 +91,8 @@ import axios from 'axios'
           // cookieへ認証tokenをセット
           this.$cookies.set("authInfo", authInfo);
 
-          // cookieへuser or hostセット
-          this.$cookies.set("user", "host");
-
-          this.$router.push(`/host/${response.data.data.myid}`)
-          this.$modal.hide('host-auth-modal')
+          this.$router.push(`/${this.$cookies.get('user')}/${response.data.data.myid}`)
+          this.$modal.hide('sign-in-modal')
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
 
           console.log("こんそるろぐ", response.data.data);

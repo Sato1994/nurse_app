@@ -27,7 +27,7 @@
                 </template>
                 <v-card width="300">
                   <v-list dark>
-                    <v-list-item @click="openUserAuthModal">
+                    <v-list-item @click="openSelectUserTypeModal">
                       <v-list-item-avatar>
                         <v-img
                           src="https://cdn.vuetifyjs.com/images/john.png"
@@ -35,27 +35,7 @@
                       </v-list-item-avatar>
                       <v-list-item-content>
                         <v-list-item-title
-                          >看護師としてログイン</v-list-item-title
-                        >
-                      </v-list-item-content>
-                      <v-list-item-action>
-                        <v-btn icon @click="menu = false">
-                          <v-icon>mdi-close-circle</v-icon>
-                        </v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-
-                  <v-list dark>
-                    <v-list-item @click="openHostAuthModal">
-                      <v-list-item-avatar>
-                        <v-img
-                          src="https://cdn.vuetifyjs.com/images/john.png"
-                        ></v-img>
-                      </v-list-item-avatar>
-                      <v-list-item-content>
-                        <v-list-item-title
-                          >病院としてログイン</v-list-item-title
+                          >ログイン</v-list-item-title
                         >
                       </v-list-item-content>
                       <v-list-item-action>
@@ -165,12 +145,14 @@
                         <SignUpAsHost />
                       </modal>
 
-                      <modal name="user-auth-modal" height="auto">
-                        <SignInAsUser />
+                      <modal name="sign-in-modal" height="auto">
+                        <SignIn />
                       </modal>
 
-                      <modal name="host-auth-modal" height="auto">
-                        <SignInAsHost />
+
+
+                      <modal name="select-user-type-modal" height="auto">
+                        <SelectUserType />
                       </modal>
 
                       <Nuxt />
@@ -189,14 +171,16 @@
 <script>
 import SignUpAsUser from "@/components/pages/user/SignUp.vue";
 import SignUpAsHost from "@/components/pages/host/SignUp.vue";
-import SignInAsUser from "@/components/pages/user/SignIn.vue";
-import SignInAsHost from "@/components/pages/host/SignIn.vue";
+import SignIn from "@/components/pages/modal/SignIn.vue"
+import SelectUserType from "@/components/pages/modal/SelectUserType.vue"
+
+
 export default {
   components: {
     SignUpAsUser,
     SignUpAsHost,
-    SignInAsUser,
-    SignInAsHost,
+    SignIn,
+    SelectUserType
   },
 
   data: () => ({
@@ -261,11 +245,8 @@ export default {
     openHostModal() {
       this.$modal.show("host-modal");
     },
-    openUserAuthModal() {
-      this.$modal.show("user-auth-modal");
-    },
-    openHostAuthModal() {
-      this.$modal.show("host-auth-modal");
+    openSelectUserTypeModal() {
+      this.$modal.show("select-user-type-modal")
     },
   },
 };
