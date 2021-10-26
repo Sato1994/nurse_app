@@ -18,9 +18,9 @@ RSpec.describe "Api::Users", type: :request do
   
   describe "GET /show" do
     let(:user_skill) {create(:user_skill)}
-    it "responseには5つの配列が入る" do
+    it "responseには6つの配列が入る" do
       get "/api/users/#{user_skill.user.myid}"
-      expect(json.count).to eq(5)
+      expect(json.count).to eq(6)
     end
   end
 end
