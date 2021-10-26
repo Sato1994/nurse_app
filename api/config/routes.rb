@@ -27,18 +27,18 @@ Rails.application.routes.draw do
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'
   post 'api/agreements/host/:host_id', to: 'api/agreements#create'
 
-
-
-
-
   post 'api/free_times', to: 'api/free_times#create'
-
 
   post 'api/recruitment_times', to: 'api/recruitment_times#create'
 
   post 'api/host_requests/:user_id', to: 'api/host_requests#create'
-
   post 'api/user_requests/:host_id', to: 'api/user_requests#create'
+
+  namespace :api do
+    resources :rooms, only: [:index, :show, :destroy]
+  end
+  post 'api/rooms/user/:user_id', to: 'api/rooms#create'
+  post 'api/rooms/host/:host_id', to: 'api/rooms#create'
 
 
 
