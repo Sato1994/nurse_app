@@ -28,4 +28,23 @@ RSpec.describe UserMessage, type: :model do
       expect(um.errors[:message]).to include("is too long (maximum is 500 characters)")
     end
   end
+
+  describe "association" do
+    let(:um) { create(:user_message) }
+    it "roomが削除されれば削除される" do
+      um.room.destroy
+      expect(UserMessage.count).to eq(0)
+      
+    end
+    
+    it "userが削除されれば削除される" do
+      um.room.user.destroy
+      expect(UserMessage.count).to eq(0)
+    end
+
+    it "hostが削除されれば削除される" do
+      um.room.host.destroy
+      expect(UserMessage.count).to eq(0)
+    end
+  end
 end
