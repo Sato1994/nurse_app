@@ -14,7 +14,8 @@ class Host < ActiveRecord::Base
   has_many :users, through: :agreements
   has_many :recruitment_times, dependent: :destroy
   has_many :host_requests, dependent: :destroy
-  has_many :room, dependent: :destroy
+  has_many :rooms, dependent: :destroy
+  has_many :host_messages, through: :rooms
 
   def to_param
     myid

@@ -47,6 +47,12 @@ Rails.application.routes.draw do
 
   post 'api/user_messages/:room_id', to: 'api/user_messages#create'
 
+  namespace :api do
+    resources :host_messages, only: [:index]
+  end
+
+  post 'api/host_messages/:room_id', to: 'api/host_messages#create'
+
 
 
 

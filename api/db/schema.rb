@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_26_194517) do
+ActiveRecord::Schema.define(version: 2021_10_27_095413) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name", null: false
@@ -52,6 +52,14 @@ ActiveRecord::Schema.define(version: 2021_10_26_194517) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_free_times_on_user_id"
+  end
+
+  create_table "host_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.text "message", null: false
+    t.bigint "room_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["room_id"], name: "index_host_messages_on_room_id"
   end
 
   create_table "host_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -204,6 +212,7 @@ ActiveRecord::Schema.define(version: 2021_10_26_194517) do
   add_foreign_key "agreements", "hosts"
   add_foreign_key "agreements", "users"
   add_foreign_key "free_times", "users"
+  add_foreign_key "host_messages", "rooms"
   add_foreign_key "host_requests", "hosts"
   add_foreign_key "host_requests", "users"
   add_foreign_key "host_skills", "hosts"

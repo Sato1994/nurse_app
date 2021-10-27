@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   has_many :hosts, through: :agreements
   has_many :free_times, dependent: :destroy
   has_many :user_requests, dependent: :destroy
-  has_many :room, dependent: :destroy
+  has_many :rooms, dependent: :destroy
   has_many :user_messages, through: :rooms
   
 
