@@ -1,5 +1,29 @@
 class Api::RoomsController < ApplicationController
 
+  def show
+     if api_user_signed_in?
+      room = Room.find(params[:id])
+      if room.user === current_api_user
+        @user_messages = UserMessage.where(room: room)
+        @host_messages = HostMessage.where(room: room)
+        render "show", formats: :json, handlers: :jbuilder
+      else
+        render json: nil, status: 403
+      end
+    elsif api_host_signed_in?
+      room = Room.find(params[:id])
+      if room.host === current_api_host
+        @user_messages = UserMessage.where(room: room)
+        @host_messages = HostMessage.where(room: room)
+        render "show", formats: :json, handlers: :jbuilder
+      else
+        render json: nil, status: 403
+      end
+    else
+      render json: nil , status: 401
+    end
+  end
+
   def create
     if api_user_signed_in?
       @host = Host.find(params[:host_id])

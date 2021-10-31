@@ -1,12 +1,5 @@
 class Api::UserMessagesController < ApplicationController
 
-
-  # def index
-  #   if api_user_signed_in?
-  #     rooms = current_api_user.rooms
-  #   end
-  # end
-
   def create
     room = Room.find(params[:room_id])
     if room.user = current_api_user

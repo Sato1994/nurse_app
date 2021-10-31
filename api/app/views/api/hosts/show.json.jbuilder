@@ -21,3 +21,7 @@ end
 json.offers do
   json.array! @offers, :id, :start_time, :finish_time, :user, :host
 end
+
+json.rooms do
+  json.array! @rooms, :id, :user, :host, :created_at
+end

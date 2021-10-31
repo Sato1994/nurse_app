@@ -11,6 +11,7 @@ class Api::HostsController < ApplicationController
         @requests = @host.host_requests
         @offers = @host.user_requests
         @agreements = @host.agreements
+        @rooms = @host.rooms
       end
     end
     @skills = @host.skills

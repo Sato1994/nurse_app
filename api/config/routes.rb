@@ -35,21 +35,20 @@ Rails.application.routes.draw do
   post 'api/user_requests/:host_id', to: 'api/user_requests#create'
 
   namespace :api do
-    resources :rooms, only: [:index, :show, :destroy]
+    resources :rooms, only: [:show]
   end
   post 'api/rooms/user/:user_id', to: 'api/rooms#create'
   post 'api/rooms/host/:host_id', to: 'api/rooms#create'
 
-  #index, create
-  namespace :api do
-    resources :user_messages, only: [:index]
-  end
+  # namespace :api do
+  #   resources :user_messages, only: [:index]
+  # end
 
   post 'api/user_messages/:room_id', to: 'api/user_messages#create'
 
-  namespace :api do
-    resources :host_messages, only: [:index]
-  end
+  # namespace :api do
+  #   resources :host_messages, only: [:index]
+  # end
 
   post 'api/host_messages/:room_id', to: 'api/host_messages#create'
 

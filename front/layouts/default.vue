@@ -115,11 +115,12 @@
               <v-row>
                 <v-col cols="2">
                   <v-sheet rounded="lg">
-                    <v-list color="transparent">
-                      <v-list-item v-for="n in 5" :key="n" link>
-                        <v-list-item-content>
+                    <v-list color="transparent" >
+                      <v-list-item to="/rooms" nuxt text>
+                        <v-list-item-content  >
                           <v-list-item-title>
-                            List Item {{ n }}
+                           メッセージ
+
                           </v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
@@ -193,6 +194,9 @@ export default {
     negotiationsURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.myInfo.myInfo.myid}/negotiations`
     },
+    myRoomsURL() {
+      return `/room`
+    }
   },
 
   // リロードの旅に認証tokenを検証しエラーなら再ログインが必要にする
@@ -214,6 +218,8 @@ export default {
             this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
             this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
             this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
+            this.$store.dispatch("myInfo/saveMyRooms", response.data.rooms)
+
         });
       })
       .catch((error) => {

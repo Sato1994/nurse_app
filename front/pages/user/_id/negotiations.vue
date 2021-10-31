@@ -20,8 +20,9 @@
       <v-list-item-group
         v-for="offer in formedMyOffers"
           :key="offer.formedOffer"
-          color="primary">
-        <v-list-item>
+          color="primary"
+          >
+        <v-list-item @click="createRoom(offer.host.id, offer.formedOffer)">
           <v-list-item-content>
             <v-list-item-title v-text="offer.formedOffer"></v-list-item-title>
             <v-list-item-title v-text="offer.host.name"></v-list-item-title>
@@ -62,6 +63,19 @@ export default {
       return offers
     },
   },
+  methods: {
+    createRoom(hostID,formedOffer) {
+      this.$axios.post(`/api/rooms/host/${hostID}`,{},{ headers: this.$cookies.get('authInfo') })
+      .then((response) => {
+        console.log(response.data)
+        // Room画面に移動しformedOfferの範囲で交渉してみよう！的なガイドをいれる
+        // offerを消す
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    }
+  }
 };
 
 </script>
