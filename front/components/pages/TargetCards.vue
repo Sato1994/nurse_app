@@ -3,7 +3,7 @@
   <v-row>
     
     <v-col
-        v-for="target in targets" :key="target.id"  cols="12" sm="6" md="6" lg="4"
+        v-for="(target, index) in targets" :key="index"  cols="12" sm="6" md="6" lg="4"
     >
     <v-card
       class="mx-auto"

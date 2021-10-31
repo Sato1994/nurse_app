@@ -101,8 +101,8 @@
     <v-list dense>
       <v-subheader>Timeの登録一覧</v-subheader>
       <v-list-item-group
-        v-for="(time) in formedMyTimes"
-          :key="time.formedTime"
+        v-for="(time, index) in formedMyTimes"
+          :key="index"
           color="primary"
       >
         <v-list-item
