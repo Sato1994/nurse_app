@@ -15,6 +15,7 @@ class Api::UsersController < ApplicationController
         @requests = @user.user_requests
         @offers = @user.host_requests
         @agreements = @user.agreements
+        @rooms = @user.rooms
       end
     end
     @skills = @user.skills

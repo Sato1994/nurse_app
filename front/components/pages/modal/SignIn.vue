@@ -104,6 +104,7 @@
               this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
               this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
               this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
+              this.$store.dispatch("myInfo/saveMyRooms", response.data.rooms)
             });
         })
         .catch((error) => {
