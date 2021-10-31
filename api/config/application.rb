@@ -56,8 +56,5 @@ module App
     config.api_only = true
     ##フラッシュが使えるようになる。
     config.middleware.use ActionDispatch::Flash
-
-    ##タイムゾーンの指定
-    config.time_zone = 'Tokyo'
   end
 end

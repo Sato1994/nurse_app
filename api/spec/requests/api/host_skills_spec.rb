@@ -15,7 +15,7 @@ RSpec.describe "Api::HostSkills", type: :request do
     describe "POST /create" do
       it "ログインすれば登録できる" do
         post "/api/skills/#{skill.id}/host_skills", headers: {uid: uid, client: client, "access-token": access_token}
-        expect(host.skills.count).to eq(1)
+        expect(HostSkill.count).to eq(1)
       end
     end
   
@@ -24,8 +24,9 @@ RSpec.describe "Api::HostSkills", type: :request do
       let(:skill) { hs.skill }
       
       it "ログインすれば削除できる" do
+        expect(HostSkill.count).to eq(1)
         delete  "/api/host_skills/#{skill.id}", headers: {uid: uid, client: client, "access-token": access_token}
-        expect(host.skills.count).to eq(0)
+        expect(HostSkill.count).to eq(0)
       end
     end
   end
