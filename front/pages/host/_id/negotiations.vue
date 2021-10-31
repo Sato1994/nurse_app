@@ -3,8 +3,8 @@
 <v-list dense>
       <v-subheader>ログイン者のrequest一覧</v-subheader>
       <v-list-item-group
-        v-for="request in formedMyRequests"
-          :key="request.formedRequest"
+        v-for="(request, index) in formedMyRequests"
+          :key="index"
           color="primary">
         <v-list-item>
           <v-list-item-content>
@@ -20,8 +20,8 @@
     <v-list dense>
       <v-subheader>ログイン者のoffers一覧</v-subheader>
       <v-list-item-group
-        v-for="offer in formedMyOffers"
-          :key="offer.formedOffer"
+        v-for="(offer, index) in formedMyOffers"
+          :key="index"
           color="primary">
         <v-list-item>
           <v-list-item-content>

@@ -63,8 +63,8 @@
     <v-list dense>
       <v-subheader>routes.params.idのTimes一覧</v-subheader>
       <v-list-item-group
-        v-for="time in formedTargetTimes"
-          :key="time.formedTime"
+        v-for="(time, index) in formedTargetTimes"
+          :key="index"
           color="primary"
       >
         <v-list-item
