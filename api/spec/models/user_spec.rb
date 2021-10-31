@@ -67,10 +67,10 @@ RSpec.describe User, type: :model do
     expect(user).to be_valid
   end
 
-  it "profileが300字を超える場合無効" do
-    user = build(:user, profile: "餅" * 301)
+  it "profileが150字を超える場合無効" do
+    user = build(:user, profile: "餅" * 151)
     user.valid?
-    expect(user.errors[:profile]).to include("is too long (maximum is 300 characters)")
+    expect(user.errors[:profile]).to include("is too long (maximum is 150 characters)")
   end
 
   describe "age" do

@@ -1,25 +1,7 @@
-50.times do |n|
-  name = Faker::Name.first_name
-  email = Faker::Internet.email
-  myid = Faker::Lorem.characters(number: 10)
-  password = "password"
-  address = Faker::Address.name
-  wanted = [true, false].sample
-  sex = [true, false].sample
-  age = rand(20..60)
-  year = rand(0..39)
-  profile = Faker::Movies::HarryPotter.quote
-
-  User.create(
-    name: name,
-    email: email,
-    myid: myid,
-    password: password,
-    address: address,
-    wanted: wanted,
-    sex: sex,
-    age: age,
-    year: year,
-    profile: profile
-  )
-end
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
+#
+# Examples:
+#
+#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
+#   Character.create(name: 'Luke', movie: movies.first)
