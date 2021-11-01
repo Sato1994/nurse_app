@@ -1,10 +1,10 @@
 <template>
-<container>
+<v-container>
 <v-list dense>
       <v-subheader>ログイン者のTalkRoom一覧</v-subheader>
       <v-list-item-group
-        v-for="room in myRooms"
-          :key="room"
+        v-for="(room, index) in myRooms"
+          :key="index"
          
           
           color="primary">
@@ -20,12 +20,12 @@
 
 
             
-            <v-list-item-title v-text="index"></v-list-item-title>
+            <v-list-item-title></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
     </v-list>
-    </container>
+    </v-container>
 </template>
 
 

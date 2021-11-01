@@ -1,7 +1,6 @@
 <template>
   <v-app dark>
     <v-main>
-      <template>
         <v-app id="inspire">
           ★デバッグ用★ ★Userかhostか？{{ $cookies.get("user") }}★
           ★myInfo→{{ $store.state.myInfo.myInfo.name}}★
@@ -164,7 +163,6 @@
             </v-container>
           </v-main>
         </v-app>
-      </template>
     </v-main>
   </v-app>
 </template>
