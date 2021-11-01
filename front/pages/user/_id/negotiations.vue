@@ -1,5 +1,5 @@
 <template>
-<container>
+<v-container>
 <v-list dense>
       <v-subheader>ログイン者のrequest一覧</v-subheader>
       <v-list-item-group
@@ -30,7 +30,7 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
-    </container>
+    </v-container>
 </template>
 
 
