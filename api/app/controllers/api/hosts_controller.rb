@@ -1,7 +1,14 @@
 class Api::HostsController < ApplicationController
+include Pagination
+
   def index
-    @hosts = Host.all
-    render "index", formats: :json, handlers: :jbuilder
+    hosts = Kaminari.paginate_array(Host.all).page(params[:page]).per(10)
+    @pagination = resources_with_pagination(hosts)
+    @hosts = hosts.as_json
+    @object = {
+      users: @hosts, kaminari: @pagination
+    }
+    render json: @object
   end
 
   def show

@@ -1,9 +1,14 @@
 class Api::UsersController < ApplicationController
-
+include Pagination
 
   def index
-    @users = User.all
-    render "index", formats: :json, handlers: :jbuilder
+    users = Kaminari.paginate_array(User.all).page(params[:page]).per(10)
+    @pagination = resources_with_pagination(users)
+    @users = users.as_json
+    @object = {
+      users: @users, kaminari: @pagination
+    }
+    render json: @object
   end
 
   def show
