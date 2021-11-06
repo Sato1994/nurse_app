@@ -2,24 +2,39 @@
 <div>
   <TargetCards :targets="targets" />
   <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+    <v-btn fixed fab bottom right color="blue" style="bottom: 50px" @click="openSearchModal">
+      <v-icon color="white">mdi-magnify</v-icon>
+    </v-btn>
+    <modal name="search-modal" height="auto">
+      <Search @search-button-click="searchUser" />
+    </modal>
 </div>
 </template>
 
 <script>
 import TargetCards from "@/components/pages/TargetCards.vue";
+import Search from '@/components/pages/modal/Search.vue'
 export default {
+  
   components: {
     TargetCards,
+    Search,
   },
+
   data: () => ({
     targets: [],
     page: 1,
+    name: '',
+    address: '',
   }),
+
   methods: {
     infiniteHandler($state) {
       this.$axios.get(`/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`, {
         params: {
-          page: this.page
+          page: this.page,
+          name: this.name,
+          address: this.address
         },
       })
       .then((response) => {
@@ -36,7 +51,28 @@ export default {
         $state.complete()
         console.log(error)
       })
-    }
+    },
+    openSearchModal() {
+      this.$modal.show("search-modal")
+    },
+    searchUser( name, address) {
+      this.name = name
+      this.address = address
+      this.$axios.get(`/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`, {
+        params: {
+          page: 1,
+          name: this.name,
+          address: this.address
+        },
+      })
+      .then((response) => {
+        this.targets = []
+        this.targets.push(...response.data.users)       
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
   },
 
   computed: {

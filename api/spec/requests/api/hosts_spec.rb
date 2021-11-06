@@ -10,9 +10,9 @@ RSpec.describe "api::hosts", type: :request do
     it "ステータス200を返す" do
       expect(response.status).to eq(200)
     end
-    it "アクセスした場合ホスト数と同じだけjsonを返す" do
+    it "アクセスした場合2つのjsonを返す" do
       json = JSON.parse(response.body)
-      expect(json.count).to eq Host.count
+      expect(json.count).to eq(2)
     end
   end
 

@@ -2,7 +2,9 @@ class Api::HostsController < ApplicationController
 include Pagination
 
   def index
-    hosts = Kaminari.paginate_array(Host.all).page(params[:page]).per(10)
+    name = params[:name]
+    address = params[:address]
+    hosts = Kaminari.paginate_array(Host.where('name LIKE ? && address LIKE ?', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
     @pagination = resources_with_pagination(hosts)
     @hosts = hosts.as_json
     @object = {
@@ -25,4 +27,7 @@ include Pagination
     @recruitment_times = @host.recruitment_times
     render "show", formats: :json, handlers: :jbuilder
   end
+
+
+
 end
