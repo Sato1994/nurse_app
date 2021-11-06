@@ -1,5 +1,6 @@
 50.times do |n|
-  name = Faker::Name.first_name
+  # name = Faker::Name.first_name
+  name = 'login'
   email = Faker::Internet.email
   myid = Faker::Lorem.characters(number: 10)
   password = "password"
@@ -10,16 +11,25 @@
   year = rand(0..39)
   profile = Faker::Movies::HarryPotter.quote
 
-  User.create(
+  # User.create(
+  #   name: name,
+  #   email: email,
+  #   myid: myid,
+  #   password: password,
+  #   address: address,
+  #   wanted: wanted,
+  #   sex: sex,
+  #   age: age,
+  #   year: year,
+  #   profile: profile
+  # )
+  Host.create(
     name: name,
     email: email,
     myid: myid,
     password: password,
     address: address,
     wanted: wanted,
-    sex: sex,
-    age: age,
-    year: year,
     profile: profile
   )
 end

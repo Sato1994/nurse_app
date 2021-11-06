@@ -11,8 +11,8 @@ RSpec.describe "Api::Users", type: :request do
     it "ステータス200を返す" do
       expect(response.status).to eq(200)
     end
-    it "アクセスした場合ユーザー数と同じだけjsonを返す" do
-      expect(json.count).to eq User.count
+    it "アクセスした場合2つのjsonを返す" do
+      expect(json.count).to eq(2)
     end
   end
   
