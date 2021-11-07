@@ -144,14 +144,6 @@ export default {
 
     targetTimes: []
   }),
-  created() {
-    const myid = this.$route.params.id
-    this.$axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
-      this.target = response.data.user
-      // this.targetSkills = response.data.target_skills;
-      this.targetTimes = response.data.target_times
-    });
-  },
 
   computed: {
     stringStartTime() {
@@ -170,8 +162,16 @@ export default {
       return targetTimes
     }
   },
+  
+  created() {
+    const myid = this.$route.params.id
+    this.$axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
+      this.target = response.data.user
+      // this.targetSkills = response.data.target_skills;
+      this.targetTimes = response.data.target_times
+    });
+  },
  
-
   methods: {
     register() {
       this.$axios.post(`/api/host_requests/${this.target.id}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
