@@ -109,16 +109,6 @@ export default {
     targetSkills: [],
     targetTimes: [],
   }),
-  
-  created() {
-    const myid = this.$route.params.id;
-    axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
-      this.target = response.data.user;
-      this.targetSkills = response.data.target_skills;
-      this.targetTimes = response.data.target_times
-    });
-  },
-
   computed: {
     formedTargetTimes() {
       const targetTimes = this.targetTimes.map(obj => {
@@ -129,7 +119,14 @@ export default {
       })
       return targetTimes
     }
-
+  },
+    created() {
+    const myid = this.$route.params.id;
+    axios.get(`http://localhost:3000/api/users/${myid}`).then((response) => {
+      this.target = response.data.user;
+      this.targetSkills = response.data.target_skills;
+      this.targetTimes = response.data.target_times
+    });
   },
 
   methods: {
