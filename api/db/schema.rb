@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_08_064258) do
+ActiveRecord::Schema.define(version: 2021_11_08_070457) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name", null: false
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(version: 2021_11_08_064258) do
     t.bigint "host_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "free_time_id", null: false
+    t.index ["free_time_id"], name: "index_host_requests_on_free_time_id"
     t.index ["host_id"], name: "index_host_requests_on_host_id"
   end
 
@@ -154,6 +156,8 @@ ActiveRecord::Schema.define(version: 2021_11_08_064258) do
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "recruitment_time_id", null: false
+    t.index ["recruitment_time_id"], name: "index_user_requests_on_recruitment_time_id"
     t.index ["user_id"], name: "index_user_requests_on_user_id"
   end
 
@@ -209,6 +213,7 @@ ActiveRecord::Schema.define(version: 2021_11_08_064258) do
   add_foreign_key "agreements", "users"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"
+  add_foreign_key "host_requests", "free_times"
   add_foreign_key "host_requests", "hosts"
   add_foreign_key "host_skills", "hosts"
   add_foreign_key "host_skills", "skills"
@@ -216,6 +221,7 @@ ActiveRecord::Schema.define(version: 2021_11_08_064258) do
   add_foreign_key "rooms", "hosts"
   add_foreign_key "rooms", "users"
   add_foreign_key "user_messages", "rooms"
+  add_foreign_key "user_requests", "recruitment_times"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_skills", "skills"
   add_foreign_key "user_skills", "users"
