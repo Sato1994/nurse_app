@@ -3,6 +3,6 @@ FactoryBot.define do
     start_time { Time.current + 21.hour }
     finish_time { Time.current  + 29.hour }
     association :host
-    association :user
+    association :free_time
   end
 end
