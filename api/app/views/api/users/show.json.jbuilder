@@ -12,7 +12,12 @@ json.target_times do
 end
 
 json.requests do
-  json.array! @requests, :id, :start_time, :finish_time, :user, :host
+  json.array! @requests do |request|
+    json.id request.id
+    json.start_time request.start_time
+    json.finish_time request.finish_time
+    json.host request.recruitment_time.host
+  end
 end
 
 json.agreements do
@@ -20,7 +25,7 @@ json.agreements do
 end
 
 json.offers do
-  json.array! @offers, :id, :start_time, :finish_time, :user, :host
+  json.array! @offers, :id, :start_time, :finish_time, :host, :free_time
 end
 
 json.rooms do
