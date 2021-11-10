@@ -1,9 +1,6 @@
 class Api::HostRequestsController < ApplicationController
 
-
-
   def create
-    @user = User.find(params[:user_id])
     host_request = HostRequest.new(host_request_params)
     if host_request.save
       render json: host_request, status: 201
@@ -12,14 +9,10 @@ class Api::HostRequestsController < ApplicationController
     end
   end
 
-
-
-
   private
 
   def host_request_params
-    params.permit(:host_request).merge(user: @user, host: current_api_host, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:host_request).merge(free_time_id: params[:free_time_id], host: current_api_host, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
-
-
+  
 end

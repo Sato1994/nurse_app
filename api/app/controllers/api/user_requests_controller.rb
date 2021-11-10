@@ -27,7 +27,6 @@ class Api::UserRequestsController < ApplicationController
   #############################################################
 
   def create
-    @host = Host.find(params[:host_id])
     user_request = UserRequest.new(user_request_params)
     if user_request.save
       render json: user_request, status: 201
@@ -39,9 +38,7 @@ class Api::UserRequestsController < ApplicationController
   private
 
   def user_request_params
-    params.permit(:user_request).merge(host: @host, user: current_api_user, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:user_request).merge(recruitment_time_id: params[:recruitment_time_id], user: current_api_user, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
-
-
 
 end
