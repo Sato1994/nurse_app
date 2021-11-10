@@ -1,5 +1,6 @@
 class RecruitmentTime < ApplicationRecord
   belongs_to :host
+  has_many :user_requests, dependent: :destroy
 
   validates :host, presence: true
   validates :start_time, presence: true

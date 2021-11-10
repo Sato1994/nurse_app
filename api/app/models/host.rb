@@ -13,6 +13,7 @@ class Host < ActiveRecord::Base
   has_many :users, through: :agreements
   has_many :recruitment_times, dependent: :destroy
   has_many :host_requests, dependent: :destroy
+  has_many :user_requests, through: :recruitment_times
   has_many :free_times, through: :host_requests
   has_many :rooms, dependent: :destroy
   has_many :host_messages, through: :rooms

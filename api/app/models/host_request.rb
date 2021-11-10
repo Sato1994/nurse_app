@@ -1,25 +1,27 @@
 class HostRequest < ApplicationRecord
-  belongs_to :user
+  belongs_to :free_time
   belongs_to :host
+  has_one :user, through: :free_time
 
-  validates :user, presence: true
+  validates :free_time, presence: true
   validates :host, presence: true
   validates :start_time, presence: true
   validates :finish_time, presence: true
+  validates_uniqueness_of :free_time_id, scope: :host_id
 
   validate :is_the_request_included_in_the_free_time
-  validate :duplication_of_host_request_for_same_user
+  validate :duplication_of_host_request
   validate :host_request_has_some_hours_grace
   validate :limitation_of_host_request_hours
 
   def is_the_request_included_in_the_free_time
-    unless FreeTime.where('start_time <= ? && finish_time >= ? && user_id = ?', start_time, finish_time, user_id).exists?
+    unless FreeTime.where('start_time <= ? && finish_time >= ? && id = ?', start_time, finish_time, free_time_id).exists?
       errors.add(:start_time, "お相手の募集時間の範囲から外れています。")
     end
   end
 
-  def duplication_of_host_request_for_same_user
-    if HostRequest.where('finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id, host_id).exists?
+  def duplication_of_host_request
+    if HostRequest.where('finish_time >= ? && ? >= start_time && free_time_id = ? && host_id = ?', start_time, finish_time, free_time_id, host_id).exists?
       errors.add(:start_time, "同じ時間帯で申請済みです。")
     end
   end

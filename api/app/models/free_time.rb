@@ -1,5 +1,6 @@
 class FreeTime < ApplicationRecord
   belongs_to :user
+  has_many :host_requests, dependent: :destroy
 
   validates :user, presence: true
   validates :start_time, presence: true
