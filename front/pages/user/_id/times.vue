@@ -99,7 +99,7 @@
     tile
   >
     <v-list dense>
-      <v-subheader>Timeの登録一覧</v-subheader>
+      <v-subheader>お相手の募集Timeの登録一覧</v-subheader>
       <v-list-item-group
         v-for="(time, index) in formedTargetTimes"
           :key="index"
@@ -119,10 +119,9 @@
         </v-list-item>
 
       </v-list-item-group>
-    </v-list>
+    </v-list> 
   </v-card>
 
-   
   </v-card>
 </template>
 
@@ -141,7 +140,6 @@ export default {
     finishTime: {},
     icon: 'mdi-clock',
     target: [],
-
     targetTimes: []
   }),
 
@@ -174,7 +172,7 @@ export default {
  
   methods: {
     register() {
-      this.$axios.post(`/api/host_requests/${this.target.id}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
+      this.$axios.post(`/api/host_requests/${this.$route.query.t}`, {start_time: this.stringStartTime, finish_time: this.stringFinishTime},
       {headers: this.$cookies.get('authInfo')})
       .then((response) => {
         console.log('host_request成功', response.data)

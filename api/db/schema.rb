@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_27_095413) do
+ActiveRecord::Schema.define(version: 2021_11_08_080827) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name", null: false
@@ -65,12 +65,13 @@ ActiveRecord::Schema.define(version: 2021_10_27_095413) do
   create_table "host_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.datetime "start_time", null: false
     t.datetime "finish_time", null: false
-    t.bigint "user_id", null: false
     t.bigint "host_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "free_time_id", null: false
+    t.index ["free_time_id"], name: "index_host_requests_on_free_time_id"
+    t.index ["host_id", "free_time_id"], name: "index_host_requests_on_host_id_and_free_time_id", unique: true
     t.index ["host_id"], name: "index_host_requests_on_host_id"
-    t.index ["user_id"], name: "index_host_requests_on_user_id"
   end
 
   create_table "host_skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -154,10 +155,11 @@ ActiveRecord::Schema.define(version: 2021_10_27_095413) do
     t.datetime "start_time", null: false
     t.datetime "finish_time", null: false
     t.bigint "user_id", null: false
-    t.bigint "host_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["host_id"], name: "index_user_requests_on_host_id"
+    t.bigint "recruitment_time_id", null: false
+    t.index ["recruitment_time_id"], name: "index_user_requests_on_recruitment_time_id"
+    t.index ["user_id", "recruitment_time_id"], name: "index_user_requests_on_user_id_and_recruitment_time_id", unique: true
     t.index ["user_id"], name: "index_user_requests_on_user_id"
   end
 
@@ -213,15 +215,15 @@ ActiveRecord::Schema.define(version: 2021_10_27_095413) do
   add_foreign_key "agreements", "users"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"
+  add_foreign_key "host_requests", "free_times"
   add_foreign_key "host_requests", "hosts"
-  add_foreign_key "host_requests", "users"
   add_foreign_key "host_skills", "hosts"
   add_foreign_key "host_skills", "skills"
   add_foreign_key "recruitment_times", "hosts"
   add_foreign_key "rooms", "hosts"
   add_foreign_key "rooms", "users"
   add_foreign_key "user_messages", "rooms"
-  add_foreign_key "user_requests", "hosts"
+  add_foreign_key "user_requests", "recruitment_times"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_skills", "skills"
   add_foreign_key "user_skills", "users"

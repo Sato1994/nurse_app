@@ -70,7 +70,7 @@
           color="primary"
       >
         <v-list-item
-        @click="jumpTargetTimes">
+        @click="jumpTargetTimes(time.id)">
           <v-list-item-content>
             <v-list-item-title v-text="time.formedTime"></v-list-item-title>
           </v-list-item-content>
@@ -136,8 +136,8 @@ export default {
     openSkillListModal() {
       this.$modal.show("skill-list-modal");
     },
-    jumpTargetTimes() {
-      this.$router.push(`/user/${this.target.myid}/times`)
+    jumpTargetTimes(freeTimeId) {
+      this.$router.push({ path: `/user/${this.target.myid}/times`, query:{ t: freeTimeId}})
     },
   },
 };
