@@ -31,8 +31,8 @@ Rails.application.routes.draw do
 
   post 'api/recruitment_times', to: 'api/recruitment_times#create'
 
-  post 'api/host_requests/:user_id', to: 'api/host_requests#create'
-  post 'api/user_requests/:host_id', to: 'api/user_requests#create'
+  post 'api/host_requests/:free_time_id', to: 'api/host_requests#create'
+  post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
 
   namespace :api do
     resources :rooms, only: [:show]
