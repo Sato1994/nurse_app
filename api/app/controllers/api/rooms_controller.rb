@@ -29,6 +29,7 @@ class Api::RoomsController < ApplicationController
       @host = Host.find(params[:host_id])
       room = Room.new(room_user_signed_in_params)
       if room.save
+        HostRequest.find(params[:request_id]).destroy
         render json: room, status: 201
       else
         render json: room.errors, status: 400
@@ -37,6 +38,7 @@ class Api::RoomsController < ApplicationController
       @user = User.find(params[:user_id])
       room = Room.new(room_host_signed_in_params)
       if room.save
+        UserRequest.find(params[:request_id]).destroy
         render json: room, status: 201
       else
         render json: room.errors, status: 400
@@ -49,11 +51,11 @@ class Api::RoomsController < ApplicationController
   private
 
   def room_user_signed_in_params
-    params.permit(:user, :host).merge(user: current_api_user, host: @host)
+    params.permit(:room).merge(user: current_api_user, host: @host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
 
   def room_host_signed_in_params
-    params.permit(:user, :host).merge(user: @user, host: current_api_host)
+    params.permit(:room).merge(user: @user, host: current_api_host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
 
 end
