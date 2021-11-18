@@ -17,6 +17,52 @@ RSpec.describe Room, type: :model do
     end
   end
 
+  describe "start_time, finish_time" do
+    it "同user-host間で同じ時間帯のroomがあれば失敗" do
+      room = create(:room)
+      new_room = build(:room, user: room.user, host: room.host)
+      new_room.valid?
+      expect(new_room.errors[:start_time]).to include("同じお相手と同じ時間帯で交渉中です。")
+    end
+
+    it "作成時点で勤務開始まで7時間以上あれば有効" do
+      room = build(:room, start_time: Time.current + 7.hour + 1.second, finish_time: Time.current + 20.hour)
+      expect(room).to be_valid
+    end
+
+    it "作成時点で勤務開始ちょうど7時間前なら無効" do
+      room = build(:room, start_time: Time.current + 7.hour)
+      room.valid?
+      expect(room.errors[:start_time]).to include("申請時間は現時刻から7時間以上の猶予が必要です。")
+    end
+
+    context "勤務時間" do
+      it "1時間なら有効" do
+        room = build(:room, finish_time: Time.current + 22.hour)
+        expect(room).to be_valid
+      end
+      
+      it "1時間未満なら無効" do
+        room = build(:room, finish_time: Time.current + 22.hour - 1.second)
+        room.valid?
+        expect(room.errors[:start_time]).to include("申請時間は最低1時間以上です。")
+      end
+
+      it "18時間ちょうどなら有効" do
+        room = build(:room, finish_time: Time.current + 39.hour)
+        expect(room).to be_valid
+      end
+      
+      it "18時間を超える場合無効" do
+        room = build(:room, finish_time: Time.current + 39.hour + 1.second)
+        room.valid?
+        expect(room.errors[:start_time]).to include("申請時間は最高18時間までです。")
+      end
+    end
+
+
+  end
+
   describe "association" do
     
     it "userが削除されれば削除される" do
@@ -25,7 +71,7 @@ RSpec.describe Room, type: :model do
     end
 
     it "hostが削除されれば削除される" do
-      room = create(:room)
+      room = create(:room)  
       expect{ room.host.destroy }.to change{ Room.count }.by(-1)
     end
     
