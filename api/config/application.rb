@@ -59,5 +59,7 @@ module App
 
     ##タイムゾーンの指定
     config.time_zone = 'Tokyo'
+    ##データベースのタイムゾーン指定
+    config.active_record.default_timezone = :local
   end
 end
