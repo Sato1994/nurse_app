@@ -31,40 +31,29 @@ RSpec.describe Agreement, type: :model do
   end
 
   describe "start_time, finish_time" do
-    context "勤務時間" do
-      it "１時間なら有効" do
-        agreement = build(:agreement, finish_time: Time.current + 25.hour)
-        expect(agreement).to be_valid
-      end
-
-      it "1時間未満なら無効" do
-        agreement = build(:agreement, finish_time: Time.current + 25.hour - 1.second )
-        agreement.valid?
-        expect(agreement.errors[:finish_time]).to include("勤務時間は1～18時間までです。")
-      end
-
-      it "18時間を超える場合無効" do
-        agreement = build(:agreement, finish_time: Time.current + 42.hour + 1.second)
-        agreement.valid?
-        expect(agreement.errors[:finish_time]).to include("勤務時間は1～18時間までです。")
-      end
-    end
-    context "同一userが含まれる勤務時間の重複" do
-      it "既存のagreementのstateが4なら有効" do
-        agreement = create(:agreement, state: 4)
-        user = agreement.user
-        new = build(:agreement, user: user)
-        expect(new).to be_valid
-      end
-      it "既存のagreementのstateが4以外なら無効" do
-        agreement = create(:agreement)
-        user = agreement.user
-        new = build(:agreement, user: user)
-        new.valid?
-        expect(new.errors[:start_time]).to include("勤務時間が他の勤務時間と重複しています。")
-      end
+    it "同userで期間が重複している場合無効" do
+      agreement = create(:agreement)
+      new_agreement = build(:agreement, user: agreement.user)
+      new_agreement.valid?
+      expect(new_agreement.errors[:start_time]).to include("看護師の勤務期間が他の契約と重複しています。")
     end
 
+    it "１時間なら有効" do
+      agreement = build(:agreement, finish_time: Time.current + 25.hour)
+      expect(agreement).to be_valid
+    end
+
+    it "1時間未満なら無効" do
+      agreement = build(:agreement, finish_time: Time.current + 25.hour - 1.second )
+      agreement.valid?
+      expect(agreement.errors[:finish_time]).to include("勤務時間は1～18時間までです。")
+    end
+
+    it "18時間を超える場合無効" do
+      agreement = build(:agreement, finish_time: Time.current + 42.hour + 1.second)
+      agreement.valid?
+      expect(agreement.errors[:finish_time]).to include("勤務時間は1～18時間までです。")
+    end
   end
 
   describe "state" do
