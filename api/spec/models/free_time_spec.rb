@@ -44,17 +44,11 @@ RSpec.describe FreeTime, type: :model do
         expect(new_ft.errors[:start_time]).to include("登録時間が重複しています。")
       end
       
-      it "自分の持つstateが4以外のAgreementと重複すれば無効" do
+      it "自分の持つAgreementと重複すれば無効" do
         agreement = create(:agreement)
         ft = build(:free_time, user: agreement.user, start_time: Time.current + 32.hour, finish_time: Time.current + 42.hour)
         ft.valid?
-        expect(ft.errors[:start_time]).to include("登録時間が勤務予定時間と重複しています。")
-      end
-      
-      it "stateが4のAgreementとの重複なら有効" do
-        agreement = create(:agreement, state: 4)
-        ft = build(:free_time, user: agreement.user, start_time: Time.current + 32.hour, finish_time: Time.current + 42.hour)
-        expect(ft).to be_valid
+        expect(ft.errors[:start_time]).to include("一度契約した時間では登録できません。")
       end
     end
   end

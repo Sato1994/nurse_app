@@ -27,8 +27,8 @@ class Agreement < ApplicationRecord
   end
 
   def duplication_of_work_hours_for_same_user
-    if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ? && state != ?', start_time, finish_time, user_id, 4).exists?
-      errors.add(:start_time, "勤務時間が他の勤務時間と重複しています。")
+    if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id).exists?
+      errors.add(:start_time, "看護師の勤務期間が他の契約と重複しています。")
     end
   end
 end
