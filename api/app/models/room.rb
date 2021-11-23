@@ -6,6 +6,8 @@ class Room < ApplicationRecord
 
   validates :user, presence: :true
   validates :host, presence: :true
+  validates :start_time, presence: :true
+  validates :finish_time, presence: :true
   validates :consensus, inclusion: { in: %w( negotiating user host conclusion cancelled) }, presence: :true
   validates :deletion, inclusion: { in: %w( na user host) }, presence: :true
 
@@ -41,6 +43,7 @@ class Room < ApplicationRecord
       errors.add(:start_time, "申請時間は最低1時間以上です。")
     end
   end
+  
   def limitation_of_room_hours_min
     unless finish_time <= (start_time + 18.hour)
       errors.add(:start_time, "申請時間は最高18時間までです。")
