@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     end
 
   end
+
   namespace :api do
     resources :agreements, only: [:index, :show, :update, :destroy]
   end
@@ -41,6 +42,7 @@ Rails.application.routes.draw do
   post 'api/rooms/host/:host_id', to: 'api/rooms#create'
   
   patch 'api/rooms/:id', to: 'api/rooms#update'
+  patch 'api/rooms/:id', to: 'api/rooms#update_consensus'
   # namespace :api do
   #   resources :user_messages, only: [:index]
   # end
@@ -52,9 +54,4 @@ Rails.application.routes.draw do
   # end
 
   post 'api/host_messages/:room_id', to: 'api/host_messages#create'
-
-
-
-
-
 end

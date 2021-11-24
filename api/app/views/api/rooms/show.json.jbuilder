@@ -1,11 +1,11 @@
-# json.user_messages do
-#   json.array! @user_messages, :id, :message, :created_at
-# end
-# json.host_messages do
-#   json.array! @host_messages, :id, :message, :created_at, 
-# end
+json.start_time @start_time
+json.finish_time @finish_time
+json.consensus @consensus
 
-
+json.partner do
+  json.id @partner.id
+  json.name @partner.name
+end
 
 json.user_messages do
   json.array! @user_messages do |message|
@@ -15,7 +15,6 @@ json.user_messages do
     json.user "user"
   end
 end
-
 
 json.host_messages do
   json.array! @host_messages do |message|
