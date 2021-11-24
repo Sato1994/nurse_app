@@ -1,90 +1,163 @@
 <template>
   <v-app id="inspire">
-
-    <v-navigation-drawer
-      v-model="drawer"
-      app
+    <v-header> {{ partner.name }}さま </v-header>
+    <v-subheader v-if="consensus == 'conclusion'"
+      >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
+        startTime.hour
+      }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
+        finishTime.month
+      }}月{{ finishTime.day }}日{{ finishTime.hour }}時{{
+        finishTime.minute
+      }}分で契約済みです。契約の変更は契約一覧から申請してください。</v-subheader
     >
-      <v-sheet
-        color="grey lighten-4"
-        class="pa-4"
-      >
-        <v-avatar
-          class="mb-4"
-          color="grey darken-1"
-          size="64"
-        ></v-avatar>
-
-        <div>john@vuetifyjs.com</div>
-      </v-sheet>
-
-      <v-divider></v-divider>
-
-     
-    </v-navigation-drawer>
-
+    <v-subheader v-if="consensus == $cookies.get('user')"
+      >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
+        startTime.hour
+      }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
+        finishTime.month
+      }}月{{ finishTime.day }}日{{ finishTime.hour }}時{{
+        finishTime.minute
+      }}分で同意しています。お相手の同意をお待ちください。</v-subheader
+    >
+    <v-subheader
+      v-if="consensus == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+      >お相手が{{ startTime.year }}年{{ startTime.month }}月{{
+        startTime.day
+      }}日{{ startTime.hour }}時{{ startTime.minute }}分から
+      {{ finishTime.year }}年{{ finishTime.month }}月{{ finishTime.day }}日{{
+        finishTime.hour
+      }}時{{
+        finishTime.minute
+      }}分で同意しました。双方の同意で契約完了します。</v-subheader
+    >
+    <v-list-item v-if="consensus == 'negotiating'" three-line>
+      <v-subheader> {{ partner.name }}さま </v-subheader>
+      <v-list-item-content>
+        <div class="text-overline mb-4">いつから</div>
+        <v-card-actions>
+          <v-select
+            v-model="startTime.year"
+            :items="yearList"
+            label="年"
+            dense
+          ></v-select>
+          <v-select
+            v-model="startTime.month"
+            :items="monthList"
+            label="月"
+            dense
+          ></v-select>
+          <v-select
+            v-model="startTime.day"
+            :items="dayList"
+            label="日"
+            dense
+          ></v-select>
+          <v-select
+            v-model="startTime.hour"
+            :items="hourList"
+            label="時"
+            dense
+          ></v-select>
+          <v-select
+            v-model="startTime.minute"
+            :items="minuteList"
+            label="分"
+            dense
+          ></v-select>
+        </v-card-actions>
+        <div class="text-overline mb-4">いつまで</div>
+        <v-card-actions>
+          <v-select
+            v-model="finishTime.year"
+            :items="yearList"
+            label="年"
+            dense
+          ></v-select>
+          <v-select
+            v-model="finishTime.month"
+            :items="monthList"
+            label="月"
+            dense
+          ></v-select>
+          <v-select
+            v-model="finishTime.day"
+            :items="dayList"
+            label="日"
+            dense
+          ></v-select>
+          <v-select
+            v-model="finishTime.hour"
+            :items="hourList"
+            label="時"
+            dense
+          ></v-select>
+          <v-select
+            v-model="finishTime.minute"
+            :items="minuteList"
+            label="分"
+            dense
+          ></v-select>
+        </v-card-actions>
+      </v-list-item-content>
+    </v-list-item>
+    <v-btn
+      v-if="consensus == 'negotiating'"
+      outlined
+      rounded
+      text
+      color="red"
+      @click="updateTime"
+    >
+      時間を変更する
+    </v-btn>
+    <v-btn
+      v-if="consensus != 'conclusion'"
+      outlined
+      rounded
+      text
+      color="red"
+      @click="updateConsensus"
+    >
+      {{
+        consensus == $cookies.get('user')
+          ? '同意を解除する'
+          : 'この時間で同意する'
+      }}
+    </v-btn>
     <v-main>
-      <v-container
-        class="py-8 px-6"
-        fluid
-      >
+      <v-container class="py-8 px-6" fluid>
         <v-row>
-          <v-col
-            
-            cols="12"
-          >
+          <v-col cols="12">
             <v-card>
-              <v-subheader>相手の名前とか</v-subheader>
-
               <v-list two-line>
                 <template>
                   <v-list-item
-                  v-for="(message, index) in messages"
-                  :key="index"
-
-                
+                    v-for="(message, index) in messages"
+                    :key="index"
                   >
                     <v-list-item-avatar color="grey darken-1">
                     </v-list-item-avatar>
-
                     <v-list-item-content>
-                      <v-list-item-title>{{message.created_at}}</v-list-item-title>
-
+                      <v-list-item-title>{{
+                        message.created_at
+                      }}</v-list-item-title>
                       <v-list-item-subtitle>
-                       {{message.user}}{{message.message}}
+                        {{ message.user }}{{ message.message }}
                       </v-list-item-subtitle>
                       <v-divider></v-divider>
-
                     </v-list-item-content>
-                   
                   </v-list-item>
-
-
                 </template>
               </v-list>
-
-
-
-
-               <v-textarea
-                v-model="inputMessage"
-                color="teal"
-              >
-                <template v-slot:label>
-                  <div>
-                    本文入力 <small>ここです</small>
-                  </div>
+              <v-textarea v-model="inputMessage" color="teal">
+                <template #label>
+                  <div>本文入力 <small>ここです</small></div>
                 </template>
               </v-textarea>
-              <v-btn @click="sendMessage">
-              送信
-              </v-btn>
-
-
-
+              <v-btn @click="sendMessage"> 送信 </v-btn>
             </v-card>
-            
-      {{messages}}
+            {{ messages }}
           </v-col>
         </v-row>
       </v-container>
@@ -93,15 +166,50 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      drawer: null,
-      messages: [], 
-      inputMessage: '',
-    }),
-  
-    mounted() {
-      this.$axios.get(`/api/rooms/${this.$route.params.id}`, {headers: this.$cookies.get('authInfo')})
+export default {
+  data: () => ({
+    drawer: null,
+    messages: [],
+    partner: {},
+    consensus: '',
+    inputMessage: '',
+    startTime: {},
+    finishTime: {},
+    yearList: [
+      2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031,
+    ],
+    monthList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    dayList: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+    ],
+    hourList: [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23,
+    ],
+    minuteList: [0, 15, 30, 45],
+  }),
+  computed: {
+    formedStartTime() {
+      return `${String(this.startTime.year)}-${String(
+        this.startTime.month
+      )}-${String(this.startTime.day)}T${String(this.startTime.hour)}:${String(
+        this.startTime.minute
+      )}`
+    },
+    formedFinishTime() {
+      return `${String(this.finishTime.year)}-${String(
+        this.finishTime.month
+      )}-${String(this.finishTime.day)}T${String(
+        this.finishTime.hour
+      )}:${String(this.finishTime.minute)}`
+    },
+  },
+  created() {
+    this.$axios
+      .get(`/api/rooms/${this.$route.params.id}`, {
+        headers: this.$cookies.get('authInfo'),
+      })
       .then((response) => {
         // Array.pushとArray.concatの違い https://qiita.com/pon_maeda/items/f034cccf3459c1d6505f
         this.messages = this.messages.concat(response.data.user_messages)
@@ -109,21 +217,76 @@
         this.messages.sort((a, b) => {
           return new Date(a.created_at) - new Date(b.created_at)
         })
+        this.partner = response.data.partner
+        this.consensus = response.data.consensus
+        const starttime = new Date(response.data.start_time)
+        this.startTime.year = starttime.getFullYear()
+        this.startTime.month = starttime.getMonth() + 1
+        this.startTime.day = starttime.getDate()
+        this.startTime.hour = starttime.getHours()
+        this.startTime.minute = starttime.getMinutes()
+        const finishtime = new Date(response.data.finish_time)
+        this.finishTime.year = finishtime.getFullYear()
+        this.finishTime.month = finishtime.getMonth() + 1
+        this.finishTime.day = finishtime.getDate()
+        this.finishTime.hour = finishtime.getHours()
+        this.finishTime.minute = finishtime.getMinutes()
       })
       .catch((error) => {
         console.log(error)
       })
-    },
-    methods: {
-      sendMessage() {
-        this.$axios.post(`/api/${this.$cookies.get('user')}_messages/${this.$route.params.id}`,{message: this.inputMessage}, {headers: this.$cookies.get('authInfo')})
-        .then((response)=> {
+  },
+  methods: {
+    sendMessage() {
+      this.$axios
+        .post(
+          `/api/${this.$cookies.get('user')}_messages/${this.$route.params.id}`,
+          { message: this.inputMessage },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
           console.log(response)
         })
         .catch((error) => {
           console.log(error)
         })
-      }
-    }
-  }
+    },
+    updateTime() {
+      this.$axios
+        .patch(
+          `/api/rooms/${this.$route.params.id}`,
+          {
+            [`${this.$cookies.get('user') === 'user' ? 'host' : 'host'}_id`]:
+              this.partner.id,
+            start_time: this.formedStartTime,
+            finish_time: this.formedFinishTime,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    updateConsensus() {
+      this.$axios
+        .patch(
+          `/api/rooms/${this.$route.params.id}`,
+          {},
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        .then((response) => {
+          console.log(response)
+          this.consensus = response.data.consensus
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+  },
+}
 </script>
