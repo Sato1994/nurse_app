@@ -34,4 +34,8 @@ class FreeTime < ApplicationRecord
       errors.add(:start_time, "登録時間は現在時刻より12時間以上時間の猶予が必要です。")
     end
   end
+
+  def self.destroy_free_times(a,b,c)
+    FreeTime.where('user_id = ? && finish_time >= ? && ? >= start_time', a, b, c).destroy_all
+  end
 end

@@ -71,6 +71,7 @@ RSpec.describe "Api::Agreements", type: :request do
         json = JSON.parse(response.body)
         expect(json.count).to eq(2)
       end
+
       it "hostがログインしている場合" do
         host = list.first.host
         create(:agreement, host: host, start_time: Time.current + 33.hour, finish_time: Time.current + 41.hour)
@@ -89,7 +90,6 @@ RSpec.describe "Api::Agreements", type: :request do
 
   describe "POST /create" do
     let!(:room) { create(:room)}
-
     context "userとしてログインしている場合" do
       before do
         post "/api/user/sign_in", params: { email: room.user.email, password: room.user.password }
@@ -98,6 +98,15 @@ RSpec.describe "Api::Agreements", type: :request do
       it "agreementを作成できる" do
         post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour }, headers: headers
         expect(Agreement.count).to eq(1)
+      end
+
+      it "agreementを作成したらその期間と重複しているfree_timeが削除される" do
+        create(:free_time, user: room.user)
+        expect{
+          post "/api/agreements/host/#{room.host.id}",
+          params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour},
+          headers: headers
+        }.to change { FreeTime.count}. from(1).to(0)
       end
 
       it "登録したらjsonを返す" do
@@ -125,6 +134,15 @@ RSpec.describe "Api::Agreements", type: :request do
       it "agreementを作成できる" do
         post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
         expect(Agreement.count).to eq(1)
+      end
+
+      it "agreementを作成したらその期間と重複しているfree_timeが削除される" do
+        create(:free_time, user: room.user)
+        expect{
+          post "/api/agreements/user/#{room.user.id}",
+          params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour},
+          headers: headers
+        }.to change { FreeTime.count}.from(1).to(0)
       end
 
       it "登録したらjsonを返す" do

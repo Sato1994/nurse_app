@@ -26,6 +26,7 @@ class Api::AgreementsController < ApplicationController
       @host = Host.find(params[:host_id])
       agreement = Agreement.new(agreement_user_signed_in_params)
       if agreement.save
+        FreeTime.destroy_free_times( current_api_user.id, Time.zone.parse(params[:start_time]), Time.zone.parse(params[:finish_time]))
         render json: agreement, status: 201
       else
         render json: agreement.errors, status: 400
@@ -34,6 +35,7 @@ class Api::AgreementsController < ApplicationController
       @user = User.find(params[:user_id])
       agreement = Agreement.new(agreement_host_signed_in_params)
       if agreement.save
+        FreeTime.destroy_free_times(params[:user_id], Time.zone.parse(params[:start_time]), Time.zone.parse(params[:finish_time]))
         render json: agreement, status: 201
       else
         render json: agreement.errors, status: 400
