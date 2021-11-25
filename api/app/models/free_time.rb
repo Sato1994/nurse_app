@@ -35,7 +35,7 @@ class FreeTime < ApplicationRecord
     end
   end
 
-  def self.destroy_free_times(a,b,c)
-    FreeTime.where('user_id = ? && finish_time >= ? && ? >= start_time', a, b, c).destroy_all
+  def self.destroy_free_times(user_id, start_time, finish_time)
+    FreeTime.where('user_id = ? && finish_time >= ? && ? >= start_time', user_id, start_time, finish_time).destroy_all
   end
 end
