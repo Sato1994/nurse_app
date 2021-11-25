@@ -90,13 +90,14 @@ RSpec.describe "Api::Agreements", type: :request do
 
   describe "POST /create" do
     let!(:room) { create(:room)}
+    let!(:params) { {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour} }
     context "userとしてログインしている場合" do
       before do
         post "/api/user/sign_in", params: { email: room.user.email, password: room.user.password }
       end
 
       it "agreementを作成できる" do
-        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour }, headers: headers
+        post "/api/agreements/host/#{room.host.id}", params: params, headers: headers
         expect(Agreement.count).to eq(1)
       end
 
@@ -104,19 +105,19 @@ RSpec.describe "Api::Agreements", type: :request do
         create(:free_time, user: room.user)
         expect{
           post "/api/agreements/host/#{room.host.id}",
-          params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour},
+          params: params,
           headers: headers
         }.to change { FreeTime.count}. from(1).to(0)
       end
 
       it "登録したらjsonを返す" do
-        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
+        post "/api/agreements/host/#{room.host.id}", params: params, headers: headers
         json = JSON.parse(response.body)
         expect(json.count).to eq(9)
       end
 
       it "登録したらステータス201を返す" do
-        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
+        post "/api/agreements/host/#{room.host.id}", params: params, headers: headers
         expect(response.status).to eq(201)
       end
 
@@ -132,7 +133,7 @@ RSpec.describe "Api::Agreements", type: :request do
       end
 
       it "agreementを作成できる" do
-        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
+        post "/api/agreements/user/#{room.user.id}", params: params, headers: headers
         expect(Agreement.count).to eq(1)
       end
 
@@ -140,19 +141,19 @@ RSpec.describe "Api::Agreements", type: :request do
         create(:free_time, user: room.user)
         expect{
           post "/api/agreements/user/#{room.user.id}",
-          params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour},
+          params: params,
           headers: headers
         }.to change { FreeTime.count}.from(1).to(0)
       end
 
       it "登録したらjsonを返す" do
-        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
+        post "/api/agreements/user/#{room.user.id}", params: params, headers: headers
         json = JSON.parse(response.body)
         expect(json.count).to eq(9)
       end
 
       it "登録したらステータス201を返す" do
-        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}, headers: headers
+        post "/api/agreements/user/#{room.user.id}", params: params, headers: headers
         expect(response.status).to eq(201)
       end
 
@@ -164,12 +165,12 @@ RSpec.describe "Api::Agreements", type: :request do
 
     context "ログインしていない場合" do
       it "ステータス401を返す" do
-        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}
+        post "/api/agreements/user/#{room.user.id}", params: params
         expect(response.status).to eq(401)
       end
 
       it "ステータス401を返す" do
-        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: Time.current + 24.hour, finish_time: Time.current + 32.hour}
+        post "/api/agreements/host/#{room.host.id}", params: params
         expect(response.status).to eq(401)
       end
     end
