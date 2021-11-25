@@ -76,17 +76,10 @@ class Api::AgreementsController < ApplicationController
   private
 
   def agreement_user_signed_in_params
-    params.permit(:state).merge(user: current_api_user, host: @host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:host_id, :room_id, :state).merge(user_id: current_api_user.id, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
 
   def agreement_host_signed_in_params
-    params.permit(:state).merge(user: @user, host: current_api_host, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:user_id, :room_id, :state).merge(host_id: current_api_host.id, start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
-
-
-
-
-
-
-
 end

@@ -3,7 +3,7 @@ class Room < ApplicationRecord
   belongs_to :host
   has_many :user_messages, dependent: :destroy
   has_many :host_messages, dependent: :destroy
-  has_one :Agreement
+  has_one :agreement
 
   validates :user, presence: :true
   validates :host, presence: :true
