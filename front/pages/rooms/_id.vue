@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-header> {{ partner.name }}さま </v-header>
+    <v-subheader> {{ partner.name }}さま </v-subheader>
     <v-subheader v-if="consensus == 'conclusion'"
       >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
         startTime.hour
@@ -31,7 +31,6 @@
       }}分で同意しました。双方の同意で契約完了します。</v-subheader
     >
     <v-list-item v-if="consensus == 'negotiating'" three-line>
-      <v-subheader> {{ partner.name }}さま </v-subheader>
       <v-list-item-content>
         <div class="text-overline mb-4">いつから</div>
         <v-card-actions>
@@ -171,6 +170,7 @@ export default {
     drawer: null,
     messages: [],
     partner: {},
+    id: '',
     consensus: '',
     inputMessage: '',
     startTime: {},
@@ -217,6 +217,7 @@ export default {
         this.messages.sort((a, b) => {
           return new Date(a.created_at) - new Date(b.created_at)
         })
+        this.id = response.data.id
         this.partner = response.data.partner
         this.consensus = response.data.consensus
         const starttime = new Date(response.data.start_time)
@@ -256,8 +257,6 @@ export default {
         .patch(
           `/api/rooms/${this.$route.params.id}`,
           {
-            [`${this.$cookies.get('user') === 'user' ? 'host' : 'host'}_id`]:
-              this.partner.id,
             start_time: this.formedStartTime,
             finish_time: this.formedFinishTime,
           },
@@ -271,21 +270,63 @@ export default {
         })
     },
     updateConsensus() {
-      this.$axios
-        .patch(
-          `/api/rooms/${this.$route.params.id}`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then((response) => {
-          console.log(response)
-          this.consensus = response.data.consensus
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      // consensusが相手の同意ずみの場合はまずagreementをcreateして、成功したらconsensusを変更するためのリクエストを出す。
+      // consensusがその他の場合はconsensusを変更するリクエストを出す。
+      switch (this.consensus) {
+        case this.$cookies.get('user') === 'user' ? 'host' : 'user':
+          this.$axios
+            .post(
+              `/api/agreements/${
+                this.$cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${this.partner.id}`,
+              {
+                room_id: this.id,
+                start_time: this.formedStartTime,
+                finish_time: this.formedFinishTime,
+              },
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+            .then((response) => {
+              console.log(response)
+              this.$axios
+                .patch(
+                  `/api/rooms/${this.$route.params.id}`,
+                  {},
+                  {
+                    headers: this.$cookies.get('authInfo'),
+                  }
+                )
+                .then((response) => {
+                  console.log(response)
+                  this.consensus = response.data.consensus
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+          break
+        default:
+          this.$axios
+            .patch(
+              `/api/rooms/${this.$route.params.id}`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+            .then((response) => {
+              console.log(response)
+              this.consensus = response.data.consensus
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+      }
     },
   },
 }
