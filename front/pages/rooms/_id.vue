@@ -138,11 +138,12 @@
                     <v-list-item-avatar color="grey darken-1">
                     </v-list-item-avatar>
                     <v-list-item-content>
-                      <v-list-item-title>{{
-                        message.created_at
-                      }}</v-list-item-title>
+                      <v-list-item-title
+                        >{{ message.name
+                        }}{{ message.created_at }}</v-list-item-title
+                      >
                       <v-list-item-subtitle>
-                        {{ message.user }}{{ message.message }}
+                        {{ message.message }}
                       </v-list-item-subtitle>
                       <v-divider></v-divider>
                     </v-list-item-content>

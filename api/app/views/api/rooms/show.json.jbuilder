@@ -13,7 +13,7 @@ json.user_messages do
     json.id message.id
     json.message message.message
     json.created_at message.created_at
-    json.user "user"
+    json.name message.user.name
   end
 end
 
@@ -22,6 +22,6 @@ json.host_messages do
     json.id message.id
     json.message message.message
     json.created_at message.created_at
-    json.user "host"
+    json.name message.host.name
   end
 end
