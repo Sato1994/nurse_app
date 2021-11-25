@@ -17,6 +17,21 @@ RSpec.describe Agreement, type: :model do
     end
   end
 
+  describe "room" do
+    it "なければ無効" do
+      agreement = build(:agreement, room: nil)
+      agreement.valid?
+      expect(agreement.errors[:room]).to include("can't be blank")
+    end
+    
+    it "同じroom_idのものは無効" do
+      agreement = create(:agreement)
+      room = agreement.room
+      new_agreement = build(:agreement, room: room)
+      expect(new_agreement).to be_invalid
+    end
+  end
+
   describe "start_time" do
     it "作成時点で勤務開始まで6時間以上あれば有効" do
       agreement = build(:agreement, start_time: Time.current + 6.hour + 1.second, finish_time: Time.current + 20.hour)

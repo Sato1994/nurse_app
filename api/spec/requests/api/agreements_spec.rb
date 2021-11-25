@@ -85,79 +85,75 @@ RSpec.describe "Api::Agreements", type: :request do
       get "/api/agreements"
       expect(response.status).to eq(401)
     end
-
   end
 
   describe "POST /create" do
-    let(:user) { create(:user) }
-    let(:host) { create(:host) }
+    let!(:room) { create(:room)}
 
     context "userとしてログインしている場合" do
       before do
-        post "/api/user/sign_in", params: { email: user.email, password: user.password }
+        post "/api/user/sign_in", params: { email: room.user.email, password: room.user.password }
       end
 
       it "agreementを作成できる" do
-        post "/api/agreements/host/#{host.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(Agreement.count).to eq(1)
       end
 
       it "登録したらjsonを返す" do
-        post "/api/agreements/host/#{host.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         json = JSON.parse(response.body)
-        expect(json.count).to eq(8)
+        expect(json.count).to eq(9)
       end
 
       it "登録したらステータス201を返す" do
-        post "/api/agreements/host/#{host.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(response.status).to eq(201)
       end
 
       it "失敗したらステータス400を返す" do
-        post "/api/agreements/host/#{host.id}", params: {start_time: "1000-08-06T00:00:00", finish_time: "1000-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: "1000-08-06T00:00:00", finish_time: "1000-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(response.status).to eq(400)
       end
-      
     end
 
     context "hostとしてログインしている場合" do
       before do
-        post "/api/host/sign_in", params: { email: host.email, password: host.password }
+        post "/api/host/sign_in", params: {room_id: room.id,  email: room.host.email, password: room.host.password }
       end
 
       it "agreementを作成できる" do
-        post "/api/agreements/user/#{user.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(Agreement.count).to eq(1)
       end
 
       it "登録したらjsonを返す" do
-        post "/api/agreements/user/#{user.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         json = JSON.parse(response.body)
-        expect(json.count).to eq(8)
+        expect(json.count).to eq(9)
       end
 
       it "登録したらステータス201を返す" do
-        post "/api/agreements/user/#{user.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(response.status).to eq(201)
       end
 
       it "失敗したらステータス400を返す" do
-        post "/api/agreements/user/#{user.id}", params: {start_time: "1000-08-06T00:00:00", finish_time: "1000-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
+        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: "1000-08-06T00:00:00", finish_time: "1000-08-06T08:00:00"}, headers: {uid: uid, client: client, "access-token": access_token}
         expect(response.status).to eq(400)
       end
     end
 
     context "ログインしていない場合" do
       it "ステータス401を返す" do
-        post "/api/agreements/user/#{user.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}
+        post "/api/agreements/user/#{room.user.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}
         expect(response.status).to eq(401)
       end
+
       it "ステータス401を返す" do
-        post "/api/agreements/host/#{host.id}", params: {start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}
+        post "/api/agreements/host/#{room.host.id}", params: {room_id: room.id, start_time: "2030-08-06T00:00:00", finish_time: "2030-08-06T08:00:00"}
         expect(response.status).to eq(401)
       end
     end
   end
-  # describe "PATCH /update" do
-  # end
 end

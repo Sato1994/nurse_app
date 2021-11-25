@@ -6,6 +6,7 @@ class Agreement < ApplicationRecord
   validates :user, presence: :true
   validates :host, presence: :true
   validates :room, presence: :true
+  validates_uniqueness_of :room_id
   validates :start_time, presence: :true
   validates :finish_time, presence: :true
   validates :state, inclusion: { in: %w(勤務期間前 勤務期間中 勤務完了 変更申請中 キャンセル済) }
