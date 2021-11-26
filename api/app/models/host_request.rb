@@ -7,8 +7,7 @@ class HostRequest < ApplicationRecord
   validates :host, presence: true
   validates :start_time, presence: true
   validates :finish_time, presence: true
-  validates_uniqueness_of :free_time_id, scope: :host_id
-
+  
   validate :is_the_request_included_in_the_free_time
   validate :duplication_of_host_request
   validate :duplication_of_user_request
