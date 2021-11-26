@@ -32,6 +32,14 @@ RSpec.describe HostRequest, type: :model do
         host_request.valid?
         expect(host_request.errors[:start_time]).to include("同じ時間帯でお相手から申請が来ています。")
       end
+
+      it "同userとの同じ期間帯のroomがあれば失敗" do
+        room = create(:room)
+        free_time = create(:free_time, user: room.user)
+        host_request = build(:host_request, host: room.host, free_time: free_time)
+        host_request.valid?
+        expect(host_request.errors[:start_time]).to include("同じ時間帯でお相手と交渉中です。")
+      end
     end
 
     context "期間制限チェック" do

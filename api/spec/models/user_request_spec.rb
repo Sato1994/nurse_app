@@ -38,6 +38,14 @@ RSpec.describe UserRequest, type: :model do
         user_request.valid?
         expect(user_request.errors[:start_time]).to include("同じ時間帯で契約済みです。")
       end
+
+      it "同userとの同じ期間帯のroomがあれば失敗" do
+        room = create(:room)
+        recruitment_time = create(:recruitment_time, host: room.host)
+        user_request = build(:user_request, user: room.user, recruitment_time: recruitment_time)
+        user_request.valid?
+        expect(user_request.errors[:start_time]).to include("同じ時間帯でお相手と交渉中です。")
+      end
     end
 
     context "期間制限チェック" do

@@ -12,6 +12,7 @@ class UserRequest < ApplicationRecord
   validate :duplication_of_user_request
   validate :duplication_of_host_request
   validate :duplication_of_agreement
+  validate :duplication_of_room
   validate :user_request_has_some_hours_grace
   validate :limitation_of_user_request_hours
 
@@ -38,6 +39,14 @@ class UserRequest < ApplicationRecord
   def duplication_of_agreement
     if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id).exists?
       errors.add(:start_time, "同じ時間帯で契約済みです。")
+    end
+  end
+
+  def duplication_of_room
+    recruitment_time = RecruitmentTime.find(recruitment_time_id)
+    host = recruitment_time.host
+    if Room.where('user_id = ? && host_id = ? && finish_time >= ? && ? >= start_time', user_id, host.id, start_time, finish_time).exists?
+      errors.add(:start_time, "同じ時間帯でお相手と交渉中です。")
     end
   end
 
