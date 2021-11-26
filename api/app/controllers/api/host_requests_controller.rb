@@ -12,7 +12,7 @@ class Api::HostRequestsController < ApplicationController
   private
 
   def host_request_params
-    params.permit(:host_request).merge(free_time_id: params[:free_time_id], host: current_api_host, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:free_time_id).merge(host_id: current_api_host.id, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
   
 end

@@ -11,6 +11,7 @@ class UserRequest < ApplicationRecord
   
   validate :is_the_request_included_in_the_recruitment_time
   validate :duplication_of_user_request
+  validate :duplication_of_host_request
   validate :duplication_of_agreement
   validate :user_request_has_some_hours_grace
   validate :limitation_of_user_request_hours
@@ -24,6 +25,14 @@ class UserRequest < ApplicationRecord
   def duplication_of_user_request
     if UserRequest.where('finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id).exists?
       errors.add(:start_time, "同じ時間帯で申請済みです。")
+    end
+  end
+
+  def duplication_of_host_request
+    recruitment_time = RecruitmentTime.find(recruitment_time_id)
+    host = recruitment_time.host
+    if HostRequest.includes(free_time: :user).where('host_id = ? && users.id = ? && host_requests.finish_time >= ? && ? >= host_requests.start_time', host.id, user_id, start_time, finish_time).references(:users, :free_times).exists?
+      errors.add(:start_time, "同じ時間帯でお相手から申請が来ています。")
     end
   end
 

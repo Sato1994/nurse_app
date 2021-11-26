@@ -36,6 +36,14 @@ RSpec.describe HostRequest, type: :model do
       new_request.valid?
       expect(new_request.errors[:start_time]).to include("同じ時間帯で申請済みです。")
     end
+    
+    it "同userから同じ時間帯のuser_requestがあれば失敗" do
+      user_request = create(:user_request)
+      free_time = create(:free_time, user: user_request.user)
+      host_request = build(:host_request, host: user_request.recruitment_time.host, free_time: free_time)
+      host_request.valid?
+      expect(host_request.errors[:start_time]).to include("同じ時間帯でお相手から申請が来ています。")
+    end
 
     it "作成時点で開始時刻が7時間以上猶予があれば有効" do
       ft = create(:free_time, start_time: Time.current + 13.hour, finish_time: Time.current + 23.hour)

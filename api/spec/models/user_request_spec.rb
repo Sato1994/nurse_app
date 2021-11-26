@@ -31,14 +31,23 @@ RSpec.describe UserRequest, type: :model do
 
     it "同じ時間帯のuser_requesがあれば失敗" do
       user_request = create(:user_request)
-      new_request = build(:user_request, user: user_request.user)
+      recruitment_time = create(:recruitment_time)
+      new_request = build(:user_request, user: user_request.user, recruitment_time: recruitment_time)
       new_request.valid?
       expect(new_request.errors[:start_time]).to include("同じ時間帯で申請済みです。")
+    end
+    it "同じ時間帯のhost_requestがあれば失敗" do
+      host_request = create(:host_request)
+      recruitment_time = create(:recruitment_time, host: host_request.host)
+      user_request = build(:user_request, user: host_request.free_time.user, recruitment_time: recruitment_time)
+      user_request.valid?
+      expect(user_request.errors[:start_time]).to include("同じ時間帯でお相手から申請が来ています。")
     end
 
     it "同じ時間帯のAgreementがあれば失敗" do
       agreement = create(:agreement)
-      user_request = build(:user_request, user: agreement.user)
+      recruitment_time = create(:recruitment_time)
+      user_request = build(:user_request, user: agreement.user, recruitment_time: recruitment_time)
       user_request.valid?
       expect(user_request.errors[:start_time]).to include("同じ時間帯で契約済みです。")
     end
