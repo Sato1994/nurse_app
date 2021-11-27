@@ -1,5 +1,7 @@
-json.host do
-  json.extract! @host, :id, :myid, :name, :address, :image, :wanted, :profile, :created_at
+if @host
+  json.host do
+    json.extract! @host, :id, :myid, :name, :address, :image, :wanted, :profile, :created_at
+  end
 end
 
 json.target_skills do

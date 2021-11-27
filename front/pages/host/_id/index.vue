@@ -75,7 +75,13 @@
       </v-list-item-group>
     </v-list>
 
-    <v-list dense>
+    <v-list
+      v-if="
+        $cookies.get('user') === 'host' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+      dense
+    >
       <v-subheader>Agreements一覧</v-subheader>
       <v-list-item-group
         v-for="(agreement, index) in formedTargetAgreements"
