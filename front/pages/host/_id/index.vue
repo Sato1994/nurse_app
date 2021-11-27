@@ -34,7 +34,7 @@
       </div>
 
       <div class="my-4 text-subtitle-1">
-        {{ target.wanted = true ? " 募集中": "募集していません"}}
+        {{ (target.wanted = true ? ' 募集中' : '募集していません') }}
       </div>
 
       <div>{{ target.profile }}</div>
@@ -64,16 +64,32 @@
       <v-subheader>routes.params.idのTimes一覧</v-subheader>
       <v-list-item-group
         v-for="(time, index) in formedTargetTimes"
-          :key="index"
-          color="primary"
+        :key="index"
+        color="primary"
       >
-        <v-list-item
-         @click="jumpTargetTimes(time.id)">
+        <v-list-item @click="jumpTargetTimes(time.id)">
           <v-list-item-content>
             <v-list-item-title v-text="time.formedTime"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+      </v-list-item-group>
+    </v-list>
 
+    <v-list dense>
+      <v-subheader>Agreements一覧</v-subheader>
+      <v-list-item-group
+        v-for="(agreement, index) in formedTargetAgreements"
+        :key="index"
+        color="primary"
+      >
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title
+              v-text="agreement.formedAgreement"
+            ></v-list-item-title>
+            <v-subheader>{{ agreement.user.name }}様との契約</v-subheader>
+          </v-list-item-content>
+        </v-list-item>
       </v-list-item-group>
     </v-list>
 
@@ -92,53 +108,78 @@
 </template>
 
 <script>
-import Edit from "@/components/pages/modal/Edit.vue";
-import SkillList from "@/components/pages/modal/SkillList.vue";
+import Edit from '@/components/pages/modal/Edit.vue'
+import SkillList from '@/components/pages/modal/SkillList.vue'
 export default {
   components: {
     Edit,
     SkillList,
   },
-
   data: () => ({
     target: [],
     targetSkills: [],
     targetTimes: [],
   }),
-  
-  created() {
-    const myid = this.$route.params.id;
-    this.$axios.get(`http://localhost:3000/api/hosts/${myid}`).then((response) => {
-      this.target = response.data.host;
-      this.targetSkills = response.data.target_skills;
-      this.targetTimes = response.data.target_times
-    });
-  },
-
   computed: {
     formedTargetTimes() {
-      const targetTimes = this.targetTimes.map(obj => {
+      const targetTimes = this.targetTimes.map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
-        const newObject = {id: obj.id, formedTime: `${s.getFullYear()}年${s.getMonth() +1}月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${f.getMonth() +1}月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`}
+        const newObject = {
+          id: obj.id,
+          formedTime: `${s.getFullYear()}年${
+            s.getMonth() + 1
+          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
+            f.getMonth() + 1
+          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
+        }
         return newObject
       })
       return targetTimes
-    }
-
+    },
+    formedTargetAgreements() {
+      const targetAgreements = this.$store.getters[
+        'myInfo/getMyAgreements'
+      ].map((obj) => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {
+          id: obj.id,
+          user: obj.user,
+          formedAgreement: `${s.getFullYear()}年${
+            s.getMonth() + 1
+          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
+            f.getMonth() + 1
+          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
+        }
+        return newObject
+      })
+      return targetAgreements
+    },
   },
-
+  created() {
+    const myid = this.$route.params.id
+    this.$axios
+      .get(`http://localhost:3000/api/hosts/${myid}`)
+      .then((response) => {
+        this.target = response.data.host
+        this.targetSkills = response.data.target_skills
+        this.targetTimes = response.data.target_times
+      })
+  },
   methods: {
     openEditModal() {
-      this.$modal.show("edit-modal");
+      this.$modal.show('edit-modal')
     },
     openSkillListModal() {
-      this.$modal.show("skill-list-modal");
+      this.$modal.show('skill-list-modal')
     },
     jumpTargetTimes(recruitmentTimeId) {
-      this.$router.push({ path: `/host/${this.target.myid}/times`, query: { t: recruitmentTimeId}})
-    }
+      this.$router.push({
+        path: `/host/${this.target.myid}/times`,
+        query: { t: recruitmentTimeId },
+      })
+    },
   },
-};
-
+}
 </script>

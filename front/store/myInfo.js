@@ -113,6 +113,9 @@ export const getters = {
   getMyRooms(state) {
     return state.myRooms
   },
+  getMyAgreements(state) {
+    return state.myAgreements
+  }
 }
 
 
