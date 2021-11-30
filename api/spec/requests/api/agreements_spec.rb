@@ -262,10 +262,10 @@ RSpec.describe "Api::Agreements", type: :request do
       end
 
       context "agreementのstart_timeが現在時刻から24時間より猶予がある場合" do
-        it "agreement.stateが変更申請中に変更される" do
+        it "agreement.stateがrequestingに変更される" do
           expect{
             patch "/api/agreements/#{agreement.id}", headers: headers
-          }.to change { agreement.reload.state}.from("勤務期間前").to("変更申請中")
+          }.to change { agreement.reload.state}.from("before").to("requesting")
         end
 
         it "room.consensusがnegotiatingに変更される" do
@@ -304,10 +304,10 @@ RSpec.describe "Api::Agreements", type: :request do
       end
 
       context "agreementのstart_timeが現在時刻から24時間より猶予がある場合" do
-        it "agreement.stateが変更申請中に変更される" do
+        it "agreement.stateがrequestingに変更される" do
           expect{
             patch "/api/agreements/#{agreement.id}", headers: headers
-          }.to change { agreement.reload.state}.from("勤務期間前").to("変更申請中")
+          }.to change { agreement.reload.state}.from("before").to("requesting")
         end
 
         it "room.consensusがnegotiatingに変更される" do

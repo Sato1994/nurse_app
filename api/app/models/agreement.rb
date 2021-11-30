@@ -9,13 +9,13 @@ class Agreement < ApplicationRecord
   validates_uniqueness_of :room_id
   validates :start_time, presence: :true
   validates :finish_time, presence: :true
-  validates :state, inclusion: { in: %w(勤務期間前 勤務期間中 勤務完了 変更申請中 キャンセル済) }
+  validates :state, inclusion: { in: %w(before during finished requesting cancelled) }
 
   validate :limitation_of_working_hours
   validate :agreement_has_some_hours_grace
   validate :duplication_of_work_hours_for_same_user
 
-  enum state: { 勤務期間前: 0, 勤務期間中: 1, 勤務完了: 2, 変更申請中: 3, キャンセル済: 4 }
+  enum state: { before: 0, during: 1, finished: 2, requesting: 3, cancelled: 4 }
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hour) >= finish_time
@@ -45,7 +45,7 @@ class Agreement < ApplicationRecord
 
   def update_state_consensus
       self.transaction do
-        self.update_attribute(:state, "変更申請中")
+        self.update_attribute(:state, "requesting")
         self.room.update_attribute(:consensus, "negotiating")
       end
       obj = {agreement: self, room: self.room}
