@@ -88,14 +88,37 @@
         :key="index"
         color="primary"
       >
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title
-              v-text="agreement.formedAgreement"
-            ></v-list-item-title>
-            <v-subheader>{{ agreement.user.name }}様との契約</v-subheader>
-          </v-list-item-content>
-        </v-list-item>
+        <v-row class="d-flex" justify="center">
+          <v-menu v-model="showMenu" absolute offset-y style="max-width: 600px">
+            <template #activator="{ on, attrs }">
+              <v-list-item v-bind="attrs" v-on="on">
+                <v-list-item-content>
+                  <v-list-item-title
+                    v-text="agreement.formedAgreement"
+                  ></v-list-item-title>
+                  <v-subheader>{{ agreement.user.name }}様との契約</v-subheader>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+
+            <v-list>
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+                @click="
+                  selectedMenu(
+                    i,
+                    agreement.id,
+                    agreement.room.id,
+                    agreement.user.myid
+                  )
+                "
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-row>
       </v-list-item-group>
     </v-list>
 
@@ -125,6 +148,12 @@ export default {
     target: [],
     targetSkills: [],
     targetTimes: [],
+    showMenu: false,
+    items: [
+      { title: 'お相手のページへ移動' },
+      { title: '契約時間の変更申請' },
+      { title: '契約の取り消し申請' },
+    ],
   }),
   computed: {
     formedTargetTimes() {
@@ -151,6 +180,7 @@ export default {
         const f = new Date(obj.finish_time)
         const newObject = {
           id: obj.id,
+          room: obj.room,
           user: obj.user,
           formedAgreement: `${s.getFullYear()}年${
             s.getMonth() + 1
@@ -185,6 +215,35 @@ export default {
         path: `/host/${this.target.myid}/times`,
         query: { t: recruitmentTimeId },
       })
+    },
+    selectedMenu(i, agreementId, roomId, userMyId) {
+      switch (i) {
+        case 0:
+          this.$router.push(`/user/${userMyId}`)
+          break
+        case 1:
+          this.$axios
+            .patch(
+              `/api/agreements/${agreementId}`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+            .then((response) => {
+              console.log(response)
+              this.$router.push(`/rooms/${roomId}`)
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+          break
+        case 2:
+          console.log('2ですよ')
+          break
+        default:
+          console.log('menuClickでエラー')
+      }
     },
   },
 }

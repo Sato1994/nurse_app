@@ -30,8 +30,27 @@ class Agreement < ApplicationRecord
   end
 
   def duplication_of_work_hours_for_same_user
-    if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id).exists?
-      errors.add(:start_time, "看護師の勤務期間が他の契約と重複しています。")
+    room = Room.find(room_id)
+    if room.agreement.nil?
+      if Agreement.where('finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id).exists?
+      errors.add(:start_time, "看護師の勤務期間が他の契約と重複しています")
+      end
+    else
+      agreement = room.agreement
+      if Agreement.where('id != ? && finish_time >= ? && ? >= start_time && user_id = ?', agreement.id, start_time, finish_time, user_id).exists?
+        errors.add(:start_time, "看護師の勤務期間が他の契約と重複しています。")
+      end
     end
+  end
+
+  def update_state_consensus
+      self.transaction do
+        self.update_attribute(:state, "変更申請中")
+        self.room.update_attribute(:consensus, "negotiating")
+      end
+      obj = {agreement: self, room: self.room}
+       return obj
+    rescue 
+      return nil
   end
 end
