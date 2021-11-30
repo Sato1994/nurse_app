@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    resources :agreements, only: [:index, :show, :update, :destroy]
+    resources :agreements, only: [:index, :show, :update, :destroy] do
+      patch 'cancell', on: :collection
+    end
   end
 
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'
