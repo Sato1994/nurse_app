@@ -247,14 +247,14 @@ RSpec.describe "Api::Agreements", type: :request do
   describe "PATCH /update" do
     context "userとしてログインしている場合" do
       it "agreementのstart_timeが現在時刻から24時間以下の場合ステータス400を返す" do
-        room = create(:room, consensus: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour, finish_time: Time.current.change(usec: 0) + 30.hour)
+        room = create(:room, state: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour, finish_time: Time.current.change(usec: 0) + 30.hour)
         agreement = create(:agreement, room: room, start_time: room.start_time, finish_time: room.finish_time, user: room.user, host: room.host)
         post "/api/user/sign_in", params: { email: room.user.email, password: room.user.password }
         patch "/api/agreements/#{agreement.id}", headers: headers
         expect(response.status).to eq(400)
       end
 
-      let!(:room) { create(:room, consensus: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour + 1.minute, finish_time: Time.current.change(usec: 0) + 30.hour)}
+      let!(:room) { create(:room, state: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour + 1.minute, finish_time: Time.current.change(usec: 0) + 30.hour)}
       let!(:agreement) { create(:agreement, room: room, start_time: room.start_time, finish_time: room.finish_time, user: room.user, host: room.host) }
 
       before do
@@ -268,10 +268,10 @@ RSpec.describe "Api::Agreements", type: :request do
           }.to change { agreement.reload.state}.from("before").to("requesting")
         end
 
-        it "room.consensusがnegotiatingに変更される" do
+        it "room.stateがnegotiatingに変更される" do
           expect{
             patch "/api/agreements/#{agreement.id}", headers: headers
-          }.to change { room.reload.consensus}.from("conclusion").to("negotiating")
+          }.to change { room.reload.state}.from("conclusion").to("negotiating")
         end
 
         it "成功したら時のjsonを2つ返す" do
@@ -289,14 +289,14 @@ RSpec.describe "Api::Agreements", type: :request do
 
     context "hostとしてログインしている場合" do
       it "agreementのstart_timeが現在時刻から24時間以下の場合ステータス400を返す" do
-        room = create(:room, consensus: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour, finish_time: Time.current.change(usec: 0) + 30.hour)
+        room = create(:room, state: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour, finish_time: Time.current.change(usec: 0) + 30.hour)
         agreement = create(:agreement, room: room, start_time: room.start_time, finish_time: room.finish_time, user: room.user, host: room.host)
         post "/api/host/sign_in", params: { email: room.host.email, password: room.host.password }
         patch "/api/agreements/#{agreement.id}", headers: headers
         expect(response.status).to eq(400)
       end
 
-      let!(:room) { create(:room, consensus: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour + 1.minute, finish_time: Time.current.change(usec: 0) + 30.hour)}
+      let!(:room) { create(:room, state: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour + 1.minute, finish_time: Time.current.change(usec: 0) + 30.hour)}
       let!(:agreement) { create(:agreement, room: room, start_time: room.start_time, finish_time: room.finish_time, user: room.user, host: room.host) }
 
       before do
@@ -310,10 +310,10 @@ RSpec.describe "Api::Agreements", type: :request do
           }.to change { agreement.reload.state}.from("before").to("requesting")
         end
 
-        it "room.consensusがnegotiatingに変更される" do
+        it "room.stateがnegotiatingに変更される" do
           expect{
             patch "/api/agreements/#{agreement.id}", headers: headers
-          }.to change { room.reload.consensus}.from("conclusion").to("negotiating")
+          }.to change { room.reload.state}.from("conclusion").to("negotiating")
         end
 
         it "成功したら時のjsonを2つ返す" do
@@ -341,9 +341,9 @@ RSpec.describe "Api::Agreements", type: :request do
       expect(agreement.reload.state).to eq("cancelled")
     end
 
-    it "userとしてログインしていればroom.consensusをcancelledに変更できる" do
+    it "userとしてログインしていればroom.stateをcancelledに変更できる" do
       patch "/api/agreements/cancell", params: { id: agreement.id }, headers: headers
-      expect(room.reload.consensus).to eq("cancelled")
+      expect(room.reload.state).to eq("cancelled")
     end
 
     it "他人のagreementはキャンセルできない" do

@@ -9,8 +9,8 @@ class Room < ApplicationRecord
   validates :host, presence: :true
   validates :start_time, presence: :true
   validates :finish_time, presence: :true
-  validates :consensus, inclusion: { in: %w( negotiating user host conclusion cancelled) }, presence: :true
-  validates :deletion, inclusion: { in: %w( na user host) }, presence: :true
+  validates :state, inclusion: { in: %w( negotiating user host conclusion cancelled) }, presence: :true
+  validates :closed, inclusion: { in: %w( na user host both) }, presence: :true
 
   validate :duplication_of_room_create, on: :create
   validate :duplication_of_room_update, on: :update
@@ -18,8 +18,8 @@ class Room < ApplicationRecord
   validate :limitation_of_room_hours_max
   validate :limitation_of_room_hours_min
 
-  enum consensus: { negotiating: 0, user: 1, host: 2, conclusion:3, cancelled: 4 }, _suffix: true
-  enum deletion: { na: 0, user: 1, host: 2}, _suffix: true
+  enum state: { negotiating: 0, user: 1, host: 2, conclusion:3, cancelled: 4 }, _suffix: true
+  enum closed: { na: 0, user: 1, host: 2}, _suffix: true
 
   def duplication_of_room_create
     if Room.where('finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id, host_id).exists?

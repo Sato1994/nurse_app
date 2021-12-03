@@ -73,7 +73,7 @@ class Api::AgreementsController < ApplicationController
     room = agreement.room
     if (api_user_signed_in? && current_api_user = agreement.user) || (api_host_signed_in? && current_api_host = agreement.host)
       if agreement.start_time > 24.hours.since
-        result = agreement.update_state_consensus
+        result = agreement.update_state
         if result
           render json: result, status: 200
         else

@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   post 'api/rooms/host/:host_id', to: 'api/rooms#create'
   
   patch 'api/rooms/:id', to: 'api/rooms#update'
-  patch 'api/rooms/:id', to: 'api/rooms#update_consensus'
+  patch 'api/rooms/:id', to: 'api/rooms#update_state'
   # namespace :api do
   #   resources :user_messages, only: [:index]
   # end

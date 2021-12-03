@@ -6,7 +6,7 @@ class Api::RoomsController < ApplicationController
     @host_messages = @room.host_messages
     @start_time = @room.start_time
     @finish_time = @room.finish_time
-    @consensus = @room.consensus
+    @state = @room.state
     if api_user_signed_in? && current_api_user = @room.user
       @partner = @room.host
       render "show", formats: :json, handlers: :jbuilder
@@ -53,21 +53,21 @@ class Api::RoomsController < ApplicationController
           render json: room.errors, status: 400
         end
       else
-        case room.consensus
+        case room.state
         when "negotiating"
-          if room.update(consensus: "user")
+          if room.update(state: "user")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "user"
-          if room.update(consensus: "negotiating")
+          if room.update(state: "negotiating")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "host"
-          if room.update(consensus: "conclusion")
+          if room.update(state: "conclusion")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
@@ -84,21 +84,21 @@ class Api::RoomsController < ApplicationController
           render json: room.errors, status: 400
         end
       else
-        case room.consensus
+        case room.state
         when "negotiating"
-          if room.update(consensus: "host")
+          if room.update(state: "host")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "user"
-          if room.update(consensus: "conclusion")
+          if room.update(state: "conclusion")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "host"
-          if room.update(consensus: "negotiating")
+          if room.update(state: "negotiating")
             render json: room, status: 200
           else
             render json: room.errors, status: 400

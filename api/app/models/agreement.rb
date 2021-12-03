@@ -43,11 +43,11 @@ class Agreement < ApplicationRecord
     end
   end
 
-  def update_state_consensus
+  def update_state
     begin
       self.transaction do
         self.update_attribute(:state, "requesting")
-        self.room.update_attribute(:consensus, "negotiating")
+        self.room.update_attribute(:state, "negotiating")
       end
       obj = {agreement: self, room: self.room}
       return obj
@@ -60,7 +60,7 @@ class Agreement < ApplicationRecord
     begin
       self.transaction do
         self.update_attribute(:state, "cancelled")
-        self.room.update_attribute(:consensus, "cancelled")
+        self.room.update_attribute(:state, "cancelled")
       end
     end
   end

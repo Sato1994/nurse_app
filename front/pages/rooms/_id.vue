@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-subheader> {{ partner.name }}さま </v-subheader>
-    <v-subheader v-if="consensus == 'conclusion'"
+    <v-subheader v-if="state == 'conclusion'"
       >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
         startTime.hour
       }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
@@ -10,7 +10,7 @@
         finishTime.minute
       }}分で契約済みです。契約の変更は契約一覧から申請してください。</v-subheader
     >
-    <v-subheader v-if="consensus == $cookies.get('user')"
+    <v-subheader v-if="state == $cookies.get('user')"
       >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
         startTime.hour
       }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
@@ -20,7 +20,7 @@
       }}分で同意しています。お相手の同意をお待ちください。</v-subheader
     >
     <v-subheader
-      v-if="consensus == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+      v-if="state == ($cookies.get('user') == 'user' ? 'host' : 'user')"
       >お相手が{{ startTime.year }}年{{ startTime.month }}月{{
         startTime.day
       }}日{{ startTime.hour }}時{{ startTime.minute }}分から
@@ -30,7 +30,7 @@
         finishTime.minute
       }}分で同意しました。双方の同意で契約完了します。</v-subheader
     >
-    <v-subheader v-if="consensus == 'cancelled'"
+    <v-subheader v-if="state == 'cancelled'"
       >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
         startTime.hour
       }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
@@ -39,7 +39,7 @@
         finishTime.minute
       }}分で契約済みでしたが、やむを得ない理由により契約がキャンセルされました。</v-subheader
     >
-    <v-main v-if="consensus == 'negotiating'" three-line>
+    <v-main v-if="state == 'negotiating'" three-line>
       <div class="text-overline mb-4">いつから</div>
       <v-card-actions>
         <v-select
@@ -107,9 +107,9 @@
         ></v-select>
       </v-card-actions>
     </v-main>
-    <v-main v-if="consensus != 'cancelled'">
+    <v-main v-if="state != 'cancelled'">
       <v-btn
-        v-if="consensus == 'negotiating'"
+        v-if="state == 'negotiating'"
         outlined
         rounded
         text
@@ -119,15 +119,15 @@
         時間を変更する
       </v-btn>
       <v-btn
-        v-if="consensus != 'conclusion'"
+        v-if="state != 'conclusion'"
         outlined
         rounded
         text
         color="red"
-        @click="updateConsensus"
+        @click="updateState"
       >
         {{
-          consensus == $cookies.get('user')
+          state == $cookies.get('user')
             ? '同意を解除する'
             : 'この時間で同意する'
         }}
@@ -181,7 +181,7 @@ export default {
     messages: [],
     partner: {},
     id: '',
-    consensus: '',
+    state: '',
     inputMessage: '',
     startTime: {},
     finishTime: {},
@@ -229,7 +229,7 @@ export default {
         })
         this.id = response.data.id
         this.partner = response.data.partner
-        this.consensus = response.data.consensus
+        this.state = response.data.state
         const starttime = new Date(response.data.start_time)
         this.startTime.year = starttime.getFullYear()
         this.startTime.month = starttime.getMonth() + 1
@@ -276,10 +276,10 @@ export default {
           console.log(error)
         })
     },
-    updateConsensus() {
-      // consensusが相手の同意ずみの場合はまずagreementをcreateして、成功したらconsensusを変更するためのリクエストを出す。
-      // consensusがその他の場合はconsensusを変更するリクエストを出す。
-      switch (this.consensus) {
+    updateState() {
+      // stateが相手の同意ずみの場合はまずagreementをcreateして、成功したらstateを変更するためのリクエストを出す。
+      // stateがその他の場合はstateを変更するリクエストを出す。
+      switch (this.state) {
         case this.$cookies.get('user') === 'user' ? 'host' : 'user':
           this.$axios
             .post(
@@ -307,7 +307,7 @@ export default {
                 )
                 .then((response) => {
                   console.log(response)
-                  this.consensus = response.data.consensus
+                  this.state = response.data.state
                 })
                 .catch((error) => {
                   console.log(error)
@@ -328,7 +328,7 @@ export default {
             )
             .then((response) => {
               console.log(response)
-              this.consensus = response.data.consensus
+              this.state = response.data.state
             })
             .catch((error) => {
               console.log(error)
