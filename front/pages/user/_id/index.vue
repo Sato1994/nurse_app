@@ -175,7 +175,7 @@ export default {
     },
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
-        'myInfo/getMyAgreements'
+        'myInfo/agreementsInProgress'
       ].map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -240,10 +240,24 @@ export default {
             })
           break
         case 2:
-          console.log('2ですよ')
+          this.$axios
+            .patch(
+              '/api/agreements/cancell',
+              { id: agreementId },
+              { headers: this.$cookies.get('authInfo') }
+            )
+            .then((response) => {
+              console.log(response)
+              this.$store.dispatch('myInfo/updateState', {
+                id: agreementId,
+                state: 'cancelled',
+              })
+              // this.$router.push(`/rooms/${roomId}`)
+            })
+            .catch((error) => {
+              console.log(error)
+            })
           break
-        default:
-          console.log('menuClickでエラー')
       }
     },
   },

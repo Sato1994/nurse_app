@@ -244,7 +244,7 @@ RSpec.describe "Api::Agreements", type: :request do
     end
   end
 
-  describe "PATCH /create" do
+  describe "PATCH /update" do
     context "userとしてログインしている場合" do
       it "agreementのstart_timeが現在時刻から24時間以下の場合ステータス400を返す" do
         room = create(:room, consensus: "conclusion", start_time: Time.current.change(usec: 0) + 24.hour, finish_time: Time.current.change(usec: 0) + 30.hour)
@@ -327,6 +327,31 @@ RSpec.describe "Api::Agreements", type: :request do
           expect(response.status).to eq(200)
         end
       end
+    end
+  end
+  describe "PATCH /cancell" do
+    let!(:room) { create(:room)}
+    let!(:agreement) { create(:agreement, user: room.user, host: room.host, room: room) }
+    before do
+      post "/api/user/sign_in", params: { email: agreement.user.email, password: agreement.user.password }
+    end
+
+    it "userとしてログインしていればagreement.stateをcancelledに変更できる" do
+      patch "/api/agreements/cancell", params: { id: agreement.id }, headers: headers
+      expect(agreement.reload.state).to eq("cancelled")
+    end
+
+    it "userとしてログインしていればroom.consensusをcancelledに変更できる" do
+      patch "/api/agreements/cancell", params: { id: agreement.id }, headers: headers
+      expect(room.reload.consensus).to eq("cancelled")
+    end
+
+    it "他人のagreementはキャンセルできない" do
+      user = create(:user)
+      post "/api/user/sign_in", params: { email: user.email, password: user.password }
+      expect{
+        patch "/api/agreements/cancell", params: { id: agreement.id }, headers: headers
+      }.to_not change{agreement.reload.state}
     end
   end
 end

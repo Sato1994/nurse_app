@@ -30,100 +30,109 @@
         finishTime.minute
       }}分で同意しました。双方の同意で契約完了します。</v-subheader
     >
-    <v-list-item v-if="consensus == 'negotiating'" three-line>
-      <v-list-item-content>
-        <div class="text-overline mb-4">いつから</div>
-        <v-card-actions>
-          <v-select
-            v-model="startTime.year"
-            :items="yearList"
-            label="年"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.month"
-            :items="monthList"
-            label="月"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.day"
-            :items="dayList"
-            label="日"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.hour"
-            :items="hourList"
-            label="時"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.minute"
-            :items="minuteList"
-            label="分"
-            dense
-          ></v-select>
-        </v-card-actions>
-        <div class="text-overline mb-4">いつまで</div>
-        <v-card-actions>
-          <v-select
-            v-model="finishTime.year"
-            :items="yearList"
-            label="年"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.month"
-            :items="monthList"
-            label="月"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.day"
-            :items="dayList"
-            label="日"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.hour"
-            :items="hourList"
-            label="時"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.minute"
-            :items="minuteList"
-            label="分"
-            dense
-          ></v-select>
-        </v-card-actions>
-      </v-list-item-content>
-    </v-list-item>
-    <v-btn
-      v-if="consensus == 'negotiating'"
-      outlined
-      rounded
-      text
-      color="red"
-      @click="updateTime"
+    <v-subheader v-if="consensus == 'cancelled'"
+      >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
+        startTime.hour
+      }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
+        finishTime.month
+      }}月{{ finishTime.day }}日{{ finishTime.hour }}時{{
+        finishTime.minute
+      }}分で契約済みでしたが、やむを得ない理由により契約がキャンセルされました。</v-subheader
     >
-      時間を変更する
-    </v-btn>
-    <v-btn
-      v-if="consensus != 'conclusion'"
-      outlined
-      rounded
-      text
-      color="red"
-      @click="updateConsensus"
-    >
-      {{
-        consensus == $cookies.get('user')
-          ? '同意を解除する'
-          : 'この時間で同意する'
-      }}
-    </v-btn>
+    <v-main v-if="consensus == 'negotiating'" three-line>
+      <div class="text-overline mb-4">いつから</div>
+      <v-card-actions>
+        <v-select
+          v-model="startTime.year"
+          :items="yearList"
+          label="年"
+          dense
+        ></v-select>
+        <v-select
+          v-model="startTime.month"
+          :items="monthList"
+          label="月"
+          dense
+        ></v-select>
+        <v-select
+          v-model="startTime.day"
+          :items="dayList"
+          label="日"
+          dense
+        ></v-select>
+        <v-select
+          v-model="startTime.hour"
+          :items="hourList"
+          label="時"
+          dense
+        ></v-select>
+        <v-select
+          v-model="startTime.minute"
+          :items="minuteList"
+          label="分"
+          dense
+        ></v-select>
+      </v-card-actions>
+      <div class="text-overline mb-4">いつまで</div>
+      <v-card-actions>
+        <v-select
+          v-model="finishTime.year"
+          :items="yearList"
+          label="年"
+          dense
+        ></v-select>
+        <v-select
+          v-model="finishTime.month"
+          :items="monthList"
+          label="月"
+          dense
+        ></v-select>
+        <v-select
+          v-model="finishTime.day"
+          :items="dayList"
+          label="日"
+          dense
+        ></v-select>
+        <v-select
+          v-model="finishTime.hour"
+          :items="hourList"
+          label="時"
+          dense
+        ></v-select>
+        <v-select
+          v-model="finishTime.minute"
+          :items="minuteList"
+          label="分"
+          dense
+        ></v-select>
+      </v-card-actions>
+    </v-main>
+    <v-main v-if="consensus != 'cancelled'">
+      <v-btn
+        v-if="consensus == 'negotiating'"
+        outlined
+        rounded
+        text
+        color="red"
+        @click="updateTime"
+      >
+        時間を変更する
+      </v-btn>
+      <v-btn
+        v-if="consensus != 'conclusion'"
+        outlined
+        rounded
+        text
+        color="red"
+        @click="updateConsensus"
+      >
+        {{
+          consensus == $cookies.get('user')
+            ? '同意を解除する'
+            : 'この時間で同意する'
+        }}
+      </v-btn>
+    </v-main>
     <v-main>
       <v-container class="py-8 px-6" fluid>
         <v-row>
@@ -233,9 +242,6 @@ export default {
         this.finishTime.day = finishtime.getDate()
         this.finishTime.hour = finishtime.getHours()
         this.finishTime.minute = finishtime.getMinutes()
-      })
-      .catch((error) => {
-        console.log(error)
       })
   },
   methods: {

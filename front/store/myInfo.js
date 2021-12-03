@@ -46,9 +46,10 @@ export const mutations = {
   logout(state) {
     state.myInfo = []
     state.mySkills = []
-  }
-
-
+  },
+  updateState(state, payload) {
+    state.myAgreements.find(obj => obj.id === payload.id).state = payload.state
+  },
 }
 
 export const actions = {
@@ -72,6 +73,9 @@ export const actions = {
   },
   saveMyRooms(context, myRooms) {
     context.commit('saveMyRooms', myRooms)
+  },
+  updateState({ commit }, payload) {
+    commit('updateState', payload)
   },
 
 
@@ -113,9 +117,12 @@ export const getters = {
   getMyRooms(state) {
     return state.myRooms
   },
-  getMyAgreements(state) {
-    return state.myAgreements
-  }
+  agreementsInProgress(state) {
+    const agreements = state.myAgreements.filter((obj) => {
+      return obj.state !== 'cancelled'
+    })
+    return agreements
+  },
 }
 
 

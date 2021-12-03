@@ -21,8 +21,10 @@ class Api::AgreementsController < ApplicationController
     render "index", formats: :json, handlers: :jbuilder
   end
 
+  ########## agreement登録または時間の変更 ##########
   def create
     room = Room.find(params[:room_id])
+    ### agreementが未だ作られていない場合
     if room.agreement.nil?
       if api_user_signed_in?
         agreement = Agreement.new(agreement_user_signed_in_params)
@@ -43,9 +45,8 @@ class Api::AgreementsController < ApplicationController
       else
         render body: nil, status: 401
       end
-  
+    ### agreementが既に存在した場合
     else
-      # agreementが既に存在した場合
       if api_user_signed_in?
         if room.agreement.update(agreement_user_signed_in_params)
           FreeTime.destroy_free_times( current_api_user.id, Time.zone.parse(params[:start_time]), Time.zone.parse(params[:finish_time]))
@@ -66,6 +67,7 @@ class Api::AgreementsController < ApplicationController
     end
   end
 
+  ########## agreementの変更申請 ##########
   def update
     agreement = Agreement.find(params[:id])
     room = agreement.room
@@ -82,6 +84,15 @@ class Api::AgreementsController < ApplicationController
       end
     else
       render body: nil, status: 403
+    end
+  end
+
+  ########## agreementキャンセル ##########
+  def cancell
+    agreement = Agreement.find(params[:id])
+    room = agreement.room
+    if api_user_signed_in? && current_api_user === agreement.user
+      agreement.cancell_agreement
     end
   end
 

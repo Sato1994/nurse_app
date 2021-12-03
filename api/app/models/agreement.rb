@@ -44,13 +44,24 @@ class Agreement < ApplicationRecord
   end
 
   def update_state_consensus
+    begin
       self.transaction do
         self.update_attribute(:state, "requesting")
         self.room.update_attribute(:consensus, "negotiating")
       end
       obj = {agreement: self, room: self.room}
-       return obj
+      return obj
     rescue 
-      return nil
+      return 
+    end
+  end
+
+  def cancell_agreement
+    begin
+      self.transaction do
+        self.update_attribute(:state, "cancelled")
+        self.room.update_attribute(:consensus, "cancelled")
+      end
+    end
   end
 end
