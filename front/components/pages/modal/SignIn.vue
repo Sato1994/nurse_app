@@ -1,9 +1,5 @@
 <template>
-  <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-  >
+  <v-form ref="form" v-model="valid" lazy-validation>
     <v-text-field
       v-model="auth.email"
       :rules="emailRules"
@@ -17,113 +13,101 @@
       required
     ></v-text-field>
 
-
-    <v-btn
-      :disabled="!valid"
-      color="success"
-      class="mr-4"
-      @click="validate"
-    >
+    <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
       Validate
     </v-btn>
 
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="reset"
-    >
-      Reset Form
-    </v-btn>
+    <v-btn color="error" class="mr-4" @click="reset"> Reset Form </v-btn>
 
-    <v-btn
-      color="warning"
-      @click="resetValidation"
-    >
-      Reset Validation
-    </v-btn>
+    <v-btn color="warning" @click="resetValidation"> Reset Validation </v-btn>
 
-    <v-btn
-      color="success"
-      @click="signIn"
-    >
-    ログイン
-    </v-btn>
+    <v-btn color="success" @click="signIn"> ログイン </v-btn>
   </v-form>
 </template>
 
 <script>
-  export default {
+export default {
+  data: () => ({
+    auth: {
+      email: '',
+      password: '',
+    },
 
-    data: () => ({
-      auth: {
-        email: '',
-        password: '',
-      },
+    valid: true,
 
-      valid: true,
-   
-      emailRules: [
-        v => !!v || 'メールアドレスは必須です',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-      ],
-    
-    }),
+    emailRules: [
+      (v) => !!v || 'メールアドレスは必須です',
+      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    ],
+  }),
 
-    methods: {
-      validate () {
-        this.$refs.form.validate()
-      },
-      reset () {
-        this.$refs.form.reset()
-      },
-      resetValidation () {
-        this.$refs.form.resetValidation()
-      },
-      signIn() {
-        this.$axios.post(`http://localhost:3000/api/${this.$cookies.get('user')}/sign_in`, this.auth)
+  methods: {
+    validate() {
+      this.$refs.form.validate()
+    },
+    reset() {
+      this.$refs.form.reset()
+    },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
+    signIn() {
+      this.$axios
+        .post(
+          `http://localhost:3000/api/${this.$cookies.get('user')}/sign_in`,
+          this.auth
+        )
         .then((response) => {
           const authInfo = {
-            "access-token": response.headers["access-token"],
+            'access-token': response.headers['access-token'],
             client: response.headers.client,
             uid: response.headers.uid,
           }
 
-          // cookieへ認証tokenをセット
-          this.$cookies.set("authInfo", authInfo);
+          this.$cookies.set('authInfo', authInfo)
 
-          this.$router.push(`/${this.$cookies.get('user')}/${response.data.data.myid}`)
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${response.data.data.myid}`
+          )
           this.$modal.hide('sign-in-modal')
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
 
-          console.log("こんそるろぐ", response.data.data);
+          console.log('こんそるろぐ', response.data.data)
 
-          this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`, {headers: this.$cookies.get('authInfo')})
+          this.$axios
+            .get(
+              `http://localhost:3000/api/${this.$cookies.get('user')}s/${
+                response.data.data.myid
+              }`,
+              { headers: this.$cookies.get('authInfo') }
+            )
             .then((response) => {
-              this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
-              this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
-              this.$store.dispatch("myInfo/saveMyRequests", response.data.requests)
-              this.$store.dispatch("myInfo/saveMyAgreements", response.data.agreements)
-              this.$store.dispatch("myInfo/saveMyOffers", response.data.offers)
-              this.$store.dispatch("myInfo/saveMyRooms", response.data.rooms)
-            });
+              this.$store.dispatch(
+                'skills/saveSkills',
+                response.data.target_skills
+              )
+              this.$store.dispatch(
+                'times/saveTimes',
+                response.data.target_times
+              )
+              this.$store.dispatch(
+                'requests/saveRequests',
+                response.data.requests
+              )
+              this.$store.dispatch(
+                'agreements/saveAgreements',
+                response.data.agreements
+              )
+              this.$store.dispatch('offers/saveOffers', response.data.offers)
+              this.$store.dispatch('rooms/saveRooms', response.data.rooms)
+            })
         })
         .catch((error) => {
           console.log('認証失敗', error)
-        }) 
-      }
+        })
     },
-
-
-
-
-
-
-
-  }
-
-
-
-
+  },
+}
 </script>
 
 

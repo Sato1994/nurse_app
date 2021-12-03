@@ -175,7 +175,7 @@ export default {
     },
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
-        'myInfo/agreementsInProgress'
+        'agreements/agreementsInProgress'
       ].map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -248,11 +248,11 @@ export default {
             )
             .then((response) => {
               console.log(response)
-              this.$store.dispatch('myInfo/updateState', {
+              this.$store.dispatch('agreements/updateState', {
                 id: agreementId,
                 state: 'cancelled',
               })
-              // this.$router.push(`/rooms/${roomId}`)
+              this.$router.push(`/rooms/${roomId}`)
             })
             .catch((error) => {
               console.log(error)

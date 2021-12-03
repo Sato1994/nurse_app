@@ -174,7 +174,7 @@ export default {
     },
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
-        'myInfo/getMyAgreements'
+        'agreements/agreementsInProgress'
       ].map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)

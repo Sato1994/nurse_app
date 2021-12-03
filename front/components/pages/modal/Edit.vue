@@ -74,7 +74,6 @@
 import axios from 'axios'
 export default {
   data: () => ({
-    // myInfo: {},
     copiedMyInfo: {},
     authInfo: {},
     postalCode: '',
@@ -88,16 +87,9 @@ export default {
       { text: '男性', value: false },
     ],
   }),
-  // computed: {
-  //   copiedMyInfo() {
-  //     const myInfo = this.$store.getters["myInfo/getMyInfo"];
-  //     const copied = Object.assign({}, myInfo);
-  //     return copied;
-  //   },
-  // },
   mounted() {
     this.authInfo = this.$cookies.get('authInfo')
-    const myInfo = this.$store.getters['myInfo/getMyInfo']
+    const myInfo = this.$store.getters['myInfo/myInfo']
     this.copiedMyInfo = Object.assign({}, myInfo)
   },
 
@@ -118,7 +110,6 @@ export default {
           this.$modal.hide('edit-modal')
           console.log('editのresponse', response.data)
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
-          // this.$emit("edit-button-click", response.data.data);
         })
         .catch((error) => {
           console.log('登録失敗', error)

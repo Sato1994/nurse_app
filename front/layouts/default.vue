@@ -204,26 +204,23 @@ export default {
           .then((response) => {
             console.log('/users/myidのやつ', response.data)
             this.$store.dispatch(
-              'myInfo/saveMySkills',
+              'skills/saveSkills',
               response.data.target_skills
             )
+            this.$store.dispatch('times/saveTimes', response.data.target_times)
             this.$store.dispatch(
-              'myInfo/saveMyTimes',
-              response.data.target_times
-            )
-            this.$store.dispatch(
-              'myInfo/saveMyRequests',
+              'requests/saveRequests',
               response.data.requests
             )
-            this.$store.dispatch('myInfo/saveMyOffers', response.data.offers)
+            this.$store.dispatch('offers/saveOffers', response.data.offers)
             this.$store.dispatch(
-              'myInfo/saveMyAgreements',
+              'agreements/saveAgreements',
               response.data.agreements
             )
-            this.$store.dispatch('myInfo/saveMyRooms', response.data.rooms)
+            this.$store.dispatch('rooms/saveRooms', response.data.rooms)
 
             this.$store.dispatch(
-              'myInfo/saveMyAgreements',
+              'agreements/saveAgreements',
               response.data.agreements
             )
           })

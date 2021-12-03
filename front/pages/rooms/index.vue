@@ -1,31 +1,32 @@
 <template>
-<v-container>
-<v-list dense>
+  <v-container>
+    <v-list dense>
       <v-subheader>ログイン者のTalkRoom一覧</v-subheader>
       <v-list-item-group
         v-for="(room, index) in myRooms"
-          :key="index"
-         
-          
-          color="primary">
+        :key="index"
+        color="primary"
+      >
         <v-list-item>
-          <v-list-item-content >
-          
+          <v-list-item-content>
+            <v-btn
+              nuxt
+              :to="{ name: 'rooms-id', params: { id: room.id } }"
+              v-text="
+                `${
+                  $cookies.get('user') === 'user'
+                    ? room.host.name
+                    : room.user.name
+                }`
+              "
+            ></v-btn>
 
-
-
-
-            <v-btn nuxt :to="{ name: 'rooms-id', params: { id: room.id}}" v-text="`${$cookies.get('user') === 'user' ? room.host.name : room.user.name}`"></v-btn>
-
-
-
-            
             <v-list-item-title></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
     </v-list>
-    </v-container>
+  </v-container>
 </template>
 
 
@@ -33,20 +34,10 @@
 export default {
   data: () => ({
     myRooms: [],
-
   }),
   mounted() {
-    this.myRooms = this.$store.getters['myInfo/getMyRooms']
+    this.myRooms = this.$store.getters['rooms/rooms']
   },
-  // computed: {
-  //   roomURL() {
-  //     return 
-  //   },
-  // },
-
-  methods: {
-    
-  }
-};
-
+  methods: {},
+}
 </script>
