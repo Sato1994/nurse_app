@@ -107,6 +107,7 @@ export default {
           this.$router.push(
             `/${this.$cookies.get('user')}/${response.data.data.myid}`
           )
+          this.$emit('edit-button-click', this.copiedMyInfo)
           this.$modal.hide('edit-modal')
           console.log('editのresponse', response.data)
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)

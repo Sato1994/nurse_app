@@ -41,7 +41,7 @@
     </v-card-text>
 
     <modal name="edit-modal" height="auto" :scrollable="true">
-      <Edit />
+      <Edit @edit-button-click="editMyInfo" />
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
@@ -122,13 +122,23 @@
       </v-list-item-group>
     </v-list>
 
-    <v-card-actions>
+    <v-card-actions
+      v-if="
+        $cookies.get('user') === 'host' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+    >
       <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
-        必須スキルを編集
+        就業に必須なスキルを編集
       </v-btn>
     </v-card-actions>
 
-    <v-card-actions>
+    <v-card-actions
+      v-if="
+        $cookies.get('user') === 'host' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+    >
       <v-btn color="deep-purple lighten-2" text @click="openEditModal">
         プロフィールを編集
       </v-btn>
@@ -209,6 +219,13 @@ export default {
     },
     openSkillListModal() {
       this.$modal.show('skill-list-modal')
+    },
+    editMyInfo(copiedMyInfo) {
+      this.$set(this.target, 'name', copiedMyInfo.name)
+      this.$set(this.target, 'address', copiedMyInfo.address)
+      this.$set(this.target, 'myid', copiedMyInfo.myid)
+      this.$set(this.target, 'profile', copiedMyInfo.profile)
+      this.$set(this.target, 'wanted', copiedMyInfo.wanted)
     },
     jumpTargetTimes(recruitmentTimeId) {
       this.$router.push({
