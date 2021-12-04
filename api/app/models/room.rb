@@ -19,7 +19,7 @@ class Room < ApplicationRecord
   validate :limitation_of_room_hours_min
 
   enum state: { negotiating: 0, user: 1, host: 2, conclusion:3, cancelled: 4 }, _suffix: true
-  enum closed: { na: 0, user: 1, host: 2}, _suffix: true
+  enum closed: { na: 0, user: 1, host: 2, both: 3}, _suffix: true
 
   def duplication_of_room_create
     if Room.where('finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id, host_id).exists?
@@ -51,4 +51,11 @@ class Room < ApplicationRecord
     end
   end
 
+  def update_closed(closed_value)
+    self.update_attribute(:closed, closed_value)
+  end
+
+  def update_state(state_value)
+    self.update_attribute(:state, state_value)
+  end
 end

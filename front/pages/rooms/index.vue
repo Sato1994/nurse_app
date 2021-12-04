@@ -32,11 +32,13 @@
 
 <script>
 export default {
-  data: () => ({
-    myRooms: [],
-  }),
-  mounted() {
-    this.myRooms = this.$store.getters['rooms/rooms']
+  data: () => ({}),
+  computed: {
+    myRooms() {
+      return this.$store.getters['rooms/unclosedRooms'](
+        this.$cookies.get('user')
+      )
+    },
   },
   methods: {},
 }

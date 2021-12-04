@@ -7,6 +7,7 @@ class Api::RoomsController < ApplicationController
     @start_time = @room.start_time
     @finish_time = @room.finish_time
     @state = @room.state
+    @closed = @room.closed
     if api_user_signed_in? && current_api_user = @room.user
       @partner = @room.host
       render "show", formats: :json, handlers: :jbuilder
@@ -109,6 +110,33 @@ class Api::RoomsController < ApplicationController
       end
     else
       render body:nil, status: 403
+    end
+  end
+
+  def cancell_room
+    room = Room.find(params[:id])
+    if api_user_signed_in? && current_api_user === room.user
+      case room.closed
+      when "na"
+        closed_value = "user"
+      when "host"
+        closed_value = "both"
+      end
+      state_value = "cancelled"
+      room.update_state(state_value)
+      room.update_closed(closed_value)
+      render json: {state: room.state, closed: room.closed}
+    elsif api_host_signed_in? && current_api_host === room.host
+      case room.closed
+      when "na"
+        closed_value = "host"
+      when "user"
+        closed_value = "both"
+      end
+      state_value = "cancelled"
+      room.update_state(state_value)
+      room.update_closed(closed_value)
+      render json: {state: room.state, closed: room.closed}
     end
   end
 

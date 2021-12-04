@@ -202,4 +202,66 @@ RSpec.describe "Api::Rooms", type: :request do
       end
     end   
   end
+
+  describe "PATCh /cancell_room" do
+    let!(:room) { create(:room) }
+    
+    context "userとしてログインしている場合" do
+      before do
+        post "/api/user/sign_in", params: { email: room.user.email, password: room.user.password}
+      end
+
+      it "closedが変更される" do
+        expect{
+          patch "/api/rooms/cancell_room", params: {id: room.id}, headers: headers
+        }.to change {room.reload.closed}
+      end
+
+      it "stateが変更される" do
+        expect{
+          patch "/api/rooms/cancell_room", params: {id: room.id}, headers: headers
+        }.to change {room.reload.state}
+
+      end
+
+      it "成功したら適切な数のjsonを返す" do
+        json = JSON.parse(response.body)
+        expect(json.count).to eq(1)
+      end
+    end
+
+    context "hostとしてログインしている場合" do
+      before do
+        post "/api/host/sign_in", params: { email: room.host.email, password: room.host.password}
+      end
+      
+      it "closedが変更される" do
+        expect{
+          patch "/api/rooms/cancell_room", params: {id: room.id}, headers: headers
+        }.to change {room.reload.closed}
+      end
+
+      it "stateが変更される" do
+        expect{
+          patch "/api/rooms/cancell_room", params: {id: room.id}, headers: headers
+        }.to change {room.reload.state}
+      end
+
+      it "成功したら適切なjsonを返す" do
+        json = JSON.parse(response.body)
+        expect(json.count).to eq(1)
+      end
+    end
+
+    context "他人がログインしている場合" do
+
+      it "closedは変更されない" do
+        user = create(:user)
+        post "/api/user/sign_in", params: { email: user.email, password: user.password}
+        expect{
+          patch "/api/rooms/cancell_room", params: {id: room.id}, headers: headers
+        }.to_not change {room.reload.closed}
+      end
+    end
+  end
 end

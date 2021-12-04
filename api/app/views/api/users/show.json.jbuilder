@@ -31,5 +31,5 @@ json.offers do
 end
 
 json.rooms do
-  json.array! @rooms, :id, :user, :host, :created_at
+  json.array! @rooms, :id, :state, :closed, :user, :host, :created_at
 end

@@ -38,13 +38,14 @@ Rails.application.routes.draw do
   post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
 
   namespace :api do
-    resources :rooms, only: [:show]
+    resources :rooms, only: [:show, :update] do
+      patch 'cancell_room', on: :collection
+    end
   end
   post 'api/rooms/user/:user_id', to: 'api/rooms#create'
   post 'api/rooms/host/:host_id', to: 'api/rooms#create'
   
   patch 'api/rooms/:id', to: 'api/rooms#update'
-  patch 'api/rooms/:id', to: 'api/rooms#update_state'
   # namespace :api do
   #   resources :user_messages, only: [:index]
   # end

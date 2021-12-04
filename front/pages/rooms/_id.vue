@@ -1,6 +1,11 @@
 <template>
   <v-app id="inspire">
     <v-subheader> {{ partner.name }}さま </v-subheader>
+    <v-subheader
+      v-if="closed == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+    >
+      お相手がトークルームから退出しました
+    </v-subheader>
     <v-subheader v-if="state == 'conclusion'"
       >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
         startTime.hour
@@ -31,13 +36,7 @@
       }}分で同意しました。双方の同意で契約完了します。</v-subheader
     >
     <v-subheader v-if="state == 'cancelled'"
-      >{{ startTime.year }}年{{ startTime.month }}月{{ startTime.day }}日{{
-        startTime.hour
-      }}時{{ startTime.minute }}分から {{ finishTime.year }}年{{
-        finishTime.month
-      }}月{{ finishTime.day }}日{{ finishTime.hour }}時{{
-        finishTime.minute
-      }}分で契約済みでしたが、やむを得ない理由により契約がキャンセルされました。</v-subheader
+      >やむを得ない理由により交渉がキャンセルされました。</v-subheader
     >
     <v-main v-if="state == 'negotiating'" three-line>
       <div class="text-overline mb-4">いつから</div>
@@ -133,6 +132,11 @@
         }}
       </v-btn>
     </v-main>
+    <v-main v-if="state != 'conclusion'">
+      <v-btn outlined rounded text color="red" @click="cancellRoom">
+        トークルームを削除する
+      </v-btn>
+    </v-main>
     <v-main>
       <v-container class="py-8 px-6" fluid>
         <v-row>
@@ -182,6 +186,7 @@ export default {
     partner: {},
     id: '',
     state: '',
+    closed: '',
     inputMessage: '',
     startTime: {},
     finishTime: {},
@@ -230,6 +235,7 @@ export default {
         this.id = response.data.id
         this.partner = response.data.partner
         this.state = response.data.state
+        this.closed = response.data.closed
         const starttime = new Date(response.data.start_time)
         this.startTime.year = starttime.getFullYear()
         this.startTime.month = starttime.getMonth() + 1
@@ -334,6 +340,29 @@ export default {
               console.log(error)
             })
       }
+    },
+    cancellRoom() {
+      this.$axios
+        .patch(
+          '/api/rooms/cancell_room',
+          { id: this.id },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          this.$store.dispatch('rooms/updateClosed', {
+            id: this.id,
+            closed: response.data.closed,
+          })
+          this.$store.dispatch('rooms/updateState', {
+            id: this.id,
+            state: response.data.state,
+          })
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${
+              this.$store.state.myInfo.myInfo.myid
+            }`
+          )
+        })
     },
   },
 }

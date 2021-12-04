@@ -2,6 +2,7 @@ json.id @room.id
 json.start_time @start_time
 json.finish_time @finish_time
 json.state @state
+json.closed @closed
 
 json.partner do
   json.id @partner.id
