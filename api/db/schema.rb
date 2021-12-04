@@ -10,28 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_15_191050) do
-
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-  end
-
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
-  end
+ActiveRecord::Schema.define(version: 2021_12_03_115650) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -41,7 +20,9 @@ ActiveRecord::Schema.define(version: 2021_11_15_191050) do
     t.integer "state", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "room_id", null: false
     t.index ["host_id"], name: "index_agreements_on_host_id"
+    t.index ["room_id"], name: "index_agreements_on_room_id"
     t.index ["user_id"], name: "index_agreements_on_user_id"
   end
 
@@ -70,7 +51,6 @@ ActiveRecord::Schema.define(version: 2021_11_15_191050) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "free_time_id", null: false
     t.index ["free_time_id"], name: "index_host_requests_on_free_time_id"
-    t.index ["host_id", "free_time_id"], name: "index_host_requests_on_host_id_and_free_time_id", unique: true
     t.index ["host_id"], name: "index_host_requests_on_host_id"
   end
 
@@ -134,8 +114,8 @@ ActiveRecord::Schema.define(version: 2021_11_15_191050) do
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "start_time", null: false
     t.datetime "finish_time", null: false
-    t.integer "consensus", default: 0, null: false
-    t.integer "deletion", default: 0, null: false
+    t.integer "state", default: 0, null: false
+    t.integer "closed", default: 0, null: false
     t.index ["host_id"], name: "index_rooms_on_host_id"
     t.index ["user_id"], name: "index_rooms_on_user_id"
   end
@@ -163,7 +143,6 @@ ActiveRecord::Schema.define(version: 2021_11_15_191050) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "recruitment_time_id", null: false
     t.index ["recruitment_time_id"], name: "index_user_requests_on_recruitment_time_id"
-    t.index ["user_id", "recruitment_time_id"], name: "index_user_requests_on_user_id_and_recruitment_time_id", unique: true
     t.index ["user_id"], name: "index_user_requests_on_user_id"
   end
 
@@ -214,8 +193,8 @@ ActiveRecord::Schema.define(version: 2021_11_15_191050) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agreements", "hosts"
+  add_foreign_key "agreements", "rooms"
   add_foreign_key "agreements", "users"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"

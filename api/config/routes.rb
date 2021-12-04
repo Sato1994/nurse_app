@@ -20,8 +20,11 @@ Rails.application.routes.draw do
     end
 
   end
+
   namespace :api do
-    resources :agreements, only: [:index, :show, :update, :destroy]
+    resources :agreements, only: [:index, :show, :update, :destroy] do
+      patch 'cancell', on: :collection
+    end
   end
 
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'
@@ -35,7 +38,9 @@ Rails.application.routes.draw do
   post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
 
   namespace :api do
-    resources :rooms, only: [:show]
+    resources :rooms, only: [:show, :update] do
+      patch 'cancell_room', on: :collection
+    end
   end
   post 'api/rooms/user/:user_id', to: 'api/rooms#create'
   post 'api/rooms/host/:host_id', to: 'api/rooms#create'
@@ -52,9 +57,4 @@ Rails.application.routes.draw do
   # end
 
   post 'api/host_messages/:room_id', to: 'api/host_messages#create'
-
-
-
-
-
 end

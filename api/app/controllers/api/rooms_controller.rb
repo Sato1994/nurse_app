@@ -1,24 +1,21 @@
 class Api::RoomsController < ApplicationController
-
+  
   def show
-     if api_user_signed_in?
-      room = Room.find(params[:id])
-      if room.user === current_api_user
-        @user_messages = UserMessage.where(room: room)
-        @host_messages = HostMessage.where(room: room)
-        render "show", formats: :json, handlers: :jbuilder
-      else
-        render json: nil, status: 403
-      end
-    elsif api_host_signed_in?
-      room = Room.find(params[:id])
-      if room.host === current_api_host
-        @user_messages = UserMessage.where(room: room)
-        @host_messages = HostMessage.where(room: room)
-        render "show", formats: :json, handlers: :jbuilder
-      else
-        render json: nil, status: 403
-      end
+    @room = Room.find(params[:id])
+    @user_messages = @room.user_messages
+    @host_messages = @room.host_messages
+    @start_time = @room.start_time
+    @finish_time = @room.finish_time
+    @state = @room.state
+    @closed = @room.closed
+    if api_user_signed_in? && current_api_user = @room.user
+      @partner = @room.host
+      render "show", formats: :json, handlers: :jbuilder
+      # render json: nil, status: 403
+    elsif api_host_signed_in? && current_api_host = @room.host
+      @partner = @room.user
+      render "show", formats: :json, handlers: :jbuilder
+      # render json: nil, status: 403
     else
       render json: nil , status: 401
     end
@@ -57,21 +54,21 @@ class Api::RoomsController < ApplicationController
           render json: room.errors, status: 400
         end
       else
-        case room.consensus
+        case room.state
         when "negotiating"
-          if room.update(consensus: "user")
+          if room.update(state: "user")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "user"
-          if room.update(consensus: "negotiating")
+          if room.update(state: "negotiating")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "host"
-          if room.update(consensus: "conclusion")
+          if room.update(state: "conclusion")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
@@ -88,21 +85,21 @@ class Api::RoomsController < ApplicationController
           render json: room.errors, status: 400
         end
       else
-        case room.consensus
+        case room.state
         when "negotiating"
-          if room.update(consensus: "host")
+          if room.update(state: "host")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "user"
-          if room.update(consensus: "conclusion")
+          if room.update(state: "conclusion")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
           end
         when "host"
-          if room.update(consensus: "negotiating")
+          if room.update(state: "negotiating")
             render json: room, status: 200
           else
             render json: room.errors, status: 400
@@ -113,6 +110,33 @@ class Api::RoomsController < ApplicationController
       end
     else
       render body:nil, status: 403
+    end
+  end
+
+  def cancell_room
+    room = Room.find(params[:id])
+    if api_user_signed_in? && current_api_user === room.user
+      case room.closed
+      when "na"
+        closed_value = "user"
+      when "host"
+        closed_value = "both"
+      end
+      state_value = "cancelled"
+      room.update_state(state_value)
+      room.update_closed(closed_value)
+      render json: {state: room.state, closed: room.closed}
+    elsif api_host_signed_in? && current_api_host === room.host
+      case room.closed
+      when "na"
+        closed_value = "host"
+      when "user"
+        closed_value = "both"
+      end
+      state_value = "cancelled"
+      room.update_state(state_value)
+      room.update_closed(closed_value)
+      render json: {state: room.state, closed: room.closed}
     end
   end
 

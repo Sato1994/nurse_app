@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :agreement do
     association :user
     association :host
+    association :room
     start_time { Time.current + 24.hour }
     finish_time { Time.current + 32.hour }
     state { 0 }

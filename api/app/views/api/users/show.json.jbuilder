@@ -1,5 +1,7 @@
-json.user do
-  json.extract! @user, :id, :myid, :name, :address, :image, :wanted, :sex, :age, :year, :profile, :created_at
+if @user
+  json.user do
+    json.extract! @user, :id, :myid, :name, :address, :image, :wanted, :sex, :age, :year, :profile, :created_at
+  end
 end
 
 # objectをArrayに包む
@@ -21,7 +23,7 @@ json.requests do
 end
 
 json.agreements do
-  json.array! @agreements, :id, :start_time, :finish_time
+  json.array! @agreements, :id, :room, :host, :state, :start_time, :finish_time
 end
 
 json.offers do
@@ -29,5 +31,5 @@ json.offers do
 end
 
 json.rooms do
-  json.array! @rooms, :id, :user, :host, :created_at
+  json.array! @rooms, :id, :state, :closed, :user, :host, :created_at
 end

@@ -48,35 +48,26 @@
 
 <script>
 export default {
-  // data: () => ({
-  //   myRequests: '',
-
-  // }),
-  // create() {
-  //   this.myRequests = this.$store.getters['myInfo/getMyRequests']
-  // },
   computed: {
     formedMyRequests() {
-      const requests = this.$store.getters['myInfo/getMyRequests'].map(
-        (obj) => {
-          const s = new Date(obj.start_time)
-          const f = new Date(obj.finish_time)
-          const newObject = {
-            id: obj.id,
-            host: obj.host,
-            formedRequest: `${s.getFullYear()}年${
-              s.getMonth() + 1
-            }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-              f.getMonth() + 1
-            }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-          }
-          return newObject
+      const requests = this.$store.getters['requests/requests'].map((obj) => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {
+          id: obj.id,
+          host: obj.host,
+          formedRequest: `${s.getFullYear()}年${
+            s.getMonth() + 1
+          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
+            f.getMonth() + 1
+          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
         }
-      )
+        return newObject
+      })
       return requests
     },
     formedMyOffers() {
-      const offers = this.$store.getters['myInfo/getMyOffers'].map((obj) => {
+      const offers = this.$store.getters['offers/offers'].map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
         const newObject = {

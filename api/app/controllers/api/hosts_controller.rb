@@ -14,20 +14,18 @@ include Pagination
   end
 
   def show
-    @host = Host.find_by!(myid: params[:id])
-    if api_host_signed_in?
-      if @host = current_api_host
-        @requests = @host.host_requests
-        @offers = @host.user_requests
-        @agreements = @host.agreements
-        @rooms = @host.rooms
-      end
+    if api_host_signed_in? && current_api_host.myid = params[:id]
+      @requests = current_api_host.host_requests
+      @offers = current_api_host.user_requests
+      @agreements = current_api_host.agreements
+      @rooms = current_api_host.rooms
+      @skills = current_api_host.skills
+      @recruitment_times = current_api_host.recruitment_times
+    else
+      @host = Host.find_by!(myid: params[:id])
+      @recruitment_times = @host.recruitment_times
+      @skills = @host.skills
     end
-    @skills = @host.skills
-    @recruitment_times = @host.recruitment_times
     render "show", formats: :json, handlers: :jbuilder
   end
-
-
-
 end

@@ -53,74 +53,68 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 export default {
   data: () => ({
     myInfo: {
-      name: "",
-      email: "",
-      myid: "",
-      password: "",
-      password_confirmation: "",
+      name: '',
+      email: '',
+      myid: '',
+      password: '',
+      password_confirmation: '',
     },
 
     valid: true,
     nameRules: [
-      (v) => !!v || "名前は必須です",
-      (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
+      (v) => !!v || '名前は必須です',
+      (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
     ],
     emailRules: [
-      (v) => !!v || "メールアドレスは必須です",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      (v) => !!v || 'メールアドレスは必須です',
+      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     ],
     select: null,
-    items: ["Item 1", "Item 2", "Item 3", "Item 4"],
+    items: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
     checkbox: false,
   }),
 
   methods: {
     validate() {
-      this.$refs.form.validate();
+      this.$refs.form.validate()
     },
     reset() {
-      this.$refs.form.reset();
+      this.$refs.form.reset()
     },
     resetValidation() {
-      this.$refs.form.resetValidation();
+      this.$refs.form.resetValidation()
     },
     signUp() {
       axios
-        .post("http://localhost:3000/api/user", this.myInfo)
+        .post('http://localhost:3000/api/user', this.myInfo)
         .then((response) => {
-          this.$router.push(`/user/${response.data.data.myid}`);
+          this.$router.push(`/user/${response.data.data.myid}`)
 
-          console.log("signUpのresponse", response.data.data);
+          console.log('signUpのresponse', response.data.data)
 
-          this.$store.dispatch("myInfo/saveMyInfo", response.data.data);
+          this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
 
-          this.$modal.hide("user-modal");
+          this.$modal.hide('user-modal')
 
           const authInfo = {
-            "access-token": response.headers["access-token"],
+            'access-token': response.headers['access-token'],
             client: response.headers.client,
             uid: response.headers.uid,
-          };
+          }
 
           // cookieへ認証tokenをセット
-          this.$cookies.set("authInfo", authInfo);
+          this.$cookies.set('authInfo', authInfo)
           // cookieへuser or hostセット
-          this.$cookies.set("user", "user");
-
-          // this.$axios.get(`http://localhost:3000/api/${this.$cookies.get("user")}s/${response.data.data.myid}`)
-          //  .then((response) => {
-          //   this.$store.dispatch("myInfo/saveMySkills", response.data.target_skills)
-          //   this.$store.dispatch("myInfo/saveMyTimes", response.data.target_times)
-          //  });
+          this.$cookies.set('user', 'user')
         })
         .catch((error) => {
-          console.log("登録失敗", error);
-        });
+          console.log('登録失敗', error)
+        })
     },
   },
-};
+}
 </script>

@@ -38,7 +38,7 @@ class Api::UserRequestsController < ApplicationController
   private
 
   def user_request_params
-    params.permit(:user_request).merge(recruitment_time_id: params[:recruitment_time_id], user: current_api_user, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:recruitment_time_id).merge(user_id: current_api_user.id, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
   end
 
 end

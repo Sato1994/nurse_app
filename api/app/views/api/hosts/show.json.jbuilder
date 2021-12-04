@@ -1,5 +1,7 @@
-json.host do
-  json.extract! @host, :id, :myid, :name, :address, :image, :wanted, :profile, :created_at
+if @host
+  json.host do
+    json.extract! @host, :id, :myid, :name, :address, :image, :wanted, :profile, :created_at
+  end
 end
 
 json.target_skills do
@@ -20,7 +22,7 @@ json.requests do
 end
 
 json.agreements do
-  json.array! @agreements, :id, :start_time, :finish_time
+  json.array! @agreements, :id, :room, :user, :state, :start_time, :finish_time
 end
 
 json.offers do
@@ -28,5 +30,5 @@ json.offers do
 end
 
 json.rooms do
-  json.array! @rooms, :id, :user, :host, :created_at
+  json.array! @rooms, :id, :state, :closed, :user, :host, :created_at
 end
