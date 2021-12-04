@@ -19,9 +19,9 @@ RSpec.describe "Api::HostMessages", type: :request do
         expect(HostMessage.count).to eq(1)
       end
 
-      it "プロパティの数だけjsonを返す" do
+      it "必要なプロパティの数だけjsonを返す" do
         json = JSON.parse(response.body)
-        expect(json.count).to eq(5)
+        expect(json.count).to eq(4)
       end
 
       it "ステータス201を返す" do

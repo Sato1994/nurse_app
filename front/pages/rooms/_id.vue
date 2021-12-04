@@ -145,7 +145,7 @@
               <v-list two-line>
                 <template>
                   <v-list-item
-                    v-for="(message, index) in messages"
+                    v-for="(message, index) in mixedMessages"
                     :key="index"
                   >
                     <v-list-item-avatar color="grey darken-1">
@@ -163,14 +163,13 @@
                   </v-list-item>
                 </template>
               </v-list>
-              <v-textarea v-model="inputMessage" color="teal">
+              <v-textarea ref="form" v-model="inputMessage" color="teal">
                 <template #label>
                   <div>本文入力 <small>ここです</small></div>
                 </template>
               </v-textarea>
               <v-btn @click="sendMessage"> 送信 </v-btn>
             </v-card>
-            {{ messages }}
           </v-col>
         </v-row>
       </v-container>
@@ -219,6 +218,12 @@ export default {
         this.finishTime.hour
       )}:${String(this.finishTime.minute)}`
     },
+    mixedMessages() {
+      const messages = this.messages.slice().sort((a, b) => {
+        return new Date(a.created_at) - new Date(b.created_at)
+      })
+      return messages
+    },
   },
   created() {
     this.$axios
@@ -229,9 +234,6 @@ export default {
         // Array.pushとArray.concatの違い https://qiita.com/pon_maeda/items/f034cccf3459c1d6505f
         this.messages = this.messages.concat(response.data.user_messages)
         this.messages = this.messages.concat(response.data.host_messages)
-        this.messages.sort((a, b) => {
-          return new Date(a.created_at) - new Date(b.created_at)
-        })
         this.id = response.data.id
         this.partner = response.data.partner
         this.state = response.data.state
@@ -260,6 +262,8 @@ export default {
         )
         .then((response) => {
           console.log(response)
+          this.messages.push(response.data)
+          this.$refs.form.reset()
         })
         .catch((error) => {
           console.log(error)
