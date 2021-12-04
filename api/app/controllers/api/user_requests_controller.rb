@@ -26,10 +26,12 @@ class Api::UserRequestsController < ApplicationController
   # end
   #############################################################
 
+  ########## user_request作成 ##########
   def create
     user_request = UserRequest.new(user_request_params)
     if user_request.save
-      render json: user_request, status: 201
+      recruitment_time = RecruitmentTime.find(params[:recruitment_time_id])
+      render json: {id: user_request.id, start_time: user_request.start_time, finish_time: user_request.finish_time, host: recruitment_time.host }, status: 201
     else
       render json: user_request.errors, status: 400
     end
