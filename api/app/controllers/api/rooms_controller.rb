@@ -26,7 +26,7 @@ class Api::RoomsController < ApplicationController
       room = Room.new(room_user_signed_in_params)
       if room.save
         HostRequest.find(params[:request_id]).destroy
-        render json: room, status: 201
+        render json: {id: room.id, state: room.state, closed: room.closed, user: room.user, host: room.host, created_at: room.created_at}, status: 201
       else
         render json: room.errors, status: 400
       end
@@ -35,7 +35,7 @@ class Api::RoomsController < ApplicationController
       room = Room.new(room_host_signed_in_params)
       if room.save
         UserRequest.find(params[:request_id]).destroy
-        render json: room, status: 201
+        render json: {id: room.id, state: room.state, closed: room.closed, user: room.user, host: room.host, created_at: room.created_at}, status: 201
       else
         render json: room.errors, status: 400
       end

@@ -102,6 +102,7 @@ export default {
         .then((response) => {
           console.log(response.data)
           this.$store.dispatch('offers/removeOffer', requestId)
+          this.$store.dispatch('rooms/addRoom', response.data)
         })
         .catch((error) => {
           console.log(error)
@@ -110,3 +111,4 @@ export default {
   },
 }
 </script>
+

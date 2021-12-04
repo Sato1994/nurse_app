@@ -30,7 +30,7 @@ RSpec.describe "Api::Rooms", type: :request do
 
         it "必要カラムだけのjsonを返す" do
           json = JSON.parse(response.body)
-          expect(json.count).to eq(9)
+          expect(json.count).to eq(6)
         end
 
         it "ステータス201を返す" do
@@ -64,7 +64,7 @@ RSpec.describe "Api::Rooms", type: :request do
 
         it "必要カラムだけのjsonを返す" do
           json = JSON.parse(response.body)
-          expect(json.count).to eq(9)
+          expect(json.count).to eq(6)
         end
 
         it "ステータス201を返す" do
