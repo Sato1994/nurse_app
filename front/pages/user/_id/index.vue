@@ -46,7 +46,10 @@
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
-      <SkillList />
+      <SkillList
+        @add-button-click="addSkill"
+        @remove-button-click="removeSkill"
+      />
     </modal>
 
     <v-divider class="mx-4"></v-divider>
@@ -155,6 +158,7 @@ export default {
     Edit,
     SkillList,
   },
+
   data: () => ({
     target: [],
     targetSkills: [],
@@ -166,6 +170,7 @@ export default {
       { title: '契約の取り消し申請' },
     ],
   }),
+
   computed: {
     formedTargetTimes() {
       const targetTimes = this.targetTimes.map((obj) => {
@@ -183,6 +188,7 @@ export default {
       })
       return targetTimes
     },
+
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
         'agreements/agreementsInProgress'
@@ -204,6 +210,7 @@ export default {
       return targetAgreements
     },
   },
+
   created() {
     const myid = this.$route.params.id
     this.$axios
@@ -214,13 +221,28 @@ export default {
         this.targetTimes = response.data.target_times
       })
   },
+
   methods: {
     openEditModal() {
       this.$modal.show('edit-modal')
     },
+
     openSkillListModal() {
       this.$modal.show('skill-list-modal')
     },
+
+    addSkill(skill) {
+      this.targetSkills.push(skill)
+    },
+
+    removeSkill(skill) {
+      const target = this.targetSkills.find(
+        (targetSkill) => targetSkill.id === skill.id
+      )
+      const index = this.targetSkills.indexOf(target)
+      this.targetSkills.splice(index, 1)
+    },
+
     editMyInfo(copiedMyInfo) {
       this.$set(this.target, 'name', copiedMyInfo.name)
       this.$set(this.target, 'address', copiedMyInfo.address)
@@ -230,12 +252,14 @@ export default {
       this.$set(this.target, 'year', copiedMyInfo.year)
       this.$set(this.target, 'sex', copiedMyInfo.sex)
     },
+
     jumpTargetTimes(freeTimeId) {
       this.$router.push({
         path: `/user/${this.target.myid}/times`,
         query: { t: freeTimeId },
       })
     },
+
     selectedMenu(i, agreementId, roomId, hostMyId) {
       switch (i) {
         case 0:

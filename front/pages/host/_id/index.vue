@@ -45,7 +45,10 @@
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
-      <SkillList />
+      <SkillList
+        @add-button-click="addSkill"
+        @remove-button-click="removeSkill"
+      />
     </modal>
 
     <v-divider class="mx-4"></v-divider>
@@ -219,6 +222,16 @@ export default {
     },
     openSkillListModal() {
       this.$modal.show('skill-list-modal')
+    },
+    addSkill(skill) {
+      this.targetSkills.push(skill)
+    },
+    removeSkill(skill) {
+      const target = this.targetSkills.find(
+        (targetSkill) => targetSkill.id === skill.id
+      )
+      const index = this.targetSkills.indexOf(target)
+      this.targetSkills.splice(index, 1)
     },
     editMyInfo(copiedMyInfo) {
       this.$set(this.target, 'name', copiedMyInfo.name)

@@ -18,7 +18,7 @@
           class="ma-1"
           color="orange"
           text-color="white"
-          @click="removeSkill(skill.id)"
+          @click="removeSkill(skill)"
         >
           {{ skill.name }}
         </v-chip>
@@ -34,7 +34,7 @@
           class="ma-1"
           color="orange"
           text-color="white"
-          @click="addSkill(unselectedSkill.id)"
+          @click="addSkill(unselectedSkill)"
         >
           {{ unselectedSkill.name }}
         </v-chip>
@@ -46,10 +46,10 @@
 <script>
 export default {
   data: () => ({
-    skills: [],
     allSkills: [],
     inputValue: '',
   }),
+
   computed: {
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
@@ -60,28 +60,29 @@ export default {
       )
       return searchedSkills
     },
+
+    skills() {
+      return this.$store.getters['skills/skills']
+    },
   },
 
-  mounted() {
-    this.skills = this.$store.getters['skills/skills']
+  created() {
     this.$axios
-      .get('http://localhost:3000/api/skills')
+      .get('/api/skills')
       .then((response) => {
         this.allSkills = response.data
         console.log('allSkillsをセット', response.data)
       })
       .catch((error) => {
-        console.log('computedでエラー', error)
+        console.log('createdでエラー', error)
       })
   },
 
   methods: {
-    addSkill(e) {
+    addSkill(skill) {
       this.$axios
         .post(
-          `http://localhost:3000/api/skills/${e}/${this.$cookies.get(
-            'user'
-          )}_skills`,
+          `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
           {},
           {
             headers: this.$cookies.get('authInfo'),
@@ -89,22 +90,27 @@ export default {
         )
         .then((response) => {
           console.log(response.data)
+          this.$emit('add-button-click', skill)
           this.$store.dispatch('skills/addNewSkill', response.data)
         })
         .catch((error) => {
           console.log(error)
         })
     },
-    removeSkill(e) {
+
+    removeSkill(skill) {
       this.$axios
         .delete(
-          `http://localhost:3000/api/${this.$cookies.get('user')}_skills/${e}`,
+          `http://localhost:3000/api/${this.$cookies.get('user')}_skills/${
+            skill.id
+          }`,
           {
             headers: this.$cookies.get('authInfo'),
           }
         )
         .then((response) => {
           console.log(response.data)
+          this.$emit('remove-button-click', skill)
           this.$store.dispatch('skills/removeSkill', response.data)
         })
         .catch((error) => {

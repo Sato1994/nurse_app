@@ -4,9 +4,9 @@ class Api::UserSkillsController < ApplicationController
 
   def create
     skill = Skill.find(params[:skill_id])
-    user_skill = current_api_user.user_skills.new(skill: skill, user: current_api_user)
+    user_skill = current_api_user.user_skills.new(skill: skill)
     if user_skill.save
-      render json: skill, status: :created
+      render json: {id: skill.id, name: skill.name}
     else
       render json: user_skill.errors, status: :bad_request
     end

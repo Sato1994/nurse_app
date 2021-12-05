@@ -2,12 +2,9 @@ class Api::HostSkillsController < ApplicationController
 
   def create
     skill = Skill.find(params[:skill_id])
-    #どれでもOK
-    # host_skill = current_api_host.host_skills.new(skill: skill, host: current_api_host)
-    # host_skill = HostSkill.new(skill_id: skill.id, host_id: current_api_host.id)
     host_skill = current_api_host.host_skills.new(skill: skill)
     if host_skill.save
-      render json: skill, status: :created
+      render json: {id: skill.id, name: skill.name}
     else
       render json: host_skill.errors, status: :bad_request
     end
