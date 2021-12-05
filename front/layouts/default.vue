@@ -1,151 +1,121 @@
 <template>
   <v-app dark>
-    <v-main>
-      <v-app id="inspire">
-        ★デバッグ用★ ★Userかhostか？{{ $cookies.get('user') }}★ ★myInfo→{{
-          $store.state.myInfo.myInfo.name
-        }}★ ★cookies→{{
-          $cookies.get('authInfo') == null ? '入ってない' : '入ってる'
-        }}
+    <v-main class="grey lighten-3">
+      <v-app-bar app color="white" flat>
+        <v-container class="py-0 fill-height">
+          <v-menu bottom right transition="scale-transition" origin="top left">
+            <template #activator="{ on }">
+              <v-avatar
+                class="mr-10"
+                color="grey darken-1"
+                size="40"
+                v-on="on"
+              ></v-avatar>
+            </template>
+            <v-card width="300">
+              <v-list dark>
+                <v-list-item @click="openSelectUserTypeModal">
+                  <v-list-item-avatar>
+                    <v-img
+                      src="https://cdn.vuetifyjs.com/images/john.png"
+                    ></v-img>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title>ログイン</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
 
-        <v-app-bar app color="white" flat>
-          <v-container class="py-0 fill-height">
-            <v-menu
-              v-model="menu"
-              bottom
-              right
-              transition="scale-transition"
-              origin="top left"
-            >
-              <template #activator="{ on }">
-                <v-avatar
-                  class="mr-10"
-                  color="grey darken-1"
-                  size="40"
-                  v-on="on"
-                ></v-avatar>
-              </template>
-              <v-card width="300">
-                <v-list dark>
-                  <v-list-item @click="openSelectUserTypeModal">
-                    <v-list-item-avatar>
-                      <v-img
-                        src="https://cdn.vuetifyjs.com/images/john.png"
-                      ></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>ログイン</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-btn icon @click="menu = false">
-                        <v-icon>mdi-close-circle</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
+              <v-list>
+                <v-list-item @click="openUserModal">
+                  <v-list-item-action>
+                    <v-icon>mdi-briefcase</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>看護師として登録する</v-list-item-title>
+                </v-list-item>
+              </v-list>
 
-                <v-list>
-                  <v-list-item @click="openUserModal">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>看護師として登録する</v-list-item-title>
-                  </v-list-item>
-                </v-list>
+              <v-list>
+                <v-list-item @click="openHostModal">
+                  <v-list-item-action>
+                    <v-icon>mdi-briefcase</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>病院として登録する</v-list-item-title>
+                </v-list-item>
+              </v-list>
 
-                <v-list>
-                  <v-list-item @click="openHostModal">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>病院として登録する</v-list-item-title>
-                  </v-list-item>
-                </v-list>
+              <v-list>
+                <v-list-item @click="logout">
+                  <v-list-item-action>
+                    <v-icon>mdi-briefcase</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>ログアウト</v-list-item-title>
+                </v-list-item>
+              </v-list>
 
-                <v-list>
-                  <v-list-item @click="logout">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>ログアウト</v-list-item-title>
-                  </v-list-item>
-                </v-list>
+              <v-list>
+                <v-list-item @click="deactivate">
+                  <v-list-item-action>
+                    <v-icon>mdi-briefcase</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>アカウント削除</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+          <v-btn :to="mypageURL" nuxt text> マイページ </v-btn>
+          <v-btn to="/" nuxt text> お相手一覧 </v-btn>
+          <v-btn to="/times" nuxt text> 募集時間の登録 </v-btn>
+          <v-btn :to="negotiationsURL" nuxt text> リクエスト等 </v-btn>
+          <v-spacer></v-spacer>
+        </v-container>
+      </v-app-bar>
+      <v-container>
+        <v-row>
+          <v-col cols="2">
+            <v-sheet rounded="lg">
+              <v-list color="transparent">
+                <v-list-item to="/rooms" nuxt text>
+                  <v-list-item-content>
+                    <v-list-item-title> メッセージ </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
 
-                <v-list>
-                  <v-list-item @click="deactivate">
-                    <v-list-item-action>
-                      <v-icon>mdi-briefcase</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-title>アカウント削除</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-menu>
-            <v-btn :to="mypageURL" nuxt text> マイページ </v-btn>
-            <v-btn to="/" nuxt text> お相手一覧 </v-btn>
-            <v-btn to="/times" nuxt text> 募集時間の登録 </v-btn>
-            <v-btn :to="negotiationsURL" nuxt text> リクエスト等 </v-btn>
-            <v-spacer></v-spacer>
-            <v-responsive max-width="260">
-              <v-text-field
-                dense
-                flat
-                hide-details
-                rounded
-                solo-inverted
-              ></v-text-field>
-            </v-responsive>
-          </v-container>
-        </v-app-bar>
-        <v-main class="grey lighten-3">
-          <v-container>
-            <v-row>
-              <v-col cols="2">
-                <v-sheet rounded="lg">
-                  <v-list color="transparent">
-                    <v-list-item to="/rooms" nuxt text>
-                      <v-list-item-content>
-                        <v-list-item-title> メッセージ </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
+                <v-divider class="my-2"></v-divider>
 
-                    <v-divider class="my-2"></v-divider>
+                <v-list-item link color="grey lighten-4">
+                  <v-list-item-content>
+                    <v-list-item-title> Refresh </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-sheet>
+          </v-col>
+          <v-col>
+            <v-sheet min-height="70vh" rounded="lg">
+              <v-container>
+                <modal name="user-modal" height="auto">
+                  <SignUpAsUser />
+                </modal>
 
-                    <v-list-item link color="grey lighten-4">
-                      <v-list-item-content>
-                        <v-list-item-title> Refresh </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-sheet>
-              </v-col>
-              <v-col>
-                <v-sheet min-height="70vh" rounded="lg">
-                  <v-container>
-                    <modal name="user-modal" height="auto">
-                      <SignUpAsUser />
-                    </modal>
+                <modal name="host-modal" height="auto" :scrollable="true">
+                  <SignUpAsHost />
+                </modal>
 
-                    <modal name="host-modal" height="auto" :scrollable="true">
-                      <SignUpAsHost />
-                    </modal>
+                <modal name="sign-in-modal" height="auto">
+                  <SignIn />
+                </modal>
 
-                    <modal name="sign-in-modal" height="auto">
-                      <SignIn />
-                    </modal>
+                <modal name="select-user-type-modal" height="auto">
+                  <SelectUserType />
+                </modal>
 
-                    <modal name="select-user-type-modal" height="auto">
-                      <SelectUserType />
-                    </modal>
-
-                    <Nuxt />
-                  </v-container>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-main>
-      </v-app>
+                <Nuxt />
+              </v-container>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -164,9 +134,7 @@ export default {
     SelectUserType,
   },
 
-  data: () => ({
-    menu: false,
-  }),
+  data: () => ({}),
   computed: {
     mypageURL() {
       return `/${this.$cookies.get('user')}/${
