@@ -1,84 +1,9 @@
 <template>
   <v-card class="mx-auto" max-width="" outlined>
-    オファーをしましょう！！！
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="text-overline mb-4">いつから</div>
-        <v-card-actions>
-          <v-select
-            v-model="startTime.year"
-            :items="yearList"
-            label="年"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.month"
-            :items="monthList"
-            label="月"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.day"
-            :items="dayList"
-            label="日"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.hour"
-            :items="hourList"
-            label="時"
-            dense
-          ></v-select>
-          <v-select
-            v-model="startTime.minute"
-            :items="minuteList"
-            label="分"
-            dense
-          ></v-select>
-        </v-card-actions>
-
-        <div class="text-overline mb-4">いつまで</div>
-        <v-card-actions>
-          <v-select
-            v-model="finishTime.year"
-            :items="yearList"
-            label="年"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.month"
-            :items="monthList"
-            label="月"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.day"
-            :items="dayList"
-            label="日"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.hour"
-            :items="hourList"
-            label="時"
-            dense
-          ></v-select>
-          <v-select
-            v-model="finishTime.minute"
-            :items="minuteList"
-            label="分"
-            dense
-          ></v-select>
-        </v-card-actions>
-      </v-list-item-content>
-    </v-list-item>
-
-    <v-btn outlined rounded text color="red" @click="register">
-      この時間でオファー！
-    </v-btn>
+    <DatePicker btn-text="オファーを送る" @register-button-click="register" />
     <v-card class="mx-auto" max-width="" tile>
       <v-list dense>
-        <v-subheader>お相手の募集Timeの登録一覧</v-subheader>
+        <v-subheader>お相手の募集期間の一覧</v-subheader>
         <v-list-item-group
           v-for="(time, index) in formedTargetTimes"
           :key="index"
@@ -100,83 +25,18 @@
 </template>
 
 <script>
+import DatePicker from '@/components/molecules/DatePicker.vue'
 export default {
-  data: () => ({
-    // 今日の日付をとってきて今日から１年後くらいまでを自動でセットしたい
-    yearList: ['2021', '2022', '2023', '2024'],
-    monthList: [
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-      '06',
-      '07',
-      '08',
-      '09',
-      '10',
-      '11',
-      '12',
-    ],
-    dayList: [
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-      '06',
-      '07',
-      '08',
-      '09',
-      '10',
-      '11',
-      '12',
-      '13',
-      '14',
-      '15',
-    ],
-    hourList: [
-      '00',
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-      '06',
-      '07',
-      '08',
-      '09',
-      '10',
-      '11',
-      '12',
-      '13',
-      '14',
-      '15',
-      '16',
-      '17',
-      '18',
-      '19',
-      '20',
-      '21',
-      '22',
-      '23',
-    ],
-    minuteList: ['00', '15', '30', '45'],
+  components: {
+    DatePicker,
+  },
 
-    startTime: {},
-    finishTime: {},
+  data: () => ({
     icon: 'mdi-clock',
-    target: [],
     targetTimes: [],
   }),
 
   computed: {
-    stringStartTime() {
-      return `${this.startTime.year}-${this.startTime.month}-${this.startTime.day}T${this.startTime.hour}:${this.startTime.minute}:00`
-    },
-    stringFinishTime() {
-      return `${this.finishTime.year}-${this.finishTime.month}-${this.finishTime.day}T${this.finishTime.hour}:${this.finishTime.minute}:00`
-    },
     formedTargetTimes() {
       const targetTimes = this.targetTimes.map((obj) => {
         const s = new Date(obj.start_time)
@@ -200,20 +60,18 @@ export default {
     this.$axios
       .get(`http://localhost:3000/api/users/${myid}`)
       .then((response) => {
-        this.target = response.data.user
-        // this.targetSkills = response.data.target_skills;
         this.targetTimes = response.data.target_times
       })
   },
 
   methods: {
-    register() {
+    register(startTime, finishTime) {
       this.$axios
         .post(
           `/api/host_requests/${this.$route.query.t}`,
           {
-            start_time: this.stringStartTime,
-            finish_time: this.stringFinishTime,
+            start_time: startTime,
+            finish_time: finishTime,
           },
           { headers: this.$cookies.get('authInfo') }
         )
