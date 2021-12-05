@@ -14,6 +14,10 @@ export const mutations = {
   updateState(state, payload) {
     state.rooms.find(obj => obj.id === payload.id).state = payload.state
   },
+
+  addRoom(state, payload) {
+    state.rooms.push(payload)
+  }
 }
 
 export const actions = {
@@ -27,6 +31,9 @@ export const actions = {
 
   updateState({ commit }, payload) {
     commit('updateState', payload)
+  },
+  addRoom({ commit }, room) {
+    commit('addRoom', room)
   },
 }
 

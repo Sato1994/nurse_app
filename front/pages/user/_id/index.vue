@@ -42,16 +42,19 @@
     </v-card-text>
 
     <modal name="edit-modal" height="auto" :scrollable="true">
-      <Edit />
+      <Edit @edit-button-click="editMyInfo" />
     </modal>
 
     <modal name="skill-list-modal" height="auto" :scrollable="true">
-      <SkillList />
+      <SkillList
+        @add-button-click="addSkill"
+        @remove-button-click="removeSkill"
+      />
     </modal>
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>私の獲得スキル</v-card-title>
+    <v-card-title>苦手スキル</v-card-title>
 
     <v-card-text>
       <div>
@@ -123,13 +126,23 @@
       </v-list-item-group>
     </v-list>
 
-    <v-card-actions>
+    <v-card-actions
+      v-if="
+        $cookies.get('user') === 'user' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+    >
       <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
         獲得スキルを編集
       </v-btn>
     </v-card-actions>
 
-    <v-card-actions>
+    <v-card-actions
+      v-if="
+        $cookies.get('user') === 'user' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+    >
       <v-btn color="deep-purple lighten-2" text @click="openEditModal">
         プロフィールを編集
       </v-btn>
@@ -145,6 +158,7 @@ export default {
     Edit,
     SkillList,
   },
+
   data: () => ({
     target: [],
     targetSkills: [],
@@ -156,6 +170,7 @@ export default {
       { title: '契約の取り消し申請' },
     ],
   }),
+
   computed: {
     formedTargetTimes() {
       const targetTimes = this.targetTimes.map((obj) => {
@@ -173,6 +188,7 @@ export default {
       })
       return targetTimes
     },
+
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
         'agreements/agreementsInProgress'
@@ -194,6 +210,7 @@ export default {
       return targetAgreements
     },
   },
+
   created() {
     const myid = this.$route.params.id
     this.$axios
@@ -204,19 +221,45 @@ export default {
         this.targetTimes = response.data.target_times
       })
   },
+
   methods: {
     openEditModal() {
       this.$modal.show('edit-modal')
     },
+
     openSkillListModal() {
       this.$modal.show('skill-list-modal')
     },
+
+    addSkill(skill) {
+      this.targetSkills.push(skill)
+    },
+
+    removeSkill(skill) {
+      const target = this.targetSkills.find(
+        (targetSkill) => targetSkill.id === skill.id
+      )
+      const index = this.targetSkills.indexOf(target)
+      this.targetSkills.splice(index, 1)
+    },
+
+    editMyInfo(copiedMyInfo) {
+      this.$set(this.target, 'name', copiedMyInfo.name)
+      this.$set(this.target, 'address', copiedMyInfo.address)
+      this.$set(this.target, 'myid', copiedMyInfo.myid)
+      this.$set(this.target, 'profile', copiedMyInfo.profile)
+      this.$set(this.target, 'age', copiedMyInfo.age)
+      this.$set(this.target, 'year', copiedMyInfo.year)
+      this.$set(this.target, 'sex', copiedMyInfo.sex)
+    },
+
     jumpTargetTimes(freeTimeId) {
       this.$router.push({
         path: `/user/${this.target.myid}/times`,
         query: { t: freeTimeId },
       })
     },
+
     selectedMenu(i, agreementId, roomId, hostMyId) {
       switch (i) {
         case 0:

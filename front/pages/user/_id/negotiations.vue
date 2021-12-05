@@ -101,8 +101,8 @@ export default {
         )
         .then((response) => {
           console.log(response.data)
-          // Room画面に移動しformedOfferの範囲で交渉してみよう！的なガイドをいれる
-          // offerを消す
+          this.$store.dispatch('offers/removeOffer', requestId)
+          this.$store.dispatch('rooms/addRoom', response.data)
         })
         .catch((error) => {
           console.log(error)
@@ -111,3 +111,4 @@ export default {
   },
 }
 </script>
+
