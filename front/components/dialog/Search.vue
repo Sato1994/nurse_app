@@ -1,21 +1,51 @@
 <template>
-  <v-dialog v-model="isDisplay" persistent max-width="600px">
-    <v-form ref="form">
-      <v-text-field
-        v-model="name"
-        :counter="10"
-        :label="nameLabel"
-      ></v-text-field>
+  <v-row justify="center">
+    <v-dialog v-model="isDisplay" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">絞り込み検索</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="name"
+                  :label="nameLabel"
+                  color="warning"
+                  required
+                ></v-text-field>
+              </v-col>
 
-      <!-- <v-text-field v-model="address" label="住所"></v-text-field>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="address"
+                  label="住所"
+                  required
+                  color="warning"
+                ></v-text-field>
+              </v-col>
 
-      <v-select label="Item"></v-select>
-
-      <v-checkbox label="現在募集中のもののみ表示しますか？"></v-checkbox> -->
-
-      <v-btn color="success" class="mr-4" @click="sendInput"> 絞り込む </v-btn>
-    </v-form>
-  </v-dialog>
+              <!-- <v-col cols="12">
+                <v-switch
+                  v-model="wanted"
+                  label="リクエスト募集中のお相手のみ表示"
+                  color="warning"
+                ></v-switch>
+              </v-col> -->
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning darken-1" text @click="isDisplay = false">
+            閉じる
+          </v-btn>
+          <v-btn color="warning darken-1" text @click="search"> 検索 </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
 </template>
 
 <script>
@@ -23,7 +53,7 @@ export default {
   data: () => ({
     isDisplay: false,
     name: '',
-    // address: '',
+    address: '',
   }),
 
   computed: {
@@ -33,9 +63,8 @@ export default {
   },
 
   methods: {
-    sendInput() {
-      this.$emit('search-button-click', this.name)
-      // this.$emit('search-button-click', this.name, this.address)
+    search() {
+      this.$emit('search-button-click', this.name, this.address)
       this.isDisplay = false
     },
   },
