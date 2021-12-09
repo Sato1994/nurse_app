@@ -1,4 +1,109 @@
 <template>
+  <v-app id="inspire">
+    <Header />
+    <v-main class="grey lighten-3">
+      <v-container>
+        <v-row>
+          <SideMenu />
+          <v-col>
+            <v-sheet min-height="70vh" rounded="lg">
+              <Nuxt />
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import Header from '@/components/Header.vue'
+import SideMenu from '@/components/SideMenu.vue'
+export default {
+  components: {
+    Header,
+    SideMenu,
+  },
+
+  created() {
+    // cookieにログインの痕跡があれば有効かチェック
+    if (this.$cookies.get('user') && this.$cookies.get('authInfo')) {
+      this.$axios
+        .get(
+          `http://localhost:3000/api/${this.$cookies.get(
+            'user'
+          )}/validate_token`,
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        .then((response) => {
+          // マイページへ遷移
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${response.data.data.myid}`
+          )
+          // myInfoをstoreにセット
+          this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
+          // 自分の付加情報をstoreにセット
+          this.$axios
+            .get(
+              `http://localhost:3000/api/${this.$cookies.get('user')}s/${
+                response.data.data.myid
+              }`,
+              { headers: this.$cookies.get('authInfo') }
+            )
+            .then((response) => {
+              this.$store.dispatch(
+                'skills/saveSkills',
+                response.data.target_skills
+              )
+              this.$store.dispatch(
+                'times/saveTimes',
+                response.data.target_times
+              )
+              this.$store.dispatch(
+                'requests/saveRequests',
+                response.data.requests
+              )
+              this.$store.dispatch('offers/saveOffers', response.data.offers)
+              this.$store.dispatch(
+                'agreements/saveAgreements',
+                response.data.agreements
+              )
+              this.$store.dispatch('rooms/saveRooms', response.data.rooms)
+
+              this.$store.dispatch(
+                'agreements/saveAgreements',
+                response.data.agreements
+              )
+            })
+        })
+        .catch(() => {
+          this.$cookies.removeAll()
+        })
+    }
+  },
+}
+</script>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <!--<template>
   <v-app dark>
     <v-main class="grey lighten-3">
       <modal name="user-modal" height="auto" :scrollable="true">
@@ -30,7 +135,7 @@
   </v-app>
 </template>
 
-<script>
+<script> 
 import Header from '@/layouts/Header.vue'
 import SideMenu from '@/layouts/SideMenu.vue'
 import SignUpAsUser from '@/components/pages/user/SignUp.vue'
@@ -99,3 +204,4 @@ export default {
   },
 }
 </script>
+-->
