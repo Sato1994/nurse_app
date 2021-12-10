@@ -58,7 +58,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar />
+    <Calendar :events="events" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -117,32 +117,15 @@ export default {
   data: () => ({
     target: [],
     targetSkills: [],
-    targetTimes: [],
     items: [
       { title: 'お相手のページへ移動' },
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
+    events: [],
   }),
 
   computed: {
-    formedTargetTimes() {
-      const targetTimes = this.targetTimes.map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          formedTime: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return targetTimes
-    },
-
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
         'agreements/agreementsInProgress'
@@ -176,7 +159,29 @@ export default {
       .then((response) => {
         this.target = response.data.host
         this.targetSkills = response.data.target_skills
-        this.targetTimes = response.data.target_times
+        const times = response.data.target_times.map((obj) => {
+          const s = new Date(obj.start_time)
+          const f = new Date(obj.finish_time)
+          const newObject = {
+            id: obj.id,
+            start: `${s.getFullYear()}-${
+              s.getMonth() + 1
+            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+            end: `${f.getFullYear()}-${
+              f.getMonth() + 1
+            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+            name: '募集中',
+            color: 'green',
+            dislayStart: `${
+              s.getMonth() + 1
+            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+            displayFinish: `${
+              f.getMonth() + 1
+            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+          }
+          return newObject
+        })
+        this.events = this.events.concat(times)
       })
   },
 

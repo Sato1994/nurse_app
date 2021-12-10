@@ -72,7 +72,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar />
+    <Calendar :events="events" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -118,6 +118,7 @@
 </template>
 
 <script>
+// import { mapGetters } from 'vuex'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
@@ -131,31 +132,38 @@ export default {
   data: () => ({
     target: [],
     targetSkills: [],
-    targetTimes: [],
     items: [
       { title: 'お相手のページへ移動' },
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
+    events: [],
   }),
 
   computed: {
-    formedTargetTimes() {
-      const targetTimes = this.targetTimes.map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          formedTime: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return targetTimes
-    },
+    // ...mapGetters({
+    //   events: ['times/timesOnCalendar'],
+    // }),
+
+    // events() {
+    //   const times = this.$store.getters['times/times'].map((obj) => {
+    //     const s = new Date(obj.start_time)
+    //     const f = new Date(obj.finish_time)
+    //     const newObject = {
+    //       id: obj.id,
+    //       start: `${s.getFullYear()}-${
+    //         s.getMonth() + 1
+    //       }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+    //       end: `${f.getFullYear()}-${
+    //         f.getMonth() + 1
+    //       }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+    //       name: '募集中',
+    //       color: 'green',
+    //     }
+    //     return newObject
+    //   })
+    //   return times
+    // },
 
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
@@ -190,7 +198,29 @@ export default {
       .then((response) => {
         this.target = response.data.user
         this.targetSkills = response.data.target_skills
-        this.targetTimes = response.data.target_times
+        const times = response.data.target_times.map((obj) => {
+          const s = new Date(obj.start_time)
+          const f = new Date(obj.finish_time)
+          const newObject = {
+            id: obj.id,
+            start: `${s.getFullYear()}-${
+              s.getMonth() + 1
+            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+            end: `${f.getFullYear()}-${
+              f.getMonth() + 1
+            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+            name: '募集中',
+            color: 'green',
+            dislayStart: `${
+              s.getMonth() + 1
+            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+            displayFinish: `${
+              f.getMonth() + 1
+            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+          }
+          return newObject
+        })
+        this.events = this.events.concat(times)
       })
   },
 
@@ -270,74 +300,3 @@ export default {
   },
 }
 </script>
-
-
-<!--
-<template>
-  <v-card class="mx-auto">
-  
-    <v-list dense>
-      <v-subheader>routes.params.idのTimes一覧</v-subheader>
-      <v-list-item-group
-        v-for="(time, index) in formedTargetTimes"
-        :key="index"
-        color="primary"
-      >
-        <v-list-item @click="jumpTargetTimes(time.id)">
-          <v-list-item-content>
-            <v-list-item-title v-text="time.formedTime"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
-
-    <v-list
-      v-if="
-        $cookies.get('user') === 'user' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
-      "
-      dense
-    >
-      <v-subheader>Agreements一覧</v-subheader>
-      <v-list-item-group
-        v-for="(agreement, index) in formedTargetAgreements"
-        :key="index"
-        color="primary"
-      >
-        <v-row class="d-flex" justify="center">
-          <v-menu v-model="showMenu" absolute offset-y style="max-width: 600px">
-            <template #activator="{ on, attrs }">
-              <v-list-item v-bind="attrs" v-on="on">
-                <v-list-item-content>
-                  <v-list-item-title
-                    v-text="agreement.formedAgreement"
-                  ></v-list-item-title>
-                  <v-subheader>{{ agreement.host.name }}様との契約</v-subheader>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-
-            <v-list>
-              <v-list-item
-                v-for="(item, i) in items"
-                :key="i"
-                @click="
-                  selectedMenu(
-                    i,
-                    agreement.id,
-                    agreement.room.id,
-                    agreement.host.myid
-                  )
-                "
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-row>
-      </v-list-item-group>
-    </v-list>
-
-  </v-card>
-</template>
--->
