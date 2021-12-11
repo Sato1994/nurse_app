@@ -68,27 +68,34 @@
           <v-card color="grey lighten-4" min-width="350px" flat>
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn icon>
-                <v-icon>mdi-clock</v-icon>
+                <v-icon>mdi-human-male-female</v-icon>
               </v-btn>
-              <v-toolbar-title
-                >{{ selectedEvent.dislayStart }}～{{
-                  selectedEvent.displayFinish
-                }}</v-toolbar-title
-              >
+              <v-toolbar-title>{{ selectedEvent.partner }}様</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span>ここに本文</span>
+              <span
+                >{{ selectedEvent.dislayStart }}～{{
+                  selectedEvent.displayFinish
+                }}</span
+              >
             </v-card-text>
             <v-card-actions>
-              <v-btn text color="secondary" @click="selectedOpen = false">
-                閉じる
+              <v-btn
+                outlined
+                text
+                color="secondary"
+                @click="request(selectedEvent.id)"
+              >
+                リクエストを送る
+              </v-btn>
+              <v-btn
+                outlined
+                text
+                color="secondary"
+                @click="request(selectedEvent.id)"
+              >
+                リクエストを削除する
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -124,6 +131,10 @@ export default {
   },
 
   methods: {
+    request(id) {
+      this.$emit('request-button-click', id)
+      this.selectedOpen = false
+    },
     viewWeek({ date }) {
       this.focus = date
       this.type = 'week'

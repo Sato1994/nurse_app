@@ -2,7 +2,7 @@
   <v-card class="mx-auto">
     <v-img
       height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      src="http://www.okuzawa-eye.com/img-layout/photo_clinic_2018.jpg"
     ></v-img>
 
     <v-card-title
@@ -58,7 +58,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar :events="events" />
+    <Calendar :events="events" @request-button-click="jumpTargetTimes" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -104,6 +104,7 @@
 </template>
 
 <script>
+// import { mapGetters } from 'vuex'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
@@ -122,6 +123,7 @@ export default {
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
+    // times: [],
     events: [],
   }),
 
@@ -153,36 +155,52 @@ export default {
   },
 
   created() {
-    const myid = this.$route.params.id
-    this.$axios
-      .get(`http://localhost:3000/api/hosts/${myid}`)
-      .then((response) => {
-        this.target = response.data.host
-        this.targetSkills = response.data.target_skills
-        const times = response.data.target_times.map((obj) => {
-          const s = new Date(obj.start_time)
-          const f = new Date(obj.finish_time)
-          const newObject = {
-            id: obj.id,
-            start: `${s.getFullYear()}-${
-              s.getMonth() + 1
-            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-            end: `${f.getFullYear()}-${
-              f.getMonth() + 1
-            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-            name: '募集中',
-            color: 'green',
-            dislayStart: `${
-              s.getMonth() + 1
-            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-            displayFinish: `${
-              f.getMonth() + 1
-            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-          }
-          return newObject
+    if (
+      this.$cookies.get('user') === 'host' &&
+      this.$route.params.id === this.$store.state.myInfo.myInfo.myid
+    ) {
+      const times = this.$store.getters['times/timesOnCalendar']
+      this.events = this.events.concat(times)
+      const requests = this.$store.getters['requests/requestsOnCalendar']
+      this.events = this.events.concat(requests)
+      this.target = this.$store.getters['myInfo/myInfo']
+      this.targetSkills = this.$store.getters['skills/skills']
+    } else {
+      console.log(
+        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
+          this.$store.state.myInfo.myInfo.myid
+        }`
+      )
+      this.$axios
+        .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
+        .then((response) => {
+          this.target = response.data.host
+          this.targetSkills = response.data.target_skills
+          const times = response.data.target_times.map((obj) => {
+            const s = new Date(obj.start_time)
+            const f = new Date(obj.finish_time)
+            const newObject = {
+              id: obj.id,
+              start: `${s.getFullYear()}-${
+                s.getMonth() + 1
+              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+              end: `${f.getFullYear()}-${
+                f.getMonth() + 1
+              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+              name: '募集中',
+              color: 'green',
+              dislayStart: `${
+                s.getMonth() + 1
+              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+              displayFinish: `${
+                f.getMonth() + 1
+              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+            }
+            return newObject
+          })
+          this.events = times
         })
-        this.events = this.events.concat(times)
-      })
+    }
   },
 
   methods: {

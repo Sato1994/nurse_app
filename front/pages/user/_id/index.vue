@@ -72,7 +72,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar :events="events" />
+    <Calendar :events="events" @request-button-click="jumpTargetTimes" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -137,34 +137,11 @@ export default {
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
+    // times: [],
     events: [],
   }),
 
   computed: {
-    // ...mapGetters({
-    //   events: ['times/timesOnCalendar'],
-    // }),
-
-    // events() {
-    //   const times = this.$store.getters['times/times'].map((obj) => {
-    //     const s = new Date(obj.start_time)
-    //     const f = new Date(obj.finish_time)
-    //     const newObject = {
-    //       id: obj.id,
-    //       start: `${s.getFullYear()}-${
-    //         s.getMonth() + 1
-    //       }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-    //       end: `${f.getFullYear()}-${
-    //         f.getMonth() + 1
-    //       }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-    //       name: '募集中',
-    //       color: 'green',
-    //     }
-    //     return newObject
-    //   })
-    //   return times
-    // },
-
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
         'agreements/agreementsInProgress'
@@ -192,36 +169,52 @@ export default {
   },
 
   created() {
-    const myid = this.$route.params.id
-    this.$axios
-      .get(`http://localhost:3000/api/users/${myid}`)
-      .then((response) => {
-        this.target = response.data.user
-        this.targetSkills = response.data.target_skills
-        const times = response.data.target_times.map((obj) => {
-          const s = new Date(obj.start_time)
-          const f = new Date(obj.finish_time)
-          const newObject = {
-            id: obj.id,
-            start: `${s.getFullYear()}-${
-              s.getMonth() + 1
-            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-            end: `${f.getFullYear()}-${
-              f.getMonth() + 1
-            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-            name: '募集中',
-            color: 'green',
-            dislayStart: `${
-              s.getMonth() + 1
-            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-            displayFinish: `${
-              f.getMonth() + 1
-            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-          }
-          return newObject
+    if (
+      this.$cookies.get('user') === 'user' &&
+      this.$route.params.id === this.$store.state.myInfo.myInfo.myid
+    ) {
+      const times = this.$store.getters['times/timesOnCalendar']
+      this.events = this.events.concat(times)
+      const requests = this.$store.getters['requests/requestsOnCalendar']
+      this.events = this.events.concat(requests)
+      this.target = this.$store.getters['myInfo/myInfo']
+      this.targetSkills = this.$store.getters['skills/skills']
+    } else {
+      console.log(
+        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
+          this.$store.state.myInfo.myInfo.myid
+        }`
+      )
+      this.$axios
+        .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
+        .then((response) => {
+          this.target = response.data.user
+          this.targetSkills = response.data.target_skills
+          const times = response.data.target_times.map((obj) => {
+            const s = new Date(obj.start_time)
+            const f = new Date(obj.finish_time)
+            const newObject = {
+              id: obj.id,
+              start: `${s.getFullYear()}-${
+                s.getMonth() + 1
+              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+              end: `${f.getFullYear()}-${
+                f.getMonth() + 1
+              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+              name: '募集中',
+              color: 'green',
+              dislayStart: `${
+                s.getMonth() + 1
+              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+              displayFinish: `${
+                f.getMonth() + 1
+              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+            }
+            return newObject
+          })
+          this.events = times
         })
-        this.events = this.events.concat(times)
-      })
+    }
   },
 
   methods: {
