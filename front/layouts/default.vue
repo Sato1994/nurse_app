@@ -6,7 +6,7 @@
         <v-row>
           <SideMenu />
           <v-col>
-            <v-sheet min-height="70vh" rounded="lg">
+            <v-sheet color="orange lighten-5" min-height="70vh" rounded="lg">
               <Nuxt />
             </v-sheet>
           </v-col>
@@ -38,10 +38,6 @@ export default {
           }
         )
         .then((response) => {
-          // マイページへ遷移
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${response.data.data.myid}`
-          )
           // myInfoをstoreにセット
           this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
           // 自分の付加情報をstoreにセット
