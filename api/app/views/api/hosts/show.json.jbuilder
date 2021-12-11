@@ -17,7 +17,7 @@ json.requests do
     json.id request.id
     json.start_time request.start_time
     json.finish_time request.finish_time
-    json.user request.free_time.user
+    json.partner request.free_time.user
   end
 end
 

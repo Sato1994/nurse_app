@@ -1,19 +1,20 @@
 <template>
   <v-card class="mx-auto">
-    <template slot="progress">
-      <v-progress-linear
-        color="deep-purple"
-        height="10"
-        indeterminate
-      ></v-progress-linear>
-    </template>
-
     <v-img
       height="250"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
 
-    <v-card-title>{{ target.name }}@{{ target.myid }}</v-card-title>
+    <v-card-title
+      >{{ target.name }}
+      <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
+        target.wanted === true ? '募集中' : '募集していません'
+      }}</v-chip>
+    </v-card-title>
+
+    <v-card-subtitle>
+      {{ target.age ? `年齢${target.age}歳` : '年齢を登録していません。' }}
+    </v-card-subtitle>
 
     <v-card-text>
       <v-row align="center" class="mx-0">
@@ -29,166 +30,118 @@
         <div class="grey--text ms-4">4.5 (413)</div>
       </v-row>
 
-      <div class="my-4 text-subtitle-1">
-        {{ target.address }}
+      <div class="my-4 text-subtitle-2">
+        {{ target.sex === true ? '女性' : '男性' }}
       </div>
 
-      <div class="my-4 text-subtitle-1">
-        {{ target.age }}歳 経験{{ target.year }}年
-        {{ (target.sex = true ? '  男性' : '  女性') }}
+      <div class="my-4 text-subtitle-2">
+        {{
+          target.year ? `経験${target.year}年` : '経験年数を登録していません。'
+        }}
       </div>
 
-      <div>{{ target.profile }}</div>
+      <div class="my-4 text-subtitle-2">
+        {{ target.address ? `${target.address}` : '住所を登録していません。' }}
+      </div>
+
+      <div>
+        {{
+          target.profile
+            ? `${target.profile}`
+            : 'プロフィールを登録していません。'
+        }}
+      </div>
     </v-card-text>
 
-    <modal name="edit-modal" height="auto" :scrollable="true">
-      <Edit @edit-button-click="editMyInfo" />
-    </modal>
-
-    <modal name="skill-list-modal" height="auto" :scrollable="true">
-      <SkillList
-        @add-button-click="addSkill"
-        @remove-button-click="removeSkill"
-      />
-    </modal>
+    <v-card-actions
+      v-if="
+        $cookies.get('user') === 'user' &&
+        $store.state.myInfo.myInfo.myid === $route.params.id
+      "
+    >
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="$refs.edit.isDisplay = true"
+      >
+        <v-icon>mdi-cog-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>苦手スキル</v-card-title>
+    <Calendar :events="events" @request-button-click="jumpTargetTimes" />
+
+    <v-divider class="mx-4"></v-divider>
+
+    <v-card-title>NGな技術</v-card-title>
 
     <v-card-text>
       <div>
-        <li v-for="skill in targetSkills" :key="skill.id">
+        <v-chip
+          v-for="(skill, i) in targetSkills"
+          :key="i"
+          class="ma-1"
+          color="warning"
+          small
+        >
           {{ skill.name }}
-        </li>
+        </v-chip>
       </div>
     </v-card-text>
 
-    <v-list dense>
-      <v-subheader>routes.params.idのTimes一覧</v-subheader>
-      <v-list-item-group
-        v-for="(time, index) in formedTargetTimes"
-        :key="index"
-        color="primary"
-      >
-        <v-list-item @click="jumpTargetTimes(time.id)">
-          <v-list-item-content>
-            <v-list-item-title v-text="time.formedTime"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
-
-    <v-list
-      v-if="
-        $cookies.get('user') === 'user' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
-      "
-      dense
-    >
-      <v-subheader>Agreements一覧</v-subheader>
-      <v-list-item-group
-        v-for="(agreement, index) in formedTargetAgreements"
-        :key="index"
-        color="primary"
-      >
-        <v-row class="d-flex" justify="center">
-          <v-menu v-model="showMenu" absolute offset-y style="max-width: 600px">
-            <template #activator="{ on, attrs }">
-              <v-list-item v-bind="attrs" v-on="on">
-                <v-list-item-content>
-                  <v-list-item-title
-                    v-text="agreement.formedAgreement"
-                  ></v-list-item-title>
-                  <v-subheader>{{ agreement.host.name }}様との契約</v-subheader>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-
-            <v-list>
-              <v-list-item
-                v-for="(item, i) in items"
-                :key="i"
-                @click="
-                  selectedMenu(
-                    i,
-                    agreement.id,
-                    agreement.room.id,
-                    agreement.host.myid
-                  )
-                "
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-row>
-      </v-list-item-group>
-    </v-list>
-
     <v-card-actions
       v-if="
         $cookies.get('user') === 'user' &&
         $store.state.myInfo.myInfo.myid === $route.params.id
       "
     >
-      <v-btn color="deep-purple lighten-2" text @click="openSkillListModal">
-        獲得スキルを編集
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="$refs.skillList.isDisplay = true"
+      >
+        <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-
-    <v-card-actions
-      v-if="
-        $cookies.get('user') === 'user' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
-      "
-    >
-      <v-btn color="deep-purple lighten-2" text @click="openEditModal">
-        プロフィールを編集
-      </v-btn>
-    </v-card-actions>
+    <Edit ref="edit" @edit-button-click="editMyInfo" />
+    <SkillList
+      ref="skillList"
+      @add-button-click="addSkill"
+      @remove-button-click="removeSkill"
+    />
   </v-card>
 </template>
 
 <script>
-import Edit from '@/components/pages/modal/Edit.vue'
-import SkillList from '@/components/pages/modal/SkillList.vue'
+// import { mapGetters } from 'vuex'
+import Edit from '@/components/dialog/Edit.vue'
+import SkillList from '@/components/dialog/SkillList.vue'
+import Calendar from '@/components/molecules/Calendar.vue'
 export default {
   components: {
     Edit,
     SkillList,
+    Calendar,
   },
 
   data: () => ({
     target: [],
     targetSkills: [],
-    targetTimes: [],
-    showMenu: false,
     items: [
       { title: 'お相手のページへ移動' },
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
+    // times: [],
+    events: [],
   }),
 
   computed: {
-    formedTargetTimes() {
-      const targetTimes = this.targetTimes.map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          formedTime: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return targetTimes
-    },
-
     formedTargetAgreements() {
       const targetAgreements = this.$store.getters[
         'agreements/agreementsInProgress'
@@ -209,28 +162,62 @@ export default {
       })
       return targetAgreements
     },
+
+    wantedChipColor() {
+      return this.target.wanted === true ? 'green' : 'red'
+    },
   },
 
   created() {
-    const myid = this.$route.params.id
-    this.$axios
-      .get(`http://localhost:3000/api/users/${myid}`)
-      .then((response) => {
-        this.target = response.data.user
-        this.targetSkills = response.data.target_skills
-        this.targetTimes = response.data.target_times
-      })
+    if (
+      this.$cookies.get('user') === 'user' &&
+      this.$route.params.id === this.$store.state.myInfo.myInfo.myid
+    ) {
+      const times = this.$store.getters['times/timesOnCalendar']
+      this.events = this.events.concat(times)
+      const requests = this.$store.getters['requests/requestsOnCalendar']
+      this.events = this.events.concat(requests)
+      this.target = this.$store.getters['myInfo/myInfo']
+      this.targetSkills = this.$store.getters['skills/skills']
+    } else {
+      console.log(
+        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
+          this.$store.state.myInfo.myInfo.myid
+        }`
+      )
+      this.$axios
+        .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
+        .then((response) => {
+          this.target = response.data.user
+          this.targetSkills = response.data.target_skills
+          const times = response.data.target_times.map((obj) => {
+            const s = new Date(obj.start_time)
+            const f = new Date(obj.finish_time)
+            const newObject = {
+              id: obj.id,
+              start: `${s.getFullYear()}-${
+                s.getMonth() + 1
+              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+              end: `${f.getFullYear()}-${
+                f.getMonth() + 1
+              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+              name: '募集中',
+              color: 'green',
+              dislayStart: `${
+                s.getMonth() + 1
+              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+              displayFinish: `${
+                f.getMonth() + 1
+              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+            }
+            return newObject
+          })
+          this.events = times
+        })
+    }
   },
 
   methods: {
-    openEditModal() {
-      this.$modal.show('edit-modal')
-    },
-
-    openSkillListModal() {
-      this.$modal.show('skill-list-modal')
-    },
-
     addSkill(skill) {
       this.targetSkills.push(skill)
     },
@@ -246,11 +233,11 @@ export default {
     editMyInfo(copiedMyInfo) {
       this.$set(this.target, 'name', copiedMyInfo.name)
       this.$set(this.target, 'address', copiedMyInfo.address)
-      this.$set(this.target, 'myid', copiedMyInfo.myid)
       this.$set(this.target, 'profile', copiedMyInfo.profile)
       this.$set(this.target, 'age', copiedMyInfo.age)
       this.$set(this.target, 'year', copiedMyInfo.year)
       this.$set(this.target, 'sex', copiedMyInfo.sex)
+      this.$set(this.target, 'wanted', copiedMyInfo.wanted)
     },
 
     jumpTargetTimes(freeTimeId) {
