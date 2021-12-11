@@ -18,7 +18,7 @@ json.requests do
     json.id request.id
     json.start_time request.start_time
     json.finish_time request.finish_time
-    json.host request.recruitment_time.host
+    json.partner request.recruitment_time.host
   end
 end
 
