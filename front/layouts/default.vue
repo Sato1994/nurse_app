@@ -35,7 +35,7 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          this.$store.dispatch('myInfo/saveMyInfo', response.data.info)
+          this.$store.dispatch('info/saveInfo', response.data.info)
           this.$store.dispatch('skills/saveSkills', response.data.skills)
           this.$store.dispatch('times/saveTimes', response.data.times)
           this.$store.dispatch('requests/saveRequests', response.data.requests)

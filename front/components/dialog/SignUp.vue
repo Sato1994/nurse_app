@@ -10,7 +10,7 @@
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
-                  v-model="myInfo.name"
+                  v-model="info.name"
                   :counter="10"
                   label="名前（フルネーム）"
                   required
@@ -18,35 +18,35 @@
               </v-col>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
-                  v-model="myInfo.myid"
+                  v-model="info.myid"
                   label="サイト内ID"
                   required
                 ></v-text-field>
               </v-col>
               <v-col v-if="$cookies.get('user') === 'host'" cols="12">
                 <v-text-field
-                  v-model="myInfo.address"
+                  v-model="info.address"
                   label="住所"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="myInfo.email"
+                  v-model="info.email"
                   label="メールアドレス"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="myInfo.password"
+                  v-model="info.password"
                   label="パスワード"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="myInfo.password_confirmation"
+                  v-model="info.password_confirmation"
                   label="パスワード確認用"
                   required
                 ></v-text-field>
@@ -71,62 +71,50 @@
 export default {
   data: () => ({
     isDisplay: false,
-    myInfo: {},
+    info: {},
   }),
 
   methods: {
     signUp() {
+      // サインアップ
       this.$axios
-        .post(`/api/${this.$cookies.get('user')}`, this.myInfo)
+        .post(`/api/${this.$cookies.get('user')}`, this.info)
         .then((response) => {
           this.isDisplay = false
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${response.data.data.myid}`
-          )
-          // this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
+          this.$cookies.set('myid', response.data.data.myid)
           const authInfo = {
             'access-token': response.headers['access-token'],
             client: response.headers.client,
             uid: response.headers.uid,
           }
           this.$cookies.set('authInfo', authInfo)
-
+          // サインアップ者情報の取得
           this.$axios
             .get(
-              `http://localhost:3000/api/${this.$cookies.get('user')}s/${
-                response.data.data.myid
-              }`,
+              `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
               { headers: this.$cookies.get('authInfo') }
             )
             .then((response) => {
-              console.log('/users/myidのやつ', response.data)
-              this.$store.dispatch(
-                'skills/saveSkills',
-                response.data.target_skills
-              )
-              this.$store.dispatch(
-                'times/saveTimes',
-                response.data.target_times
-              )
+              this.$store.dispatch('info/saveInfo', response.data.info)
+              this.$store.dispatch('skills/saveSkills', response.data.skills)
+              this.$store.dispatch('times/saveTimes', response.data.times)
               this.$store.dispatch(
                 'requests/saveRequests',
                 response.data.requests
               )
-              this.$store.dispatch('offers/saveOffers', response.data.offers)
               this.$store.dispatch(
                 'agreements/saveAgreements',
                 response.data.agreements
               )
+              this.$store.dispatch('offers/saveOffers', response.data.offers)
               this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-
-              this.$store.dispatch(
-                'agreements/saveAgreements',
-                response.data.agreements
+              this.$router.push(
+                `/${this.$cookies.get('user')}/${response.data.info.myid}`
               )
             })
-        })
-        .catch((error) => {
-          console.log('登録失敗', error)
+            .catch(() => {
+              this.$cookies.removeAll()
+            })
         })
     },
   },

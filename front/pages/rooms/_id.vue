@@ -362,9 +362,7 @@ export default {
             state: response.data.state,
           })
           this.$router.push(
-            `/${this.$cookies.get('user')}/${
-              this.$store.state.myInfo.myInfo.myid
-            }`
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
           )
         })
     },

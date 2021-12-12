@@ -10,14 +10,14 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="myInfo.email"
+                  v-model="info.email"
                   label="メールアドレス"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="myInfo.password"
+                  v-model="info.password"
                   label="パスワード"
                   required
                 ></v-text-field>
@@ -43,45 +43,33 @@
 export default {
   data: () => ({
     isDisplay: false,
-    myInfo: {},
+    info: {},
   }),
 
   methods: {
     signIn() {
+      // ログイン
       this.$axios
-        // ログイン
-        .post(`/api/${this.$cookies.get('user')}/sign_in`, this.myInfo)
+        .post(`/api/${this.$cookies.get('user')}/sign_in`, this.info)
         .then((response) => {
           this.isDisplay = false
-          // マイページへ遷移
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${response.data.data.myid}`
-          )
+          this.$cookies.set('myid', response.data.data.myid)
           const authInfo = {
             'access-token': response.headers['access-token'],
             client: response.headers.client,
             uid: response.headers.uid,
           }
-          // authInfoセット
           this.$cookies.set('authInfo', authInfo)
-
-          // myInfoをstoreにセット
-          this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
-          // 自分の付加情報をstoreにセット
+          // ログイン者情報の取得
           this.$axios
             .get(
               `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
               { headers: this.$cookies.get('authInfo') }
             )
             .then((response) => {
-              this.$store.dispatch(
-                'skills/saveSkills',
-                response.data.target_skills
-              )
-              this.$store.dispatch(
-                'times/saveTimes',
-                response.data.target_times
-              )
+              this.$store.dispatch('info/saveInfo', response.data.info)
+              this.$store.dispatch('skills/saveSkills', response.data.skills)
+              this.$store.dispatch('times/saveTimes', response.data.times)
               this.$store.dispatch(
                 'requests/saveRequests',
                 response.data.requests
@@ -92,10 +80,13 @@ export default {
               )
               this.$store.dispatch('offers/saveOffers', response.data.offers)
               this.$store.dispatch('rooms/saveRooms', response.data.rooms)
+              this.$router.push(
+                `/${this.$cookies.get('user')}/${response.data.info.myid}`
+              )
             })
-        })
-        .catch((error) => {
-          console.log('認証失敗', error)
+            .catch(() => {
+              this.$cookies.removeAll()
+            })
         })
     },
   },

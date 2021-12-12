@@ -48,9 +48,7 @@ export default {
 
   computed: {
     mypageURL() {
-      return `/${this.$cookies.get('user')}/${
-        this.$store.state.myInfo.myInfo.myid
-      }`
+      return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
     },
   },
 

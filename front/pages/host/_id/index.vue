@@ -42,7 +42,7 @@
     <v-card-actions
       v-if="
         $cookies.get('user') === 'host' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
+        $store.state.info.info.myid === $route.params.id
       "
     >
       <v-btn
@@ -81,7 +81,7 @@
     <v-card-actions
       v-if="
         $cookies.get('user') === 'host' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
+        $store.state.info.info.myid === $route.params.id
       "
     >
       <v-btn
@@ -94,7 +94,7 @@
         <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-    <Edit ref="edit" @edit-button-click="editMyInfo" />
+    <Edit ref="edit" @edit-button-click="editInfo" />
     <SkillList
       ref="skillList"
       @add-button-click="addSkill"
@@ -157,26 +157,26 @@ export default {
   created() {
     if (
       this.$cookies.get('user') === 'host' &&
-      this.$route.params.id === this.$store.state.myInfo.myInfo.myid
+      this.$route.params.id === this.$store.state.info.info.myid
     ) {
       const times = this.$store.getters['times/timesOnCalendar']
       this.events = this.events.concat(times)
       const requests = this.$store.getters['requests/requestsOnCalendar']
       this.events = this.events.concat(requests)
-      this.target = this.$store.getters['myInfo/myInfo']
+      this.target = this.$store.getters['info/info']
       this.targetSkills = this.$store.getters['skills/skills']
     } else {
       console.log(
         `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
-          this.$store.state.myInfo.myInfo.myid
+          this.$store.state.info.info.myid
         }`
       )
       this.$axios
         .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
         .then((response) => {
-          this.target = response.data.host
-          this.targetSkills = response.data.target_skills
-          const times = response.data.target_times.map((obj) => {
+          this.target = response.data.info
+          this.targetSkills = response.data.skills
+          const times = response.data.times.map((obj) => {
             const s = new Date(obj.start_time)
             const f = new Date(obj.finish_time)
             const newObject = {
@@ -216,11 +216,11 @@ export default {
       this.targetSkills.splice(index, 1)
     },
 
-    editMyInfo(copiedMyInfo) {
-      this.$set(this.target, 'name', copiedMyInfo.name)
-      this.$set(this.target, 'address', copiedMyInfo.address)
-      this.$set(this.target, 'profile', copiedMyInfo.profile)
-      this.$set(this.target, 'wanted', copiedMyInfo.wanted)
+    editInfo(copiedInfo) {
+      this.$set(this.target, 'name', copiedInfo.name)
+      this.$set(this.target, 'address', copiedInfo.address)
+      this.$set(this.target, 'profile', copiedInfo.profile)
+      this.$set(this.target, 'wanted', copiedInfo.wanted)
     },
 
     jumpTargetTimes(recruitmentTimeId) {

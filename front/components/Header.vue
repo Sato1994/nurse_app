@@ -8,7 +8,7 @@
           </v-btn>
         </div>
       </template>
-      <v-list v-if="!$store.state.myInfo.myInfo.myid" dense>
+      <v-list v-if="!$store.state.info.info.myid" dense>
         <v-list-item v-for="(item, i) in unAuthItems" :key="i">
           <v-list-item-title @click="clickUnAuthMenu(i)">{{
             item.title
@@ -16,7 +16,7 @@
         </v-list-item>
       </v-list>
 
-      <v-list v-if="$store.state.myInfo.myInfo.myid" dense>
+      <v-list v-if="$store.state.info.info.myid" dense>
         <v-list-item v-for="(item, i) in authItems" :key="i">
           <v-list-item-title @click="clickAuthMenu(i)">{{
             item.title
@@ -89,7 +89,7 @@ export default {
         case 2:
           this.$router.push(
             `/${this.$cookies.get('user')}/${
-              this.$store.state.myInfo.myInfo.myid
+              this.$store.state.info.info.myid
             }/negotiations`
           )
           break
@@ -117,15 +117,13 @@ export default {
       switch (i) {
         case 0:
           this.$router.push(
-            `/${this.$cookies.get('user')}/${
-              this.$store.state.myInfo.myInfo.myid
-            }`
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
           )
           break
         case 1:
           this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('myInfo/logout')
+          this.$store.dispatch('info/logout')
           break
         case 2:
           this.$axios
@@ -135,7 +133,7 @@ export default {
             .then(() => {
               this.$cookies.removeAll()
               this.$router.push('/')
-              this.$store.dispatch('myInfo/logout')
+              this.$store.dispatch('info/logout')
             })
           break
       }
