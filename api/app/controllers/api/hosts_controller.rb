@@ -15,6 +15,7 @@ include Pagination
 
   def show
     if api_host_signed_in? && current_api_host.myid = params[:id]
+      @host = current_api_host
       @requests = current_api_host.host_requests
       @offers = current_api_host.user_requests
       @agreements = current_api_host.agreements

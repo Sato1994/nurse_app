@@ -17,6 +17,7 @@ include Pagination
     # !で、レコードが見つからない場合nilでなくて404を発生させられる。
     # 個人のページのURLをmyidにする。
     if api_user_signed_in? && current_api_user.myid = params[:id]
+      @user = current_api_user
       @requests = current_api_user.user_requests
       @offers = current_api_user.host_requests
       @agreements = current_api_user.agreements

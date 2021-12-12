@@ -1,14 +1,14 @@
 if @host
-  json.host do
+  json.info do
     json.extract! @host, :id, :myid, :name, :address, :image, :wanted, :profile, :created_at
   end
 end
 
-json.target_skills do
+json.skills do
   json.array! @skills, :id, :name
 end
 
-json.target_times do
+json.times do
   json.array! @recruitment_times, :id, :start_time, :finish_time
 end
 
