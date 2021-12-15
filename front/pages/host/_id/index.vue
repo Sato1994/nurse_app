@@ -120,6 +120,7 @@
 
 <script>
 import DatePicker from '@/components/dialog/DatePicker.vue'
+import axios from 'axios'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
@@ -213,6 +214,8 @@ export default {
     ) {
       const requests = this.$store.getters['requests/requestsOnCalendar']
       this.events = this.events.concat(requests)
+
+      // ここから
       this.target = this.$store.getters['info/info']
       this.targetSkills = this.$store.getters['skills/skills']
     } else {
@@ -264,6 +267,7 @@ export default {
           })
           this.events = times
         })
+      // ここまで
     }
   },
 
