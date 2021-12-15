@@ -118,7 +118,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
+import axios from 'axios'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
@@ -129,6 +129,43 @@ export default {
     Calendar,
   },
 
+  async asyncData({ route }) {
+    try {
+      const data = await axios.get(
+        `http://web:3000/api/users/${route.params.id}`
+      )
+      const times = data.data.times.map((obj) => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {
+          id: obj.id,
+          start: `${s.getFullYear()}-${
+            s.getMonth() + 1
+          }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+          end: `${f.getFullYear()}-${
+            f.getMonth() + 1
+          }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+          name: '募集中',
+          color: 'green',
+          dislayStart: `${
+            s.getMonth() + 1
+          }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+          displayFinish: `${
+            f.getMonth() + 1
+          }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+        }
+        return newObject
+      })
+      return {
+        target: data.data.info,
+        targetSkills: data.data.skills,
+        events: times,
+      }
+    } catch (error) {
+      console.log('asyncdataエラー', error)
+    }
+  },
+
   data: () => ({
     target: [],
     targetSkills: [],
@@ -137,7 +174,6 @@ export default {
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
-    // times: [],
     events: [],
   }),
 
@@ -173,48 +209,8 @@ export default {
       this.$cookies.get('user') === 'user' &&
       this.$route.params.id === this.$store.state.info.info.myid
     ) {
-      const times = this.$store.getters['times/timesOnCalendar']
-      this.events = this.events.concat(times)
       const requests = this.$store.getters['requests/requestsOnCalendar']
       this.events = this.events.concat(requests)
-      this.target = this.$store.getters['info/info']
-      this.targetSkills = this.$store.getters['skills/skills']
-      console.log('aaaa')
-    } else {
-      console.log(
-        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
-          this.$store.state.info.info.myid
-        }`
-      )
-      this.$axios
-        .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
-        .then((response) => {
-          this.target = response.data.info
-          this.targetSkills = response.data.skills
-          const times = response.data.times.map((obj) => {
-            const s = new Date(obj.start_time)
-            const f = new Date(obj.finish_time)
-            const newObject = {
-              id: obj.id,
-              start: `${s.getFullYear()}-${
-                s.getMonth() + 1
-              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-              end: `${f.getFullYear()}-${
-                f.getMonth() + 1
-              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-              name: '募集中',
-              color: 'green',
-              dislayStart: `${
-                s.getMonth() + 1
-              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-              displayFinish: `${
-                f.getMonth() + 1
-              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-            }
-            return newObject
-          })
-          this.events = times
-        })
     }
   },
 
