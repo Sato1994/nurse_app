@@ -1,48 +1,61 @@
 <template>
-  <container>
-    <v-list dense>
-      <v-subheader>ログイン者のrequest一覧</v-subheader>
-      <v-list-item-group
-        v-for="(request, index) in formedMyRequests"
-        :key="index"
-        color="primary"
-      >
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title
-              v-text="request.formedRequest"
-            ></v-list-item-title>
-            <v-list-item-title v-text="request.user.name"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+  <v-card>
+    <v-toolbar color="warning" dark>
+      <v-toolbar-title>リクエスト</v-toolbar-title>
 
-    <v-list dense>
-      <v-subheader>ログイン者のoffers一覧</v-subheader>
-      <v-list-item-group
-        v-for="(offer, index) in formedMyOffers"
-        :key="index"
-        color="primary"
+      <v-spacer></v-spacer>
+    </v-toolbar>
+
+    <v-list dense subheader two-line>
+      <v-subheader inset>看護師からのオファー一覧</v-subheader>
+
+      <v-list-item
+        v-for="(offer, i) in formedMyOffers"
+        :key="i"
+        @click="
+          createRoom(
+            offer.id,
+            offer.user.id,
+            offer.start_time,
+            offer.finish_time
+          )
+        "
       >
-        <v-list-item
-          @click="
-            createRoom(
-              offer.id,
-              offer.user.id,
-              offer.start_time,
-              offer.finish_time
-            )
-          "
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="offer.formedOffer"></v-list-item-title>
-            <v-list-item-title v-text="offer.user.name"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
+        <v-list-item-avatar>
+          <v-icon>mdi-hospital</v-icon>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title v-text="offer.user.name"></v-list-item-title>
+
+          <v-list-item-subtitle
+            v-text="offer.formedOffer"
+          ></v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider inset></v-divider>
+
+      <v-subheader inset>看護師へのリクエスト一覧</v-subheader>
+
+      <v-list-item
+        v-for="(request, i) in formedMyRequests"
+        :key="`second-${i}`"
+      >
+        <v-list-item-avatar>
+          <v-icon> mdi-hospital</v-icon>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title v-text="request.partner.name"></v-list-item-title>
+
+          <v-list-item-subtitle
+            v-text="request.formedRequest"
+          ></v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
-  </container>
+  </v-card>
 </template>
 
 
@@ -55,7 +68,7 @@ export default {
         const f = new Date(obj.finish_time)
         const newObject = {
           id: obj.id,
-          user: obj.user,
+          partner: obj.partner,
           formedRequest: `${s.getFullYear()}年${
             s.getMonth() + 1
           }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
