@@ -15,7 +15,7 @@
         @click="
           createRoom(
             offer.id,
-            offer.user.id,
+            offer.partner.id,
             offer.start_time,
             offer.finish_time
           )
@@ -26,7 +26,7 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="offer.user.name"></v-list-item-title>
+          <v-list-item-title v-text="offer.partner.name"></v-list-item-title>
 
           <v-list-item-subtitle
             v-text="offer.formedOffer"
@@ -86,7 +86,7 @@ export default {
         const newObject = {
           id: obj.id,
           recruitmentTime: obj.recruitmentTime,
-          user: obj.user,
+          partner: obj.partner,
           start_time: obj.start_time,
           finish_time: obj.finish_time,
           formedOffer: `${s.getFullYear()}年${
