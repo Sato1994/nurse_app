@@ -1,3 +1,4 @@
+<!--
 <template>
   <v-app id="inspire">
     <v-subheader> {{ partner.name }}さま </v-subheader>
@@ -138,6 +139,7 @@
       </v-btn>
     </v-main>
     <v-main>
+
       <v-container class="py-8 px-6" fluid>
         <v-row>
           <v-col cols="12">
@@ -176,9 +178,75 @@
     </v-main>
   </v-app>
 </template>
+-->
+
+<template>
+  <v-card>
+    <v-toolbar color="warning" dark>
+      <v-toolbar-title>メッセージ</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+      <v-subheader>{{ partner.name }}</v-subheader>
+    </v-toolbar>
+    <v-card>
+      <v-card-text>
+        <div>交渉時間</div>
+        <p class="text-h4 text--primary">
+          {{ startTime.month }}月{{ startTime.day }}日{{ startTime.hour }}時{{
+            startTime.minute
+          }}分から{{ finishTime.day }}日{{ finishTime.hour }}時{{
+            finishTime.minute
+          }}分
+        </p>
+        <p>adjective</p>
+        <div class="text--primary">
+          well meaning and kindly.<br />
+          "a benevolent smile"
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="deep-purple accent-4"> Learn More </v-btn>
+      </v-card-actions>
+    </v-card>
+
+    <v-list two-line dense>
+      <v-list-item v-for="(message, index) in mixedMessages" :key="index">
+        <v-list-item-avatar color="grey darken-1"> </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title>{{ message.name }}</v-list-item-title>
+
+          <v-list-item-subtitle>
+            {{ message.message }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider inset></v-divider>
+    </v-list>
+    <InputMessage ref="message" @send-button-click="sendMessage" />
+    <v-btn
+      fixed
+      fab
+      bottom
+      right
+      color="warning"
+      style="bottom: 50px"
+      @click="$refs.message.isDisplay = true"
+    >
+      <v-icon color="white">mdi-pencil</v-icon>
+    </v-btn>
+  </v-card>
+</template>
+
+
 
 <script>
+import InputMessage from '@/components/dialog/InputMessage.vue'
 export default {
+  components: {
+    InputMessage,
+  },
   data: () => ({
     drawer: null,
     messages: [],
@@ -186,7 +254,6 @@ export default {
     id: '',
     state: '',
     closed: '',
-    inputMessage: '',
     startTime: {},
     finishTime: {},
     yearList: [
@@ -253,17 +320,16 @@ export default {
       })
   },
   methods: {
-    sendMessage() {
+    sendMessage(message) {
       this.$axios
         .post(
           `/api/${this.$cookies.get('user')}_messages/${this.$route.params.id}`,
-          { message: this.inputMessage },
+          { message },
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
           console.log(response)
           this.messages.push(response.data)
-          this.$refs.form.reset()
         })
         .catch((error) => {
           console.log(error)
