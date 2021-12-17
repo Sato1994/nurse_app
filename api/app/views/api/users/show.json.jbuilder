@@ -27,7 +27,13 @@ json.agreements do
 end
 
 json.offers do
-  json.array! @offers, :id, :start_time, :finish_time, :host, :free_time
+  json.array! @offers do |request|
+    json.id request.id
+    json.start_time request.start_time
+    json.finish_time request.finish_time
+    json.free_time request.free_time
+    json.partner request.host
+  end
 end
 
 json.rooms do
