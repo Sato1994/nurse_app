@@ -190,7 +190,7 @@
     </v-toolbar>
     <v-card>
       <v-card-text>
-        <div>交渉時間</div>
+        <div class="text--primary">{{ startTime.year }}年</div>
         <p class="text-h4 text--primary">
           {{ startTime.month }}月{{ startTime.day }}日{{ startTime.hour }}時{{
             startTime.minute
@@ -199,13 +199,63 @@
           }}分
         </p>
         <p>adjective</p>
-        <div class="text--primary">
-          well meaning and kindly.<br />
-          "a benevolent smile"
+        <div
+          v-if="closed == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+          class="text--primary"
+        >
+          お相手がトークルームから退出しました
+        </div>
+
+        <div v-if="state == $cookies.get('user')" class="text--primary">
+          上記の時間で同意しています。お相手の同意をお待ちください。
+        </div>
+
+        <div
+          v-if="state == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+          class="text--primary"
+        >
+          お相手が上記の時間で同意しました。双方の同意で契約完了します。
+        </div>
+
+        <div v-if="state == 'conclusion'">
+          契約済みです。契約の変更は契約一覧から申請してください。
+        </div>
+
+        <div v-if="state == 'cancelled'">
+          やむを得ない理由により交渉がキャンセルされました。
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn text color="deep-purple accent-4"> Learn More </v-btn>
+        <v-btn
+          v-if="state != 'conclusion' && state != 'cancelled'"
+          text
+          color="warning accent-4"
+          @click="updateState"
+        >
+          {{
+            state == $cookies.get('user')
+              ? '同意を解除する'
+              : 'この時間で同意する'
+          }}
+        </v-btn>
+
+        <v-btn
+          v-if="state == 'negotiating' && state != 'cancelled'"
+          text
+          color="warning accent-4"
+          @click="updateTime"
+        >
+          時間を変更する
+        </v-btn>
+
+        <v-btn
+          v-if="state != 'conclusion'"
+          text
+          color="red"
+          @click="cancellRoom"
+        >
+          トークルームを削除する
+        </v-btn>
       </v-card-actions>
     </v-card>
 
