@@ -186,7 +186,7 @@ export default {
         }`
       )
       this.$axios
-        .get(`http://localhost:3000/api/hosts/${this.$route.params.id}`)
+        .get(`http://localhost:3000/api/users/${this.$route.params.id}`)
         .then((response) => {
           this.target = response.data.user
           this.targetSkills = response.data.target_skills

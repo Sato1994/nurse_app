@@ -7,6 +7,7 @@ json.closed @closed
 json.partner do
   json.id @partner.id
   json.name @partner.name
+  json.myid @partner.myid
 end
 
 json.user_messages do

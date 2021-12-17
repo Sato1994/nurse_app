@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import DatePicker from '@/components/molecules/DatePicker.vue'
+import DatePicker from '@/components/dialog/DatePicker.vue'
 export default {
   components: {
     DatePicker,
