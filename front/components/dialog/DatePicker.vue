@@ -104,12 +104,40 @@ export default {
 
     startTime: {
       type: Object,
-      default: () => {},
+      default: () => {
+        const startTime = {}
+        const today = new Date()
+        const year = today.getFullYear()
+        const month = today.getMonth() + 1
+        const day = today.getDate()
+        const hour = today.getHours()
+        const minute = 0
+        startTime.year = year
+        startTime.month = month
+        startTime.day = day
+        startTime.hour = hour
+        startTime.minute = minute
+        return startTime
+      },
     },
 
     finishTime: {
       type: Object,
-      default: () => {},
+      default: () => {
+        const finishTime = {}
+        const today = new Date()
+        const year = today.getFullYear()
+        const month = today.getMonth() + 1
+        const day = today.getDate()
+        const hour = today.getHours()
+        const minute = 0
+        finishTime.year = year
+        finishTime.month = month
+        finishTime.day = day
+        finishTime.hour = hour
+        finishTime.minute = minute
+        return finishTime
+      },
     },
   },
 
