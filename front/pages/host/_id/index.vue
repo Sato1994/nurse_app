@@ -54,11 +54,26 @@
       >
         <v-icon>mdi-cog-outline</v-icon>
       </v-btn>
+
+      <v-btn
+        class="ma-2"
+        color="green lighten-4"
+        small
+        depressed
+        @click="$refs.datePicker.isDisplay = true"
+      >
+        <v-icon>mdi-clock-plus-outline</v-icon>
+      </v-btn>
     </v-card-actions>
 
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" @request-button-click="jumpTargetTimes" />
+    <DatePicker
+      ref="datePicker"
+      title="募集時間を追加"
+      @register-button-click="createRecruitmentTime"
+    />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -104,12 +119,13 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
+import DatePicker from '@/components/dialog/DatePicker.vue'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
 export default {
   components: {
+    DatePicker,
     Edit,
     SkillList,
     Calendar,
@@ -195,6 +211,20 @@ export default {
               displayFinish: `${
                 f.getMonth() + 1
               }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+              startTime: {
+                year: s.getFullYear(),
+                month: s.getMonth() + 1,
+                day: s.getDate(),
+                hour: s.getHours(),
+                minute: s.getMinutes(),
+              },
+              finishTime: {
+                year: f.getFullYear(),
+                month: f.getMonth() + 1,
+                day: f.getDate(),
+                hour: f.getHours(),
+                minute: f.getMinutes(),
+              },
             }
             return newObject
           })
@@ -228,6 +258,24 @@ export default {
         path: `/host/${this.target.myid}/times`,
         query: { t: recruitmentTimeId },
       })
+    },
+
+    createRecruitmentTime(startTime, finishTime) {
+      this.$axios
+        .post(
+          '/api/recruitment_times',
+          {
+            start_time: startTime,
+            finish_time: finishTime,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          console.log('とりあえず成功', response.data)
+        })
+        .catch((error) => {
+          console.log('とりあえず失敗', error)
+        })
     },
 
     selectedMenu(i, agreementId, roomId, userMyId) {
