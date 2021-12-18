@@ -85,28 +85,39 @@
                 outlined
                 text
                 color="secondary"
-                @click="request(selectedEvent.id)"
+                @click="
+                  request(
+                    selectedEvent.startTime,
+                    selectedEvent.finishTime,
+                    selectedEvent.id
+                  )
+                "
               >
                 リクエストを送る
               </v-btn>
-              <v-btn
-                outlined
-                text
-                color="secondary"
-                @click="request(selectedEvent.id)"
-              >
+              <v-btn outlined text color="secondary">
                 リクエストを削除する
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
+        <DatePicker
+          ref="datePicker"
+          @register-button-click="createRequest"
+          title="リクエストを送る"
+        />
       </v-sheet>
     </v-col>
   </v-row>
 </template>
 
 <script>
+import DatePicker from '@/components/dialog/DatePicker.vue'
 export default {
+  components: {
+    DatePicker,
+  },
+
   props: {
     events: {
       type: Array,
@@ -131,17 +142,42 @@ export default {
   },
 
   methods: {
-    request(id) {
-      this.$emit('request-button-click', id)
-      this.selectedOpen = false
+    request(startTime, finishTime, timeId) {
+      this.$refs.datePicker.isDisplay = true
+      this.$refs.datePicker.startTime = startTime
+      this.$refs.datePicker.finishTime = finishTime
+      this.$refs.datePicker.timeId = timeId
     },
+
+    createRequest(startTime, finishTime, timeId) {
+      this.$axios
+        .post(
+          `/api/${this.$cookies.get('user')}_requests/${timeId}`,
+          {
+            start_time: startTime,
+            finish_time: finishTime,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          console.log('host_request成功', response.data)
+          this.$store.dispatch('requests/addRequest', response.data)
+          this.$router.push(`/host/${this.$store.state.myInfo.myInfo.myid}`)
+        })
+        .catch((error) => {
+          console.log('host_request失敗', error)
+        })
+    },
+
     viewWeek({ date }) {
       this.focus = date
       this.type = 'week'
     },
+
     setToday() {
       this.focus = ''
     },
+
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
@@ -150,7 +186,6 @@ export default {
           requestAnimationFrame(() => (this.selectedOpen = true))
         )
       }
-
       if (this.selectedOpen) {
         this.selectedOpen = false
         requestAnimationFrame(() => requestAnimationFrame(() => open()))

@@ -61,7 +61,7 @@
           v-if="state == 'negotiating' && state != 'cancelled'"
           text
           color="warning accent-4"
-          @click="$refs.datePicker.isDisplay = true"
+          @click="openDatePicker"
         >
           時間を変更する
         </v-btn>
@@ -78,8 +78,6 @@
     </v-card>
     <DatePicker
       ref="datePicker"
-      :startTime="startTime"
-      :finishTime="finishTime"
       title="時間の登録"
       @register-button-click="updateTime"
     />
@@ -195,6 +193,12 @@ export default {
   },
 
   methods: {
+    openDatePicker() {
+      this.$refs.datePicker.isDisplay = true
+      this.$refs.datePicker.startTime = this.startTime
+      this.$refs.datePicker.finishTime = this.finishTime
+    },
+
     sendMessage(message) {
       this.$axios
         .post(

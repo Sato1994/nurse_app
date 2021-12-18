@@ -217,7 +217,7 @@ export default {
               end: `${f.getFullYear()}-${
                 f.getMonth() + 1
               }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-              name: '募集中',
+              name: 'time',
               color: 'green',
               dislayStart: `${
                 s.getMonth() + 1
@@ -225,6 +225,20 @@ export default {
               displayFinish: `${
                 f.getMonth() + 1
               }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+              startTime: {
+                year: s.getFullYear(),
+                month: s.getMonth() + 1,
+                day: s.getDate(),
+                hour: s.getHours(),
+                minute: s.getMinutes(),
+              },
+              finishTime: {
+                year: f.getFullYear(),
+                month: f.getMonth() + 1,
+                day: f.getDate(),
+                hour: f.getHours(),
+                minute: f.getMinutes(),
+              },
             }
             return newObject
           })

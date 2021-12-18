@@ -13,31 +13,31 @@
                 <small>開始日時</small>
                 <v-card-actions>
                   <v-select
-                    v-model="anotherStartTime.year"
+                    v-model="startTime.year"
                     :items="yearList"
                     label="年"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherStartTime.month"
+                    v-model="startTime.month"
                     :items="monthList"
                     label="月"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherStartTime.day"
+                    v-model="startTime.day"
                     :items="dayList"
                     label="日"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherStartTime.hour"
+                    v-model="startTime.hour"
                     :items="hourList"
                     label="時"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherStartTime.minute"
+                    v-model="startTime.minute"
                     :items="minuteList"
                     label="分"
                     dense
@@ -48,31 +48,31 @@
                 <small>終了日時</small>
                 <v-card-actions>
                   <v-select
-                    v-model="anotherFinishTime.year"
+                    v-model="finishTime.year"
                     :items="yearList"
                     label="年"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherFinishTime.month"
+                    v-model="finishTime.month"
                     :items="monthList"
                     label="月"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherFinishTime.day"
+                    v-model="finishTime.day"
                     :items="dayList"
                     label="日"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherFinishTime.hour"
+                    v-model="finishTime.hour"
                     :items="hourList"
                     label="時"
                     dense
                   ></v-select>
                   <v-select
-                    v-model="anotherFinishTime.minute"
+                    v-model="finishTime.minute"
                     :items="minuteList"
                     label="分"
                     dense
@@ -101,44 +101,6 @@ export default {
       type: String,
       required: true,
     },
-
-    startTime: {
-      type: Object,
-      default: () => {
-        const startTime = {}
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = today.getMonth() + 1
-        const day = today.getDate()
-        const hour = today.getHours()
-        const minute = 0
-        startTime.year = year
-        startTime.month = month
-        startTime.day = day
-        startTime.hour = hour
-        startTime.minute = minute
-        return startTime
-      },
-    },
-
-    finishTime: {
-      type: Object,
-      default: () => {
-        const finishTime = {}
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = today.getMonth() + 1
-        const day = today.getDate()
-        const hour = today.getHours()
-        const minute = 0
-        finishTime.year = year
-        finishTime.month = month
-        finishTime.day = day
-        finishTime.hour = hour
-        finishTime.minute = minute
-        return finishTime
-      },
-    },
   },
 
   data: () => ({
@@ -161,24 +123,44 @@ export default {
     ],
 
     minuteList: [0, 15, 30, 45],
+    startTime: {},
+    finishTime: {},
+    timeId: '',
   }),
 
   computed: {
     stringStartTime() {
-      return `${this.anotherStartTime.year}-${this.anotherStartTime.month}-${this.anotherStartTime.day}T${this.anotherStartTime.hour}:${this.anotherStartTime.minute}:00`
+      return `${this.startTime.year}-${this.startTime.month}-${this.startTime.day}T${this.startTime.hour}:${this.startTime.minute}:00`
     },
 
     stringFinishTime() {
-      return `${this.anotherFinishTime.year}-${this.anotherFinishTime.month}-${this.anotherFinishTime.day}T${this.anotherFinishTime.hour}:${this.anotherFinishTime.minute}:00`
+      return `${this.finishTime.year}-${this.finishTime.month}-${this.finishTime.day}T${this.finishTime.hour}:${this.finishTime.minute}:00`
     },
+  },
 
-    anotherStartTime() {
-      return this.startTime
-    },
-
-    anotherFinishTime() {
-      return this.finishTime
-    },
+  created() {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = today.getMonth() + 1
+    const day = today.getDate()
+    const hour = today.getHours()
+    const minute = 0
+    const startTime = {
+      year,
+      month,
+      day,
+      hour,
+      minute,
+    }
+    const finishTime = {
+      year,
+      month,
+      day,
+      hour,
+      minute,
+    }
+    this.startTime = startTime
+    this.finishTime = finishTime
   },
 
   methods: {
@@ -186,7 +168,8 @@ export default {
       this.$emit(
         'register-button-click',
         this.stringStartTime,
-        this.stringFinishTime
+        this.stringFinishTime,
+        this.timeId
       )
       this.isDisplay = false
     },
