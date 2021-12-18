@@ -68,9 +68,12 @@
           <v-card color="grey lighten-4" min-width="350px" flat>
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn icon>
-                <v-icon>mdi-human-male-female</v-icon>
+                <v-icon>mdi-clock-outline</v-icon>
               </v-btn>
-              <v-toolbar-title>{{ selectedEvent.partner }}様</v-toolbar-title>
+              <v-toolbar-title v-if="selectedEvent.name === '募集中'"
+                >リクエストを待っています</v-toolbar-title
+              >
+
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
@@ -82,6 +85,10 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
+                v-if="
+                  selectedEvent.name === '募集中' &&
+                  $route.params.id != $store.state.myInfo.myInfo.myid
+                "
                 outlined
                 text
                 color="secondary"
@@ -94,9 +101,6 @@
                 "
               >
                 リクエストを送る
-              </v-btn>
-              <v-btn outlined text color="secondary">
-                リクエストを削除する
               </v-btn>
             </v-card-actions>
           </v-card>

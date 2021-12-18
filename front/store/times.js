@@ -29,7 +29,7 @@ export const getters = {
           }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
         end: `${f.getFullYear()}-${f.getMonth() + 1
           }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-        name: 'time',
+        name: '募集中',
         color: 'green',
         dislayStart: `${s.getMonth() + 1
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
