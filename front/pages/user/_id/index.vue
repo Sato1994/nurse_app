@@ -134,7 +134,6 @@
 
 <script>
 import DatePicker from '@/components/dialog/DatePicker.vue'
-import axios from 'axios'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
@@ -146,11 +145,9 @@ export default {
     Calendar,
   },
 
-  async asyncData({ route }) {
+  async asyncData({ route, $axios }) {
     try {
-      const data = await axios.get(
-        `http://web:3000/api/users/${route.params.id}`
-      )
+      const data = await $axios.get(`/api/users/${route.params.id}`)
       const times = data.data.times.map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -170,6 +167,20 @@ export default {
           displayFinish: `${
             f.getMonth() + 1
           }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+          startTime: {
+            year: s.getFullYear(),
+            month: s.getMonth() + 1,
+            day: s.getDate(),
+            hour: s.getHours(),
+            minute: s.getMinutes(),
+          },
+          finishTime: {
+            year: f.getFullYear(),
+            month: f.getMonth() + 1,
+            day: f.getDate(),
+            hour: f.getHours(),
+            minute: f.getMinutes(),
+          },
         }
         return newObject
       })
@@ -228,61 +239,6 @@ export default {
     ) {
       const requests = this.$store.getters['requests/requestsOnCalendar']
       this.events = this.events.concat(requests)
-
-      // ここから
-      this.target = this.$store.getters['info/info']
-      this.targetSkills = this.$store.getters['skills/skills']
-      console.log('aaaa')
-    } else {
-      console.log(
-        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
-          this.$store.state.info.info.myid
-        }`
-      )
-      this.$axios
-        .get(`http://localhost:3000/api/users/${this.$route.params.id}`)
-        .then((response) => {
-          this.target = response.data.info
-          this.targetSkills = response.data.skills
-          const times = response.data.times.map((obj) => {
-            const s = new Date(obj.start_time)
-            const f = new Date(obj.finish_time)
-            const newObject = {
-              id: obj.id,
-              start: `${s.getFullYear()}-${
-                s.getMonth() + 1
-              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-              end: `${f.getFullYear()}-${
-                f.getMonth() + 1
-              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-              name: '募集中',
-              color: 'green',
-              dislayStart: `${
-                s.getMonth() + 1
-              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-              displayFinish: `${
-                f.getMonth() + 1
-              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-              startTime: {
-                year: s.getFullYear(),
-                month: s.getMonth() + 1,
-                day: s.getDate(),
-                hour: s.getHours(),
-                minute: s.getMinutes(),
-              },
-              finishTime: {
-                year: f.getFullYear(),
-                month: f.getMonth() + 1,
-                day: f.getDate(),
-                hour: f.getHours(),
-                minute: f.getMinutes(),
-              },
-            }
-            return newObject
-          })
-          this.events = times
-        })
-      // ここまで
     }
   },
 
