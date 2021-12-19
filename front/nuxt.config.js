@@ -46,6 +46,7 @@ export default {
       src: '~/plugins/main.js',
       mode: 'client'
     },
+    'plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -70,18 +71,9 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // proxy: true
-    baseURL: 'http://localhost:3000'
+    baseURL: 'http://web:3000',
+    browserBaseURL: 'http://localhost:3000'
   },
-
-
-  // proxy: {
-  //   '/api/': {
-  //     target: 'http://web:3000',
-  //   }
-  // },
-
-
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
