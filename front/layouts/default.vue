@@ -29,9 +29,7 @@ export default {
     if (this.$cookies.get('authInfo')) {
       await this.$axios
         .get(
-          `http://web:3000/api/${this.$cookies.get(
-            'user'
-          )}s/${this.$cookies.get('myid')}`,
+          `/api/${this.$cookies.get('user')}s/${this.$cookies.get('myid')}`,
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {

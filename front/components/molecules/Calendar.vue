@@ -87,7 +87,7 @@
               <v-btn
                 v-if="
                   selectedEvent.name === '募集中' &&
-                  $route.params.id != $store.state.myInfo.myInfo.myid
+                  $route.params.id != $store.state.info.info.myid
                 "
                 outlined
                 text
@@ -166,7 +166,7 @@ export default {
         .then((response) => {
           console.log('host_request成功', response.data)
           this.$store.dispatch('requests/addRequest', response.data)
-          this.$router.push(`/host/${this.$store.state.myInfo.myInfo.myid}`)
+          this.$router.push(`/host/${this.$store.state.info.info.myid}`)
         })
         .catch((error) => {
           console.log('host_request失敗', error)

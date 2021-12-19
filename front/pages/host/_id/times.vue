@@ -58,11 +58,9 @@ export default {
 
   created() {
     const myid = this.$route.params.id
-    this.$axios
-      .get(`http://localhost:3000/api/hosts/${myid}`)
-      .then((response) => {
-        this.targetTimes = response.data.times
-      })
+    this.$axios.get(`/api/hosts/${myid}`).then((response) => {
+      this.targetTimes = response.data.times
+    })
   },
 
   methods: {
