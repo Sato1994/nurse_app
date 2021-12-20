@@ -80,14 +80,12 @@ export default {
               )
               this.$store.dispatch('offers/saveOffers', response.data.offers)
               this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-              console.log('サインインでdispatchは成功')
               this.$router.push(
                 `/${this.$cookies.get('user')}/${response.data.info.myid}`
               )
             })
             .catch(() => {
               this.$cookies.removeAll()
-              console.log('サインイン失敗')
             })
         })
     },
