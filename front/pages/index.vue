@@ -20,7 +20,7 @@
         small
         color="warning"
         style="bottom: 50px"
-        @click="$refs.search.isDisplay = true"
+        @click="openSearchDialog"
       >
         <v-icon color="white">mdi-magnify</v-icon>
       </v-btn>
@@ -83,6 +83,14 @@ export default {
           console.log(error)
         })
     },
+
+    openSearchDialog() {
+      this.$refs.search.name = this.name
+      this.$refs.search.address = this.address
+      this.$refs.search.lowerYear = this.lowerYear
+      this.$refs.search.isDisplay = true
+    },
+
     searchUser(name, address, lowerYear) {
       this.name = name
       this.address = address
