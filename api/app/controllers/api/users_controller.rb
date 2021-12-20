@@ -2,9 +2,9 @@ class Api::UsersController < ApplicationController
 include Pagination
 
   def index
-    name = params[:name]
+    lower_year = params[:lowerYear]
     address = params[:address]
-    users = Kaminari.paginate_array(User.where('name LIKE ? && address LIKE ?', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
+    users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ?', lower_year, "%#{address}%")).page(params[:page]).per(10)
     @pagination = resources_with_pagination(users)
     @users = users.as_json
     @object = {

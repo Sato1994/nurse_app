@@ -44,6 +44,7 @@ export default {
     page: 1,
     name: '',
     address: '',
+    lowerYear: 0,
   }),
 
   computed: {
@@ -62,6 +63,7 @@ export default {
               page: this.page,
               name: this.name,
               address: this.address,
+              lowerYear: this.lowerYear,
             },
           }
         )
@@ -81,9 +83,10 @@ export default {
           console.log(error)
         })
     },
-    searchUser(name, address) {
+    searchUser(name, address, lowerYear) {
       this.name = name
       this.address = address
+      this.lowerYear = lowerYear
       this.$axios
         .get(
           `/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`,
@@ -92,6 +95,7 @@ export default {
               page: 1,
               name: this.name,
               address: this.address,
+              lowerYear: this.lowerYear,
             },
           }
         )
