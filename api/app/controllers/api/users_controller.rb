@@ -4,7 +4,11 @@ include Pagination
   def index
     lower_year = params[:lowerYear]
     address = params[:address]
-    users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ?', lower_year, "%#{address}%")).page(params[:page]).per(10)
+    if params[:wanted].blank?
+      users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ?', lower_year, "%#{address}%")).page(params[:page]).per(10)
+    else
+      users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ? && wanted = true', lower_year, "%#{address}%")).page(params[:page]).per(10)
+    end
     @pagination = resources_with_pagination(users)
     @users = users.as_json
     @object = {

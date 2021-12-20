@@ -4,7 +4,11 @@ include Pagination
   def index
     name = params[:name]
     address = params[:address]
-    hosts = Kaminari.paginate_array(Host.where('name LIKE ? && address LIKE ?', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
+    if params[:wanted].blank?
+      hosts = Kaminari.paginate_array(Host.where('name LIKE ? && address LIKE ?', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
+    else
+      hosts = Kaminari.paginate_array(Host.where('name LIKE ? && address LIKE ? && wanted = true', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
+    end
     @pagination = resources_with_pagination(hosts)
     @hosts = hosts.as_json
     @object = {
