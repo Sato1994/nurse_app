@@ -131,11 +131,9 @@ export default {
     Calendar,
   },
 
-  async asyncData({ route }) {
+  async asyncData({ route, $axios }) {
     try {
-      const data = await axios.get(
-        `http://web:3000/api/hosts/${route.params.id}`
-      )
+      const data = await $axios.get(`/api/hosts/${route.params.id}`)
       const times = data.data.times.map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -155,6 +153,20 @@ export default {
           displayFinish: `${
             f.getMonth() + 1
           }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+          startTime: {
+            year: s.getFullYear(),
+            month: s.getMonth() + 1,
+            day: s.getDate(),
+            hour: s.getHours(),
+            minute: s.getMinutes(),
+          },
+          finishTime: {
+            year: f.getFullYear(),
+            month: f.getMonth() + 1,
+            day: f.getDate(),
+            hour: f.getHours(),
+            minute: f.getMinutes(),
+          },
         }
         return newObject
       })

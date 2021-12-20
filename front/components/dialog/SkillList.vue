@@ -104,14 +104,9 @@ export default {
 
     removeSkill(skill) {
       this.$axios
-        .delete(
-          `http://localhost:3000/api/${this.$cookies.get('user')}_skills/${
-            skill.id
-          }`,
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
+        .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
+          headers: this.$cookies.get('authInfo'),
+        })
         .then((response) => {
           console.log(response.data)
           this.$emit('remove-button-click', skill)

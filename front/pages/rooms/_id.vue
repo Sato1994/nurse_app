@@ -123,15 +123,41 @@ export default {
     DatePicker,
   },
 
-  data: () => ({
-    messages: [],
-    partner: {},
-    id: '',
-    state: '',
-    closed: '',
-    startTime: {},
-    finishTime: {},
-  }),
+  asyncData({ $cookies, $axios, route }) {
+    return $axios
+      .get(`/api/rooms/${route.params.id}`, {
+        headers: $cookies.get('authInfo'),
+      })
+      .then((response) => {
+        const startTime = new Date(response.data.start_time)
+        const finishTime = new Date(response.data.finish_time)
+        let messages = response.data.user_messages
+        messages = messages.concat(response.data.host_messages)
+        return {
+          id: response.data.id,
+          partner: response.data.partner,
+          state: response.data.state,
+          closed: response.data.closed,
+          startTime: {
+            year: startTime.getFullYear(),
+            month: startTime.getMonth() + 1,
+            day: startTime.getDate(),
+            hour: startTime.getHours(),
+            minute: startTime.getMinutes(),
+          },
+          finishTime: {
+            year: finishTime.getFullYear(),
+            month: finishTime.getMonth() + 1,
+            day: finishTime.getDate(),
+            hour: finishTime.getHours(),
+            minute: finishTime.getMinutes(),
+          },
+          messages,
+        }
+      })
+  },
+
+  data: () => ({}),
 
   computed: {
     formedStartTime() {
@@ -162,34 +188,6 @@ export default {
         this.partner.myid
       }`
     },
-  },
-
-  created() {
-    this.$axios
-      .get(`/api/rooms/${this.$route.params.id}`, {
-        headers: this.$cookies.get('authInfo'),
-      })
-      .then((response) => {
-        // Array.pushとArray.concatの違い https://qiita.com/pon_maeda/items/f034cccf3459c1d6505f
-        this.messages = this.messages.concat(response.data.user_messages)
-        this.messages = this.messages.concat(response.data.host_messages)
-        this.id = response.data.id
-        this.partner = response.data.partner
-        this.state = response.data.state
-        this.closed = response.data.closed
-        const starttime = new Date(response.data.start_time)
-        this.startTime.year = starttime.getFullYear()
-        this.startTime.month = starttime.getMonth() + 1
-        this.startTime.day = starttime.getDate()
-        this.startTime.hour = starttime.getHours()
-        this.startTime.minute = starttime.getMinutes()
-        const finishtime = new Date(response.data.finish_time)
-        this.finishTime.year = finishtime.getFullYear()
-        this.finishTime.month = finishtime.getMonth() + 1
-        this.finishTime.day = finishtime.getDate()
-        this.finishTime.hour = finishtime.getHours()
-        this.finishTime.minute = finishtime.getMinutes()
-      })
   },
 
   methods: {
