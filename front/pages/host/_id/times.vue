@@ -61,7 +61,7 @@ export default {
     this.$axios
       .get(`http://localhost:3000/api/hosts/${myid}`)
       .then((response) => {
-        this.targetTimes = response.data.target_times
+        this.targetTimes = response.data.times
       })
   },
 
@@ -79,7 +79,7 @@ export default {
         .then((response) => {
           console.log('user_request成功', response.data)
           this.$store.dispatch('requests/addRequest', response.data)
-          this.$router.push(`/user/${this.$store.state.myInfo.myInfo.myid}`)
+          this.$router.push(`/user/${this.$store.state.info.info.myid}`)
         })
         .catch((error) => {
           console.log('user_request失敗', error)

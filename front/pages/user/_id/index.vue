@@ -56,7 +56,7 @@
     <v-card-actions
       v-if="
         $cookies.get('user') === 'user' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
+        $store.state.info.info.myid === $route.params.id
       "
     >
       <v-btn
@@ -110,7 +110,7 @@
     <v-card-actions
       v-if="
         $cookies.get('user') === 'user' &&
-        $store.state.myInfo.myInfo.myid === $route.params.id
+        $store.state.info.info.myid === $route.params.id
       "
     >
       <v-btn
@@ -123,7 +123,7 @@
         <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-    <Edit ref="edit" @edit-button-click="editMyInfo" />
+    <Edit ref="edit" @edit-button-click="editInfo" />
     <SkillList
       ref="skillList"
       @add-button-click="addSkill"
@@ -145,6 +145,43 @@ export default {
     Calendar,
   },
 
+  async asyncData({ route }) {
+    try {
+      const data = await axios.get(
+        `http://web:3000/api/users/${route.params.id}`
+      )
+      const times = data.data.times.map((obj) => {
+        const s = new Date(obj.start_time)
+        const f = new Date(obj.finish_time)
+        const newObject = {
+          id: obj.id,
+          start: `${s.getFullYear()}-${
+            s.getMonth() + 1
+          }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+          end: `${f.getFullYear()}-${
+            f.getMonth() + 1
+          }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+          name: '募集中',
+          color: 'green',
+          dislayStart: `${
+            s.getMonth() + 1
+          }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+          displayFinish: `${
+            f.getMonth() + 1
+          }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+        }
+        return newObject
+      })
+      return {
+        target: data.data.info,
+        targetSkills: data.data.skills,
+        events: times,
+      }
+    } catch (error) {
+      console.log('asyncdataエラー', error)
+    }
+  },
+
   data: () => ({
     target: [],
     targetSkills: [],
@@ -153,7 +190,6 @@ export default {
       { title: '契約時間の変更申請' },
       { title: '契約の取り消し申請' },
     ],
-    // times: [],
     events: [],
   }),
 
@@ -187,63 +223,10 @@ export default {
   created() {
     if (
       this.$cookies.get('user') === 'user' &&
-      this.$route.params.id === this.$store.state.myInfo.myInfo.myid
+      this.$route.params.id === this.$store.state.info.info.myid
     ) {
-      const times = this.$store.getters['times/timesOnCalendar']
-      this.events = this.events.concat(times)
       const requests = this.$store.getters['requests/requestsOnCalendar']
       this.events = this.events.concat(requests)
-      this.target = this.$store.getters['myInfo/myInfo']
-      this.targetSkills = this.$store.getters['skills/skills']
-    } else {
-      console.log(
-        `${this.$cookies.get('user')}あんど${this.$route.params.id}あんど${
-          this.$store.state.myInfo.myInfo.myid
-        }`
-      )
-      this.$axios
-        .get(`http://localhost:3000/api/users/${this.$route.params.id}`)
-        .then((response) => {
-          this.target = response.data.user
-          this.targetSkills = response.data.target_skills
-          const times = response.data.target_times.map((obj) => {
-            const s = new Date(obj.start_time)
-            const f = new Date(obj.finish_time)
-            const newObject = {
-              id: obj.id,
-              start: `${s.getFullYear()}-${
-                s.getMonth() + 1
-              }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-              end: `${f.getFullYear()}-${
-                f.getMonth() + 1
-              }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-              name: '募集中',
-              color: 'green',
-              dislayStart: `${
-                s.getMonth() + 1
-              }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-              displayFinish: `${
-                f.getMonth() + 1
-              }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-              startTime: {
-                year: s.getFullYear(),
-                month: s.getMonth() + 1,
-                day: s.getDate(),
-                hour: s.getHours(),
-                minute: s.getMinutes(),
-              },
-              finishTime: {
-                year: f.getFullYear(),
-                month: f.getMonth() + 1,
-                day: f.getDate(),
-                hour: f.getHours(),
-                minute: f.getMinutes(),
-              },
-            }
-            return newObject
-          })
-          this.events = times
-        })
     }
   },
 
@@ -260,14 +243,14 @@ export default {
       this.targetSkills.splice(index, 1)
     },
 
-    editMyInfo(copiedMyInfo) {
-      this.$set(this.target, 'name', copiedMyInfo.name)
-      this.$set(this.target, 'address', copiedMyInfo.address)
-      this.$set(this.target, 'profile', copiedMyInfo.profile)
-      this.$set(this.target, 'age', copiedMyInfo.age)
-      this.$set(this.target, 'year', copiedMyInfo.year)
-      this.$set(this.target, 'sex', copiedMyInfo.sex)
-      this.$set(this.target, 'wanted', copiedMyInfo.wanted)
+    editInfo(copiedInfo) {
+      this.$set(this.target, 'name', copiedInfo.name)
+      this.$set(this.target, 'address', copiedInfo.address)
+      this.$set(this.target, 'profile', copiedInfo.profile)
+      this.$set(this.target, 'age', copiedInfo.age)
+      this.$set(this.target, 'year', copiedInfo.year)
+      this.$set(this.target, 'sex', copiedInfo.sex)
+      this.$set(this.target, 'wanted', copiedInfo.wanted)
     },
 
     jumpTargetTimes(freeTimeId) {

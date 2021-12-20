@@ -10,7 +10,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="copiedMyInfo.name"
+                  v-model="copiedInfo.name"
                   :counter="10"
                   :label="nameLabel"
                   color="warning"
@@ -27,14 +27,14 @@
               </v-col>
 
               <v-col cols="12" sm="6" md="6">
-                <v-btn @click="getAddress" color="warning">
+                <v-btn color="warning" @click="getAddress">
                   住所を検索する</v-btn
                 >
               </v-col>
 
               <v-col cols="12">
                 <v-text-field
-                  v-model="copiedMyInfo.address"
+                  v-model="copiedInfo.address"
                   label="住所"
                   required
                   color="warning"
@@ -44,7 +44,7 @@
 
               <v-col cols="12">
                 <v-textarea
-                  v-model="copiedMyInfo.profile"
+                  v-model="copiedInfo.profile"
                   label="プロフィール"
                   required
                   color="warning"
@@ -57,7 +57,7 @@
                 md="6"
               >
                 <v-text-field
-                  v-model="copiedMyInfo.age"
+                  v-model="copiedInfo.age"
                   label="年齢"
                   type="number"
                   color="warning"
@@ -71,7 +71,7 @@
                 md="6"
               >
                 <v-text-field
-                  v-model="copiedMyInfo.year"
+                  v-model="copiedInfo.year"
                   label="経験年数"
                   type="number"
                   color="warning"
@@ -80,7 +80,7 @@
               </v-col>
               <v-col v-if="$cookies.get('user') === 'user'" cols="12">
                 <v-select
-                  v-model="copiedMyInfo.sex"
+                  v-model="copiedInfo.sex"
                   :items="sex"
                   label="性別"
                   color="warning"
@@ -89,7 +89,7 @@
               </v-col>
               <v-col cols="12">
                 <v-switch
-                  v-model="copiedMyInfo.wanted"
+                  v-model="copiedInfo.wanted"
                   label="お相手からのリクエストを受け付けますか？"
                   color="warning"
                 ></v-switch>
@@ -122,8 +122,8 @@ export default {
   }),
 
   computed: {
-    copiedMyInfo() {
-      return Object.assign({}, this.$store.getters['myInfo/myInfo'])
+    copiedInfo() {
+      return Object.assign({}, this.$store.getters['info/info'])
     },
 
     nameLabel() {
@@ -136,17 +136,17 @@ export default {
   methods: {
     editUser() {
       this.$axios
-        .put(`/api/${this.$cookies.get('user')}`, this.copiedMyInfo, {
+        .put(`/api/${this.$cookies.get('user')}`, this.copiedInfo, {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
           this.$router.push(
             `/${this.$cookies.get('user')}/${response.data.data.myid}`
           )
-          this.$emit('edit-button-click', this.copiedMyInfo)
+          this.$emit('edit-button-click', this.copiedInfo)
           this.isDisplay = false
           console.log('editのresponse', response.data)
-          this.$store.dispatch('myInfo/saveMyInfo', response.data.data)
+          this.$store.dispatch('info/saveInfo', response.data.data)
         })
         .catch((error) => {
           console.log('登録失敗', error)
@@ -158,7 +158,7 @@ export default {
         .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
         .then((response) => {
           console.log(response.data)
-          this.copiedMyInfo.address = response.data.data.fullAddress
+          this.copiedInfo.address = response.data.data.fullAddress
         })
         .catch((error) => {
           console.log(error)
