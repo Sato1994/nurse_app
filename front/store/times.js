@@ -35,7 +35,22 @@ export const getters = {
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
         displayFinish: `${f.getMonth() + 1
           }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+        startTime: {
+          year: s.getFullYear(),
+          month: s.getMonth() + 1,
+          day: s.getDate(),
+          hour: s.getHours(),
+          minute: s.getMinutes(),
+        },
+        finishTime: {
+          year: f.getFullYear(),
+          month: f.getMonth() + 1,
+          day: f.getDate(),
+          hour: f.getHours(),
+          minute: f.getMinutes(),
+        }
       }
+
       return newObject
     })
     return times
