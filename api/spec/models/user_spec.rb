@@ -99,4 +99,61 @@ RSpec.describe User, type: :model do
     expect(user).to be_valid
   end
 
+  ########## メソッド ##########
+  describe "year_gt" do
+    let!(:user_1) { create(:user, year: 0) }
+    let!(:user_2) { create(:user, year: 1) }
+    let!(:user_3) { create(:user, year: 2) }
+    it "引数の数以上のyearを持つuserが検索される" do
+      expect(User.year_gt(1)).to include(user_2, user_3)
+    end
+
+    it "引数の数未満のyearを持つuserは検索されない" do
+      expect(User.year_gt(1)).to_not include(user_1)
+    end
+  end
+
+  describe "address_like" do
+    let!(:user_1) { create(:user, address: "東京都江戸川区葛西")}
+    let!(:user_2) { create(:user, address: "東京都足立区栗原") }
+    let!(:user_3) { create(:user, address: "東京都江戸川区一之江") }
+    it "引数に部分一致するaddressを持つuserは検索される" do
+      expect(User.address_like("江戸川区")).to include(user_1, user_3)
+    end
+
+    it "引数に全く一致しないaddressを持つuserは検索されない" do
+      expect(User.address_like("江戸川区")).to_not include(user_2)
+    end
+  end
+
+  describe "wanted_true" do
+    let!(:user_1) { create(:user, wanted: true) }
+    let!(:user_2) { create(:user, wanted: true) }
+    let!(:user_3) { create(:user, wanted: false) }
+
+    it "引数が空でないならばwantedがtrueのuserを検索する" do
+      expect(User.wanted_true("true")).to include(user_1, user_2)
+    end
+
+    it "引数が空ならば全てのuserを検索する" do
+      expect(User.wanted_true("")).to include(user_1, user_2, user_3) 
+    end
+  end
+
+  describe "id_include" do
+    let!(:user_1) { create(:user, id: 1) }
+    let!(:user_2) { create(:user, id: 2) }
+    let!(:user_3) { create(:user, id: 3) }
+
+    it "引数のparamsが空でなく、引数のidsが空でないとき指定されたidを持つuserを検索する" do
+      expect(User.id_include([ 1, 3 ], [ 10, 20 ])).to include(user_1, user_3)
+    end
+
+    it "引数のparamsが空でなく、引数のidsが空でないとき指定外のidを持つuserは検索されない" do
+      expect(User.id_include([ 1, 3 ], [ 10, 20 ])).to_not include(user_2)
+    end
+
+    it "引数のparamsが空なとき全てのuserを返す" do
+      expect(User.id_include([ 1, 3 ], [] )).to include(user_1, user_2, user_3)
+    end
 end
