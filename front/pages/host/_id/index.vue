@@ -266,7 +266,40 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('とりあえず成功', response.data)
+          const s = new Date(response.data.start_time)
+          const f = new Date(response.data.finish_time)
+          const newObj = {
+            id: response.data.id,
+            start: `${s.getFullYear()}-${
+              s.getMonth() + 1
+            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+            end: `${f.getFullYear()}-${
+              f.getMonth() + 1
+            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+            name: '募集中',
+            color: 'green',
+            dislayStart: `${
+              s.getMonth() + 1
+            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+            displayFinish: `${
+              f.getMonth() + 1
+            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+            startTime: {
+              year: s.getFullYear(),
+              month: s.getMonth() + 1,
+              day: s.getDate(),
+              hour: s.getHours(),
+              minute: s.getMinutes(),
+            },
+            finishTime: {
+              year: f.getFullYear(),
+              month: f.getMonth() + 1,
+              day: f.getDate(),
+              hour: f.getHours(),
+              minute: f.getMinutes(),
+            },
+          }
+          this.events.push(newObj)
         })
         .catch((error) => {
           console.log('とりあえず失敗', error)
