@@ -2,15 +2,46 @@ class Api::HostsController < ApplicationController
 include Pagination
 
   def index
+
+    ########## skillが被っていないhostのidの配列の作成 ##########
     name = params[:name]
     address = params[:address]
-    hosts = Kaminari.paginate_array(Host.where('name LIKE ? && address LIKE ?', "%#{name}%", "%#{address}%")).page(params[:page]).per(10)
-    @pagination = resources_with_pagination(hosts)
-    @hosts = hosts.as_json
+    wanted = params[:wanted]
+
+    user_skill_ids = []
+    user_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
+
+    all_hosts = Host.includes(:host_skills)
+
+    target_hosts_id = [] 
+
+    all_hosts.each do  |host|
+      skills = host.host_skills
+      host_skill_ids = []
+      
+      skills.each do |skill|
+      host_skill_ids.push(skill.skill_id)
+      end
+
+     host_skill_ids.push(user_skill_ids)
+     host_skill_ids.flatten!
+     mixed_skill_ids = host_skill_ids.uniq
+
+     if mixed_skill_ids.length == host_skill_ids.length
+      target_hosts_id.push(host.id)
+     end
+
+    end
+
+    ########## host検索 ##########
+    hosts = Kaminari.paginate_array(Host.all.name_like(name).address_like(address).wanted_true(wanted).id_include(target_hosts_id, params[:skillsId])).page(params[:page]).per(10)
+    
+    pagination = resources_with_pagination(hosts)
     @object = {
-      users: @hosts, kaminari: @pagination
+      users: hosts.as_json, kaminari: pagination
     }
     render json: @object
+
   end
 
   def show

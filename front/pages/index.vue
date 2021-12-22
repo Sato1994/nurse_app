@@ -20,7 +20,7 @@
         small
         color="warning"
         style="bottom: 50px"
-        @click="$refs.search.isDisplay = true"
+        @click="openSearchDialog"
       >
         <v-icon color="white">mdi-magnify</v-icon>
       </v-btn>
@@ -33,6 +33,7 @@
 <script>
 import TargetCard from '@/components/organisms/TargetCard.vue'
 import Search from '@/components/dialog/Search.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     TargetCard,
@@ -44,9 +45,15 @@ export default {
     page: 1,
     name: '',
     address: '',
+    lowerYear: 0,
+    wanted: true,
   }),
 
   computed: {
+    ...mapGetters({
+      skillsId: 'skills/skillsId',
+    }),
+
     mypageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
     },
@@ -62,6 +69,9 @@ export default {
               page: this.page,
               name: this.name,
               address: this.address,
+              lowerYear: this.lowerYear,
+              wanted: this.wanted === true ? true : '',
+              skillsId: this.skillsId,
             },
           }
         )
@@ -81,9 +91,20 @@ export default {
           console.log(error)
         })
     },
-    searchUser(name, address) {
+
+    openSearchDialog() {
+      this.$refs.search.name = this.name
+      this.$refs.search.address = this.address
+      this.$refs.search.lowerYear = this.lowerYear
+      this.$refs.search.wanted = this.wanted
+      this.$refs.search.isDisplay = true
+    },
+
+    searchUser(name, address, lowerYear, wanted) {
       this.name = name
       this.address = address
+      this.lowerYear = lowerYear
+      this.wanted = wanted
       this.$axios
         .get(
           `/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`,
@@ -92,6 +113,9 @@ export default {
               page: 1,
               name: this.name,
               address: this.address,
+              lowerYear: this.lowerYear,
+              wanted: this.wanted === true ? true : '',
+              skillsId: this.skillsId,
             },
           }
         )

@@ -1,49 +1,75 @@
 <template>
-  <v-dialog v-model="isDisplay" persistent max-width="600px">
-    <v-card>
-      <v-card-title>取得済みスキル一覧</v-card-title>
+  <v-row justify="center">
+    <v-dialog v-model="isDisplay" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span>登録済みスキル</span>
+        </v-card-title>
+        <v-container>
+          <v-sheet color="orange lighten-5">
+            <v-card-text>
+              <div class="text-center">
+                <v-chip
+                  v-for="skill in skills"
+                  :key="skill.id"
+                  class="ma-1"
+                  color="orange"
+                  text-color="white"
+                  @click="removeSkill(skill)"
+                >
+                  {{ skill.name }}
+                </v-chip>
+              </div>
+            </v-card-text>
+          </v-sheet>
+        </v-container>
 
-      <v-text-field
-        v-model="inputValue"
-        hide-details
-        prepend-icon="mdi-magnify"
-        single-line
-        placeholder="スキルを検索"
-      ></v-text-field>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <v-card-title>
+                <span>未登録スキル</span>
+              </v-card-title>
+            </v-col>
 
-      <v-card-text>
-        <div class="text-center">
-          <v-chip
-            v-for="skill in skills"
-            :key="skill.id"
-            class="ma-1"
-            color="orange"
-            text-color="white"
-            @click="removeSkill(skill)"
-          >
-            {{ skill.name }}
-          </v-chip>
-        </div>
-      </v-card-text>
-      <v-divider class="mx-4"></v-divider>
-      <v-card-title>未取得のスキル一覧</v-card-title>
-      <v-card-text>
-        <div class="text-center">
-          <v-chip
-            v-for="unselectedSkill in unselectedSkills"
-            :key="unselectedSkill.id"
-            class="ma-1"
-            color="orange"
-            text-color="white"
-            @click="addSkill(unselectedSkill)"
-          >
-            {{ unselectedSkill.name }}
-          </v-chip>
-        </div>
-      </v-card-text>
-      <v-btn color="success" @click="isDisplay = false"> 戻る</v-btn>
-    </v-card>
-  </v-dialog>
+            <v-col cols="12">
+              <v-text-field
+                v-model="inputValue"
+                label="スキルを検索"
+                prepend-icon="mdi-magnify"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <v-container>
+          <v-sheet color="orange lighten-5">
+            <v-card-text>
+              <div class="text-center">
+                <v-chip
+                  v-for="unselectedSkill in unselectedSkills"
+                  :key="unselectedSkill.id"
+                  class="ma-1"
+                  color="orange"
+                  text-color="white"
+                  @click="addSkill(unselectedSkill)"
+                >
+                  {{ unselectedSkill.name }}
+                </v-chip>
+              </div>
+            </v-card-text>
+          </v-sheet>
+        </v-container>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning darken-1" text @click="isDisplay = false">
+            閉じる
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
 </template>
 
 <script>

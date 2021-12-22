@@ -10,11 +10,20 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
+                  v-if="$cookies.get('user') != 'host'"
                   v-model="name"
-                  :label="nameLabel"
+                  label="病院名"
                   color="warning"
-                  required
                 ></v-text-field>
+              </v-col>
+              <v-col cols="6" v-if="$cookies.get('user') === 'host'">
+                <v-select
+                  v-model="lowerYear"
+                  label="経験年数下限"
+                  :items="yearItems"
+                  color="warning"
+                ></v-select>
+                <p>年以上</p>
               </v-col>
 
               <v-col cols="12">
@@ -26,13 +35,13 @@
                 ></v-text-field>
               </v-col>
 
-              <!-- <v-col cols="12">
+              <v-col cols="12">
                 <v-switch
                   v-model="wanted"
                   label="リクエスト募集中のお相手のみ表示"
                   color="warning"
                 ></v-switch>
-              </v-col> -->
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -54,18 +63,26 @@ export default {
     isDisplay: false,
     name: '',
     address: '',
+    lowerYear: 0,
+    wanted: '',
   }),
-
-  computed: {
-    nameLabel() {
-      return this.$cookies.get('user') === 'user' ? '病院名' : 'お名前'
-    },
-  },
 
   methods: {
     search() {
-      this.$emit('search-button-click', this.name, this.address)
+      this.$emit(
+        'search-button-click',
+        this.name,
+        this.address,
+        this.lowerYear,
+        this.wanted
+      )
       this.isDisplay = false
+    },
+  },
+
+  computed: {
+    yearItems() {
+      return [...Array(11).keys()]
     },
   },
 }
