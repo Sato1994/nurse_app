@@ -6,8 +6,10 @@ include Pagination
     ########## skillが被っていないhostのidの配列の作成 ##########
     name = params[:name]
     address = params[:address]
-    user_skill_ids = params[:skillsId].map(&:to_i)
     wanted = params[:wanted]
+
+    user_skill_ids = []
+    user_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
 
     all_hosts = Host.includes(:host_skills)
 
@@ -32,7 +34,7 @@ include Pagination
     end
 
     ########## host検索 ##########
-    hosts = Kaminari.paginate_array(Host.all.name_like(name).address_like(address).wanted_true(wanted).id_include(target_hosts_id)).page(params[:page]).per(10)
+    hosts = Kaminari.paginate_array(Host.all.name_like(name).address_like(address).wanted_true(wanted).id_include(target_hosts_id, params[:skillsId])).page(params[:page]).per(10)
     
     pagination = resources_with_pagination(hosts)
     @object = {

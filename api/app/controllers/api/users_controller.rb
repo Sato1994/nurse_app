@@ -6,8 +6,10 @@ include Pagination
     ########## skillが被っていないuserのidの配列の作成 ##########
     lower_year = params[:lowerYear].to_i
     address = params[:address]
-    host_skill_ids = params[:skillsId].map(&:to_i)
     wanted = params[:wanted]
+
+    host_skill_ids = []
+    host_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
 
     all_users = User.includes(:user_skills)
 
@@ -32,7 +34,7 @@ include Pagination
     end
 
     ########## user検索 ##########
-    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(target_users_id)).page(params[:page]).per(10)
+    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(target_users_id, params[:skillsId])).page(params[:page]).per(10)
 
     pagination = resources_with_pagination(users)
     @object = {

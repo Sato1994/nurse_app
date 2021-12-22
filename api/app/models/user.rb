@@ -47,6 +47,6 @@ class User < ActiveRecord::Base
   scope :year_gt, -> (lower_year) { where('year >= ?', lower_year) if lower_year.present?}
   scope :address_like, -> (address) { where('address LIKE ?', "%#{address}%" ) if address.present? }
   scope :wanted_true, -> (wanted) { where(wanted: true) if wanted.present?}
-  scope :id_include, -> (ids) { where(id: ids ) if ids.present?}
+  scope :id_include, -> (ids, params) { where(id: ids ) if ids.present? && params.present? }
 
 end
