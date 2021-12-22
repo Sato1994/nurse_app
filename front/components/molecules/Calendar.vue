@@ -65,23 +65,29 @@
           :activator="selectedElement"
           offset-x
         >
-          <v-card color="grey lighten-4" min-width="350px" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-clock-outline</v-icon>
-              </v-btn>
-              <v-toolbar-title v-if="selectedEvent.name === '募集中'"
-                >リクエストを待っています</v-toolbar-title
-              >
-
-              <v-spacer></v-spacer>
-            </v-toolbar>
+          <v-card class="mx-auto" max-width="">
             <v-card-text>
-              <span
-                >{{ selectedEvent.dislayStart }}～{{
+              <v-sheet color="green lighten-5">
+                <div v-if="selectedEvent.name === '募集中'">
+                  リクエストを待っています
+                </div>
+              </v-sheet>
+              <v-sheet color="orange lighten-5">
+                <div v-if="selectedEvent.name === 'リクエスト中'">
+                  リクエストを送っています
+                </div>
+              </v-sheet>
+
+              <p class="text-h4 text--primary">
+                {{ selectedEvent.dislayStart }}～{{
                   selectedEvent.displayFinish
-                }}</span
-              >
+                }}
+              </p>
+              <p>ここに相手の名前</p>
+              <div class="text--primary">
+                well meaning and kindly.<br />
+                "a benevolent smile"
+              </div>
             </v-card-text>
             <v-card-actions>
               <v-btn
@@ -89,9 +95,8 @@
                   selectedEvent.name === '募集中' &&
                   $route.params.id != $store.state.info.info.myid
                 "
-                outlined
                 text
-                color="secondary"
+                color="warning darken-1"
                 @click="
                   request(
                     selectedEvent.startTime,
