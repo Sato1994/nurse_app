@@ -37,4 +37,8 @@ export const getters = {
   skills(state) {
     return state.skills
   },
+  skillsId(state) {
+    return state.skills.map(obj => obj.id)
+  }
+
 }

@@ -33,6 +33,7 @@
 <script>
 import TargetCard from '@/components/organisms/TargetCard.vue'
 import Search from '@/components/dialog/Search.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     TargetCard,
@@ -49,6 +50,10 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      skillsId: 'skills/skillsId',
+    }),
+
     mypageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
     },
@@ -66,6 +71,7 @@ export default {
               address: this.address,
               lowerYear: this.lowerYear,
               wanted: this.wanted === true ? true : '',
+              skillsId: this.skillsId,
             },
           }
         )
@@ -109,6 +115,7 @@ export default {
               address: this.address,
               lowerYear: this.lowerYear,
               wanted: this.wanted === true ? true : '',
+              skillsId: this.skillsId,
             },
           }
         )

@@ -2,17 +2,41 @@ class Api::UsersController < ApplicationController
 include Pagination
 
   def index
-    lower_year = params[:lowerYear]
+
+    ########## skillが被っていないuserのidの配列の作成 ##########
+    lower_year = params[:lowerYear].to_i
     address = params[:address]
-    if params[:wanted].blank?
-      users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ?', lower_year, "%#{address}%")).page(params[:page]).per(10)
-    else
-      users = Kaminari.paginate_array(User.where('year >= ? && address LIKE ? && wanted = true', lower_year, "%#{address}%")).page(params[:page]).per(10)
+    host_skill_ids = params[:skillsId].map(&:to_i)
+    wanted = params[:wanted]
+
+    all_users = User.includes(:user_skills)
+
+    target_users_id = [] 
+
+    all_users.each do  |user|
+      skills = user.user_skills
+      user_skill_ids = []
+      
+      skills.each do |skill|
+      user_skill_ids.push(skill.skill_id)
+      end
+
+     user_skill_ids.push(host_skill_ids)
+     user_skill_ids.flatten!
+     mixed_skill_ids = user_skill_ids.uniq
+
+     if mixed_skill_ids.length == user_skill_ids.length
+      target_users_id.push(user.id)
+     end
+
     end
-    @pagination = resources_with_pagination(users)
-    @users = users.as_json
+
+    ########## user検索 ##########
+    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(target_users_id)).page(params[:page]).per(10)
+
+    pagination = resources_with_pagination(users)
     @object = {
-      users: @users, kaminari: @pagination
+      users: users.as_json, kaminari: pagination
     }
     render json: @object
   end
@@ -35,4 +59,5 @@ include Pagination
     end
     render "show", formats: :json, handlers: :jbuilder
   end
+  
 end

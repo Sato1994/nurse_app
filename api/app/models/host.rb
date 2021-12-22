@@ -31,4 +31,11 @@ class Host < ActiveRecord::Base
   validates :wanted, exclusion: { in: [nil] }
   validates :profile, length: { maximum: 300 }
   validates :myid, presence: true, format: { with: /\A[a-zA-Z0-9]+\z/ }, length: { maximum: 15 }, uniqueness: { case_sensitive: true }
+
+
+  scope :name_like, -> (name) { where( 'name LIKE ?', "%#{name}%") if name.present? }
+  scope :address_like, -> (address) { where('address LIKE ?', "%#{address}%") if address.present? }
+  scope :wanted_true, -> (wanted) { where(wanted: true) if wanted.present? }
+  scope :id_include, -> (ids) { where(id: ids ) if ids.present? }
+  
 end

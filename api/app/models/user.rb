@@ -42,4 +42,11 @@ class User < ActiveRecord::Base
   ###issue#5###
   # validates :password, presence: true, confirmation: true, length: { in: 8..20 }
   # validates :password_confirmation, presence: true
+
+
+  scope :year_gt, -> (lower_year) { where('year >= ?', lower_year) if lower_year.present?}
+  scope :address_like, -> (address) { where('address LIKE ?', "%#{address}%" ) if address.present? }
+  scope :wanted_true, -> (wanted) { where(wanted: true) if wanted.present?}
+  scope :id_include, -> (ids) { where(id: ids ) if ids.present?}
+
 end
