@@ -44,5 +44,13 @@ json.offers do
 end
 
 json.rooms do
-  json.array! @rooms, :id, :state, :closed, :user, :host, :created_at
+  json.array! @rooms do |room|
+    json.id room.id
+    json.state room.state
+    json.closed room.closed
+    json.partner room.host
+    json.start_time room.start_time
+    json.finish_time room.finish_time
+    json.created_at room.created_at
+  end
 end
