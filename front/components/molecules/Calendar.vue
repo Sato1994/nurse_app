@@ -169,12 +169,14 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('host_request成功', response.data)
+          console.log('request成功', response.data)
           this.$store.dispatch('requests/addRequest', response.data)
-          this.$router.push(`/host/${this.$store.state.info.info.myid}`)
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+          )
         })
         .catch((error) => {
-          console.log('host_request失敗', error)
+          console.log('request失敗', error)
         })
     },
 
