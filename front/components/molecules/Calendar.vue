@@ -82,6 +82,11 @@
                   オファーが届いています
                 </div>
               </v-sheet>
+              <v-sheet color="red lighten-5">
+                <div v-if="selectedEvent.name === '契約済み'">
+                  契約があります
+                </div>
+              </v-sheet>
 
               <p class="text-h4 text--primary">
                 {{ selectedEvent.dislayStart }}～{{

@@ -192,27 +192,6 @@ export default {
   }),
 
   computed: {
-    formedTargetAgreements() {
-      const targetAgreements = this.$store.getters[
-        'agreements/agreementsInProgress'
-      ].map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          room: obj.room,
-          user: obj.user,
-          formedAgreement: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return targetAgreements
-    },
-
     wantedChipColor() {
       return this.target.wanted === true ? 'green' : 'red'
     },
@@ -225,8 +204,10 @@ export default {
     ) {
       const requests = this.$store.getters['requests/requestsOnCalendar']
       const offers = this.$store.getters['offers/offersOnCalendar']
+      const agreements = this.$store.getters['agreements/agreementsOnCalendar']
       this.events = this.events.concat(requests)
       this.events = this.events.concat(offers)
+      this.events = this.events.concat(agreements)
     }
   },
 
