@@ -192,27 +192,6 @@ export default {
   }),
 
   computed: {
-    formedTargetAgreements() {
-      const targetAgreements = this.$store.getters[
-        'agreements/agreementsInProgress'
-      ].map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          room: obj.room,
-          user: obj.user,
-          formedAgreement: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return targetAgreements
-    },
-
     wantedChipColor() {
       return this.target.wanted === true ? 'green' : 'red'
     },
@@ -224,7 +203,11 @@ export default {
       this.$route.params.id === this.$store.state.info.info.myid
     ) {
       const requests = this.$store.getters['requests/requestsOnCalendar']
+      const offers = this.$store.getters['offers/offersOnCalendar']
+      const agreements = this.$store.getters['agreements/agreementsOnCalendar']
       this.events = this.events.concat(requests)
+      this.events = this.events.concat(offers)
+      this.events = this.events.concat(agreements)
     }
   },
 
@@ -266,7 +249,40 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('とりあえず成功', response.data)
+          const s = new Date(response.data.start_time)
+          const f = new Date(response.data.finish_time)
+          const newObj = {
+            id: response.data.id,
+            start: `${s.getFullYear()}-${
+              s.getMonth() + 1
+            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+            end: `${f.getFullYear()}-${
+              f.getMonth() + 1
+            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+            name: '募集中',
+            color: 'green',
+            dislayStart: `${
+              s.getMonth() + 1
+            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+            displayFinish: `${
+              f.getMonth() + 1
+            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+            startTime: {
+              year: s.getFullYear(),
+              month: s.getMonth() + 1,
+              day: s.getDate(),
+              hour: s.getHours(),
+              minute: s.getMinutes(),
+            },
+            finishTime: {
+              year: f.getFullYear(),
+              month: f.getMonth() + 1,
+              day: f.getDate(),
+              hour: f.getHours(),
+              minute: f.getMinutes(),
+            },
+          }
+          this.events.push(newObj)
         })
         .catch((error) => {
           console.log('とりあえず失敗', error)

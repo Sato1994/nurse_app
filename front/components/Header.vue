@@ -86,7 +86,7 @@ export default {
           this.$router.push(
             `/${this.$cookies.get('user')}/${
               this.$store.state.info.info.myid
-            }/negotiations`
+            }/agreements`
           )
           break
         case 2:

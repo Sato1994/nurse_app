@@ -65,23 +65,44 @@
           :activator="selectedElement"
           offset-x
         >
-          <v-card color="grey lighten-4" min-width="350px" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-clock-outline</v-icon>
-              </v-btn>
-              <v-toolbar-title v-if="selectedEvent.name === '募集中'"
-                >リクエストを待っています</v-toolbar-title
-              >
-
-              <v-spacer></v-spacer>
-            </v-toolbar>
+          <v-card class="mx-auto" max-width="">
             <v-card-text>
-              <span
-                >{{ selectedEvent.dislayStart }}～{{
+              <v-sheet color="green lighten-5">
+                <div v-if="selectedEvent.name === '募集中'">
+                  リクエストを待っています
+                </div>
+              </v-sheet>
+              <v-sheet color="warning lighten-5">
+                <div v-if="selectedEvent.name === 'リクエスト中'">
+                  リクエストを送っています
+                </div>
+              </v-sheet>
+              <v-sheet color="blue lighten-5">
+                <div v-if="selectedEvent.name === 'オファーがあります'">
+                  オファーが届いています
+                </div>
+              </v-sheet>
+              <v-sheet color="red lighten-5">
+                <div v-if="selectedEvent.name === '契約済み'">
+                  契約があります
+                </div>
+              </v-sheet>
+
+              <p class="text-h4 text--primary">
+                {{ selectedEvent.dislayStart }}～{{
                   selectedEvent.displayFinish
-                }}</span
+                }}
+              </p>
+              <nuxt-link
+                :to="`/${$cookies.get('user') === 'user' ? 'host' : 'user'}/${
+                  selectedEvent.partnerMyid
+                }`"
+                >{{ selectedEvent.partnerName }}</nuxt-link
               >
+              <div class="text--primary">
+                well meaning and kindly.<br />
+                "a benevolent smile"
+              </div>
             </v-card-text>
             <v-card-actions>
               <v-btn
@@ -89,9 +110,8 @@
                   selectedEvent.name === '募集中' &&
                   $route.params.id != $store.state.info.info.myid
                 "
-                outlined
                 text
-                color="secondary"
+                color="warning darken-1"
                 @click="
                   request(
                     selectedEvent.startTime,
@@ -101,6 +121,25 @@
                 "
               >
                 リクエストを送る
+              </v-btn>
+
+              <v-btn
+                v-if="
+                  selectedEvent.name === 'オファーがあります' &&
+                  $route.params.id === $store.state.info.info.myid
+                "
+                text
+                color="warning darken-1"
+                @click="
+                  createRoom(
+                    selectedEvent.id,
+                    selectedEvent.partnerId,
+                    selectedEvent.startTime,
+                    selectedEvent.finishTime
+                  )
+                "
+              >
+                オファーを受けとる
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -146,6 +185,30 @@ export default {
   },
 
   methods: {
+    createRoom(requestId, partnerId, startTime, finishTime) {
+      this.$axios
+        .post(
+          `/api/rooms/${
+            this.$cookies.get('user') === 'user' ? 'host' : 'user'
+          }/${partnerId}`,
+          {
+            start_time: startTime,
+            finish_time: finishTime,
+            request_id: requestId,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          console.log(response.data)
+          this.$store.dispatch('offers/removeOffer', requestId)
+          this.$store.dispatch('rooms/addRoom', response.data)
+          this.$router.push(`/rooms/${response.data.id}`)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
     request(startTime, finishTime, timeId) {
       this.$refs.datePicker.isDisplay = true
       this.$refs.datePicker.startTime = startTime
@@ -164,12 +227,14 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('host_request成功', response.data)
+          console.log('request成功', response.data)
           this.$store.dispatch('requests/addRequest', response.data)
-          this.$router.push(`/host/${this.$store.state.info.info.myid}`)
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+          )
         })
         .catch((error) => {
-          console.log('host_request失敗', error)
+          console.log('request失敗', error)
         })
     },
 

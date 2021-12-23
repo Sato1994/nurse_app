@@ -33,7 +33,7 @@ export const getters = {
       const f = new Date(obj.finish_time)
       const newObject = {
         id: obj.id,
-        partner: obj.partner.name,
+        partnerName: obj.partner.name,
         start: `${s.getFullYear()}-${s.getMonth() + 1
           }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
         end: `${f.getFullYear()}-${f.getMonth() + 1
