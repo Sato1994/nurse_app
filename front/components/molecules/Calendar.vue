@@ -83,7 +83,7 @@
                   selectedEvent.displayFinish
                 }}
               </p>
-              <p>ここに相手の名前</p>
+              <p>{{ selectedEvent.partnerName }}</p>
               <div class="text--primary">
                 well meaning and kindly.<br />
                 "a benevolent smile"
