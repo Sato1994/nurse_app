@@ -1,121 +1,108 @@
 <template>
-  <v-card>
-    <v-toolbar color="warning" dark>
-      <v-toolbar-title>リクエスト</v-toolbar-title>
+  <v-card flat>
+    <v-toolbar color="red" dark flat>
+      <v-toolbar-title>契約</v-toolbar-title>
 
       <v-spacer></v-spacer>
     </v-toolbar>
 
     <v-list dense subheader two-line>
-      <v-subheader inset>看護師からのオファー一覧</v-subheader>
+      <v-subheader inset>仕事の予定</v-subheader>
 
-      <v-list-item
-        v-for="(offer, i) in formedMyOffers"
-        :key="i"
-        @click="
-          createRoom(
-            offer.id,
-            offer.partner.id,
-            offer.start_time,
-            offer.finish_time
-          )
-        "
-      >
+      <v-list-item v-for="(agreement, i) in agreementsInProgress" :key="i">
         <v-list-item-avatar>
           <v-icon>mdi-hospital</v-icon>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="offer.partner.name"></v-list-item-title>
+          <v-list-item-title v-text="agreement.partnerName"></v-list-item-title>
 
           <v-list-item-subtitle
-            v-text="offer.formedOffer"
-          ></v-list-item-subtitle>
+            >{{ agreement.startTime.month }}月{{ agreement.startTime.day }}日{{
+              agreement.startTime.hour
+            }}時{{ agreement.startTime.minute }}分から{{
+              agreement.finishTime.day
+            }}日{{ agreement.finishTime.hour }}時{{
+              agreement.finishTime.minute
+            }}分</v-list-item-subtitle
+          >
         </v-list-item-content>
+        <v-card-actions>
+          <v-btn
+            text
+            color="warning accent-4"
+            @click="jumpPartner(agreement.partnerMyid)"
+          >
+            お相手
+          </v-btn>
+          <v-btn
+            text
+            color="warning accent-4"
+            @click="editAgreement(agreement.id, agreement.roomId)"
+          >
+            時間変更
+          </v-btn>
+          <v-btn
+            text
+            color="warning accent-4"
+            @click="cancellAgreement(agreement.id, agreement.roomId)"
+          >
+            キャンセル
+          </v-btn>
+        </v-card-actions>
       </v-list-item>
 
       <v-divider inset></v-divider>
 
-      <v-subheader inset>看護師へのリクエスト一覧</v-subheader>
-
-      <v-list-item
-        v-for="(request, i) in formedMyRequests"
-        :key="`second-${i}`"
-      >
-        <v-list-item-avatar>
-          <v-icon> mdi-hospital</v-icon>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title v-text="request.partner.name"></v-list-item-title>
-
-          <v-list-item-subtitle
-            v-text="request.formedRequest"
-          ></v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+      <v-subheader inset>何かしら</v-subheader>
     </v-list>
   </v-card>
 </template>
 
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   computed: {
-    formedMyRequests() {
-      const requests = this.$store.getters['requests/requests'].map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          partner: obj.partner,
-          formedRequest: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return requests
-    },
-    formedMyOffers() {
-      const offers = this.$store.getters['offers/offers'].map((obj) => {
-        const s = new Date(obj.start_time)
-        const f = new Date(obj.finish_time)
-        const newObject = {
-          id: obj.id,
-          recruitmentTime: obj.recruitmentTime,
-          partner: obj.partner,
-          start_time: obj.start_time,
-          finish_time: obj.finish_time,
-          formedOffer: `${s.getFullYear()}年${
-            s.getMonth() + 1
-          }月${s.getDate()}日${s.getHours()}時${s.getMinutes()}分から${f.getFullYear()}年${
-            f.getMonth() + 1
-          }月${f.getDate()}日${f.getHours()}時${f.getMinutes()}分`,
-        }
-        return newObject
-      })
-      return offers
-    },
+    ...mapGetters({
+      agreementsInProgress: 'agreements/agreementsInProgress',
+    }),
   },
   methods: {
-    createRoom(requestId, userID, startTime, finishTime) {
+    jumpPartner(myid) {
+      this.$router.push(`/user/${myid}`)
+    },
+    editAgreement(agreementId, roomId) {
       this.$axios
-        .post(
-          `/api/rooms/user/${userID}`,
+        .patch(
+          `/api/agreements/${agreementId}`,
+          {},
           {
-            start_time: startTime,
-            finish_time: finishTime,
-            request_id: requestId,
-          },
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        .then((response) => {
+          console.log(response)
+          this.$router.push(`/rooms/${roomId}`)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    cancellAgreement(agreementId, roomId) {
+      this.$axios
+        .patch(
+          '/api/agreements/cancell',
+          { id: agreementId },
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log(response.data)
-          this.$store.dispatch('offers/removeOffer', requestId)
-          this.$store.dispatch('rooms/addRoom', response.data)
+          console.log(response)
+          this.$store.dispatch('agreements/updateState', {
+            id: agreementId,
+            state: 'cancelled',
+          })
+          this.$router.push(`/rooms/${roomId}`)
         })
         .catch((error) => {
           console.log(error)
