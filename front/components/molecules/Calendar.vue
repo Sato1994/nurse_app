@@ -72,9 +72,14 @@
                   リクエストを待っています
                 </div>
               </v-sheet>
-              <v-sheet color="orange lighten-5">
+              <v-sheet color="warning lighten-5">
                 <div v-if="selectedEvent.name === 'リクエスト中'">
                   リクエストを送っています
+                </div>
+              </v-sheet>
+              <v-sheet color="blue lighten-5">
+                <div v-if="selectedEvent.name === 'オファーがあります'">
+                  オファーが届いています
                 </div>
               </v-sheet>
 
@@ -83,7 +88,12 @@
                   selectedEvent.displayFinish
                 }}
               </p>
-              <p>{{ selectedEvent.partnerName }}</p>
+              <nuxt-link
+                :to="`/${$cookies.get('user') === 'user' ? 'host' : 'user'}/${
+                  selectedEvent.partnerMyid
+                }`"
+                >{{ selectedEvent.partnerName }}</nuxt-link
+              >
               <div class="text--primary">
                 well meaning and kindly.<br />
                 "a benevolent smile"
@@ -106,6 +116,25 @@
                 "
               >
                 リクエストを送る
+              </v-btn>
+
+              <v-btn
+                v-if="
+                  selectedEvent.name === 'オファーがあります' &&
+                  $route.params.id === $store.state.info.info.myid
+                "
+                text
+                color="warning darken-1"
+                @click="
+                  createRoom(
+                    selectedEvent.id,
+                    selectedEvent.partnerId,
+                    selectedEvent.startTime,
+                    selectedEvent.finishTime
+                  )
+                "
+              >
+                オファーを受けとる
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -151,6 +180,30 @@ export default {
   },
 
   methods: {
+    createRoom(requestId, partnerId, startTime, finishTime) {
+      this.$axios
+        .post(
+          `/api/rooms/${
+            this.$cookies.get('user') === 'user' ? 'host' : 'user'
+          }/${partnerId}`,
+          {
+            start_time: startTime,
+            finish_time: finishTime,
+            request_id: requestId,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        .then((response) => {
+          console.log(response.data)
+          this.$store.dispatch('offers/removeOffer', requestId)
+          this.$store.dispatch('rooms/addRoom', response.data)
+          this.$router.push(`/rooms/${response.data.id}`)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
     request(startTime, finishTime, timeId) {
       this.$refs.datePicker.isDisplay = true
       this.$refs.datePicker.startTime = startTime

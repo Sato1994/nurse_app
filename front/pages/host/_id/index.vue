@@ -224,7 +224,9 @@ export default {
       this.$route.params.id === this.$store.state.info.info.myid
     ) {
       const requests = this.$store.getters['requests/requestsOnCalendar']
+      const offers = this.$store.getters['offers/offersOnCalendar']
       this.events = this.events.concat(requests)
+      this.events = this.events.concat(offers)
     }
   },
 
