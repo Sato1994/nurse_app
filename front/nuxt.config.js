@@ -9,15 +9,6 @@ export default {
 
   },
 
-
-
-
-
-
-
-
-
-
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - front',
@@ -68,11 +59,10 @@ export default {
     'cookie-universal-nuxt'
   ],
 
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://web:3000',
-    browserBaseURL: 'http://localhost:3000'
+    baseURL: process.env.BASE_URL,
+    browserBaseURL: process.env.BROWSER_BASE_URL,
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
