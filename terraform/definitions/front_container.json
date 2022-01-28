@@ -1,7 +1,7 @@
 [
   {
     "name": "front_container",
-    "image": "nginx:latest",
+    "image": "850929304034.dkr.ecr.ap-northeast-1.amazonaws.com/front:latest",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
