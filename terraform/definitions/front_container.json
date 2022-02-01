@@ -14,8 +14,13 @@
     "portMappings": [
       {
         "protocol": "tcp",
-        "containerPort": 80
+        "containerPort": 8080
       }
+    ],
+    "command": [
+      "npm",
+      "run",
+      "start"
     ]
   }
 ]

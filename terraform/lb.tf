@@ -31,12 +31,12 @@ resource "aws_lb_listener" "http" {
   protocol = "HTTP"
 
   default_action {
-    type = "fixed-response"
+    type = "redirect"
 
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "koreha http"
-      status_code = "200"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }
@@ -49,28 +49,8 @@ resource "aws_lb_listener" "https" {
   ssl_policy = "ELBSecurityPolicy-2016-08"
 
   default_action {
-    type = "fixed-response"
-
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "koreha https"
-      status_code = "200"
-    }
-  }
-}
-resource "aws_lb_listener_rule" "to_target_group" {
-  listener_arn = aws_lb_listener.https.arn
-  priority = 100
-
-  action {
-    type = "forward"
     target_group_arn = aws_lb_target_group.front_container.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/*"]
-    }
+    type = "forward"
   }
 }
 ################################################################
@@ -80,17 +60,17 @@ resource "aws_lb_target_group" "front_container" {
   name = "front"
   target_type = "ip"
   vpc_id = aws_vpc.vpc.id
-  port = "80"
+  port = "8080"
   protocol = "HTTP"
   deregistration_delay = 300
   depends_on = [aws_lb.alb]
 
   health_check {
     path = "/"
-    healthy_threshold = 5
+    healthy_threshold = 2
     unhealthy_threshold = 2
-    timeout = 5
-    interval = 30
+    timeout = 120
+    interval = 150
     matcher = 200
     port = "traffic-port"
     protocol = "HTTP"

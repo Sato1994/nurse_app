@@ -39,7 +39,7 @@ resource "aws_ecs_service" "front_container" {
   load_balancer {
     target_group_arn = aws_lb_target_group.front_container.arn
     container_name = "front_container"
-    container_port = 80
+    container_port = 8080
   }
 
   lifecycle {

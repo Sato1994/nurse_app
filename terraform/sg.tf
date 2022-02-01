@@ -18,6 +18,6 @@ module "front_sg" {
   source = "./security_group"
   name = "front_sg"
   vpc_id = aws_vpc.vpc.id
-  port = 80
+  port = 8080
   cidr_blocks = [aws_vpc.vpc.cidr_block]
 }
