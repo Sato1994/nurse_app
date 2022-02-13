@@ -5,30 +5,30 @@ resource "aws_ecs_cluster" "cluster" {
 #################################################################################
 
 # タスク定義#####################################################################
-resource "aws_ecs_task_definition" "front_container" {
-  family = "front_container"
+resource "aws_ecs_task_definition" "nurse_container" {
+  family = "nurse_container"
   cpu = "512"
   memory = "1024"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  container_definitions = file("./definitions/front_container.json")
+  container_definitions = file("./definitions/nurse_container.json")
   execution_role_arn = module.ecs_task_execution_role.iam_role_arn
 }
 #################################################################################
 
 # ecsサービス####################################################################
-resource "aws_ecs_service" "front_container" {
-  name = "front_container"
+resource "aws_ecs_service" "nurse" {
+  name = "nurse"
   cluster = aws_ecs_cluster.cluster.arn
-  task_definition = aws_ecs_task_definition.front_container.arn
+  task_definition = aws_ecs_task_definition.nurse_container.arn
   desired_count = 1
   launch_type = "FARGATE"
-  platform_version = "1.3.0"
+  platform_version = "1.4.0"
   health_check_grace_period_seconds = 60
 
   network_configuration {
     assign_public_ip = false
-    security_groups = [module.front_sg.security_group_id]
+    security_groups = [aws_security_group.ecs_sg.id]
 
     subnets = [
       aws_subnet.private-1a.id,

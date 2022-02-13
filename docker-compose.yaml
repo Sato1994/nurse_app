@@ -4,16 +4,14 @@ services:
   web:
     build:
       context: ./api
-      args:
-        WEB_WORKDIR: $WEB_WORKDIR
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      API_DOMAIN: "localhost:$FRONT_PORT"
+      API_DOMAIN: $API_DOMAIN
     command: /bin/sh -c "rm -f /tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     depends_on:
       - db
     ports:
-      - "$WEB_PORT:$WEB_PORT"
+      - "3000:3000"
     volumes:
       - ./api:/app
       - bundle:/usr/local/bundle
@@ -23,25 +21,22 @@ services:
     image: mysql:5.7
     volumes:
       - mysql_data:/var/lib/mysql/
-    environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     ports:
-      - '3305:3305'
+      - '3307:3306'
   front:
     build:
       context: ./front
-      args:
-        FRONT_WORKDIR: $FRONT_WORKDIR
     environment:
       BASE_URL: $BASE_URL
       BROWSER_BASE_URL: $BROWSER_BASE_URL
     volumes:
       - ./front:/app
     ports:
-      - "$FRONT_PORT:$FRONT_PORT"
+      - "8080:8080"
     tty: true
     stdin_open: true
-    command: npm run dev
+    # command: npm run dev
+    command: npm run start
 
 volumes:
   mysql_data:

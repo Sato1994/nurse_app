@@ -1,7 +1,5 @@
 FROM node:14.16.1-alpine
 
-# ARG FRONT_WORKDIR
-
 RUN mkdir -p /app
 WORKDIR /app
 EXPOSE 8080
