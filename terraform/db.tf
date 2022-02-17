@@ -27,7 +27,9 @@ resource "aws_db_instance" "nurse" {
   skip_final_snapshot = true
   port = 3306
   apply_immediately = true
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  vpc_security_group_ids = [
+    module.mysql_sg.security_group_id
+  ]
   db_subnet_group_name = aws_db_subnet_group.nurse.name
 }
 #####################################################################

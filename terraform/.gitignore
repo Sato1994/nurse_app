@@ -5,3 +5,4 @@ terraform.tfstate
 terraform.tfstate.backup
 session-manager-plugin.deb
 terraform.tfvars
+amazon-ecs-exec-checker

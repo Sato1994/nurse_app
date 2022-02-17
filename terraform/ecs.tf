@@ -28,7 +28,10 @@ resource "aws_ecs_service" "nurse" {
 
   network_configuration {
     assign_public_ip = false
-    security_groups = [aws_security_group.ecs_sg.id]
+    security_groups = [
+      module.front_sg.security_group_id,
+      module.api_sg.security_group_id
+    ]
 
     subnets = [
       aws_subnet.private-1a.id,

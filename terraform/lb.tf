@@ -17,7 +17,8 @@ resource "aws_lb" "alb" {
   }
 
   security_groups = [
-    aws_security_group.alb_sg.id
+    module.http_sg.security_group_id,
+    module.https_sg.security_group_id
   ]
 }
 ################################################################
