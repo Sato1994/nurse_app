@@ -11,16 +11,6 @@
         "awslogs-group": "/ecs/api"
       }
     },
-    "healthCheck": {
-      "command": [
-        "CMD-SHELL",
-        "curl http://localhost:3000 || exit 1"
-      ],
-      "interval": 5,
-      "retries": 3,
-      "startPeriod": 60,
-      "timeout": 5
-    },
     "portMappings": [
       {
         "protocol": "tcp",

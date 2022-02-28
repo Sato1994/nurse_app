@@ -1,4 +1,4 @@
-# alb###########################################################
+# alb ########################################################
 resource "aws_lb" "alb" {
   name = "alb"
   load_balancer_type = "application"
@@ -18,13 +18,13 @@ resource "aws_lb" "alb" {
 
   security_groups = [
     module.http_sg.security_group_id,
-    module.https_sg.security_group_id
+    module.https_sg.security_group_id,
+    module.api_sg.security_group_id
   ]
 }
-################################################################
+##############################################################
 
-# リスナー######################################################
-
+# リスナー####################################################
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port = "80"
@@ -53,9 +53,23 @@ resource "aws_lb_listener" "https" {
     type = "forward"
   }
 }
-################################################################
 
-# ターゲットグループ ###########################################
+resource "aws_lb_listener" "from_front" {
+  load_balancer_arn = aws_lb.alb.arn
+  port = "3000"
+  protocol = "HTTPS"
+  certificate_arn = aws_acm_certificate.certificate.arn
+  ssl_policy = "ELBSecurityPolicy-2016-08"
+
+  default_action {
+    target_group_arn = aws_lb_target_group.api_container.arn
+    type = "forward"
+  }
+}
+##############################################################
+
+# ターゲットグループ #########################################
+# front
 resource "aws_lb_target_group" "front_container" {
   name = "front"
   target_type = "ip"
@@ -67,6 +81,28 @@ resource "aws_lb_target_group" "front_container" {
 
   health_check {
     path = "/"
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    timeout = 120
+    interval = 150
+    matcher = 200
+    port = "traffic-port"
+    protocol = "HTTP"
+  }
+}
+
+#api
+resource "aws_lb_target_group" "api_container" {
+  name = "api"
+  target_type = "ip"
+  vpc_id = aws_vpc.vpc.id
+  port = "3000"
+  protocol = "HTTP"
+  deregistration_delay = 300
+  depends_on = [aws_lb.alb]
+
+  health_check {
+    path = "/api/health_checks"
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 120

@@ -1,6 +1,6 @@
 # サービスディスカバリ ###########################################################
 resource "aws_service_discovery_private_dns_namespace" "nurse_internal" {
-  name = "nurse.internal.local"
+  name = "nurse"
   vpc = aws_vpc.vpc.id
 }
 ##################################################################################

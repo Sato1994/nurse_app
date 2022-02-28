@@ -74,7 +74,7 @@ resource "aws_ecs_service" "api_container" {
   network_configuration {
     assign_public_ip = false
     security_groups = [
-      module.api_sg.security_group_id
+      module.from_alb_sg.security_group_id
     ]
 
     subnets = [
@@ -85,6 +85,12 @@ resource "aws_ecs_service" "api_container" {
 
   service_registries {
     registry_arn = aws_service_discovery_service.sd_api.arn
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.api_container.arn
+    container_name = "api_container"
+    container_port = 3000
   }
 
   lifecycle {
