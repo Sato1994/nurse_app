@@ -74,7 +74,7 @@ resource "aws_ecs_service" "api_container" {
   network_configuration {
     assign_public_ip = false
     security_groups = [
-      module.from_alb_sg.security_group_id
+      module.api_sg.security_group_id
     ]
 
     subnets = [
