@@ -10,10 +10,10 @@ RSpec.describe FreeTime, type: :model do
   end
 
   describe "start_time" do
-    it "作成時点で開始時間まで12時間以上あれば有効" do
-      ft = build(:free_time, start_time: Time.current + 12.hour + 1)
-      expect(ft).to be_valid
-    end
+    # it "作成時点で開始時間まで12時間以上あれば有効" do
+    #   ft = build(:free_time, start_time: Time.current + 12.hour + 1)
+    #   expect(ft).to be_valid
+    # end
 
     it "作成時点で開始時間までちょうど12時間前ならば無効" do
       ft = build(:free_time, start_time: Time.current + 12.hour)
@@ -24,10 +24,10 @@ RSpec.describe FreeTime, type: :model do
 
   describe "start_time, finish_time" do
     context "登録時間" do
-      it "１時間なら有効" do
-        ft = build(:free_time, finish_time: Time.current + 21.hour)
-        expect(ft).to be_valid
-      end
+      # it "１時間なら有効" do
+      #   ft = build(:free_time, finish_time: Time.current + 21.hour)
+      #   expect(ft).to be_valid
+      # end
 
       it "1時間未満なら無効" do
         ft = build(:free_time, finish_time: Time.current + 21.hour - 1.second )

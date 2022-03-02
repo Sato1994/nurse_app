@@ -1,8 +1,8 @@
 FROM ruby:2.7.1
 
 
-ENV RAILS_ENV production
-# ENV RAILS_ENV development
+# ENV RAILS_ENV production
+ENV RAILS_ENV development
 
 EXPOSE 3000
 

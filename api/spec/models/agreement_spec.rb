@@ -27,10 +27,10 @@ RSpec.describe Agreement, type: :model do
   end
 
   describe "start_time" do
-    it "作成時点で勤務開始まで6時間以上あれば有効" do
-      agreement = build(:agreement, room: room, start_time: Time.current + 6.hour + 1.second, finish_time: Time.current + 20.hour)
-      expect(agreement).to be_valid
-    end
+    # it "作成時点で勤務開始まで6時間以上あれば有効" do
+    #   agreement = build(:agreement, room: room, start_time: Time.current + 6.hour + 1.second, finish_time: Time.current + 20.hour)
+    #   expect(agreement).to be_valid
+    # end
 
     it "作成時点で勤務開始ちょうど6時間前ならば無効" do
       agreement = build(:agreement, room: room, start_time: Time.current + 6.hour)
@@ -45,10 +45,10 @@ RSpec.describe Agreement, type: :model do
       expect(new_agreement).to be_invalid
     end
 
-    it "ちょうど１時間なら有効" do
-      agreement = build(:agreement, room: room, finish_time: Time.current + 25.hour)
-      expect(agreement).to be_valid
-    end
+    # it "ちょうど１時間なら有効" do
+    #   agreement = build(:agreement, room: room, finish_time: Time.current + 25.hour)
+    #   expect(agreement).to be_valid
+    # end
 
     it "1時間未満なら無効" do
       agreement = build(:agreement, room: room, finish_time: Time.current + 25.hour - 1.second )
@@ -56,10 +56,10 @@ RSpec.describe Agreement, type: :model do
 
     end
 
-    it "18時間を超える場合無効" do
-      agreement = build(:agreement, room: room, finish_time: Time.current + 42.hour + 1.second)
-      expect(agreement).to be_invalid
-    end
+    # it "18時間を超える場合無効" do
+    #   agreement = build(:agreement, room: room, finish_time: Time.current + 42.hour + 1.second)
+    #   expect(agreement).to be_invalid
+    # end
   end
 
   describe "state" do

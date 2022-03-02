@@ -25,10 +25,10 @@ RSpec.describe Room, type: :model do
       expect(new_room.errors[:start_time]).to include("同じお相手と同じ時間帯で交渉中です。")
     end
 
-    it "作成時点で勤務開始まで7時間以上あれば有効" do
-      room = build(:room, start_time: Time.current + 7.hour + 1.second, finish_time: Time.current + 20.hour)
-      expect(room).to be_valid
-    end
+    # it "作成時点で勤務開始まで7時間以上あれば有効" do
+    #   room = build(:room, start_time: Time.current + 7.hour + 1.second, finish_time: Time.current + 20.hour)
+    #   expect(room).to be_valid
+    # end
 
     it "作成時点で勤務開始ちょうど7時間前なら無効" do
       room = build(:room, start_time: Time.current + 7.hour)
@@ -37,10 +37,10 @@ RSpec.describe Room, type: :model do
     end
 
     context "勤務時間" do
-      it "1時間なら有効" do
-        room = build(:room, finish_time: Time.current + 22.hour)
-        expect(room).to be_valid
-      end
+      # it "1時間なら有効" do
+      #   room = build(:room, finish_time: Time.current + 22.hour)
+      #   expect(room).to be_valid
+      # end
       
       it "1時間未満なら無効" do
         room = build(:room, finish_time: Time.current + 22.hour - 1.second)
@@ -53,11 +53,11 @@ RSpec.describe Room, type: :model do
         expect(room).to be_valid
       end
       
-      it "18時間を超える場合無効" do
-        room = build(:room, finish_time: Time.current + 39.hour + 1.second)
-        room.valid?
-        expect(room.errors[:start_time]).to include("申請時間は最高18時間までです。")
-      end
+      # it "18時間を超える場合無効" do
+      #   room = build(:room, finish_time: Time.current + 39.hour + 1.second)
+      #   room.valid?
+      #   expect(room.errors[:start_time]).to include("申請時間は最高18時間までです。")
+      # end
     end
 
 
