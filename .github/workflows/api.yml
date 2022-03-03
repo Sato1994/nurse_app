@@ -11,12 +11,12 @@ jobs:
         docker-compose build
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
-    - name: up
-      shell: bash
-      run: |
-        docker-compose up -d
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
+    # - name: up
+    #   shell: bash
+    #   run: |
+    #     docker-compose up -d
+    #   env:
+    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
 
     - name: sleep
       shell: bash
@@ -26,13 +26,13 @@ jobs:
     - name: db:create
       shell: bash
       run: |
-        docker-compose exec web rails db:create
+        docker-compose run -e RAILS_ENV=test web rails db:create
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
-
+        
     - name: Run RSpec
       shell: bash
       run:  |
-        docker-compose exec web rspec
+        docker-compose run web rspec
       env:
         RAILS_ENV: test
