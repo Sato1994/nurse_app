@@ -1,4 +1,4 @@
-name: Ruby
+name: CI
 on: [push]
 jobs:
   test:
@@ -20,21 +20,26 @@ jobs:
       run: |
         docker-compose up -d
 
-    - name: sleep
-      shell: bash
-      run: |
-        sleep 30
+    # - name: sleep
+    #   shell: bash
+    #   run: |
+    #     sleep 30
 
-    - name: db:create
-      shell: bash
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      run: |
-        docker-compose exec -T web rails db:create
+    # - name: db:create
+    #   shell: bash
+    #   env:
+    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    #   run: |
+    #     docker-compose exec -T web rails db:create
         
-    - name: Run RSpec
+    # - name: Run RSpec
+    #   shell: bash
+    #   env:
+    #     RAILS_ENV: test
+    #   run:  |
+    #     docker-compose exec -T web rspec
+    steps:
+    - name: Run Jest
       shell: bash
-      env:
-        RAILS_ENV: test
-      run:  |
-        docker-compose exec -T web rspec
+      run: |
+        docker-compose exec -T front npm run test
