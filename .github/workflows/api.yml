@@ -7,32 +7,32 @@ jobs:
     - uses: actions/checkout@v2
     - name: build
       shell: bash
-      run: |
+      run: 
         docker-compose build
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
-    # - name: up
-    #   shell: bash
-    #   run: |
-    #     docker-compose up -d
-    #   env:
-    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
+    - name: up
+      shell: bash
+      run: |
+        docker-compose up -d
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
 
     - name: sleep
       shell: bash
       run: |
-        sleep 30
+        sleep 1m
 
     - name: db:create
       shell: bash
       run: |
-        docker-compose run -e RAILS_ENV=test web rails db:create
+        docker-compose exec -T web rails db:create
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
         
     - name: Run RSpec
       shell: bash
       run:  |
-        docker-compose run web rspec
+        docker-compose exec -T web rspec
       env:
         RAILS_ENV: test
