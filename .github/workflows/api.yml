@@ -1,44 +1,89 @@
-name: CI
+name: "Ruby on Rails CI"
 on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    services:
+      postgres:
+        image: mysql:5.7
+        ports:
+          - "3306:3306"
+        env:
+          MYSQL_ROOT_PASSWORD: passpass
+          MYSQL_DATABASE: app_test
+          MYSQL_USER: mysqluser
+          MYSQL_PASSWORD: password_user
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "mysql://mysqluser:password_user@localhost:3306/app_test"
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # Add or replace dependency steps here
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
+        with:
+          bundler-cache: true
+      # Add or replace database setup steps here
+      - name: rspec
+        run: rspec
+      # Add or replace test runners here
 
-    - name: build
-      shell: bash
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      run: 
-        docker-compose build
 
-    - name: up
-      shell: bash
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      run: |
-        docker-compose up -d
 
-    - name: sleep
-      shell: bash
-      run: |
-        sleep 30
 
-    # - name: db:create
-    #   shell: bash
-    #   env:
-    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-    #   run: |
-    #     docker-compose exec -T web rails db:create
+# name: CI
+# on: [push]
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     - name: set up ruby
+
+
+
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     - name: build
+#       shell: bash
+#       env:
+#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#       run: 
+#         docker-compose build
+
+#     - name: up
+#       shell: bash
+#       env:
+#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#       run: |
+#         docker-compose up -d
+
+#     - name: sleep
+#       shell: bash
+#       run: |
+#         sleep 30
+
+#     # - name: db:create
+#     #   shell: bash
+#     #   env:
+#     #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#     #   run: |
+#     #     docker-compose exec -T web rails db:create
         
-    # - name: Run RSpec
-    #   shell: bash
-    #   env:
-    #     RAILS_ENV: test
-    #   run:  |
-    #     docker-compose exec -T web rspec
-    - name: Run Jest
-      shell: bash
-      run: |
-        docker-compose exec -T front yarn test
+#     # - name: Run RSpec
+#     #   shell: bash
+#     #   env:
+#     #     RAILS_ENV: test
+#     #   run:  |
+#     #     docker-compose exec -T web rspec
+#     - name: Run Jest
+#       shell: bash
+#       run: |
+#         docker-compose exec -T front yarn test
