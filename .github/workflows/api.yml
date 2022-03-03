@@ -30,7 +30,7 @@ jobs:
           ruby-version: '2.7.1'
       # Add or replace database setup steps here
       - name: rspec
-        run: rspec
+        run: bin/rspec
       # Add or replace test runners here
 
 
