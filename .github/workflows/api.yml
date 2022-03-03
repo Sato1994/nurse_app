@@ -5,34 +5,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
     - name: build
       shell: bash
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
       run: 
         docker-compose build
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
+
     - name: up
       shell: bash
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
       run: |
         docker-compose up -d
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
 
     - name: sleep
       shell: bash
       run: |
-        sleep 1m
+        sleep 30
 
     - name: db:create
       shell: bash
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
       run: |
         docker-compose exec -T web rails db:create
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD}}
         
     - name: Run RSpec
       shell: bash
-      run:  |
-        docker-compose exec -T web rspec
       env:
         RAILS_ENV: test
+      run:  |
+        docker-compose exec -T web rspec
