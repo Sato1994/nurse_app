@@ -41,4 +41,4 @@ jobs:
     - name: Run Jest
       shell: bash
       run: |
-        docker-compose exec -T front npm run test
+        docker-compose exec -T front yarn test
