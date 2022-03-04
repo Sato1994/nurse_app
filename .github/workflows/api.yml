@@ -102,26 +102,29 @@ jobs:
         
     steps:
       - uses: actions/checkout@v1
-      - name: Prepare bundler
+      - name: docker ps
         run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-        working-directory: ./api
-      - name: cp
-        run: |
-          cp config/database.ci.yml config/database.yml
-        working-directory: ./api
-      - name : db:create
-        run: |
-          bin/rails db:create
-        working-directory: ./api
-      - name: db:migrate
-        run: |
-          bin/rails db:migrate
-        working-directory: ./api
-      - name: Run test
-        run: bin/rspec
-        working-directory: ./api
+          docker ps
+      # - name: Prepare bundler
+      #   run: |
+      #     gem install bundler
+      #     bundle install --jobs 4 --retry 3
+      #   working-directory: ./api
+      # - name: cp
+      #   run: |
+      #     cp config/database.ci.yml config/database.yml
+      #   working-directory: ./api
+      # - name : db:create
+      #   run: |
+      #     bin/rails db:create
+      #   working-directory: ./api
+      # - name: db:migrate
+      #   run: |
+      #     bin/rails db:migrate
+      #   working-directory: ./api
+      # - name: Run test
+      #   run: bin/rspec
+      #   working-directory: ./api
 
 
 
