@@ -49,7 +49,6 @@ jobs:
       - name: create db
         run: |
           rails db:create
-          rails db:migrate
       # - name: Run Rspec
       #   run: rspec
 
