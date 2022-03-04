@@ -22,8 +22,8 @@ jobs:
       DATABASE_URL: "mysql://satosato:passpass@localhost:3306/app_test"
 
     steps:
-     - name: check
-      run: pwd
+      - name: check
+        run: pwd
       # - name: Show Docker containers
       #   run: docker ps -a
       # - name: Show databases for root user
