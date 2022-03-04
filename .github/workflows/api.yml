@@ -137,23 +137,28 @@ jobs:
       run:
         docker-compose up -d
 
-    - name: sleep
-      shell: bash
-      run: |
-        sleep 30
+    # - name: sleep
+    #   shell: bash
+    #   run: |
+    #     sleep 30
     
     - name: docker ps
       shell: bash
       run: |
         docker ps
 
-    - name: db:create
+    - name: database kakunin
       shell: bash
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        DATABASE_URL: mysql://root:password@db:3306/app_test
       run: |
-        docker-compose run web rails db:create
+        docker-compose exec db mysql -h localhost -P 3306 -u root -ppassword -e "SHOW DATABASES"
+
+    # - name: db:create
+    #   shell: bash
+    #   env:
+    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    #     DATABASE_URL: mysql://root:password@db:3306/app_test
+    #   run: |
+    #     docker-compose run web rails db:create
 
     # - name: Run RSpec
     #   shell: bash
