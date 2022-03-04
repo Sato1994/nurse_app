@@ -93,23 +93,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
- 
-    container:
-      image: ruby:2.7.1
-      env:
-        RAILS_ENV: test
-        MYSQL_ROOT_PASSWORD: user1_pass
         
     steps:
       - uses: actions/checkout@v1
-      - name: docker ps
-        run: |
-          docker ps
-      # - name: Prepare bundler
-      #   run: |
-      #     gem install bundler
-      #     bundle install --jobs 4 --retry 3
-      #   working-directory: ./api
+      - name: set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.1
+      - name: gem install
+        run: bundle install
+        working-directory: ./api
+      - name: run rspec
+        run: bundle exec rspec
+        working-directory: ./api
+
+
+
       # - name: cp
       #   run: |
       #     cp config/database.ci.yml config/database.yml
