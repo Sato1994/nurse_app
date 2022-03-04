@@ -40,13 +40,14 @@ jobs:
           ruby-version: 2.7.1
       - name: bundle install
         env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
           RAILS_ENV: test
           MYSQL_USER: user1
           MYSQL_PASSWORD: user1_pass
         run: |
           bundle install
       - name: Run Rspec
-        run: rspec
+        run: bundle exec rspec
 
           
       
