@@ -51,9 +51,7 @@ jobs:
       shell: bash
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      run: |
-        docker-compose run web yarn install --check-files
-        docker-compose run web yarn upgrade
+      run:
         docker-compose build
 
     # - name: up
