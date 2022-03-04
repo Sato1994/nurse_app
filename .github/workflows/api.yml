@@ -46,10 +46,11 @@ jobs:
           MYSQL_PASSWORD: user1_pass
         run: |
           bundle install
+      - name: Run Rspec
+        run: rspec
 
           
       
-
     # - name: Set up Ruby
     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
     #   with:
