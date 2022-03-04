@@ -1,24 +1,90 @@
-# お試し
+# # お試し
 
-name: Ruby
+# name: Ruby
 
+# on: [push]
+
+# jobs:
+#   test:
+
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./api
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - 3306:3306
+#         env:
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_DATABASE: test
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#         options: >-
+#           --health-cmd "mysqladmin ping"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+#     steps:
+#     # databaseにログインして起動確認 ###############################################################
+#     # - uses: actions/checkout@v2
+
+#     # - name: mysql --protocol=tcp login and show databases
+#     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+#     ################################################################################################
+#       - uses: actions/checkout@v2
+#       - name: set up ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: 2.7.1
+#       - name: bundle install
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#           RAILS_ENV: test
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#         run: |
+#           bundle install
+#       - name: create db
+#         env:
+#           RAILS_ENV: test
+#         run: |
+#           rails db:create
+#       # - name: Run Rspec
+#       #   run: rspec
+
+          
+      
+#     # - name: Set up Ruby
+#     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+#     #   with:
+#     #     ruby-version: 2.7.1
+
+#     # - name: Setup Database
+#     #   env:
+#     #     RAILS_ENV: test
+#     #   run: |
+#     #     cp config/database.ci.yml config/database.yml
+#     #     ./bin/rails db:create
+#     #     ./bin/rails db:migrate
+#     # - name: Run tests
+#     #   run: ./bin/rspec
+
+
+# お試し2
+
+name: Ruby CI
 on: [push]
-
 jobs:
-  test:
-
+  build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./api
     services:
       mysql:
         image: mysql:5.7
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test
           MYSQL_USER: user1
           MYSQL_PASSWORD: user1_pass
         options: >-
@@ -26,50 +92,28 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    container:
+      image: ruby:2.7.1
+      env:
+        RAILS_ENV: test
+        MYSQL_ROOT_PASSWORD: user1_pass
+        
     steps:
-    # databaseにログインして起動確認 ###############################################################
-    # - uses: actions/checkout@v2
-
-    # - name: mysql --protocol=tcp login and show databases
-    #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
-    ################################################################################################
-      - uses: actions/checkout@v2
-      - name: set up ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.1
-      - name: bundle install
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-          RAILS_ENV: test
-          MYSQL_USER: user1
-          MYSQL_PASSWORD: user1_pass
+      - uses: actions/checkout@v1
+      - name: Prepare bundler
         run: |
-          bundle install
-      - name: create db
-        env:
-          RAILS_ENV: test
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+        working-directory: ./api
+      - name: Prepare database
         run: |
-          rails db:create
-      # - name: Run Rspec
-      #   run: rspec
-
-          
-      
-    # - name: Set up Ruby
-    #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
-    #   with:
-    #     ruby-version: 2.7.1
-
-    # - name: Setup Database
-    #   env:
-    #     RAILS_ENV: test
-    #   run: |
-    #     cp config/database.ci.yml config/database.yml
-    #     ./bin/rails db:create
-    #     ./bin/rails db:migrate
-    # - name: Run tests
-    #   run: ./bin/rspec
+          cp config/database.ci.yml config/database.yml
+          bin/rails db:create
+          bin/rails db:migrate
+        working-directory: ./api
+      - name: Run test
+        run: bin/rspec
+        working-directory: ./api
 
 
 
