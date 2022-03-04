@@ -23,6 +23,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       # Add or replace dependency steps here
+      - name: confirmation
+        run: ls
       - name: set up ruby
         uses:  ruby/setup-ruby@v1 # v1.92
         with:
