@@ -47,6 +47,8 @@ jobs:
         run: |
           bundle install
       - name: create db
+        env:
+          RAILS_ENV: test
         run: |
           rails db:create
       # - name: Run Rspec
