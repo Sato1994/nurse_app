@@ -102,9 +102,23 @@ jobs:
           ruby-version: 2.7.1
       - name: gem install
         run: bundle install
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+        working-directory: ./api
+      - name: create db
+        run: bundle exec rails db:create
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+        working-directory: ./api
+      - name: migrate db
+        run: bundle exec rails db:migrate
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
         working-directory: ./api
       - name: run rspec
         run: bundle exec rspec
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
         working-directory: ./api
 
 
