@@ -47,11 +47,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: set up ruby
-
-    steps:
-    - uses: actions/checkout@v2
-
     - name: build
       shell: bash
       env:
