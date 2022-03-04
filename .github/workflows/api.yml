@@ -8,9 +8,6 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
     services:
       mysql:
         image: mysql:5.7
@@ -21,20 +18,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
-      with:
-        ruby-version: 2.7.1
+    - name: kakuninn
+      run: docker ps
+    # - name: Set up Ruby
+    #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+    #   with:
+    #     ruby-version: 2.7.1
 
-    - name: Setup Database
-      env:
-        RAILS_ENV: test
-      run: |
-        cp config/database.ci.yml config/database.yml
-        ./bin/rails db:create
-        ./bin/rails db:migrate
-    - name: Run tests
-      run: ./bin/rspec
+    # - name: Setup Database
+    #   env:
+    #     RAILS_ENV: test
+    #   run: |
+    #     cp config/database.ci.yml config/database.yml
+    #     ./bin/rails db:create
+    #     ./bin/rails db:migrate
+    # - name: Run tests
+    #   run: ./bin/rspec
 
 
 
