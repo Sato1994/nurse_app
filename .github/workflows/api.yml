@@ -87,11 +87,13 @@ jobs:
         env:
           MYSQL_USER: user1
           MYSQL_PASSWORD: user1_pass
+          MYSQL_ROOT_PASSWORD: root
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+ 
     container:
       image: ruby:2.7.1
       env:
