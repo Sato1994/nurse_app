@@ -46,8 +46,12 @@ jobs:
           MYSQL_PASSWORD: user1_pass
         run: |
           bundle install
-      - name: Run Rspec
-        run: bundle exec rspec
+      - name: create db
+        run: |
+          rails db:create
+          rails db:migrate
+      # - name: Run Rspec
+      #   run: rspec
 
           
       
