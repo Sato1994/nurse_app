@@ -25,7 +25,9 @@ jobs:
       - name: Show Docker containers
         run: docker ps -a
       - name: Show databases for satosato
-        run: mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
     # steps:
     #   - name: Checkout code
     #     uses: actions/checkout@v2
