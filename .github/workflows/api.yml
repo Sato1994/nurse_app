@@ -24,12 +24,31 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-    - uses: actions/checkout@v2
+    # databaseにログインして起動確認 ###############################################################
+    # - uses: actions/checkout@v2
 
-    # - name: set up mysql
-    #   run: sudo /etc/init.d/mysql start
-    - name: mysql --protocol=tcp login and show databases
-      run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+    # - name: mysql --protocol=tcp login and show databases
+    #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+    ################################################################################################
+      - uses: actions/checkout@v2
+      - name: set up ruby
+        uses: actions/setup-ruby@v1
+        with: ruby-version: 2.7.1
+      - name: build and run test
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+          RAILS_ENV: test
+          MYSQL_USER: user1
+          MYSQL_PASSWORD: user1_pass
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          gem install bundler:1.17.3
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+          RAILS_ENV=test bundle exec rspec
+      
+
     # - name: Set up Ruby
     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
     #   with:
