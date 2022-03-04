@@ -20,9 +20,11 @@ jobs:
           MYSQL_PASSWORD: user1_pass
     steps:
     - uses: actions/checkout@v2
-    - name: kakuninn
+    - name: set up mysql
+      run: sudo systemctl start mysql
+    - name: docker container confirmation
       run: docker ps
-    - name: kakuninn 2
+    - name: mysql login and show databases
       run: mysql -h localhost -P 3306 -u user1 -p user1_pass -e "SHOW DATABASES;"
     # - name: Set up Ruby
     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
