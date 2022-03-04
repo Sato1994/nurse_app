@@ -1,33 +1,78 @@
-# github 公式が出してるやつ
-name: "Ruby on Rails CI"
+# お試し
+
+name: Ruby
+
 on: [push]
+
 jobs:
   test:
+
     runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: api
+    defaults:
+      run:
+        working-directory: api
     services:
       mysql:
         image: mysql:5.7
         ports:
-          - "3306:3306"
+          - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DB: app_test
-          MYSQL_USER: satosato
-          MYSQL_PASSWORD: passpass
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: "mysql://satosato:passpass@localhost:3306/app_test"
+          MYSQL_ROOT_PASSWORD: root
 
     steps:
-      - name: Show Docker containers
-        run: docker ps -a
-      - name: Show databases for satosato
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+      with:
+        ruby-version: 2.7.1
+
+    - name: Setup Database
+      env:
+        RAILS_ENV: test
+      run: |
+        cp config/database.ci.yml config/database.yml
+        ./bin/rails db:create
+        ./bin/rails db:migrate
+    - name: Run tests
+      run: ./bin/rspec
+
+
+
+
+
+
+
+
+# # github 公式が出してるやつ
+# name: "Ruby on Rails CI"
+# on: [push]
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     # defaults:
+#     #   run:
+#     #     working-directory: api
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - "3306:3306"
+#         env:
+#           MYSQL_ROOT_PASSWORD: password
+#           MYSQL_DB: app_test
+#           MYSQL_USER: satosato
+#           MYSQL_PASSWORD: passpass
+#     env:
+#       RAILS_ENV: test
+#       DATABASE_URL: "mysql://satosato:passpass@localhost:3306/app_test"
+
+#     steps:
+#       - name: Show Docker containers
+#         run: docker ps -a
+#       - name: Show databases for satosato
+#         run: |
+#           sudo /etc/init.d/mysql start
+#           mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
     # steps:
     #   - name: Checkout code
     #     uses: actions/checkout@v2
