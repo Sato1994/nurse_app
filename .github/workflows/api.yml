@@ -23,8 +23,8 @@ jobs:
 
     # - name: set up mysql
     #   run: sudo /etc/init.d/mysql start
-    - name: mysql login and show databases
-      run: mysql -h  127.0.0.1  -P 3306 -u sato -puser1_pass -e "SHOW DATABASES"
+    - name: mysql --protocol=tcp login and show databases
+      run: mysql --protocol=tcp -h  127.0.0.1  -P 3306 -u sato -puser1_pass -e "SHOW DATABASES"
     # - name: Set up Ruby
     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
     #   with:
