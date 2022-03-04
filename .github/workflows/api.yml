@@ -34,10 +34,6 @@ jobs:
     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
     ################################################################################################
       - uses: actions/checkout@v2
-      - name: pwd
-        run: pwd
-      - name: cat
-        run: cat Gemfile
       - name: set up ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -51,7 +47,6 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y build-essential libpq-dev nodejs
-          rm -rf /var/lib/apt/lists/*
 
           
       
