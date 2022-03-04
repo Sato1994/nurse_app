@@ -1,70 +1,70 @@
-# お試し
+# # お試し
 
-name: Ruby
+# name: Ruby
 
-on: [push]
+# on: [push]
 
-jobs:
-  test:
+# jobs:
+#   test:
 
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./api
-    services:
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test
-          MYSQL_USER: user1
-          MYSQL_PASSWORD: user1_pass
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-    # databaseにログインして起動確認 ###############################################################
-    # - uses: actions/checkout@v2
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./api
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - 3306:3306
+#         env:
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_DATABASE: test
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#         options: >-
+#           --health-cmd "mysqladmin ping"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+#     steps:
+#     # databaseにログインして起動確認 ###############################################################
+#     # - uses: actions/checkout@v2
 
-    # - name: mysql --protocol=tcp login and show databases
-    #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
-    ################################################################################################
-      - uses: actions/checkout@v2
-      - name: set up ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.1
-      - name: install apt e.g
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-          RAILS_ENV: test
-          MYSQL_USER: user1
-          MYSQL_PASSWORD: user1_pass
-        run: |
-          apt-get update -qq
-          apt-get install -y build-essential libpq-dev nodejs
+#     # - name: mysql --protocol=tcp login and show databases
+#     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+#     ################################################################################################
+#       - uses: actions/checkout@v2
+#       - name: set up ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: 2.7.1
+#       - name: install apt e.g
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#           RAILS_ENV: test
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#         run: |
+#           apt-get update -qq
+#           apt-get install -y build-essential libpq-dev nodejs
 
           
       
 
-    # - name: Set up Ruby
-    #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
-    #   with:
-    #     ruby-version: 2.7.1
+#     # - name: Set up Ruby
+#     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+#     #   with:
+#     #     ruby-version: 2.7.1
 
-    # - name: Setup Database
-    #   env:
-    #     RAILS_ENV: test
-    #   run: |
-    #     cp config/database.ci.yml config/database.yml
-    #     ./bin/rails db:create
-    #     ./bin/rails db:migrate
-    # - name: Run tests
-    #   run: ./bin/rspec
+#     # - name: Setup Database
+#     #   env:
+#     #     RAILS_ENV: test
+#     #   run: |
+#     #     cp config/database.ci.yml config/database.yml
+#     #     ./bin/rails db:create
+#     #     ./bin/rails db:migrate
+#     # - name: Run tests
+#     #   run: ./bin/rspec
 
 
 
@@ -120,50 +120,48 @@ jobs:
     #     run: bin/rake
 
 
-# docker-compose 使用 ######################################################################3
-# name: CI
-# on: [push]
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
+docker-compose 使用 ######################################################################3
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - uses: actions/checkout@v2
+    steps:
+    - uses: actions/checkout@v2
 
-#     - name: build
-#       shell: bash
-#       env:
-#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-#       run:
-#         docker-compose build
+    - name: up
+      shell: bash
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      run:
+        docker-compose up -d
 
-#     # - name: up
-#     #   shell: bash
-#     #   env:
-#     #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-#     #   run: |
-#     #     docker-compose up -d
+    - name: sleep
+      shell: bash
+      run: |
+        sleep 30
+    
+    - name: docker ps
+      shell: bash
+      run: |
+        docker ps
 
-#     - name: sleep
-#       shell: bash
-#       run: |
-#         sleep 30
+    # - name: db:create
+    #   shell: bash
+    #   env:
+    #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    #   run: |
+    #     docker-compose run web rails db:create
 
-#     - name: db:create
-#       shell: bash
-#       env:
-#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-#       run: |
-#         docker-compose run web rails db:create
+    # - name: Run RSpec
+    #   shell: bash
+    #   env:
+    #     RAILS_ENV: test
+    #   run:  |
+    #     docker-compose run web rspec
 
-#     - name: Run RSpec
-#       shell: bash
-#       env:
-#         RAILS_ENV: test
-#       run:  |
-#         docker-compose run web rspec
-
-#     # - name: Run Jest
-#     #   shell: bash
-#     #   run: |
-#     #     docker-compose exec -T front yarn test
+    # - name: Run Jest
+    #   shell: bash
+    #   run: |
+    #     docker-compose exec -T front yarn test
