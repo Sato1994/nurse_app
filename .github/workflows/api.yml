@@ -107,12 +107,16 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3
         working-directory: ./api
-      - name: Prepare database
+      - name: cp
         run: |
           cp config/database.ci.yml config/database.yml
-          bin/rails db:create
-          bin/rails db:migrate
         working-directory: ./api
+      - name : db:create
+        run: |
+          bin/rails db:create
+      - name: db:migrate
+        run: |
+          bin/rails db:migrate
       - name: Run test
         run: bin/rspec
         working-directory: ./api
