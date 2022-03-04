@@ -114,9 +114,11 @@ jobs:
       - name : db:create
         run: |
           bin/rails db:create
+        working-directory: ./api
       - name: db:migrate
         run: |
           bin/rails db:migrate
+        working-directory: ./api
       - name: Run test
         run: bin/rspec
         working-directory: ./api
