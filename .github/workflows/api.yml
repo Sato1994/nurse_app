@@ -24,10 +24,8 @@ jobs:
     steps:
       - name: Show Docker containers
         run: docker ps -a
-      - name: Show databases for root user
-        run: mysql --protocol=tcp -h localhost -P 3306 -u root -password -e "SHOW DATABASES"
       - name: Show databases for satosato
-        run: mysql --protocol=tcp -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
+        run: mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
     # steps:
     #   - name: Checkout code
     #     uses: actions/checkout@v2
