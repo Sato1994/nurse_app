@@ -367,8 +367,8 @@ jobs:
 
     - name: db:create
       run: |
-        docker-compose run web rails db:create
+        docker-compose exec web rails db:create
 
     - name: Run RSpec
       run:  |
-        docker-compose run web rspec
+        docker-compose exec web rspec
