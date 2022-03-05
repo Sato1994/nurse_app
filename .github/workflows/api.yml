@@ -363,7 +363,7 @@ jobs:
 
     - name: database kakunin
       run: |
-        docker-compose exec db mysql -h localhost -P 3306 -u root -ppassword -e "SHOW DATABASES"
+        docker-compose exec db mysql-u root -ppassword -e "SHOW DATABASES"
 
     - name: db:create
       run: |
