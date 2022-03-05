@@ -10,8 +10,9 @@ jobs:
       db:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: user1
+          MYSQL_USER_PASSWORD: user1_pass
           MYSQL_DATABASE: app_test
     steps:
       - name: checkout code
@@ -23,6 +24,8 @@ jobs:
       - name: bundle install
         run: bundle install --path vendor/bundle
       - name: databse set up
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/app_test
         run: bundle exec rails db:schema:load
       - name: run rspec
         run: bundle exec Rspec
