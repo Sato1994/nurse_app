@@ -27,10 +27,9 @@ development:
 test:
   <<: *default
   database: app_test
-  host: mysql
-  password: usre1_pass
-  username: user1
-  
+  host: 127.0.0.1
+  port: 3306
+
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
