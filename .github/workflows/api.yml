@@ -1,37 +1,36 @@
-# # お試し
+# お試し
 
-# name: Ruby
+name: Ruby
 
-# on: [push]
+on: [push]
 
-# jobs:
-#   test:
+jobs:
+  test:
 
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: ./api
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         ports:
-#           - 3306:3306
-#         env:
-#           MYSQL_ROOT_PASSWORD: root
-#           MYSQL_DATABASE: test
-#           MYSQL_USER: user1
-#           MYSQL_PASSWORD: user1_pass
-#         options: >-
-#           --health-cmd "mysqladmin ping"
-#           --health-interval 10s
-#           --health-timeout 5s
-#           --health-retries 5
-#     steps:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
+
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_USER: user1
+          MYSQL_PASSWORD: user1_pass
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
 #     # databaseにログインして起動確認 ###############################################################
-#     # - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-#     # - name: mysql --protocol=tcp login and show databases
-#     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+    - name: mysql --protocol=tcp login and show databases
+      run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
 #     ################################################################################################
 #       - uses: actions/checkout@v2
 #       - name: set up ruby
@@ -74,52 +73,52 @@
 
 # お試し2
 
-name: Ruby CI
-on: [push]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_USER: user1
-          MYSQL_PASSWORD: user1_pass
-          MYSQL_ROOT_PASSWORD: root
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+# name: Ruby CI
+# on: [push]
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - 3306:3306
+#         env:
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#           MYSQL_ROOT_PASSWORD: root
+#         options: >-
+#           --health-cmd "mysqladmin ping"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
         
-    steps:
-      - uses: actions/checkout@v1
-      - name: set up ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.1
-      - name: gem install
-        run: bundle install
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-        working-directory: ./api
-      - name: create db
-        run: bundle exec rails db:create
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-        working-directory: ./api
-      - name: migrate db
-        run: bundle exec rails db:migrate
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-        working-directory: ./api
-      - name: run rspec
-        run: bundle exec rspec
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-        working-directory: ./api
+#     steps:
+#       - uses: actions/checkout@v1
+#       - name: set up ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: 2.7.1
+#       - name: gem install
+#         run: bundle install
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#         working-directory: ./api
+#       - name: create db
+#         run: bundle exec rails db:create
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#         working-directory: ./api
+#       - name: migrate db
+#         run: bundle exec rails db:migrate
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#         working-directory: ./api
+#       - name: run rspec
+#         run: bundle exec rspec
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
+#         working-directory: ./api
 
 
 
