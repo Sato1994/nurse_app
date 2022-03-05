@@ -54,6 +54,8 @@ jobs:
       - name: db migrate
         run: |
           bundle exec rails db:migrate
+        env:
+          DATABASE_URL: mysql://user1:user1_pass@mysql:3306/app_test
       - name: Run Rspec
         run: |
           bundle exec rspec
