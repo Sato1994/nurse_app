@@ -1,7 +1,8 @@
-name: 
+name: CI-CD
 on: [push]
 jobs:
-  test:
+# rails rspec ########################################################
+  rails test:
     runs-on: ubuntu-18.04
     defaults:
       run:
@@ -9,7 +10,7 @@ jobs:
     env:
       RAILS_ENV: test
       DB_HOST: 127.0.0.1
-      # DB_PORT: 3306
+      API_DOMAIN: localhost
     services:
       db:
         image: mysql:5.7
@@ -18,7 +19,11 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           BIND-ADDRESS: 0.0.0.0
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2.3.4
       - name: set up ruby
@@ -39,254 +44,10 @@ jobs:
           bundle install --jobs 4 --retry 3 --path vendor/bundle
       - name: yarn install
         run:  yarn install --check-files
-      - name: migration
+      - name: migrate db
         run: |
           bundle exec rails db:create
           bundle exec rails db:test:prepare
       - name: run rspec
         run: bundle exec rspec
-# ###########################################################################
-
-
-
-
-
-
-
-# # お試し
-
-# name: Ruby
-
-# on: [push]
-
-# jobs:
-#   test:
-
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: ./api
-
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         ports:
-#           - 3306:3306
-#         env:
-#           MYSQL_USER: user1
-#           MYSQL_PASSWORD: user1_pass
-#           MYSQL_ROOT_PASSWORD: root
-#           MYSQL_DATABASE: app_test
-#         options: >-
-#           --health-cmd "mysqladmin ping"
-#           --health-interval 10s
-#           --health-timeout 5s
-#           --health-retries 5
-#     container:
-#       image: ruby:2.7.1
-#       env:
-#         RAILS_ENV: test
-#         MYSQL_HOST: mysql
-#         RAILS_DATABASE_USER: user1
-#         RAILS_DATABASE_PASSWORD: user1_pass
-#     steps:
-# #     # databaseにログインして起動確認 ###############################################################
-#     # - uses: actions/checkout@v2
-
-#     # - name: mysql --protocol=tcp login and show databases
-#     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
-# #     ################################################################################################
-    
-#       - uses: actions/checkout@v2
-#       - name: bundler set up
-#         run: |
-#           gem install bundler
-#           bundle install
-#       - name: install node
-#         uses: actions/setup-node@v1
-#         with:
-#           node-version: '10.24'
-#       - name: db migrate
-#         run: |
-#           bundle exec rails db:migrate
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@mysql:3306/app_test
-#       - name: Run Rspec
-#         run: |
-#           bundle exec rspec
-
-          
-      
-#     # - name: Set up Ruby
-#     #   uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
-#     #   with:
-#     #     ruby-version: 2.7.1
-
-#     # - name: Setup Database
-#     #   env:
-#     #     RAILS_ENV: test
-#     #   run: |
-#     #     cp config/database.ci.yml config/database.yml
-#     #     ./bin/rails db:create
-#     #     ./bin/rails db:migrate
-#     # - name: Run tests
-#     #   run: ./bin/rspec
-
-
-# お試し2
-
-# name: Ruby CI
-# on: [push]
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         ports:
-#           - 3306:3306
-#         env:
-#           MYSQL_USER: user1
-#           MYSQL_PASSWORD: user1_pass
-#           MYSQL_ROOT_PASSWORD: root
-#         options: >-
-#           --health-cmd "mysqladmin ping"
-#           --health-interval 10s
-#           --health-timeout 5s
-#           --health-retries 5
-        
-#     steps:
-#       - uses: actions/checkout@v1
-#       - name: set up ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: 2.7.1
-#       - name: gem install
-#         run: bundle install
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-#         working-directory: ./api
-#       - name: create db
-#         run: bundle exec rails db:create
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-#         working-directory: ./api
-#       - name: migrate db
-#         run: bundle exec rails db:migrate
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-#         working-directory: ./api
-#       - name: run rspec
-#         run: bundle exec rspec
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-#         working-directory: ./api
-
-
-
-      # - name: cp
-      #   run: |
-      #     cp config/database.ci.yml config/database.yml
-      #   working-directory: ./api
-      # - name : db:create
-      #   run: |
-      #     bin/rails db:create
-      #   working-directory: ./api
-      # - name: db:migrate
-      #   run: |
-      #     bin/rails db:migrate
-      #   working-directory: ./api
-      # - name: Run test
-      #   run: bin/rspec
-      #   working-directory: ./api
-
-
-
-
-
-
-
-
-# # github 公式が出してるやつ
-# name: "Ruby on Rails CI"
-# on: [push]
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     # defaults:
-#     #   run:
-#     #     working-directory: api
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         ports:
-#           - "3306:3306"
-#         env:
-#           MYSQL_ROOT_PASSWORD: password
-#           MYSQL_DB: app_test
-#           MYSQL_USER: satosato
-#           MYSQL_PASSWORD: passpass
-#     env:
-#       RAILS_ENV: test
-#       DATABASE_URL: "mysql://satosato:passpass@localhost:3306/app_test"
-
-#     steps:
-#       - name: Show Docker containers
-#         run: docker ps -a
-#       - name: Show databases for satosato
-#         run: |
-#           sudo /etc/init.d/mysql start
-#           mysql -h localhost -P 3306 -u satosato -passpass -e "SHOW DATABASES"
-    # steps:
-    #   - name: Checkout code
-    #     uses: actions/checkout@v2
-    #   # Add or replace dependency steps here
-    #   - name: Install Ruby and gems
-    #     uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
-    #     with:
-    #       bundler-cache: true
-    #       ruby-version: '2.7.1'
-    #   # Add or replace database setup steps here
-    #   - name: Set up database schema
-    #     run: bin/rails db:schema:load
-    #   # Add or replace test runners here
-    #   - name: Run tests
-    #     run: bin/rake
-
-
-# # docker-compose 使用 ######################################################################3
-# name: Ruby
-# on: [push]
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     env:
-#       RAILS_ENV: test
-#       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - name: up
-#       run:
-#         docker-compose up -d
-
-#     - name: sleep
-#       run: |
-#         sleep 10
-    
-#     - name: docker ps
-#       run: |
-#         docker ps
-
-#     # - name: database kakunin
-#     #   run: |
-#     #     docker-compose exec db mysql -u root -ppassword -e "SHOW DATABASES"
-
-#     - name: db:create
-#       run: |
-#         docker-compose exec -T web rails db:create
-
-#     - name: Run RSpec
-#       run:  |
-#         docker-compose exec web rspec
+#######################################################################
