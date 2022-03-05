@@ -40,7 +40,7 @@ jobs:
       run: bundle install
     - name: Setup Database
       run: |
-        bundle exec rails db:create
+        bundle exec rails db:create RAILS_ENV=test
         bundle exec rails db:migrate
 
 
