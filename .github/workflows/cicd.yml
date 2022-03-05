@@ -1,6 +1,6 @@
-# name: CI-CD
-# on: [push]
-# jobs:
+name: CI-CD
+on: [push]
+jobs:
 # # rails rspec #########################################################
 #   rails_test:
 #     runs-on: ubuntu-18.04
@@ -67,6 +67,7 @@
 #######################################################################
   ecs_deploy:
     runs-on: ubuntu-latest
+
 
     steps:
       - uses: actions/checkout@v2
