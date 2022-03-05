@@ -1,86 +1,4 @@
-# name: Ruby
-# on: [push]
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     env:
-#       RAILS_ENV: test
-#     defaults:
-#       run:
-#         working-directory: ./api
-#     services:
-#       db:
-#         image: mysql:5.7
-#         env:
-#           MYSQL_ALLOW_EMPTY_PASSWORD: true
-#           MYSQL_ROOT_PASSWORD: ''
-#           MYSQL_DATABASE: app_test
-#     steps:
-#       - name: checkout code
-#         uses: actions/checkout@v2
-#       - name: set up ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: 2.7.1
-#       - name: bundle install
-#         run: bundle install --path vendor/bundle
-#       - name: databse set up
-#         run: bundle exec rails db:schema:load
-#       - name: run rspec
-#         run: bundle exec Rspec
-
-
-
-
-
-# name: Ruby
-# on: [push]
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: ./api
-#     services:
-#       db:
-#         image: mysql:5.7
-#         env:
-#           MYSQL_USERNAME: dbuser
-#           MYSQL_ROOT_PASSWORD: dbpass
-#     container:
-#       image: ruby:2.7.1
-#       env:
-#         RAILS_ENV: test
-#         MYSQL_HOST: db
-#         MYSQL_USERNAME: dbuser
-#         MYSQL_ROOT_PASSWORD: dbpass
-#     steps:
-#     - uses: actions/checkout@v2
-#     - uses: actions/cache@v1
-#       with:
-#         path: vendor/bundle
-#         key: bundle-${{ hashFiles('**/Gemfile.lock') }}
-#     - uses: actions/cache@v1
-#       with:
-#         path: node_modules
-#         key: yarn-${{ hashFiles('**/yarn.lock') }}
-#     - name: Setup yarn and node
-#       run: |
-#         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-#         echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-#         apt-get update -qq
-#         apt-get install -y nodejs yarn
-#         yarn install
-#     - name: Setup bundles
-#       run: bundle install
-#     - name: Setup Database
-#       run: |
-#         bundle exec rails db:create RAILS_ENV=test
-#         bundle exec rails db:migrate
-
-
-# # お試し#####################################################
-name: Ruby
+name: 
 on: [push]
 jobs:
   test:
@@ -91,7 +9,7 @@ jobs:
     env:
       RAILS_ENV: test
       DB_HOST: 127.0.0.1
-      DB_PORT: 3306
+      # DB_PORT: 3306
     services:
       db:
         image: mysql:5.7
