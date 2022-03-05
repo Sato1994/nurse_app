@@ -1,64 +1,118 @@
 # お試し
-
 name: Ruby
-
 on: [push]
-
 jobs:
   test:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     defaults:
       run:
         working-directory: ./api
-
+    env:
+      RAILS_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
     services:
-      mysql:
+      db:
         image: mysql:5.7
         ports:
           - 3306:3306
         env:
-          MYSQL_USER: user1
-          MYSQL_PASSWORD: user1_pass
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: app_test
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    container:
-      image: ruby:2.7.1
-      env:
-        RAILS_ENV: test
-        MYSQL_HOST: mysql
-        RAILS_DATABASE_USER: user1
-        RAILS_DATABASE_PASSWORD: user1_pass
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          BIND-ADDRESS: 0.0.0.0
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-#     # databaseにログインして起動確認 ###############################################################
-    # - uses: actions/checkout@v2
-
-    # - name: mysql --protocol=tcp login and show databases
-    #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
-#     ################################################################################################
-    
-      - uses: actions/checkout@v2
-      - name: bundler set up
+      - uses: actions/checkout@v2.3.4
+      - name: ruby/setup-ruby@v1.68.0
+        with:
+          ruby-version: 2.7.1
+          bundler-cache: true
+      - name: cache node modules
+        uses: actions/cache@v2.1.4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: bundle install
         run: |
           gem install bundler
-          bundle install
-      - name: install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '10.24'
-      - name: db migrate
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+      - name: yarn install
+        run:  yarn install --check-files
+      - name: migration
         run: |
-          bundle exec rails db:migrate
-        env:
-          DATABASE_URL: mysql://user1:user1_pass@mysql:3306/app_test
-      - name: Run Rspec
-        run: |
-          bundle exec rspec
+          bundle exec rails db:create
+          bundle exec rails db:test:prepare
+      - name: run rspec
+        run: bundle exec rspec
+
+
+
+
+
+
+
+# # お試し
+
+# name: Ruby
+
+# on: [push]
+
+# jobs:
+#   test:
+
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./api
+
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - 3306:3306
+#         env:
+#           MYSQL_USER: user1
+#           MYSQL_PASSWORD: user1_pass
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_DATABASE: app_test
+#         options: >-
+#           --health-cmd "mysqladmin ping"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+#     container:
+#       image: ruby:2.7.1
+#       env:
+#         RAILS_ENV: test
+#         MYSQL_HOST: mysql
+#         RAILS_DATABASE_USER: user1
+#         RAILS_DATABASE_PASSWORD: user1_pass
+#     steps:
+# #     # databaseにログインして起動確認 ###############################################################
+#     # - uses: actions/checkout@v2
+
+#     # - name: mysql --protocol=tcp login and show databases
+#     #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+# #     ################################################################################################
+    
+#       - uses: actions/checkout@v2
+#       - name: bundler set up
+#         run: |
+#           gem install bundler
+#           bundle install
+#       - name: install node
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: '10.24'
+#       - name: db migrate
+#         run: |
+#           bundle exec rails db:migrate
+#         env:
+#           DATABASE_URL: mysql://user1:user1_pass@mysql:3306/app_test
+#       - name: Run Rspec
+#         run: |
+#           bundle exec rspec
 
           
       
