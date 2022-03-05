@@ -1,7 +1,7 @@
 name: CI-CD
 on: [push]
 jobs:
-# rails rspec ########################################################
+# rails rspec #########################################################
   rails_test:
     runs-on: ubuntu-18.04
     defaults:
@@ -51,6 +51,8 @@ jobs:
       - name: run rspec
         run: bundle exec rspec
 #######################################################################
+
+# nuxt jest ###########################################################
   nuxt_test:
     runs-on: ubuntu-latest
     defaults:
@@ -62,3 +64,4 @@ jobs:
         run:  yarn install
       - name: run jest
         run: yarn test
+#######################################################################
