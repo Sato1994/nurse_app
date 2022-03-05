@@ -27,6 +27,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    container:
+      image: ruby: 2.7.1
+      env:
+        RAILS_ENV: test
+        MYSQL_HOST: mysql
+        RAILS_DATABASE_USER: user1
+        RAILS_DATABASE_PASSWORD: user1_pass
     steps:
 #     # databaseにログインして起動確認 ###############################################################
     - uses: actions/checkout@v2
@@ -34,26 +41,23 @@ jobs:
     - name: mysql --protocol=tcp login and show databases
       run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
 #     ################################################################################################
-#       - uses: actions/checkout@v2
-#       - name: set up ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: 2.7.1
-#       - name: bundle install
-#         env:
-#           DATABASE_URL: mysql://user1:user1_pass@localhost:3306/test
-#           RAILS_ENV: test
-#           MYSQL_USER: user1
-#           MYSQL_PASSWORD: user1_pass
-#         run: |
-#           bundle install
-#       - name: create db
-#         env:
-#           RAILS_ENV: test
-#         run: |
-#           rails db:create
-#       # - name: Run Rspec
-#       #   run: rspec
+    
+      - uses: actions/checkout@v2
+      - name: bundler set up
+        run: |
+          gem install bundler
+          bundle install
+      - name: install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.24'
+      - name: db migrate
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+      - name: Run Rspec
+        run: |
+          bundle exec rspec
 
           
       
