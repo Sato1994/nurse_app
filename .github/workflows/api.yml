@@ -22,7 +22,8 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: ruby/setup-ruby@v1.68.0
+      - name: set up ruby
+        uses: ruby/setup-ruby@v1.68.0
         with:
           ruby-version: 2.7.1
           bundler-cache: true
