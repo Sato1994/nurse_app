@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
     defaults:
       run:
         working-directory: ./api
