@@ -1,3 +1,36 @@
+name: Ruby
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
+    services:
+      db:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_DATABASE: app_test
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.1
+      - name: bundle install
+        run: bundle install --path vendor/bundle
+      - name: databse set up
+        run: bundle exec rails db:schema:load
+      - name: run rspec
+        run: bundle exec Rspec
+
+
+
+
+
 # name: Ruby
 # on: [push]
 # jobs:
@@ -302,46 +335,46 @@
 
 
 # docker-compose 使用 ######################################################################3
-name: Ruby
-on: [push]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    env:
-      RAILS_ENV: test
+# name: Ruby
+# on: [push]
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     env:
+#       RAILS_ENV: test
 
 
-    steps:
-    - uses: actions/checkout@v2
+#     steps:
+#     - uses: actions/checkout@v2
 
-    - name: up
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      run:
-        docker-compose up -d
+#     - name: up
+#       env:
+#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#       run:
+#         docker-compose up -d
 
-    - name: sleep
-      shell: bash
-      run: |
-        sleep 10
+#     - name: sleep
+#       shell: bash
+#       run: |
+#         sleep 10
     
-    - name: docker ps
-      run: |
-        docker ps
+#     - name: docker ps
+#       run: |
+#         docker ps
 
-    - name: database kakunin
-      run: |
-        docker-compose exec db mysql -h localhost -P 3306 -u root -ppassword -e "SHOW DATABASES"
+#     - name: database kakunin
+#       run: |
+#         docker-compose exec db mysql -h localhost -P 3306 -u root -ppassword -e "SHOW DATABASES"
 
-    - name: db:create
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        DATABASE_URL: mysql://root:password@127.0.0.1:3306/app_test
-      run: |
-        docker-compose run web rails db:create RAILS_ENV=test
+#     - name: db:create
+#       env:
+#         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#         DATABASE_URL: mysql://root:password@127.0.0.1:3306/app_test
+#       run: |
+#         docker-compose run web rails db:create RAILS_ENV=test
 
-    - name: Run RSpec
-      env:
-        RAILS_ENV: test
-      run:  |
-        docker-compose run web rspec
+#     - name: Run RSpec
+#       env:
+#         RAILS_ENV: test
+#       run:  |
+#         docker-compose run web rspec
