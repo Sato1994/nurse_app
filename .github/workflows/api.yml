@@ -2,7 +2,7 @@ name: CI-CD
 on: [push]
 jobs:
 # rails rspec ########################################################
-  rails test:
+  rails_test:
     runs-on: ubuntu-18.04
     defaults:
       run:
