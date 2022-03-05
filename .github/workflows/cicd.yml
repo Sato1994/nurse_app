@@ -81,8 +81,8 @@ jobs:
           docker-compose build
       - name: rename images
         run: |
-          docker image tag nurse_app_web tag ${{ secrets.AWS_API_REPOSITORY }}:latest
-          docker image tag nurse_app_front tag ${{ secrets.AWS_FRONT_REPOSITORY }}:latest
+          docker image tag nurse_app_web ${{ secrets.AWS_API_REPOSITORY }}:latest
+          docker image tag nurse_app_front ${{ secrets.AWS_FRONT_REPOSITORY }}:latest
       - name : check
         run: docker images
       
