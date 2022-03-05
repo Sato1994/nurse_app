@@ -36,10 +36,10 @@ jobs:
         RAILS_DATABASE_PASSWORD: user1_pass
     steps:
 #     # databaseにログインして起動確認 ###############################################################
-    - uses: actions/checkout@v2
+    # - uses: actions/checkout@v2
 
-    - name: mysql --protocol=tcp login and show databases
-      run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
+    # - name: mysql --protocol=tcp login and show databases
+    #   run: mysql --protocol=tcp -h  localhost  -P 3306 -u user1 -puser1_pass -e "SHOW DATABASES"
 #     ################################################################################################
     
       - uses: actions/checkout@v2
