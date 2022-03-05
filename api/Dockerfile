@@ -1,9 +1,5 @@
 FROM ruby:2.7.1
 
-
-# ENV RAILS_ENV production
-# ENV RAILS_ENV test
-
 EXPOSE 3000
 
 RUN apt-get update -qq && \
