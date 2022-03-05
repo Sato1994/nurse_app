@@ -354,7 +354,6 @@ jobs:
         docker-compose up -d
 
     - name: sleep
-      shell: bash
       run: |
         sleep 10
     
@@ -367,10 +366,9 @@ jobs:
         docker-compose exec db mysql -h localhost -P 3306 -u root -ppassword -e "SHOW DATABASES"
 
     - name: db:create
+      run: |
         docker-compose run web rails db:create
 
     - name: Run RSpec
-      env:
-        RAILS_ENV: test
       run:  |
         docker-compose run web rspec
