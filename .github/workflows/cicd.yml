@@ -91,9 +91,12 @@ jobs:
           docker-compose build
           docker image tag nurse_app_web $ECR_REGISTRY/api:latest
           docker image tag nurse_app_front $ECR_REGISTRY/front:latest
-          docker push $ECR_REGISTRY/api:latest
-          docker push $ECR_REGISTRY/front:latest
+          docker images
+
       
       - name: check
         run: |
           echo "${{ steps.build-image.outputs.image }}"
+
+        # docker push $ECR_REGISTRY/api:latest
+        #   docker push $ECR_REGISTRY/front:latest
