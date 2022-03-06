@@ -27,7 +27,7 @@ module "api_sg" {
   name = "api_sg"
   vpc_id = aws_vpc.vpc.id
   port = 3000
-  cidr_blocks = [aws_vpc.vpc.cidr_block]
+  cidr_blocks = ["0.0.0.0/0"]
 }
 
 module "mysql_sg" {
