@@ -72,23 +72,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: aws authentication
-        run: |
-          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+
       - name : ecr login
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
-      - name: build docker images
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - name: build and push
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker-compose build
-      - name: rename images
+          docker image tag nurse_app_web $ECR_REGISTRY/api:latest
+          docker image tag nurse_app_front $ECR_REGISTRY/front:latest
+          docker push $ECR_REGISTRY/api:latest
+          docker push $ECR_REGISTRY/front:latest
+      
+      - name: check
         run: |
-          docker image tag nurse_app_web ${{ secrets.ECR_URL }}/api:latest
-          docker image tag nurse_app_front ${{ secrets.ECR_URL }}/front:latest
-      - name : check
-        run: docker images
-      - name: docker push
-        run: |
-          docker push ${{ secrets.ECR_URL }}/api:latest
-          docker push ${{ secrets.ECR_URL }}/front:latest
+          echo "${{ steps.build-image.outputs.image }}"
