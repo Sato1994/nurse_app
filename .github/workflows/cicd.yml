@@ -89,7 +89,6 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker-compose build
-          docker-compose run front npm install
           docker image tag nurse_app_web $ECR_REGISTRY/api:latest
           docker image tag nurse_app_front $ECR_REGISTRY/front:latest
           docker push $ECR_REGISTRY/api:latest
