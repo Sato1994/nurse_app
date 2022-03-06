@@ -91,8 +91,6 @@ jobs:
           docker-compose build
           docker image tag nurse_app_web $ECR_REGISTRY/api:latest
           docker image tag nurse_app_front $ECR_REGISTRY/front:latest
-          docker push $ECR_REGISTRY/api:latest
-          docker push $ECR_REGISTRY/front:latest
           echo "::set-output name=api_image::$ECR_REGISTRY/api:latest"
           echo "::set-output name=front_image::$ECR_REGISTRY/front:latest"
       
@@ -100,3 +98,6 @@ jobs:
         run: |
           echo "${{ steps.build-image.outputs.api_image }}"
           echo "${{ steps.build-image.outputs.front_image }}"
+
+  # docker push $ECR_REGISTRY/api:latest
+  #         docker push $ECR_REGISTRY/front:latest
