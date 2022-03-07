@@ -94,4 +94,8 @@ jobs:
           docker image tag nurse_app_front $ECR_REGISTRY/front:latest
           docker push $ECR_REGISTRY/api:latest
           docker push $ECR_REGISTRY/front:latest
+      - name: image update
+        run: |
+          aws ecs update-service --cluster cluster --service api_container --force-new-deployment
+          aws ecs update-service --cluster cluster --service front_container --force-new-deployment
 #######################################################################
