@@ -5,8 +5,9 @@ variable "API_DOMAIN" {}
 variable "DATABASE_URL" {}
 
 # front
-variable "BASE_URL" {}
-variable "BROWSER_BASE_URL" {}
+# variable "BASE_URL" {}
+# variable "BROWSER_BASE_URL" {}
+variable "API_URL"{}
 
 # db
 variable "DATABASE_USER_NAME" {}
@@ -40,15 +41,9 @@ resource "aws_ssm_parameter" "DATABASE_URL" {
 #####################################################
 
 # front #############################################
-resource "aws_ssm_parameter" "BASE_URL" {
-  name = "BASE_URL"
-  value = var.BASE_URL
-  type = "SecureString"
-}
-
-resource "aws_ssm_parameter" "BROWSER_BASE_URL" {
-  name = "BROWSER_BASE_URL"
-  value = var.BROWSER_BASE_URL
+resource "aws_ssm_parameter" "API_URL" {
+  name = "API_URL"
+  value = var.API_URL
   type = "SecureString"
 }
 #####################################################

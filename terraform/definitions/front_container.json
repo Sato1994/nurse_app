@@ -19,12 +19,8 @@
     ],
     "secrets": [
       {
-        "name": "BROWSER_BASE_URL",
-        "valueFrom": "BROWSER_BASE_URL"
-      },
-      {
-        "name": "BASE_URL",
-        "valueFrom": "BASE_URL"
+        "name": "API_URL",
+        "valueFrom": "API_URL"
       }
     ],
     "command": [
