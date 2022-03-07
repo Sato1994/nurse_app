@@ -91,7 +91,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>NGな技術</v-card-title>
+    <v-card-title>NG技術</v-card-title>
 
     <v-card-text>
       <div>
