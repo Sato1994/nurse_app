@@ -16,7 +16,7 @@
 
     <v-card-actions>
       <v-btn color="orange lighten-2" text :to="targetPageURL" nuxt>
-        お相手のページへ
+        お相手のページへgo
       </v-btn>
 
       <v-spacer></v-spacer>

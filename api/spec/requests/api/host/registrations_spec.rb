@@ -8,7 +8,7 @@ RSpec.describe "host登録", type: :request do
     end
   end
 
-  describe "POST　/api/host/sign_in" do
+  describe "POST /api/host/sign_in" do
     let(:host) { create(:host) }
     it " email,passwordでログインできるか" do
       login

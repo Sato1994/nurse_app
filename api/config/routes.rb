@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   namespace :api do
+    
+    resources :health_checks, only: :index
+
     resources :users, except: :destroy
     mount_devise_token_auth_for 'User', at: 'user', controllers: {
       registrations: 'api/user/registrations'
