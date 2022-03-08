@@ -70,6 +70,7 @@ resource "aws_ecs_service" "api_container" {
   desired_count = 1
   launch_type = "FARGATE"
   platform_version = "1.4.0"
+  health_check_grace_period_seconds = 60
 
   network_configuration {
     assign_public_ip = false

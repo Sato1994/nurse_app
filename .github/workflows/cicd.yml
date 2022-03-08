@@ -94,8 +94,46 @@ jobs:
           docker image tag nurse_app_front $ECR_REGISTRY/front:latest
           docker push $ECR_REGISTRY/api:latest
           docker push $ECR_REGISTRY/front:latest
-      - name: image update
+        
+      - name: sleep
+        run: sleep 10
+
+      - name: update service
         run: |
           aws ecs update-service --cluster cluster --service api_container --force-new-deployment
           aws ecs update-service --cluster cluster --service front_container --force-new-deployment
+      # - name: Fill in the new image ID in the Amazon ECS api task definition
+      #   id: api-task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: .github/definitions/api.json
+      #     container-name: api_container
+      #     image: $ECR_REGISTRY/api:latest
+      
+      # - name: Fill in the new image ID in the Amazon ECS front task definition
+      #   id: front-task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: .github/definitions/front.json
+      #     container-name: front_container
+      #     image: $ECR_REGISTRY/front:latest
+
+
+      # - name: deploy ecs api task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.api-task-def.outputs.task-definition }}
+      #     sevice: api_container
+      #     cluster: cluster
+      #     wait-for-service-stability: true
+
+      # - name: deploy ecs front task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.front-task-def.outputs.task-definition }}
+      #     sevice: front_container
+      #     cluster: cluster
+      #     wait-for-service-stability: true
+
+      
 #######################################################################
