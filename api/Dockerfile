@@ -1,18 +1,16 @@
 FROM ruby:2.7.1
 
-ARG WEB_WORKDIR
-
+EXPOSE 3000
 
 RUN apt-get update -qq && \
   apt-get install -y build-essential \ 
   libpq-dev \        
-  nodejs \
-  && rm -rf /var/lib/apt/lists/* 
+  nodejs
+RUN mkdir /app
+WORKDIR /app
 
-RUN mkdir ${WEB_WORKDIR}
-WORKDIR ${WEB_WORKDIR}
-
-ADD ./Gemfile ${WEB_WORKDIR}/Gemfile
-ADD ./Gemfile.lock ${WEB_WORKDIR}/Gemfile.lock
+# ADD ./Gemfile /app/Gemfile
+# ADD ./Gemfile.lock /app/Gemfile.lock
+COPY . .
 
 RUN bundle install

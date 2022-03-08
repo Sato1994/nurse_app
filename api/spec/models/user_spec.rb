@@ -156,4 +156,5 @@ RSpec.describe User, type: :model do
     it "引数のparamsが空なとき全てのuserを返す" do
       expect(User.id_include([ 1, 3 ], [] )).to include(user_1, user_2, user_3)
     end
+  end
 end
