@@ -1,8 +1,0 @@
-test:
-  adapter: mysql2
-  encoding: utf8
-  username: user1
-  password: user1_pass
-  host: mysql
-  database: test
-  reconnect: false
