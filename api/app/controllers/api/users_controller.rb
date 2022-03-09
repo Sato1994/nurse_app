@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 class Api::UsersController < ApplicationController
-include Pagination
+  include Pagination
 
   def index
-
-    ########## skillが被っていないuserのidの配列の作成 ##########
+    # skillが被っていないuserのidの配列の作成
     lower_year = params[:lowerYear].to_i
     address = params[:address]
     wanted = params[:wanted]
@@ -13,28 +14,27 @@ include Pagination
 
     all_users = User.includes(:user_skills)
 
-    target_users_id = [] 
+    target_users_id = []
 
-    all_users.each do  |user|
+    all_users.each do |user|
       skills = user.user_skills
       user_skill_ids = []
-      
+
       skills.each do |skill|
-      user_skill_ids.push(skill.skill_id)
+        user_skill_ids.push(skill.skill_id)
       end
 
-     user_skill_ids.push(host_skill_ids)
-     user_skill_ids.flatten!
-     mixed_skill_ids = user_skill_ids.uniq
+      user_skill_ids.push(host_skill_ids)
+      user_skill_ids.flatten!
+      mixed_skill_ids = user_skill_ids.uniq
 
-     if mixed_skill_ids.length == user_skill_ids.length
-      target_users_id.push(user.id)
-     end
-
+      target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length
     end
 
-    ########## user検索 ##########
-    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(target_users_id, params[:skillsId])).page(params[:page]).per(10)
+    # user検索
+    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(
+                                      target_users_id, params[:skillsId]
+                                    )).page(params[:page]).per(10)
 
     pagination = resources_with_pagination(users)
     @object = {
@@ -59,7 +59,6 @@ include Pagination
       @free_times = @user.free_times
       @skills = @user.skills
     end
-    render "show", formats: :json, handlers: :jbuilder
+    render 'show', formats: :json, handlers: :jbuilder
   end
-  
 end

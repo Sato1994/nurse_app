@@ -1,10 +1,11 @@
-class Api::HostSkillsController < ApplicationController
+# frozen_string_literal: true
 
+class Api::HostSkillsController < ApplicationController
   def create
     skill = Skill.find(params[:skill_id])
     host_skill = current_api_host.host_skills.new(skill: skill)
     if host_skill.save
-      render json: {id: skill.id, name: skill.name}
+      render json: { id: skill.id, name: skill.name }
     else
       render json: host_skill.errors, status: :bad_request
     end
@@ -15,15 +16,12 @@ class Api::HostSkillsController < ApplicationController
     skill = Skill.find(params[:id])
     if host_skill.host_id == current_api_host.id
       if host_skill.destroy
-        render json: skill, status: 200
+        render json: skill, status: :ok
       else
         rende json: host_skill.errors, status: :bad_request
       end
     else
       render body: nil, status: :bad_request
     end
-
   end
-
-
 end
