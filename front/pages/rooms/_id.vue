@@ -216,7 +216,7 @@ export default {
     updateTime(startTime, finishTime) {
       this.$axios
         .patch(
-          `/api/rooms/${this.$route.params.id}`,
+          `/api/rooms/${this.$route.params.id}/update_room_time`,
           {
             start_time: startTime,
             finish_time: finishTime,
@@ -254,7 +254,7 @@ export default {
               console.log(response)
               this.$axios
                 .patch(
-                  `/api/rooms/${this.$route.params.id}`,
+                  `/api/rooms/${this.$route.params.id}/update_room_state`,
                   {},
                   {
                     headers: this.$cookies.get('authInfo'),
@@ -275,7 +275,7 @@ export default {
         default:
           this.$axios
             .patch(
-              `/api/rooms/${this.$route.params.id}`,
+              `/api/rooms/${this.$route.params.id}/update_room_state`,
               {},
               {
                 headers: this.$cookies.get('authInfo'),

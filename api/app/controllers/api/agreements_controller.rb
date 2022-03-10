@@ -1,28 +1,11 @@
 # frozen_string_literal: true
 
 class Api::AgreementsController < ApplicationController
-  def index
-    # 1.存在する自分が関与するAgreementsを取得
-    # 3.そのうちstateが2～4のものは配列から除外する
-    # 4.そのうちstateが0のものは勤務時間であればにstateを1に変更。
-    # 5.そのうちstateが0か1のもののうち勤務時間を超えていれば2へ変更
-    if api_user_signed_in?
-      Agreement.where('user_id = ? && start_time <= ? && ? <= finish_time && state = 0', current_api_user.id, Time.current,
-                      Time.current).update_all(state: 1)
-      Agreement.where('user_id = ? && finish_time < ? && (state = 0 || 1)', current_api_user.id,
-                      Time.current).update_all(state: 2)
-      @agreements = Agreement.where(user_id: current_api_user.id)
+  before_action :set_me, only: %i[index create]
 
-    elsif api_host_signed_in?
-      Agreement.where('host_id = ? && start_time <= ? && ? <= finish_time && state = 0', current_api_host.id, Time.current,
-                      Time.current).update_all(state: 1)
-      Agreement.where('host_id = ? && finish_time < ? && (state = 0 || 1)', current_api_host.id,
-                      Time.current).update_all(state: 2)
-      @agreements = Agreement.where(host_id: current_api_host.id)
-    else
-      render body: nil, status: :unauthorized
-      return
-    end
+  def index
+    Agreement.update_state_when_view_index(@id, @me)
+    @agreements = Agreement.where("#{@me}_id": @id)
     render 'index', formats: :json, handlers: :jbuilder
   end
 
@@ -31,61 +14,30 @@ class Api::AgreementsController < ApplicationController
     room = Room.find(params[:room_id])
     # agreementが未だ作られていない場合
     if room.agreement.nil?
-      if api_user_signed_in?
-        agreement = Agreement.new(agreement_user_signed_in_params)
-        if agreement.save
-          FreeTime.destroy_free_times(current_api_user.id, Time.zone.parse(params[:start_time]),
-                                      Time.zone.parse(params[:finish_time]))
-          render json: agreement, status: :created
-        else
-          render json: agreement.errors, status: :bad_request
-        end
-      elsif api_host_signed_in?
-        agreement = Agreement.new(agreement_host_signed_in_params)
-        if agreement.save
-          FreeTime.destroy_free_times(params[:user_id], Time.zone.parse(params[:start_time]),
-                                      Time.zone.parse(params[:finish_time]))
-          render json: agreement, status: :created
-        else
-          render json: agreement.errors, status: :bad_request
-        end
+      agreement = Agreement.new(eval("agreement_#{@me}_signed_in_params"))
+      if agreement.save
+        FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
+                                    Time.zone.parse(params[:finish_time]))
+        render json: agreement, status: :created
       else
-        render body: nil, status: :unauthorized
+        render json: agreement.errors, status: :bad_request
       end
     # agreementが既に存在した場合
-    elsif api_user_signed_in?
-      if room.agreement.update(agreement_user_signed_in_params)
-        FreeTime.destroy_free_times(current_api_user.id, Time.zone.parse(params[:start_time]),
-                                    Time.zone.parse(params[:finish_time]))
-        render json: room.agreement, status: :ok
-      else
-        render json: room.agreement.errors, status: :bad_request
-      end
-    elsif api_host_signed_in?
-      if room.agreement.update(agreement_host_signed_in_params)
-        FreeTime.destroy_free_times(params[:user_id], Time.zone.parse(params[:start_time]),
-                                    Time.zone.parse(params[:finish_time]))
-        render json: room.agreement, status: :ok
-      else
-        render json: room.agreement.errors, status: :bad_request
-      end
+    elsif room.agreement.update(eval("agreement_#{@me}_signed_in_params"))
+      FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
+                                  Time.zone.parse(params[:finish_time]))
+      render json: room.agreement, status: :ok
     else
-      render body: nil, status: :unauthorized
+      render json: room.agreement.errors, status: :bad_request
     end
   end
 
   # agreementの変更申請
   def update
     agreement = Agreement.find(params[:id])
-    room = agreement.room
-    if (api_user_signed_in? && current_api_user = agreement.user) || (api_host_signed_in? && current_api_host = agreement.host)
+    if user_login_and_own?(agreement.user.id) || host_login_and_own?(agreement.host.id)
       if agreement.start_time > 24.hours.since
-        result = agreement.update_state
-        if result
-          render json: result, status: :ok
-        else
-          render body: nil, status: :internal_server_error
-        end
+        render json: agreement.update_state
       else
         render body: nil, status: :bad_request
       end
@@ -97,19 +49,35 @@ class Api::AgreementsController < ApplicationController
   # agreementキャンセル
   def cancell
     agreement = Agreement.find(params[:id])
-    room = agreement.room
-    agreement.cancell_agreement if api_user_signed_in? && current_api_user === agreement.user
+    agreement.cancell_agreement if api_user_signed_in? && current_api_user == agreement.user
+  end
+
+  # before action
+  def set_me
+    if api_user_signed_in?
+      @me = 'user'
+      @id = current_api_user.id
+      @user_id = current_api_user.id
+    elsif api_host_signed_in?
+      @me = 'host'
+      @id = current_api_host.id
+      @user_id = params[:user_id]
+    else
+      render body: nil, status: :unauthorized
+    end
   end
 
   private
 
   def agreement_user_signed_in_params
     params.permit(:host_id, :room_id).merge(state: 'before', user_id: current_api_user.id,
-                                            start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+                                            start_time: Time.zone.parse(params[:start_time]),
+                                            finish_time: Time.zone.parse(params[:finish_time]))
   end
 
   def agreement_host_signed_in_params
     params.permit(:user_id, :room_id).merge(state: 'before', host_id: current_api_host.id,
-                                            start_time: Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+                                            start_time: Time.zone.parse(params[:start_time]),
+                                            finish_time: Time.zone.parse(params[:finish_time]))
   end
 end

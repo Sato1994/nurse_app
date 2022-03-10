@@ -64,4 +64,13 @@ class Agreement < ApplicationRecord
       end
     end
   end
+
+  def self.update_state_when_view_index(id, me)
+    # stateが0のものは勤務時間であればにstateを1に変更。
+    # stateが0か1のもののうち勤務時間を超えていれば2へ変更
+    self.where("#{me}_id = ? && start_time <= ? && ? <= finish_time && state = 0", id, Time.current,
+      Time.current).update_all(state: 1)
+    self.where("#{me}_id = ? && finish_time < ? && (state = 0 || 1)", id,
+    Time.current).update_all(state: 2)
+  end
 end

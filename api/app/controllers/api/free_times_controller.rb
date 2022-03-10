@@ -16,8 +16,6 @@ class Api::FreeTimesController < ApplicationController
     end
   end
 
-  def destroy; end
-
   private
 
   def free_time_params

@@ -102,110 +102,147 @@ RSpec.describe 'Api::Rooms', type: :request do
     end
   end
 
-  describe 'PATCh /update' do
-    let!(:room) { create(:room) }
-    let!(:room_state_user) { create(:room, state: 'user') }
-    let!(:room_state_host) { create(:room, state: 'host') }
-    let!(:room_state_cancelled) { create(:room, state: 'cancelled') }
+  # #############################################3
 
-    context 'userとしてログインしており' do
-      before do
-        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+  describe 'PATCh /update_room_time' do
+    let(:room) { create(:room) }
+
+    it 'ログインしていなければ更新されない' do
+      expect do
+        patch "/api/rooms/#{room.id}/update_room_time",
+              params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now }
+      end.not_to change { room.reload.start_time }
+    end
+
+    context 'userとしてログイン' do
+      it '自分のroomなら更新される' do
+        user_login
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_time",
+                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                headers: headers
+        end.to change { room.reload.start_time }
       end
 
-      context 'リクエストにparams[:start_time]が存在する場合' do
-        it 'Roomの期間を更新できる。' do
-          patch "/api/rooms/#{room.id}",
-                params: { host_id: room.host.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+      it '自分のroomでなければ更新されない' do
+        room2 = create(:room)
+        user_login
+        expect do
+          patch "/api/rooms/#{room2.id}/update_room_time",
+                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
-          expect(response.status).to eq(200)
-        end
-
-        it '失敗ならステータスコード400を返す' do
-          patch "/api/rooms/#{room.id}",
-                params: { host_id: room.host.id, start_time: 22.hours.from_now, finish_time: 1.year.from_now },
-                headers: headers
-          expect(response.status).to eq(400)
-        end
-      end
-
-      context 'リクエストにparams[:start_time]が存在せず、stateが' do
-        it 'negotiatingの場合userへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room.id}",
-                  headers: headers
-          end.to change { room.reload.state }.from('negotiating').to('user')
-        end
-
-        it 'userの場合negotiatingへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room_state_user.id}",
-                  headers: headers
-          end.to change { room_state_user.reload.state }.from('user').to('negotiating')
-        end
-
-        it 'hostの場合conclusionへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room_state_host.id}",
-                  headers: headers
-          end.to change { room_state_host.reload.state }.from('host').to('conclusion')
-        end
-
-        it 'canselledの場合ステータスコード400を返す' do
-          patch "/api/rooms/#{room_state_cancelled.id}",
-                headers: headers
-          expect(response.status).to eq(400)
-        end
+        end.not_to change { room.reload.start_time }
       end
     end
 
-    context 'hostとしてログインしており' do
-      before do
+    context 'hostとしてログイン' do
+      it '自分のroomなら更新される' do
+        host_login
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_time",
+                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                headers: headers
+        end.to change { room.reload.start_time }
+      end
+
+      it '自分のroomでなければ更新されない' do
+        room2 = create(:room)
+        host_login
+        expect do
+          patch "/api/rooms/#{room2.id}/update_room_time",
+                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                headers: headers
+        end.not_to change { room.reload.start_time }
+      end
+    end
+
+    def user_login
+      post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+    end
+
+    def host_login
+      post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+    end
+  end
+
+  describe 'PATCH /update_room_state' do
+    it 'ログインしていなければ更新されない' do
+      room = create(:room, state: 'user')
+      expect do
+        patch "/api/rooms/#{room.id}/update_room_state"
+      end.not_to change { room.reload.state }
+    end
+
+    context 'userがログイン' do
+      it 'stateがnegotiatingならuserへ変更される' do
+        room = create(:room, state: 'negotiating')
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'user'
+      end
+
+      it 'stateがuserならnegotiatingへ変更される' do
+        room = create(:room, state: 'user')
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'negotiating'
+      end
+
+      it 'stateがhostならconclusionへ変更される' do
+        room = create(:room, state: 'host')
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'conclusion'
+      end
+
+      it 'stateがその他ならば変更されない' do
+        room = create(:room, state: 'conclusion')
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.not_to change { room.reload.state }
+      end
+    end
+
+    context 'hostがログイン' do
+      it 'stateがnegotiatingならhostへ変更される' do
+        room = create(:room, state: 'negotiating')
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'host'
       end
 
-      context 'リクエストにparams[:start_time]が存在する場合' do
-        it 'Roomの期間を更新できる。' do
-          patch "/api/rooms/#{room.id}",
-                params: { user_id: room.user.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
-                headers: headers
-          expect(response.status).to eq(200)
-        end
-
-        it '失敗ならステータスコード400を返す' do
-          patch "/api/rooms/#{room.id}",
-                params: { user_id: room.user.id, start_time: 22.hours.from_now, finish_time: 1.year.from_now },
-                headers: headers
-          expect(response.status).to eq(400)
-        end
+      it 'stateがuserならconclusionへ変更される' do
+        room = create(:room, state: 'user')
+        post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'conclusion'
       end
 
-      context 'リクエストにparams[:start_time]が存在せず、stateが' do
-        it 'negotiatingの場合hostへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room.id}", headers: headers
-          end.to change { room.reload.state }.from('negotiating').to('host')
-        end
+      it 'stateがhostならnegotiatingへ変更される' do
+        room = create(:room, state: 'host')
+        post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.to change { room.reload.state }.to 'negotiating'
+      end
 
-        it 'hostの場合negotiatingへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room_state_host.id}", headers: headers
-          end.to change { room_state_host.reload.state }.from('host').to('negotiating')
-        end
-
-        it 'userの場合conclusionへ変更される' do
-          expect  do
-            patch "/api/rooms/#{room_state_user.id}", headers: headers
-          end.to change { room_state_user.reload.state }.from('user').to('conclusion')
-        end
-
-        it 'canselledの場合ステータスコード400を返す' do
-          patch "/api/rooms/#{room_state_cancelled.id}", headers: headers
-          expect(response.status).to eq(400)
-        end
+      it 'stateがその他ならば変更されない' do
+        room = create(:room, state: 'conclusion')
+        post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+        expect do
+          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        end.not_to change { room.reload.state }
       end
     end
   end
+
+  ##############################################################
 
   describe 'PATCh /cancell_room' do
     let!(:room) { create(:room) }

@@ -24,123 +24,99 @@ class Api::RoomsController < ApplicationController
 
   def create
     if api_user_signed_in?
-      room = Room.new(room_user_signed_in_params)
-      if room.save
-        HostRequest.find(params[:request_id]).destroy
-        render json: { id: room.id, state: room.state, closed: room.closed, user: room.user, host: room.host, created_at: room.created_at },
-               status: :created
-      else
-        render json: room.errors, status: :bad_request
-      end
+      method = room_user_signed_in_params
+      request = 'Host'
     elsif api_host_signed_in?
-      user = User.find(params[:user_id])
-      room = Room.new(room_host_signed_in_params)
-      if room.save
-        UserRequest.find(params[:request_id]).destroy
-        render json: { id: room.id, state: room.state, closed: room.closed, user: room.user, host: room.host, created_at: room.created_at },
-               status: :created
-      else
-        render json: room.errors, status: :bad_request
-      end
+      method = room_host_signed_in_params
+      request = 'User'
     else
       render body: nil, status: :unauthorized
+      return
+    end
+    room = Room.new(method)
+    if room.save
+      eval("#{request}Request").find(params[:request_id]).destroy
+      render json: { id: room.id, state: room.state, closed: room.closed, user: room.user,
+                     host: room.host, created_at: room.created_at },
+             status: :created
+    else
+      render json: room.errors, status: :bad_request
     end
   end
 
-  def update
+  def update_room_time
     room = Room.find(params[:id])
-    if api_user_signed_in? && current_api_user = room.user
-      if params[:start_time]
-        if room.update(room_user_signed_in_params)
-          render json: room, status: :ok
-        else
-          render json: room.errors, status: :bad_request
-        end
-      else
-        case room.state
-        when 'negotiating'
-          if room.update(state: 'user')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        when 'user'
-          if room.update(state: 'negotiating')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        when 'host'
-          if room.update(state: 'conclusion')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        else
-          render body: nil, status: :bad_request
-        end
-      end
-    elsif api_host_signed_in? && current_api_host = room.host
-      if params[:start_time]
-        if room.update(room_host_signed_in_params)
-          render json: room, status: :ok
-        else
-          render json: room.errors, status: :bad_request
-        end
-      else
-        case room.state
-        when 'negotiating'
-          if room.update(state: 'host')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        when 'user'
-          if room.update(state: 'conclusion')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        when 'host'
-          if room.update(state: 'negotiating')
-            render json: room, status: :ok
-          else
-            render json: room.errors, status: :bad_request
-          end
-        else
-          render body: nil, status: :bad_request
-        end
-      end
+    if user_login_and_own?(room.user.id)
+      # 時間が更新される
+      render json: room.errors, status: :bad_request unless room.update(room_user_signed_in_params)
+    elsif host_login_and_own?(room.host.id)
+      render json: room.errors, status: :bad_request unless room.update(room_host_signed_in_params)
     else
       render body: nil, status: :forbidden
     end
   end
 
+  def update_room_state
+    room = Room.find(params[:id])
+    if user_login_and_own?(room.user.id)
+      negotiating_to = 'user'
+      user_to = 'negotiating'
+      host_to = 'conclusion'
+
+    elsif host_login_and_own?(room.host.id)
+      negotiating_to = 'host'
+      user_to = 'conclusion'
+      host_to = 'negotiating'
+    else
+      render body: nil, status: :forbidden
+      return
+    end
+
+    case room.state
+    when 'negotiating'
+      if room.update(state: negotiating_to)
+        render json: room, status: :ok
+      else
+        render json: room.errors, status: :bad_request
+      end
+    when 'user'
+      if room.update(state: user_to)
+        render json: room, status: :ok
+      else
+        render json: room.errors, status: :bad_request
+      end
+    when 'host'
+      if room.update(state: host_to)
+        render json: room, status: :ok
+      else
+        render json: room.errors, status: :bad_request
+      end
+    else
+      render body: nil, status: :bad_request
+    end
+  end
+
   def cancell_room
     room = Room.find(params[:id])
-    if api_user_signed_in? && current_api_user === room.user
-      case room.closed
-      when 'na'
-        closed_value = 'user'
-      when 'host'
-        closed_value = 'both'
-      end
-      state_value = 'cancelled'
-      room.update_state(state_value)
-      room.update_closed(closed_value)
-      render json: { state: room.state, closed: room.closed }
-    elsif api_host_signed_in? && current_api_host === room.host
-      case room.closed
-      when 'na'
-        closed_value = 'host'
-      when 'user'
-        closed_value = 'both'
-      end
-      state_value = 'cancelled'
-      room.update_state(state_value)
-      room.update_closed(closed_value)
-      render json: { state: room.state, closed: room.closed }
+    if user_login_and_own?(room.user.id)
+      na_to = 'user'
+    elsif host_login_and_own?(room.host.id)
+      na_to = 'host'
+    else
+      render body: nil, status: :forbidden
+      return
     end
+
+    case room.closed
+    when 'na'
+      room.update(closed: na_to)
+    when 'host' || 'user'
+      room.update(closed: 'both')
+    else
+      render body: nil, status: :bad_request
+    end
+    room.update(state: 'cancelled')
+    render json: { state: room.state, closed: room.closed }
   end
 
   private

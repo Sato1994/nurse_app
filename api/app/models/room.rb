@@ -21,6 +21,7 @@ class Room < ApplicationRecord
   enum state: { negotiating: 0, user: 1, host: 2, conclusion:3, cancelled: 4 }, _suffix: true
   enum closed: { na: 0, user: 1, host: 2, both: 3}, _suffix: true
 
+  # バリデーション
   def duplication_of_room_create
     if Room.where('finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id, host_id).exists?
       errors.add(:start_time, "同じお相手と同じ時間帯で交渉中です。")

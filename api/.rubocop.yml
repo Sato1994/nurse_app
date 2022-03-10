@@ -58,3 +58,15 @@ Rails/SkipsModelValidations:
 
 Style/ClassAndModuleChildren:
   Enabled: false
+
+Style/EvalWithLocation:
+  Enabled: false
+
+Security/Eval:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
