@@ -1,4 +1,4 @@
-export default ({ $axios }) => {
+export default ({ $axios, redirect }) => {
   // リクエストログ
   $axios.onRequest((config) => {
     console.log(config)
@@ -10,5 +10,11 @@ export default ({ $axios }) => {
   // エラーログ
   $axios.onError((e) => {
     console.log(e.response)
+  })
+  // 401エラーならホームへ遷移
+  $axios.onError((e) => {
+    if (e.response.status === 401) {
+      redirect('/')
+    }
   })
 }
