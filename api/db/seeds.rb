@@ -1,35 +1,22 @@
-50.times do |n|
-  # name = Faker::Name.first_name
-  name = 'login'
-  email = Faker::Internet.email
-  myid = Faker::Lorem.characters(number: 10)
-  password = "password"
-  address = Faker::Address.name
-  wanted = [true, false].sample
-  sex = [true, false].sample
-  age = rand(20..60)
-  year = rand(0..39)
-  profile = Faker::Movies::HarryPotter.quote
+# frozen_string_literal: true
 
-  # User.create(
-  #   name: name,
-  #   email: email,
-  #   myid: myid,
-  #   password: password,
-  #   address: address,
-  #   wanted: wanted,
-  #   sex: sex,
-  #   age: age,
-  #   year: year,
-  #   profile: profile
-  # )
-  Host.create(
-    name: name,
-    email: email,
-    myid: myid,
-    password: password,
-    address: address,
-    wanted: wanted,
-    profile: profile
-  )
-end
+# Skill
+Skill.create([
+               # ,{name: ''}
+               # common
+               { name: '生活指導' }, { name: '輸血管理' }, { name: 'シリンジポンプの取り扱い' }, { name: '採血' },
+               # 手術室系
+               { name: '手術室看護' }, { name: '器械出し' }, { name: '外回り' }, { name: '麻酔介助' },
+               # 消化器系
+               { name: 'ストーマの取り扱い' }, { name: '消化器手術後のオリエンテーション' }, { name: '腹水穿刺' }, { name: '内視鏡検査介助' }, { name: '糖尿病患者への退院指導' },
+               # 小児系
+               { name: '小児看護' }, { name: '小児のプレパレーション' }, { name: '小児家族に対する援助' }, { name: '小児への与薬' }, { name: '小児へのギプス固定' },
+               # 循環器系
+               { name: '心電図の判読' }, { name: 'ホルター心電図検査の介助' }, { name: '心臓カテーテル検査の介助' }, { name: '運動負荷心電図検査の介助' }, { name: 'Aラインからの採血' },
+               { name: '気管切開時の介助' }, { name: '胸腔ドレナージの介助' }, { name: 'PCPS患者のケア' }, { name: 'カテーテルアブレーションの基礎知識' }, { name: '循環器手術後のオリエンテーション' },
+
+               # ICU系
+               { name: '人工呼吸器の管理' }, { name: '人工呼吸器の挿入、抜去時介助' }, { name: 'ペースメーカー導入、抜去時介助' }, { name: '一時的ペースメーカの固定・接続・設定' },
+               { name: 'BLS' }, { name: 'ICLS' }, { name: 'ACLS' }, { name: 'PALS' }, { name: '創傷部留置ドレーンの管理' }, { name: '早期離床' }
+
+             ])
