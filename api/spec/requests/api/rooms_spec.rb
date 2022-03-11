@@ -11,12 +11,21 @@ RSpec.describe 'Api::Rooms', type: :request do
   describe 'GET /show' do
     let(:room) { create(:room) }
 
-    it '他人の場合jsonを返さない' do
-      user2 = create(:user)
-      post '/api/user/sign_in', params: { email: user2.email, password: user2.password }
-      get "/api/rooms/#{room.id}", headers: headers
-      json = JSON.parse(response.body)
-      expect(json).to be_nil
+    context '他人がログイン' do
+      before do
+        user2 = create(:user)
+        post '/api/user/sign_in', params: { email: user2.email, password: user2.password }
+        get "/api/rooms/#{room.id}", headers: headers
+      end
+
+      it 'jsonを返さない' do
+        json = JSON.parse(response.body)
+        expect(json).to be_nil
+      end
+
+      it 'status unauthorized(401)を返す' do
+        expect(response.status).to eq(401)
+      end
     end
 
     context 'userがログイン' do
