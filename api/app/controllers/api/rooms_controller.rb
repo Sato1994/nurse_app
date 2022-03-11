@@ -3,20 +3,24 @@
 class Api::RoomsController < ApplicationController
   def show
     @room = Room.find(params[:id])
-    @user_messages = @room.user_messages
-    @host_messages = @room.host_messages
-    @start_time = @room.start_time
-    @finish_time = @room.finish_time
-    @state = @room.state
-    @closed = @room.closed
-    if api_user_signed_in? && current_api_user = @room.user
+    if user_login_and_own?(@room.user.id)
       @partner = @room.host
+      @user_messages = @room.user_messages
+      @host_messages = @room.host_messages
+      @start_time = @room.start_time
+      @finish_time = @room.finish_time
+      @state = @room.state
+      @closed = @room.closed
       render 'show', formats: :json, handlers: :jbuilder
-      # render json: nil, status: 403
-    elsif api_host_signed_in? && current_api_host = @room.host
+    elsif host_login_and_own?(@room.host.id)
+      @user_messages = @room.user_messages
+      @host_messages = @room.host_messages
+      @start_time = @room.start_time
+      @finish_time = @room.finish_time
+      @state = @room.state
+      @closed = @room.closed
       @partner = @room.user
       render 'show', formats: :json, handlers: :jbuilder
-      # render json: nil, status: 403
     else
       render json: nil, status: :unauthorized
     end

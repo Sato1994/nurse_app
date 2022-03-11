@@ -8,6 +8,36 @@ RSpec.describe 'Api::Rooms', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  describe 'GET /show' do
+    let(:room) { create(:room) }
+
+    it '他人の場合jsonを返さない' do
+      user2 = create(:user)
+      post '/api/user/sign_in', params: { email: user2.email, password: user2.password }
+      get "/api/rooms/#{room.id}", headers: headers
+      json = JSON.parse(response.body)
+      expect(json).to be_nil
+    end
+
+    context 'userがログイン' do
+      it '自分のroomなら必要数のjsonを返す' do
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        get "/api/rooms/#{room.id}", headers: headers
+        json = JSON.parse(response.body)
+        expect(json.count).to eq(8)
+      end
+    end
+
+    context 'hostがログイン' do
+      it '自分のroomなら必要数のjsonを返す' do
+        post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+        get "/api/rooms/#{room.id}", headers: headers
+        json = JSON.parse(response.body)
+        expect(json.count).to eq(8)
+      end
+    end
+  end
+
   describe 'POST /create' do
     let!(:free_time) { create(:free_time) }
     let!(:recruitment_time) { create(:recruitment_time) }
@@ -241,8 +271,6 @@ RSpec.describe 'Api::Rooms', type: :request do
       end
     end
   end
-
-  ##############################################################
 
   describe 'PATCh /cancell_room' do
     let!(:room) { create(:room) }
