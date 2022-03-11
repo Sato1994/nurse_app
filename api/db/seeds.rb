@@ -93,12 +93,14 @@ Skill.create([
                # 手術室系
                { name: '手術室看護' }, { name: '器械出し' }, { name: '外回り' }, { name: '麻酔介助' },
                # 消化器系
-               { name: 'ストーマの取り扱い' }, { name: '消化器手術後のオリエンテーション' }, { name: '腹水穿刺' }, { name: '内視鏡検査介助' }, { name: '糖尿病患者への退院指導' },
+               { name: 'ストーマの取り扱い' }, { name: '消化器手術後のオリエンテーション' }, { name: '腹水穿刺' }, { name: '内視鏡検査介助' },
+               { name: '糖尿病患者への退院指導' },
                # 小児系
                { name: '小児看護' }, { name: '小児のプレパレーション' }, { name: '小児家族に対する援助' }, { name: '小児への与薬' }, { name: '小児へのギプス固定' },
                # 循環器系
-               { name: '心電図の判読' }, { name: 'ホルター心電図検査の介助' }, { name: '心臓カテーテル検査の介助' }, { name: '運動負荷心電図検査の介助' }, { name: 'Aラインからの採血' },
-               { name: '気管切開時の介助' }, { name: '胸腔ドレナージの介助' }, { name: 'PCPS患者のケア' }, { name: 'カテーテルアブレーションの基礎知識' }, { name: '循環器手術後のオリエンテーション' },
+               { name: '心電図の判読' }, { name: 'ホルター心電図検査の介助' }, { name: '心臓カテーテル検査の介助' }, { name: '運動負荷心電図検査の介助' },
+               { name: 'Aラインからの採血' }, { name: '気管切開時の介助' }, { name: '胸腔ドレナージの介助' }, { name: 'PCPS患者のケア' },
+               { name: 'カテーテルアブレーションの基礎知識' }, { name: '循環器手術後のオリエンテーション' },
 
                # ICU系
                { name: '人工呼吸器の管理' }, { name: '人工呼吸器の挿入、抜去時介助' }, { name: 'ペースメーカー導入、抜去時介助' }, { name: '一時的ペースメーカの固定・接続・設定' },
@@ -131,6 +133,31 @@ CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
     sex: [true, false].sample,
     age: rand(20..60),
     year: rand(0..39),
-    profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample} #{user_fourth.sample} #{user_fifth.sample} #{user_sixth.sample}"
+    profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample} #{user_fourth.sample}
+              #{user_fifth.sample} #{user_sixth.sample}"
   )
 end
+
+# gest host
+Host.create(
+  name: '東京都立孝之協同病院',
+  email: 'takayuki@guest.host',
+  myid: 'takayuki',
+  password: 'takayukipass',
+  wanted: true,
+  profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
+)
+
+# gest user
+User.create(
+  name: '山田 孝之',
+  email: 'yamada@guest.user',
+  myid: 'yamada',
+  password: 'yamadapass',
+  address: '東京都港区芝公園',
+  wanted: true,
+  age: 27,
+  year: 6,
+  profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample} #{user_fourth.sample}
+  #{user_fifth.sample} #{user_sixth.sample}"
+)
