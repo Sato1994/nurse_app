@@ -8,6 +8,10 @@ AllCops:
   Exclude:
     - vendor/*
     - bin/*
+    - app/jobs/*
+    - app/mailers/*
+    - app/models/concerns/*
+    - app/channels/**/*
     - config/**/*
     - db/migrate/*
     - db/schema.rb
@@ -69,4 +73,7 @@ Style/DocumentDynamicEvalDefinition:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Naming/MethodParameterName:
   Enabled: false
