@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class UserSkill < ApplicationRecord
   belongs_to :user
   belongs_to :skill
 
   validates :user_id, presence: true
   validates :skill_id, presence: true
-  validates_uniqueness_of :skill_id, scope: :user_id
+  validates :skill_id, uniqueness: { scope: :user_id }
 end

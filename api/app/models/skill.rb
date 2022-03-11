@@ -1,5 +1,6 @@
-class Skill < ApplicationRecord
+# frozen_string_literal: true
 
+class Skill < ApplicationRecord
   has_many :user_skills, dependent: :destroy
   has_many :users, through: :user_skills
 
@@ -7,6 +8,4 @@ class Skill < ApplicationRecord
   has_many :hosts, through: :host_skills
 
   validates :name, uniqueness: true, presence: true, length: { maximum: 30 }
-
-
 end
