@@ -65,6 +65,8 @@ export default {
       { title: 'お相手検索' },
       { title: 'リクエスト一覧' },
       { title: 'メッセージ' },
+      { title: 'user' },
+      { title: 'host' },
     ],
 
     unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
@@ -92,6 +94,115 @@ export default {
         case 2:
           this.$router.push('/rooms')
           break
+        case 3:
+          this.$axios
+            .post('/api/user/sign_in', {
+              email: 'yamada@guest.user',
+              password: 'yamadapass',
+            })
+            .then((response) => {
+              this.$cookies.set('user', 'user')
+              this.isDisplay = false
+              this.$cookies.set('myid', response.data.data.myid)
+              const authInfo = {
+                'access-token': response.headers['access-token'],
+                client: response.headers.client,
+                uid: response.headers.uid,
+              }
+              this.$cookies.set('authInfo', authInfo)
+              // ログイン者情報の取得
+              this.$axios
+                .get(
+                  `/api/${this.$cookies.get('user')}s/${
+                    response.data.data.myid
+                  }`,
+                  { headers: this.$cookies.get('authInfo') }
+                )
+                .then((response) => {
+                  this.$store.dispatch('info/saveInfo', response.data.info)
+                  this.$store.dispatch(
+                    'skills/saveSkills',
+                    response.data.skills
+                  )
+                  this.$store.dispatch('times/saveTimes', response.data.times)
+                  this.$store.dispatch(
+                    'requests/saveRequests',
+                    response.data.requests
+                  )
+                  this.$store.dispatch(
+                    'agreements/saveAgreements',
+                    response.data.agreements
+                  )
+                  this.$store.dispatch(
+                    'offers/saveOffers',
+                    response.data.offers
+                  )
+                  this.$store.dispatch('rooms/saveRooms', response.data.rooms)
+                  console.log('サインインでdispatchは成功')
+                  this.$router.push(
+                    `/${this.$cookies.get('user')}/${response.data.info.myid}`
+                  )
+                })
+                .catch(() => {
+                  this.$cookies.removeAll()
+                  console.log('サインイン失敗')
+                })
+            })
+          break
+        case 4:
+          this.$axios
+            .post('/api/host/sign_in', {
+              email: 'takayuki@guest.host',
+              password: 'takayukipass',
+            })
+            .then((response) => {
+              this.$cookies.set('user', 'host')
+              this.isDisplay = false
+              this.$cookies.set('myid', response.data.data.myid)
+              const authInfo = {
+                'access-token': response.headers['access-token'],
+                client: response.headers.client,
+                uid: response.headers.uid,
+              }
+              this.$cookies.set('authInfo', authInfo)
+              // ログイン者情報の取得
+              this.$axios
+                .get(
+                  `/api/${this.$cookies.get('user')}s/${
+                    response.data.data.myid
+                  }`,
+                  { headers: this.$cookies.get('authInfo') }
+                )
+                .then((response) => {
+                  this.$store.dispatch('info/saveInfo', response.data.info)
+                  this.$store.dispatch(
+                    'skills/saveSkills',
+                    response.data.skills
+                  )
+                  this.$store.dispatch('times/saveTimes', response.data.times)
+                  this.$store.dispatch(
+                    'requests/saveRequests',
+                    response.data.requests
+                  )
+                  this.$store.dispatch(
+                    'agreements/saveAgreements',
+                    response.data.agreements
+                  )
+                  this.$store.dispatch(
+                    'offers/saveOffers',
+                    response.data.offers
+                  )
+                  this.$store.dispatch('rooms/saveRooms', response.data.rooms)
+                  console.log('サインインでdispatchは成功')
+                  this.$router.push(
+                    `/${this.$cookies.get('user')}/${response.data.info.myid}`
+                  )
+                })
+                .catch(() => {
+                  this.$cookies.removeAll()
+                  console.log('サインイン失敗')
+                })
+            })
       }
     },
 
