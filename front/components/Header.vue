@@ -85,11 +85,7 @@ export default {
           this.$router.push('/')
           break
         case 1:
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${
-              this.$store.state.info.info.myid
-            }/agreements`
-          )
+          this.$router.push(`/agreements`)
           break
         case 2:
           this.$router.push('/rooms')
