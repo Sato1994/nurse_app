@@ -170,7 +170,8 @@ end
 end
 ##################################################################################################################################
 
-# gest host ######################################################################################################################
+# host ###########################################################################################################################
+# guest host
 guest_host = Host.create(
   name: '東京都立孝之協同病院',
   email: 'takayuki@guest.host',
@@ -180,9 +181,21 @@ guest_host = Host.create(
   wanted: true,
   profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
 )
+
+# other host
+other_host = Host.create(
+  name: '平成餅麦病院',
+  email: Faker::Internet.email,
+  address: '東京都足立区谷中2丁目16-7',
+  myid: 'mochimugi',
+  password: 'llllll',
+  wanted: true,
+  profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
+)
 ##################################################################################################################################
 
-# gest user ######################################################################################################################
+# user ###########################################################################################################################
+# guest user
 guest_user = User.create(
   name: '山田 孝之',
   email: 'yamada@guest.user',
@@ -192,24 +205,308 @@ guest_user = User.create(
   wanted: true,
   age: 27,
   year: 6,
-  profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample} #{user_fourth.sample}
-  #{user_fifth.sample} #{user_sixth.sample}"
+  profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample}
+            #{user_fourth.sample} #{user_fifth.sample} #{user_sixth.sample}"
+)
+
+# other user
+other_user = User.create(
+  name: '松本 人志',
+  email: 'hitoshi@matsumoto.com',
+  myid: 'matsumoto',
+  password: 'llllll',
+  address: '東京都杉並区永福',
+  wanted: true,
+  age: 56,
+  year: 30,
+  profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample}
+            #{user_fourth.sample} #{user_fifth.sample} #{user_sixth.sample}"
 )
 ##################################################################################################################################
 
-# guest userのfree_times #########################################################################################################
-FreeTime.create(
+##################################################################################################################################
+
+# free_times #####################################################################################################################
+# guest user
+# 2日後の20:00~
+guest_user_time_1 = FreeTime.create(
   user_id: guest_user.id,
-  start_time: 24.hours.from_now,
-  finish_time: 32.hours.from_now
+  start_time: a = Time.current.since(2.days).beginning_of_day + 20.hours,
+  finish_time: a + 40.hours
+)
+# 8日後の8:30~
+guest_user_time_2 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(8.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 8.hours + 30.minutes
+)
+
+# 12日後の 9:00~
+guest_user_time_3 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(12.days).beginning_of_day + 9.hours,
+  finish_time: a + 9.hours
+)
+# 17日後の 21:00~
+guest_user_time_4 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(17.days).beginning_of_day + 21.hours,
+  finish_time: a + 15.hours
+)
+# 20日後の 9:00~
+guest_user_time_5 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(20.days).beginning_of_day + 9.hours,
+  finish_time: a + 34.hours
+)
+# 23日後の 12:30~
+guest_user_time_6 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(23.days).beginning_of_day + 12.hours + 30.minutes,
+  finish_time: a + 8.hours + 30.minutes
+)
+# 26日後の 12:30~
+guest_user_time_7 = FreeTime.create(
+  user_id: guest_user.id,
+  start_time: a = Time.current.since(26.days).beginning_of_day + 12.hours + 30.minutes,
+  finish_time: a + 21.hours + 30.minutes
+)
+
+# other user
+# 20日後の 9:00~
+other_user_time_1 = FreeTime.create(
+  user_id: other_user.id,
+  start_time: a = Time.current.since(20.days).beginning_of_day + 7.hours,
+  finish_time: a + 12.hours
 )
 ##################################################################################################################################
 
 # guest hostの recruitment_times #################################################################################################
+
+# 6日後の8:30~
+guest_host_time_1 = RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(6.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 9.hours + 30.minutes
+)
+# 7日後の8:30~
 RecruitmentTime.create(
   host_id: guest_host.id,
-  start_time: 24.hours.from_now,
-  finish_time: 40.hours.from_now
+  start_time: a = Time.current.since(7.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 9.hours + 30.minutes
+)
+# 8日後の8:30~
+RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(8.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 9.hours + 30.minutes
+)
+# 9日後の8:30~
+RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(9.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 9.hours + 30.minutes
+)
+# 15日後の17:00~
+RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(15.days).beginning_of_day + 17.hours,
+  finish_time: a + 16.hours
+)
+# 20日後の9:00~
+guest_host_time_2 = RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(20.days).beginning_of_day + 9.hours,
+  finish_time: a + 8.hours
+)
+# 24日後の8:30~
+RecruitmentTime.create(
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(24.days).beginning_of_day + 8.hours + 30.minutes,
+  finish_time: a + 12.hours + 30.minutes
+)
+##################################################################################################################################
+
+# guest userの user_requests #####################################################################################################
+UserRequest.create([
+                     {
+                       user_id: guest_user.id, recruitment_time_id: guest_host_time_1.id,
+                       start_time: guest_host_time_1.start_time, finish_time: guest_host_time_1.finish_time
+                     },
+                     {
+                       user_id: guest_user.id, recruitment_time_id: guest_host_time_2.id,
+                       start_time: guest_host_time_2.start_time, finish_time: guest_host_time_2.finish_time
+                     }
+                   ])
+##################################################################################################################################
+
+# host_requests ##################################################################################################################
+HostRequest.create([
+                     # (guest host - guest user)
+                     {
+                       host_id: guest_host.id, free_time_id: guest_user_time_1.id,
+                       start_time: a = guest_user_time_1.start_time + 2.hours, finish_time: a + 10.hours
+                     },
+                     # (guest host - other user)
+                     {
+                       host_id: guest_host.id, free_time_id: other_user_time_1.id,
+                       start_time: a = other_user_time_1.start_time + 2.hours, finish_time: a + 8.hours
+                     },
+                     # (other host - guest user)
+                     {
+                       host_id: other_host.id, free_time_id: guest_user_time_5.id,
+                       start_time: a = guest_user_time_5.start_time + 3.hours, finish_time: a + 30.hours
+                     }
+                   ])
+##################################################################################################################################
+
+# rooms, agreement ###############################################################################################################
+# (guest user - guest host)
+room_1 = Room.create(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(7.days).beginning_of_day + 12.hours,
+  finish_time: a + 5.hours,
+  state: 'conclusion'
+)
+Agreement.create(
+  room_id: room_1.id,
+  user_id: room_1.user_id,
+  host_id: room_1.host_id,
+  start_time: room_1.start_time,
+  finish_time: room_1.finish_time
+)
+
+room_3 = Room.create(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(24.days).beginning_of_day + 10.hours,
+  finish_time: a + 11.hours,
+  state: 'conclusion'
+)
+Agreement.create(
+  room_id: room_3.id,
+  user_id: room_3.user_id,
+  host_id: room_3.host_id,
+  start_time: room_3.start_time,
+  finish_time: room_3.finish_time
+)
+
+# (guest user - other host)
+room_2 = Room.create(
+  user_id: guest_user.id,
+  host_id: other_host.id,
+  start_time: a = Time.current.since(10.days).beginning_of_day + 21.hours,
+  finish_time: a + 11.hours + 30.minutes,
+  state: 'conclusion'
+)
+Agreement.create(
+  room_id: room_2.id,
+  user_id: room_2.user_id,
+  host_id: room_2.host_id,
+  start_time: room_2.start_time,
+  finish_time: room_2.finish_time
+)
+
+# (guest host - other user)
+room_4 = Room.create(
+  user_id: other_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.since(15.days).beginning_of_day + 17.hours,
+  finish_time: a + 5.hours,
+  state: 'conclusion'
+)
+Agreement.create(
+  room_id: room_4.id,
+  user_id: room_4.user_id,
+  host_id: room_4.host_id,
+  start_time: room_4.start_time,
+  finish_time: room_4.finish_time
+)
+##################################################################################################################################
+
+# messages #######################################################################################################################
+# room_1
+HostMessage.create(
+  room_id: room_1.id,
+  message: 'いきなり申請失礼します。今提示してあります時間帯で勤務いかがでしょうか。',
+  created_at: a = Time.current.ago(7.days)
+)
+UserMessage.create(
+  room_id: room_1.id,
+  message: 'すみません。少し用事が入ってしまいまして、12時からなら可能なのですが、、、',
+  created_at: a + 20.minutes
+)
+HostMessage.create(
+  room_id: room_1.id,
+  message: '12時からでもありがたいです。時間を変更しておきましたので契約お願いします。',
+  created_at: a + 40.minutes
+)
+UserMessage.create(
+  room_id: room_1.id,
+  message: '契約しました。よろしくお願いします！',
+  created_at: a + 60.minutes
+)
+
+# room_2
+UserMessage.create(
+  room_id: room_2.id,
+  message: 'このあたりの時間で夜勤入れませんか？',
+  created_at: a = Time.current.ago(5.days)
+)
+HostMessage.create(
+  room_id: room_2.id,
+  message: '忙しくなるので覚悟してよ～。こっちは申請してくれた時間で許可したからね。',
+  created_at: a + 30.minutes
+)
+UserMessage.create(
+  room_id: room_2.id,
+  message: '忙しいのは嫌いじゃありません。よろしくお願いします。',
+  created_at: a + 45.minutes
+)
+
+# room_3
+UserMessage.create(
+  room_id: room_3.id,
+  message: 'どうしてもこの日に入りたいんです。',
+  created_at: a = Time.current.ago(3.days)
+)
+HostMessage.create(
+  room_id: room_3.id,
+  message: 'そんな日もありますね。8時30分から勤務できないですか？',
+  created_at: a + 70.minutes
+)
+UserMessage.create(
+  room_id: room_3.id,
+  message: '朝は必ず寝坊してしまうので10時以降でお願いします。',
+  created_at: a + 100.minutes
+)
+HostMessage.create(
+  room_id: room_3.id,
+  message: '分かりました。では10時でいいですね？',
+  created_at: a + 120.minutes
+)
+UserMessage.create(
+  room_id: room_3.id,
+  message: 'お願いします。',
+  created_at: a + 135.minutes
+)
+
+# room4
+UserMessage.create(
+  room_id: room_4.id,
+  message: '夜勤はできないですけど22時くらいまでとかでできませんか？',
+  created_at: a = Time.current.ago(4.days)
+)
+HostMessage.create(
+  room_id: room_4.id,
+  message: 'まぁしょうがないからいいかー。',
+  created_at: a + 155.minutes
+)
+UserMessage.create(
+  room_id: room_4.id,
+  message: 'やったー',
+  created_at: a + 200.minutes
 )
 ##################################################################################################################################
 
