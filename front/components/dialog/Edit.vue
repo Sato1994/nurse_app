@@ -119,18 +119,19 @@ export default {
       { text: '女性', value: true },
       { text: '男性', value: false },
     ],
+    copiedInfo: [],
   }),
 
   computed: {
-    copiedInfo() {
-      return Object.assign({}, this.$store.getters['info/info'])
-    },
-
     nameLabel() {
       return this.$cookies.get('user') === 'user'
         ? '名前（フルネーム）'
         : '病院名'
     },
+  },
+
+  created() {
+    this.copiedInfo = Object.assign({}, this.$store.getters['info/info'])
   },
 
   methods: {
