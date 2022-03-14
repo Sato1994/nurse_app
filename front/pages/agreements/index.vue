@@ -71,7 +71,9 @@ export default {
 
   methods: {
     jumpPartner(myid) {
-      this.$router.push(`/host/${myid}`)
+      this.$router.push(
+        `/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${myid}`
+      )
     },
     editAgreement(agreementId, roomId) {
       this.$axios
