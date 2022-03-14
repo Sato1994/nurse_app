@@ -117,7 +117,7 @@ end
 
 # hosts ##########################################################################################################################
 CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
-  Host.create(
+  hosts = Host.create(
     name: row['name'],
     email: Faker::Internet.email,
     myid: Faker::Lorem.characters(number: 10),
@@ -155,7 +155,24 @@ User.all.each do |user|
 end
 ##################################################################################################################################
 
-# users, hostsのskills############################################################################################################
+# seedsのtimes ########################################################################################################
+%w[user host].each do |me|
+  eval("#{me}s_ids.each do |id|
+    pre_time = Time.current.beginning_of_day.since(rand(2..7).days) + rand(0..23).hours + [0, 15, 45].sample.minutes
+    rand(3..5).times do
+      time = #{me == 'user' ? 'Free' : 'Recruitment'}Time.create(
+        #{me}_id: id,
+        start_time: a = pre_time + rand(3..120).hours,
+        finish_time: a + rand(1..17).hours
+      )
+      pre_time = time.finish_time
+    end
+  end")
+end
+
+##################################################################################################################################
+
+# seedsのskills############################################################################################################
 %w[user host].each do |me|
   eval("#{me}s_ids.each do |#{me}_id|
     copy_array = skills_ids.dup
@@ -222,8 +239,6 @@ other_user = User.create(
   profile: "#{user_first.sample} #{user_second.sample} #{user_third.sample}
             #{user_fourth.sample} #{user_fifth.sample} #{user_sixth.sample}"
 )
-##################################################################################################################################
-
 ##################################################################################################################################
 
 # free_times #####################################################################################################################
