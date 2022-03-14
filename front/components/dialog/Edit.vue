@@ -38,7 +38,7 @@
                   label="住所"
                   required
                   color="warning"
-                  disabled
+                  :disabled="$cookies.get('user') === 'user' ? true : false"
                 ></v-text-field>
               </v-col>
 
