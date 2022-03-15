@@ -49,7 +49,17 @@ class Api::AgreementsController < ApplicationController
   # agreementキャンセル
   def cancell
     agreement = Agreement.find(params[:id])
-    agreement.cancell_agreement if api_user_signed_in? && current_api_user == agreement.user
+    return unless user_login_and_own?(agreement.user_id)
+
+    if agreement.start_time > (48.hours.from_now)
+      agreement.cancell_agreement
+    else
+      return unless params[:comment]
+
+      # cancell comment 作成
+      cancell_comment = CancellComment.new(cancell_comment_params)
+      agreement.cancell_agreement if cancell_comment.save
+    end
   end
 
   # before action
@@ -79,5 +89,9 @@ class Api::AgreementsController < ApplicationController
     params.permit(:user_id, :room_id).merge(state: 'before', host_id: current_api_host.id,
                                             start_time: Time.zone.parse(params[:start_time]),
                                             finish_time: Time.zone.parse(params[:finish_time]))
+  end
+
+  def cancell_comment_params
+    params.permit(:comment).merge(agreement_id: params[:id])
   end
 end
