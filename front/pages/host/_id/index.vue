@@ -191,6 +191,12 @@ export default {
     events: [],
   }),
 
+  head() {
+    return {
+      title: this.target.name,
+    }
+  },
+
   computed: {
     wantedChipColor() {
       return this.target.wanted === true ? 'green' : 'red'

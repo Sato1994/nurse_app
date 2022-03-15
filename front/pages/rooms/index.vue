@@ -46,6 +46,11 @@
 <script>
 export default {
   data: () => ({}),
+
+  head: {
+    title: 'メッセージ',
+  },
+
   computed: {
     myRooms() {
       return this.$store.getters['rooms/unclosedRooms'](

@@ -63,6 +63,10 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
+  head: {
+    title: '契約一覧',
+  },
+
   computed: {
     ...mapGetters({
       agreementsInProgress: 'agreements/agreementsInProgress',
