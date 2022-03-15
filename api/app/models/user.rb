@@ -17,6 +17,7 @@ class User < ApplicationRecord
   has_many :recruitment_times, through: :user_requests
   has_many :rooms, dependent: :destroy
   has_many :user_messages, through: :rooms
+  has_many :cancell_comments, through: :agreements
 
   # 個人のページのURLをmyidにする。
   def to_param

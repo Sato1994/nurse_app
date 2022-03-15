@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_03_115650) do
+ActiveRecord::Schema.define(version: 2022_03_15_053812) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -24,6 +24,14 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.index ["host_id"], name: "index_agreements_on_host_id"
     t.index ["room_id"], name: "index_agreements_on_room_id"
     t.index ["user_id"], name: "index_agreements_on_user_id"
+  end
+
+  create_table "cancell_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "agreement_id", null: false
+    t.text "comment"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["agreement_id"], name: "index_cancell_comments_on_agreement_id"
   end
 
   create_table "free_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -196,6 +204,7 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
   add_foreign_key "agreements", "hosts"
   add_foreign_key "agreements", "rooms"
   add_foreign_key "agreements", "users"
+  add_foreign_key "cancell_comments", "agreements"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"
   add_foreign_key "host_requests", "free_times"
