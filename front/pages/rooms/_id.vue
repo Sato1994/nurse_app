@@ -159,6 +159,12 @@ export default {
 
   data: () => ({}),
 
+  head() {
+    return {
+      title: 'メッセージ - ' + this.partner.name,
+    }
+  },
+
   computed: {
     formedStartTime() {
       return `${String(this.startTime.year)}-${String(

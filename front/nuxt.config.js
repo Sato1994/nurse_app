@@ -11,8 +11,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - front',
-    title: 'front',
+    titleTemplate: '%s | NurseHop',
+    title: 'Good Nurses and Good Hospitals are here.',
     htmlAttrs: {
       lang: 'en'
     },
