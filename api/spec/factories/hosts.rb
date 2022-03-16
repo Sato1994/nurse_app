@@ -5,6 +5,7 @@ FactoryBot.define do
     name { "#{Faker::Address.city}モチムギ病院" }
     email { Faker::Internet.free_email }
     myid { Faker::Lorem.characters(number: 10) }
+    phone { '02912345678' }
     password { 'password' }
   end
 end

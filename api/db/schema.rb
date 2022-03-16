@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_15_053812) do
+ActiveRecord::Schema.define(version: 2022_03_15_110355) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 2022_03_15_053812) do
 
   create_table "cancell_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "agreement_id", null: false
-    t.text "comment"
+    t.text "comment", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["agreement_id"], name: "index_cancell_comments_on_agreement_id"
@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 2022_03_15_053812) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "myid", null: false
+    t.string "phone", null: false
     t.index ["confirmation_token"], name: "index_hosts_on_confirmation_token", unique: true
     t.index ["email"], name: "index_hosts_on_email", unique: true
     t.index ["myid"], name: "index_hosts_on_myid", unique: true
