@@ -60,8 +60,8 @@ RSpec.describe Host, type: :model do
       expect(host.errors[:phone]).to include("can't be blank")
     end
 
-    it '11字を越えると無効' do
-      host = build(:host, phone: '090123456789')
+    it '13字を越えると無効' do
+      host = build(:host, phone: '090-1234-56789')
       expect(host).to be_invalid
     end
   end
