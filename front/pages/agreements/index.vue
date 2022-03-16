@@ -1,5 +1,13 @@
 <template>
   <v-card flat>
+    <Confirm
+      :confirm-display="confirmDisplay"
+      :confirm-text="confirmText"
+      :confirm-description="confirmDescription"
+      :agree-button-text="agreeButtonText"
+      @click-agree-button="cancellAgreement(agreement.id, agreement.roomId)"
+      @click-disagree-button="confirmDisplay = false"
+    />
     <v-toolbar color="red" dark flat>
       <v-toolbar-title>契約</v-toolbar-title>
 
@@ -43,11 +51,7 @@
           >
             時間変更
           </v-btn>
-          <v-btn
-            text
-            color="warning accent-4"
-            @click="cancellAgreement(agreement.id, agreement.roomId)"
-          >
+          <v-btn text color="warning accent-4" @click="confirmDisplay = true">
             キャンセル
           </v-btn>
         </v-card-actions>
@@ -60,9 +64,24 @@
   </v-card>
 </template>
 
+
 <script>
 import { mapGetters } from 'vuex'
+import Confirm from '@/components/dialog/Confirm.vue'
 export default {
+  components: {
+    Confirm,
+  },
+
+  data() {
+    return {
+      confirmDisplay: false,
+      confirmText: '契約のキャンセル',
+      confirmDescription: `一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`,
+      agreeButtonText: '契約をキャンセル',
+    }
+  },
+
   head: {
     title: '契約一覧',
   },
@@ -79,6 +98,7 @@ export default {
         `/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${myid}`
       )
     },
+
     editAgreement(agreementId, roomId) {
       this.$axios
         .patch(
