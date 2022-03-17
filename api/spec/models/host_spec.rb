@@ -53,13 +53,26 @@ RSpec.describe Host, type: :model do
     end
   end
 
+  describe 'phone' do
+    it 'なければ無効' do
+      host = build(:host, phone: nil)
+      host.valid?
+      expect(host.errors[:phone]).to include("can't be blank")
+    end
+
+    it '13字を越えると無効' do
+      host = build(:host, phone: '090-1234-56789')
+      expect(host).to be_invalid
+    end
+  end
+
   it 'passwordがなければ無効' do
     host = build(:host, password: nil)
     host.valid?
     expect(host.errors[:password]).to include("can't be blank")
   end
 
-  it 'nameとemailとpasswordとmyidがあれば有効' do
+  it 'nameとemailとpasswordとmyid,phoneがあれば有効' do
     host = build(:host)
     host.valid?
     expect(host).to be_valid

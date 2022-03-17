@@ -34,6 +34,7 @@ export const getters = {
         state: obj.state,
         partnerName: obj.partner.name,
         partnerMyid: obj.partner.myid,
+        partnerPhone: obj.partner.phone,
         startTime: {
           year: s.getFullYear(),
           month: s.getMonth() + 1,

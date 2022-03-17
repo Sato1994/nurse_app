@@ -4,6 +4,7 @@ class Agreement < ApplicationRecord
   belongs_to :user
   belongs_to :host
   belongs_to :room
+  has_one :cancell_comment
 
   validates :user, presence: :true
   validates :host, presence: :true

@@ -1,5 +1,15 @@
 <template>
   <v-card flat>
+    <Confirm
+      :dialog="dialog"
+      :confirm-title="confirmTitle"
+      :confirm-description="confirmDescription"
+      :agree-button-text="agreeButtonText"
+      :phone="phone"
+      :commentIsDisplay="commentIsDisplay"
+      @agree-button-click="cancellAgreement"
+      @disagree-button-click="hideDialog"
+    />
     <v-toolbar color="red" dark flat>
       <v-toolbar-title>契約</v-toolbar-title>
 
@@ -46,7 +56,9 @@
           <v-btn
             text
             color="warning accent-4"
-            @click="cancellAgreement(agreement.id, agreement.roomId)"
+            @click="
+              openDialog(agreement.id, agreement.roomId, agreement.partnerPhone)
+            "
           >
             キャンセル
           </v-btn>
@@ -60,9 +72,28 @@
   </v-card>
 </template>
 
+
 <script>
 import { mapGetters } from 'vuex'
+import Confirm from '@/components/dialog/Confirm.vue'
 export default {
+  components: {
+    Confirm,
+  },
+
+  data() {
+    return {
+      dialog: false,
+      commentIsDisplay: false,
+      confirmTitle: '契約のキャンセル',
+      confirmDescription: `一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`,
+      agreeButtonText: '契約をキャンセル',
+      agreementId: null,
+      roomId: null,
+      phone: null,
+    }
+  },
+
   head: {
     title: '契約一覧',
   },
@@ -79,6 +110,7 @@ export default {
         `/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${myid}`
       )
     },
+
     editAgreement(agreementId, roomId) {
       this.$axios
         .patch(
@@ -96,24 +128,45 @@ export default {
           console.log(error)
         })
     },
-    cancellAgreement(agreementId, roomId) {
+
+    cancellAgreement(comment) {
       this.$axios
         .patch(
           '/api/agreements/cancell',
-          { id: agreementId },
+          { id: this.agreementId, comment },
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
           console.log(response)
           this.$store.dispatch('agreements/updateState', {
-            id: agreementId,
+            id: this.agreementId,
             state: 'cancelled',
           })
-          this.$router.push(`/rooms/${roomId}`)
+          this.$router.push(`/rooms/${this.roomId}`)
+          this.dialog = false
         })
         .catch((error) => {
-          console.log(error)
+          if (error.response.status === 400) {
+            this.commentIsDisplay = true
+            this.confirmTitle = '開始時刻まで48時間を切っています。'
+            this.confirmDescription = `お相手に電話して直接キャンセルを申し出てください。\nキャンセル後、簡単に理由を入力し確定を押してください。`
+            this.agreeButtonText = '確定'
+          }
         })
+    },
+    openDialog(agreementId, roomId, phone) {
+      this.dialog = true
+      this.agreementId = agreementId
+      this.roomId = roomId
+      this.phone = phone
+    },
+
+    hideDialog() {
+      this.dialog = false
+      this.commentIsDisplay = false
+      this.confirmTitle = '契約のキャンセル'
+      this.confirmDescription = `一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`
+      this.agreeButtonText = '契約をキャンセル'
     },
   },
 }

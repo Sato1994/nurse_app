@@ -298,7 +298,7 @@ RSpec.describe 'Api::Agreements', type: :request do
         expect(response.status).to eq(400)
       end
 
-      context 'agreementのstart_timeが現在時刻から24時間より猶予がある場合' do
+      context 'agreementのstart_timeが現在時刻から48時間より猶予がある場合' do
         it 'agreement.stateがrequestingに変更される' do
           expect  do
             patch "/api/agreements/#{agreement.id}", headers: headers
@@ -338,7 +338,7 @@ RSpec.describe 'Api::Agreements', type: :request do
                       finish_time: Time.current.change(usec: 0) + 30.hours)
       end
 
-      it 'agreementのstart_timeが現在時刻から24時間以下の場合ステータス400を返す' do
+      it 'agreementのstart_timeが現在時刻から48時間以下の場合ステータス400を返す' do
         room = create(:room, state: 'conclusion', start_time: Time.current.change(usec: 0) + 24.hours,
                              finish_time: Time.current.change(usec: 0) + 30.hours)
         agreement = create(:agreement, room: room, start_time: room.start_time, finish_time: room.finish_time,
@@ -376,29 +376,112 @@ RSpec.describe 'Api::Agreements', type: :request do
   end
 
   describe 'PATCH /cancell' do
-    let!(:room) { create(:room) }
-    let!(:agreement) { create(:agreement, user: room.user, host: room.host, room: room) }
+    describe '現時刻から48時間以上の猶予がある場合場合' do
+      let!(:room) do
+        create(:room, start_time: 100.hours.from_now.change(usec: 0), finish_time: 108.hours.from_now.change(usec: 0))
+      end
+      let!(:agreement) do
+        create(:agreement, user: room.user, host: room.host, room: room, start_time: 103.hours.from_now.change(usec: 0),
+                           finish_time: 111.hours.from_now.change(usec: 0))
+      end
 
-    before do
-      post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
-    end
+      before do
+        post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
+      end
 
-    it 'userとしてログインしていればagreement.stateをcancelledに変更できる' do
-      patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
-      expect(agreement.reload.state).to eq('cancelled')
-    end
-
-    it 'userとしてログインしていればroom.stateをcancelledに変更できる' do
-      patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
-      expect(room.reload.state).to eq('cancelled')
-    end
-
-    it '他人のagreementはキャンセルできない' do
-      user = create(:user)
-      post '/api/user/sign_in', params: { email: user.email, password: user.password }
-      expect  do
+      it 'userとしてログインしていればagreement.stateをcancelledに変更できる' do
         patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
-      end.not_to change { agreement.reload.state }
+        expect(agreement.reload.state).to eq('cancelled')
+      end
+
+      it 'userとしてログインしていればroom.stateをcancelledに変更できる' do
+        patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+        expect(room.reload.state).to eq('cancelled')
+      end
+
+      it '他人のagreementはキャンセルできない' do
+        user = create(:user)
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        expect  do
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+        end.not_to change { agreement.reload.state }
+      end
+    end
+
+    describe '現時刻から48時間以内のもの' do
+      let!(:room) { create(:room) }
+      let!(:agreement) { create(:agreement, user: room.user, host: room.host, room: room) }
+
+      before do
+        post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
+      end
+
+      describe 'パラメータにcommentがあるとき' do
+        it 'cancell_commentが作成される' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id, comment: 'こんにちは' }, headers: headers
+          end.to change(CancellComment, :count).from(0).to(1)
+        end
+
+        it 'room.stateがcancelledに変更される' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id, comment: 'こんにちは' }, headers: headers
+          end.to change { room.reload.state }.to('cancelled')
+        end
+
+        it 'agreement.stateがcancelledに変更される' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id, comment: 'こんにちは' }, headers: headers
+          end.to change { agreement.reload.state }.to('cancelled')
+        end
+      end
+
+      describe 'パラメータにcommentがないとき' do
+        it 'coomentがなければcancell_commentは作成されない' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          end.not_to change { agreement.reload.state }
+        end
+
+        it 'room.stateは変更されない' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          end.not_to change { room.reload.state }
+        end
+
+        it 'agreement.stateは変更されない' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          end.not_to change { agreement.reload.state }
+        end
+
+        it 'status bad_requestを返す(400)' do
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          expect(response.status).to eq(400)     
+        end
+      end
+
+      describe '時間の境界テスト' do
+        it '48時間ちょうどならcomment必要' do
+          time = 48.hours.from_now.change(usec: 0)
+          room = create(:room, start_time: time, finish_time: time + 8.hours)
+          agreement = create(:agreement, user: room.user, host: room.host, room: room, start_time: time,
+                                         finish_time: time + 8.hours)
+          post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          expect(agreement.reload.state).not_to eq('cancelled')
+        end
+
+        it '48時間以上ならcomment不要' do
+          time = 48.hours.from_now.change(usec: 0) + 1.second
+          room = create(:room, start_time: time, finish_time: time + 8.hours)
+          agreement = create(:agreement, user: room.user, host: room.host, room: room, start_time: time,
+                                         finish_time: time + 8.hours)
+          post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          expect(agreement.reload.state).to eq('cancelled')
+        end
+      end
     end
   end
 end

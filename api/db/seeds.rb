@@ -121,6 +121,7 @@ CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
     name: row['name'],
     email: Faker::Internet.email,
     myid: Faker::Lorem.characters(number: 10),
+    phone: row['phone'],
     password: 'llllll',
     address: row['address'],
     wanted: [true, false].sample,
@@ -194,6 +195,7 @@ guest_host = Host.create(
   email: 'takayuki@guest.host',
   address: '東京都新宿区須賀町2-3',
   myid: 'takayuki',
+  phone: '029-1234-5678',
   password: 'takayukipass',
   wanted: true,
   profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
@@ -205,6 +207,7 @@ other_host = Host.create(
   email: Faker::Internet.email,
   address: '東京都足立区谷中2丁目16-7',
   myid: 'mochimugi',
+  phone: '029-9876-5432',
   password: 'llllll',
   wanted: true,
   profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
