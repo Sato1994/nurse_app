@@ -454,6 +454,11 @@ RSpec.describe 'Api::Agreements', type: :request do
             patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
           end.not_to change { agreement.reload.state }
         end
+
+        it 'status bad_requestを返す(400)' do
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+          expect(response.status).to eq(400)     
+        end
       end
 
       describe '時間の境界テスト' do

@@ -54,7 +54,10 @@ class Api::AgreementsController < ApplicationController
     if agreement.start_time > (48.hours.from_now)
       agreement.cancell_agreement
     else
-      return unless params[:comment]
+      if params[:comment].blank?
+        render body:nil, status: :bad_request
+        return
+      end
 
       # cancell comment 作成
       cancell_comment = CancellComment.new(cancell_comment_params)
