@@ -4,7 +4,6 @@
     <v-main class="grey lighten-3">
       <v-container>
         <v-row>
-          <SideMenu />
           <v-col>
             <v-sheet color="orange lighten-5" min-height="70vh" rounded="lg">
               <Nuxt />
@@ -18,11 +17,13 @@
 
 <script>
 import Header from '@/components/Header.vue'
-import SideMenu from '@/components/SideMenu.vue'
 export default {
   components: {
     Header,
-    SideMenu,
+  },
+
+  data() {
+    return {}
   },
 
   async fetch() {

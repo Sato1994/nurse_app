@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" persistent max-width="600px">
+    <v-dialog v-model="isDisplay" max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">ログイン</span>
