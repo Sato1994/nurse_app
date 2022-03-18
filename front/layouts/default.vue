@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <Header @side-menu-click="openSideMenu" />
+    <Header />
     <v-main class="grey lighten-3">
       <v-container>
         <v-row>
