@@ -1,12 +1,15 @@
 <template>
   <v-app id="inspire">
-    <Header />
+    <Header @side-menu-click="openSideMenu" />
     <v-main class="grey lighten-3">
       <v-container>
         <v-row>
-          <SideMenu />
           <v-col>
             <v-sheet color="orange lighten-5" min-height="70vh" rounded="lg">
+              <SideMenu
+                :sideMenu="sideMenu"
+                @close-side-menu-click="closeSideMenu"
+              />
               <Nuxt />
             </v-sheet>
           </v-col>
@@ -23,6 +26,12 @@ export default {
   components: {
     Header,
     SideMenu,
+  },
+
+  data() {
+    return {
+      sideMenu: false,
+    }
   },
 
   async fetch() {
@@ -48,6 +57,15 @@ export default {
           this.$cookies.removeAll()
         })
     }
+  },
+
+  methods: {
+    openSideMenu() {
+      this.sideMenu = !this.sideMenu
+    },
+    closeSideMenu() {
+      this.sideMenu = true
+    },
   },
 }
 </script>
