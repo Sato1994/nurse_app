@@ -6,10 +6,6 @@
         <v-row>
           <v-col>
             <v-sheet color="orange lighten-5" min-height="70vh" rounded="lg">
-              <SideMenu
-                :sideMenu="sideMenu"
-                @close-side-menu-click="closeSideMenu"
-              />
               <Nuxt />
             </v-sheet>
           </v-col>
@@ -21,17 +17,13 @@
 
 <script>
 import Header from '@/components/Header.vue'
-import SideMenu from '@/components/SideMenu.vue'
 export default {
   components: {
     Header,
-    SideMenu,
   },
 
   data() {
-    return {
-      sideMenu: false,
-    }
+    return {}
   },
 
   async fetch() {
@@ -57,15 +49,6 @@ export default {
           this.$cookies.removeAll()
         })
     }
-  },
-
-  methods: {
-    openSideMenu() {
-      this.sideMenu = !this.sideMenu
-    },
-    closeSideMenu() {
-      this.sideMenu = true
-    },
   },
 }
 </script>

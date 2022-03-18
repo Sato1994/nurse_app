@@ -1,11 +1,37 @@
 <template>
   <v-card>
     <v-app-bar dense app color="white" flat>
-      <v-app-bar-nav-icon @click.stop="openSideMenu"></v-app-bar-nav-icon>
+      <v-menu bottom left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+          </v-btn>
+        </template>
+
+        <v-list v-if="!$store.state.info.info.myid" dense>
+          <v-list-item v-for="(item, i) in unAuthItems" :key="i">
+            <v-list-item-title @click="clickUnAuthMenu(i)">{{
+              item.title
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+
+        <v-list v-if="$store.state.info.info.myid" dense>
+          <v-list-item v-for="(item, i) in authItems" :key="i">
+            <v-list-item-title @click="clickAuthMenu(i)">{{
+              item.title
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <v-app-bar-title>NurseHop</v-app-bar-title>
 
       <v-spacer></v-spacer>
+
+      <v-btn v-if="$store.state.info.info.myid" @click="toMyPage" icon>
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
 
       <v-btn @click="loginAsGuestUser" icon>
         <v-icon>mdi-doctor</v-icon>
@@ -58,12 +84,52 @@ export default {
   data() {
     return {
       tabs: null,
+      unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
+      authItems: [{ title: 'ログアウト' }, { title: 'アカウント削除' }],
     }
   },
 
   methods: {
-    openSideMenu() {
-      this.$emit('side-menu-click')
+    clickUnAuthMenu(i) {
+      switch (i) {
+        case 0:
+          this.$refs.selectUserType.isSignIn = true
+          this.$refs.selectUserType.isDisplay = true
+
+          break
+        case 1:
+          this.$refs.selectUserType.isSignIn = false
+          this.$refs.selectUserType.isDisplay = true
+          break
+      }
+    },
+
+    toMyPage() {
+      this.$router.push(
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      )
+    },
+
+    clickAuthMenu(i) {
+      switch (i) {
+        case 0:
+          this.$cookies.removeAll()
+          this.$router.push('/')
+          this.$store.dispatch('info/logout')
+          break
+
+        case 1:
+          this.$axios
+            .delete(`/api/${this.$cookies.get('user')}`, {
+              headers: this.$cookies.get('authInfo'),
+            })
+            .then(() => {
+              this.$cookies.removeAll()
+              this.$router.push('/')
+              this.$store.dispatch('info/logout')
+            })
+          break
+      }
     },
 
     loginAsGuestUser() {
