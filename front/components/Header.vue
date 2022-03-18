@@ -129,6 +129,7 @@ export default {
           this.$cookies.removeAll()
           this.$router.push('/')
           this.$store.dispatch('info/logout')
+          this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
 
         case 1:
@@ -140,6 +141,7 @@ export default {
               this.$cookies.removeAll()
               this.$router.push('/')
               this.$store.dispatch('info/logout')
+              this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })
           break
       }
@@ -168,6 +170,7 @@ export default {
               { headers: this.$cookies.get('authInfo') }
             )
             .then((response) => {
+              this.$store.dispatch('snackbar/setMessage', 'ログインしました。')
               this.$store.dispatch('info/saveInfo', response.data.info)
               this.$store.dispatch('skills/saveSkills', response.data.skills)
               this.$store.dispatch('times/saveTimes', response.data.times)
@@ -198,6 +201,7 @@ export default {
           password: 'takayukipass',
         })
         .then((response) => {
+          this.$store.dispatch('snackbar/setMessage', 'ログインしました。')
           this.$cookies.set('user', 'host')
           this.isDisplay = false
           this.$cookies.set('myid', response.data.data.myid)

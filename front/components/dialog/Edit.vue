@@ -141,12 +141,15 @@ export default {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'プロフィールを変更しました。'
+          )
           this.$router.push(
             `/${this.$cookies.get('user')}/${response.data.data.myid}`
           )
           this.$emit('edit-button-click', this.copiedInfo)
           this.isDisplay = false
-          console.log('editのresponse', response.data)
           this.$store.dispatch('info/saveInfo', response.data.data)
         })
         .catch((error) => {
@@ -158,11 +161,13 @@ export default {
       this.$axios
         .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
         .then((response) => {
-          console.log(response.data)
           this.copiedInfo.address = response.data.data.fullAddress
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            '住所の検索の取得に失敗しました。'
+          )
         })
     },
   },
