@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" max-width="600px">
+    <v-dialog v-model="isDisplay" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">新規登録</span>
@@ -57,7 +57,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="isDisplay = false">
+          <v-btn color="warning darken-1" text @click="closeDialog">
             閉じる
           </v-btn>
           <v-btn color="warning darken-1" text @click="signUp"> 登録 </v-btn>
@@ -116,6 +116,11 @@ export default {
               this.$cookies.removeAll()
             })
         })
+    },
+
+    closeDialog() {
+      this.$cookies.removeAll()
+      this.isDisplay = false
     },
   },
 }

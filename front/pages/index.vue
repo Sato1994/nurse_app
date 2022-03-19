@@ -31,9 +31,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TargetCard from '@/components/organisms/TargetCard.vue'
 import Search from '@/components/dialog/Search.vue'
-import { mapGetters } from 'vuex'
 export default {
   components: {
     TargetCard,
@@ -84,11 +84,10 @@ export default {
             } else {
               $state.complete()
             }
-          }, 700)
+          }, 5)
         })
-        .catch((error) => {
+        .catch(() => {
           $state.complete()
-          console.log(error)
         })
     },
 

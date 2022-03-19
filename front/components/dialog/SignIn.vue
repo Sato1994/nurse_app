@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" max-width="600px">
+    <v-dialog v-model="isDisplay" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">ログイン</span>
@@ -27,7 +27,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="isDisplay = false">
+          <v-btn color="warning darken-1" text @click="closeDialog">
             閉じる
           </v-btn>
           <v-btn color="warning darken-1" text @click="signIn">
@@ -80,16 +80,19 @@ export default {
               )
               this.$store.dispatch('offers/saveOffers', response.data.offers)
               this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-              console.log('サインインでdispatchは成功')
               this.$router.push(
                 `/${this.$cookies.get('user')}/${response.data.info.myid}`
               )
             })
             .catch(() => {
               this.$cookies.removeAll()
-              console.log('サインイン失敗')
             })
         })
+    },
+
+    closeDialog() {
+      this.isDisplay = false
+      this.$cookies.removeAll()
     },
   },
 }

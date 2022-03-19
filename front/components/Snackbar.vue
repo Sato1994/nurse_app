@@ -14,11 +14,6 @@ export default {
     }
   },
 
-  methods: {
-    ...mapGetters('snackbar', ['getMessage', 'existsMessage']),
-    ...mapActions('snackbar', ['clearMessage']),
-  },
-
   computed: {
     isShow() {
       return this.existsMessage()
@@ -39,6 +34,11 @@ export default {
         this.clearMessage()
       }
     },
+  },
+
+  methods: {
+    ...mapGetters('snackbar', ['getMessage', 'existsMessage']),
+    ...mapActions('snackbar', ['clearMessage']),
   },
 }
 </script>
