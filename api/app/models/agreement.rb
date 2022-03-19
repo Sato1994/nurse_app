@@ -22,13 +22,13 @@ class Agreement < ApplicationRecord
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
-      errors.add(:finish_time,
+      errors.add(:message,
                  '勤務時間は1～18時間までです。')
     end
   end
 
   def agreement_has_some_hours_grace
-    errors.add(:start_time, '勤務開始時間は現在時刻より6時間以上の猶予が必要です。') unless start_time > (6.hours.from_now)
+    errors.add(:message, '勤務開始時間は現在時刻より6時間以上の猶予が必要です。') unless start_time > (6.hours.from_now)
   end
 
   def duplication_of_work_hours_for_same_user
@@ -36,14 +36,14 @@ class Agreement < ApplicationRecord
     if room.agreement.nil?
       # 新規
       if Agreement.exists?(['finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id])
-        errors.add(:start_time, '看護師の勤務期間が他の契約と重複しています')
+        errors.add(:message, '看護師の勤務期間が他の契約と重複しています')
       end
     else
       # 更新
       agreement = room.agreement
       if Agreement.exists?(['id != ? && finish_time >= ? && ? >= start_time && user_id = ?', agreement.id, start_time,
                             finish_time, user_id])
-        errors.add(:start_time, '看護師の勤務期間が他の契約と重複しています。')
+        errors.add(:message, '看護師の勤務期間が他の契約と重複しています。')
       end
     end
   end

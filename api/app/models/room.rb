@@ -27,26 +27,26 @@ class Room < ApplicationRecord
   def duplication_of_room_create
     if Room.exists?(['finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id,
                      host_id])
-      errors.add(:start_time, '同じお相手と同じ時間帯で交渉中です。')
+      errors.add(:message, '同じお相手と同じ時間帯で交渉中です。')
     end
   end
 
   def duplication_of_room_update
     if Room.exists?(['finish_time >= ? && ? >= start_time && user_id = ? && host_id = ? && id != ?', start_time, finish_time,
                      user_id, host_id, id])
-      errors.add(:start_time, '同じお相手と同じ時間帯で交渉中です。')
+      errors.add(:message, '同じお相手と同じ時間帯で交渉中です。')
     end
   end
 
   def room_has_some_hours_grace
-    errors.add(:start_time, '申請時間は現時刻から7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
+    errors.add(:message, '申請時間は現時刻から7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
   end
 
   def limitation_of_room_hours_max
-    errors.add(:start_time, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
+    errors.add(:message, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
   end
 
   def limitation_of_room_hours_min
-    errors.add(:start_time, '申請時間は最高18時間までです。') unless finish_time <= (start_time + 18.hours)
+    errors.add(:message, '申請時間は最高18時間までです。') unless finish_time <= (start_time + 18.hours)
   end
 end
