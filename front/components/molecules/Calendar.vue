@@ -146,8 +146,8 @@
         </v-menu>
         <DatePicker
           ref="datePicker"
-          @register-button-click="createRequest"
           title="リクエストを送る"
+          @register-button-click="createRequest"
         />
       </v-sheet>
     </v-col>
@@ -199,13 +199,13 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log(response.data)
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'トークルームが作成されました。'
+          )
           this.$store.dispatch('offers/removeOffer', requestId)
           this.$store.dispatch('rooms/addRoom', response.data)
           this.$router.push(`/rooms/${response.data.id}`)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
 
@@ -227,14 +227,14 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('request成功', response.data)
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'リクエストを送信しました。'
+          )
           this.$store.dispatch('requests/addRequest', response.data)
           this.$router.push(
             `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
           )
-        })
-        .catch((error) => {
-          console.log('request失敗', error)
         })
     },
 

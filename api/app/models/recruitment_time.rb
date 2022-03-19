@@ -14,15 +14,15 @@ class RecruitmentTime < ApplicationRecord
 
   def duplication_of_recruitment_time_for_same_host
     if RecruitmentTime.exists?(['finish_time >= ? && ? >= start_time && host_id = ?', start_time, finish_time, host_id])
-      errors.add(:start_time, '登録時間が重複しています。')
+      errors.add(:message, '登録時間が重複しています。')
     end
   end
 
   def limitation_of_recruitment_time
-    errors.add(:start_time, '登録時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
+    errors.add(:message, '登録時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
   end
 
   def recruitment_time_has_some_hours_grace
-    errors.add(:start_time, '登録時間は現在時刻より12時間以上時間の猶予が必要です。') unless start_time > (12.hours.from_now)
+    errors.add(:message, '登録時間は現在時刻より12時間以上時間の猶予が必要です。') unless start_time > (12.hours.from_now)
   end
 end

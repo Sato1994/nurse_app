@@ -21,13 +21,13 @@ class UserRequest < ApplicationRecord
   def included_in_the_recruitment_time
     unless RecruitmentTime.exists?(['start_time <= ? && finish_time >= ? && id = ?', start_time, finish_time,
                                     recruitment_time_id])
-      errors.add(:start_time, '病院の募集時間の範囲を超えています。')
+      errors.add(:message, '病院の募集時間の範囲を超えています。')
     end
   end
 
   def duplication_of_user_request
     if UserRequest.exists?(['finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id])
-      errors.add(:start_time, '同じ時間帯で申請済みです。')
+      errors.add(:message, '同じ時間帯で申請済みです。')
     end
   end
 
@@ -37,13 +37,13 @@ class UserRequest < ApplicationRecord
     if HostRequest.includes(free_time: :user).where('host_id = ? && users.id = ? && host_requests.finish_time >= ? && ? >= host_requests.start_time', host.id, user_id, start_time, finish_time).references(
       :users, :free_times
     ).exists?
-      errors.add(:start_time, '同じ時間帯でお相手から申請が来ています。')
+      errors.add(:message, '同じ時間帯でお相手から申請が来ています。')
     end
   end
 
   def duplication_of_agreement
     if Agreement.exists?(['finish_time >= ? && ? >= start_time && user_id = ?', start_time, finish_time, user_id])
-      errors.add(:start_time, '同じ時間帯で契約済みです。')
+      errors.add(:message, '同じ時間帯で契約済みです。')
     end
   end
 
@@ -52,15 +52,15 @@ class UserRequest < ApplicationRecord
     host = recruitment_time.host
     if Room.exists?(['user_id = ? && host_id = ? && finish_time >= ? && ? >= start_time', user_id, host.id, start_time,
                      finish_time])
-      errors.add(:start_time, '同じ時間帯でお相手と交渉中です。')
+      errors.add(:message, '同じ時間帯でお相手と交渉中です。')
     end
   end
 
   def user_request_has_some_hours_grace
-    errors.add(:start_time, '申請時間は現時刻より7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
+    errors.add(:message, '申請時間は現時刻より7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
   end
 
   def limitation_of_user_request_hours
-    errors.add(:start_time, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
+    errors.add(:message, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
   end
 end

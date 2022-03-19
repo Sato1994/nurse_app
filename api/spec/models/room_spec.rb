@@ -20,11 +20,11 @@ RSpec.describe Room, type: :model do
   end
 
   describe 'start_time, finish_time' do
-    it '同user-host間で同じ時間帯のroomがあれば失敗' do
+    it '同user-host間で同じ時間帯のroomがあれば期待するエラーメッセージを返す' do
       room = create(:room)
       new_room = build(:room, user: room.user, host: room.host)
       new_room.valid?
-      expect(new_room.errors[:start_time]).to include('同じお相手と同じ時間帯で交渉中です。')
+      expect(new_room.errors[:message]).to include('同じお相手と同じ時間帯で交渉中です。')
     end
 
     it '作成時点で勤務開始まで7時間以上あれば有効' do
@@ -32,10 +32,10 @@ RSpec.describe Room, type: :model do
       expect(room).to be_valid
     end
 
-    it '作成時点で勤務開始ちょうど7時間前なら無効' do
+    it '作成時点で勤務開始ちょうど7時間前なら期待するエラーメッセージを返す' do
       room = build(:room, start_time: 7.hours.from_now)
       room.valid?
-      expect(room.errors[:start_time]).to include('申請時間は現時刻から7時間以上の猶予が必要です。')
+      expect(room.errors[:message]).to include('申請時間は現時刻から7時間以上の猶予が必要です。')
     end
 
     context '勤務時間' do
@@ -44,10 +44,10 @@ RSpec.describe Room, type: :model do
         expect(room).to be_valid
       end
 
-      it '1時間未満なら無効' do
+      it '1時間未満なら期待するエラーメッセージを返す' do
         room = build(:room, finish_time: 22.hours.from_now - 1.second)
         room.valid?
-        expect(room.errors[:start_time]).to include('申請時間は最低1時間以上です。')
+        expect(room.errors[:message]).to include('申請時間は最低1時間以上です。')
       end
 
       it '18時間ちょうどなら有効' do
@@ -55,10 +55,10 @@ RSpec.describe Room, type: :model do
         expect(room).to be_valid
       end
 
-      it '18時間を超える場合無効' do
+      it '18時間を超える場合期待するエラーメッセージを返す' do
         room = build(:room, finish_time: 39.hours.from_now + 1.second)
         room.valid?
-        expect(room.errors[:start_time]).to include('申請時間は最高18時間までです。')
+        expect(room.errors[:message]).to include('申請時間は最高18時間までです。')
       end
     end
   end

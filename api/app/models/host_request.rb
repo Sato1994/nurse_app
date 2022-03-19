@@ -19,14 +19,14 @@ class HostRequest < ApplicationRecord
 
   def included_in_the_free_time
     unless FreeTime.exists?(['start_time <= ? && finish_time >= ? && id = ?', start_time, finish_time, free_time_id])
-      errors.add(:start_time, 'お相手の募集時間の範囲から外れています。')
+      errors.add(:message, 'お相手の募集時間の範囲から外れています。')
     end
   end
 
   def duplication_of_host_request
     if HostRequest.exists?(['finish_time >= ? && ? >= start_time && free_time_id = ? && host_id = ?', start_time, finish_time,
                             free_time_id, host_id])
-      errors.add(:start_time, '同じ時間帯で申請済みです。')
+      errors.add(:message, '同じ時間帯で申請済みです。')
     end
   end
 
@@ -38,7 +38,7 @@ class HostRequest < ApplicationRecord
                          user.id, host_id, start_time, finish_time).references(
                            :hosts, :recruitment_times
                          ).exists?
-      errors.add(:start_time, '同じ時間帯でお相手から申請が来ています。')
+      errors.add(:message, '同じ時間帯でお相手から申請が来ています。')
     end
   end
 
@@ -47,15 +47,15 @@ class HostRequest < ApplicationRecord
     user = free_time.user
     if Room.exists?(['user_id = ? && host_id = ? && finish_time >= ? && ? >= start_time', user.id, host_id, start_time,
                      finish_time])
-      errors.add(:start_time, '同じ時間帯でお相手と交渉中です。')
+      errors.add(:message, '同じ時間帯でお相手と交渉中です。')
     end
   end
 
   def host_request_has_some_hours_grace
-    errors.add(:start_time, '申請時間は現時刻より7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
+    errors.add(:message, '申請時間は現時刻より7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
   end
 
   def limitation_of_host_request_hours
-    errors.add(:start_time, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
+    errors.add(:message, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
   end
 end

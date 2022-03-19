@@ -136,8 +136,11 @@ export default {
           { id: this.agreementId, comment },
           { headers: this.$cookies.get('authInfo') }
         )
-        .then((response) => {
-          console.log(response)
+        .then(() => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            '契約をキャンセルしました。'
+          )
           this.$store.dispatch('agreements/updateState', {
             id: this.agreementId,
             state: 'cancelled',

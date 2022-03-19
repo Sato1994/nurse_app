@@ -52,6 +52,7 @@ export default {
       this.$axios
         .post(`/api/${this.$cookies.get('user')}/sign_in`, this.info)
         .then((response) => {
+          this.$store.dispatch('snackbar/setMessage', 'ログインしました。')
           this.isDisplay = false
           this.$cookies.set('myid', response.data.data.myid)
           const authInfo = {
@@ -87,6 +88,12 @@ export default {
             .catch(() => {
               this.$cookies.removeAll()
             })
+        })
+        .catch(() => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            '入力内容に誤りがあります。'
+          )
         })
     },
 
