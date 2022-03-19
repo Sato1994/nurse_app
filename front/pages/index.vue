@@ -106,7 +106,7 @@ export default {
       this.wanted = wanted
       this.$axios
         .get(
-          `/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`,
+          `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
           {
             params: {
               page: 1,
@@ -121,9 +121,6 @@ export default {
         .then((response) => {
           this.targets = []
           this.targets.push(...response.data.users)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
   },
