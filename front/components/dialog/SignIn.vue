@@ -2,38 +2,49 @@
   <v-row justify="center">
     <v-dialog v-model="isDisplay" persistent max-width="600px">
       <v-card>
-        <v-card-title>
-          <span class="text-h5">ログイン</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="info.email"
-                  label="メールアドレス"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="info.password"
-                  label="パスワード"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="closeDialog">
-            閉じる
-          </v-btn>
-          <v-btn color="warning darken-1" text @click="signIn">
-            ログイン
-          </v-btn>
-        </v-card-actions>
+        <ValidationObserver v-slot="{ invalid }">
+          <v-card-title>
+            <span class="text-h5">ログイン</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <ValidationProvider name="メールアドレス" rules="required">
+                    <v-text-field
+                      v-model="info.email"
+                      label="メールアドレス"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col cols="12">
+                  <ValidationProvider name="パスワード" rules="required">
+                    <v-text-field
+                      v-model="info.password"
+                      label="パスワード"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="warning darken-1" text @click="closeDialog">
+              閉じる
+            </v-btn>
+            <v-btn
+              color="warning darken-1"
+              text
+              :disabled="invalid"
+              @click="signIn"
+            >
+              ログイン
+            </v-btn>
+          </v-card-actions>
+        </ValidationObserver>
       </v-card>
     </v-dialog>
   </v-row>
@@ -100,6 +111,7 @@ export default {
     closeDialog() {
       this.isDisplay = false
       this.$cookies.removeAll()
+      this.info = ''
     },
   },
 }
