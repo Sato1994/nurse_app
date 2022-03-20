@@ -28,11 +28,11 @@ export default ({ $axios, redirect, store }) => {
       if (e.response.data === undefined) {
         return
       }
-      const message = e.response.data.message[0]
+      const message = e.response.data.message
       if (message === undefined || message === null || message === '') {
         return
       }
-      store.dispatch('snackbar/setMessage', message)
+      store.dispatch('snackbar/setMessage', message[0])
     }
   })
 }

@@ -120,12 +120,8 @@ export default {
             headers: this.$cookies.get('authInfo'),
           }
         )
-        .then((response) => {
-          console.log(response)
+        .then(() => {
           this.$router.push(`/rooms/${roomId}`)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
 
