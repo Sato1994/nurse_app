@@ -49,17 +49,6 @@ RSpec.describe Room, type: :model do
         room.valid?
         expect(room.errors[:message]).to include('申請時間は最低1時間以上です。')
       end
-
-      it '18時間ちょうどなら有効' do
-        room = build(:room, finish_time: 39.hours.from_now)
-        expect(room).to be_valid
-      end
-
-      it '18時間を超える場合期待するエラーメッセージを返す' do
-        room = build(:room, finish_time: 39.hours.from_now + 1.second)
-        room.valid?
-        expect(room.errors[:message]).to include('申請時間は最高18時間までです。')
-      end
     end
   end
 

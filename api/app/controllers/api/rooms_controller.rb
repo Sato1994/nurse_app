@@ -78,6 +78,12 @@ class Api::RoomsController < ApplicationController
 
     case room.state
     when 'negotiating'
+      # 18時間以上のままで同意したらエラー
+      if room.finish_time > (room.start_time + 18.hours)
+        render json: { message: ['勤務時間は18時間以内にする必要があります。'] }, status: :bad_request
+        return
+      end
+
       if room.update(state: negotiating_to)
         render json: room, status: :ok
       else

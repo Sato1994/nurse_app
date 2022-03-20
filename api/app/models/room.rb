@@ -18,7 +18,6 @@ class Room < ApplicationRecord
   validate :duplication_of_room_update, on: :update
   validate :room_has_some_hours_grace
   validate :limitation_of_room_hours_max
-  validate :limitation_of_room_hours_min
 
   enum state: { negotiating: 0, user: 1, host: 2, conclusion: 3, cancelled: 4 }, _suffix: true
   enum closed: { na: 0, user: 1, host: 2, both: 3 }, _suffix: true
@@ -44,9 +43,5 @@ class Room < ApplicationRecord
 
   def limitation_of_room_hours_max
     errors.add(:message, '申請時間は最低1時間以上です。') unless finish_time >= (start_time + 1.hour)
-  end
-
-  def limitation_of_room_hours_min
-    errors.add(:message, '申請時間は最高18時間までです。') unless finish_time <= (start_time + 18.hours)
   end
 end
