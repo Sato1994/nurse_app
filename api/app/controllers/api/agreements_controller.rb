@@ -55,7 +55,7 @@ class Api::AgreementsController < ApplicationController
       agreement.cancell_agreement
     else
       if params[:comment].blank?
-        render body:nil, status: :bad_request
+        render body: nil, status: :bad_request
         return
       end
 
