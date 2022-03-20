@@ -16,6 +16,7 @@ json.user_messages do
     json.message message.message
     json.created_at message.created_at
     json.name message.user.name
+    json.color 'green'
   end
 end
 
@@ -25,5 +26,6 @@ json.host_messages do
     json.message message.message
     json.created_at message.created_at
     json.name message.host.name
+    json.color 'red'
   end
 end

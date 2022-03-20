@@ -1,125 +1,131 @@
 <template>
   <v-card>
-    <v-toolbar color="warning" dark>
-      <v-toolbar-title>メッセージ</v-toolbar-title>
+    <v-card color="warning" flat dark>
+      <v-app-bar flat color="rgba(0, 0, 0, 0)">
+        <v-btn :to="partnerLink" nuxt text class="text-h6 pl-0"
+          >{{ partner.name }}
+        </v-btn>
+        <v-spacer></v-spacer>
 
-      <v-spacer></v-spacer>
-      <v-btn :to="partnerLink" nuxt color="warning">{{ partner.name }}</v-btn>
-    </v-toolbar>
-    <v-card>
-      <v-card-text>
-        <div class="text--primary">{{ startTime.year }}年</div>
-        <p class="text-h4 text--primary">
-          {{ startTime.month }}月{{ startTime.day }}日{{ startTime.hour }}時{{
-            startTime.minute
-          }}分から{{ finishTime.day }}日{{ finishTime.hour }}時{{
-            finishTime.minute
-          }}分
-        </p>
-        <p>adjective</p>
-        <div
-          v-if="closed == ($cookies.get('user') == 'user' ? 'host' : 'user')"
-          class="text--primary"
-        >
-          お相手がトークルームから退出しました
-        </div>
+        <v-menu v-if="state != 'conclusion'" bottom left>
+          <template #activator="{ on, attrs }">
+            <v-btn icon color="white" v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
 
-        <div v-if="state == $cookies.get('user')" class="text--primary">
-          上記の時間で同意しています。お相手の同意をお待ちください。
-        </div>
+          <v-list btn dense>
+            <v-list-item link>
+              <v-list-item-title @click="cancellRoom"
+                >トークルームを削除する</v-list-item-title
+              >
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-app-bar>
 
-        <div
-          v-if="state == ($cookies.get('user') == 'user' ? 'host' : 'user')"
-          class="text--primary"
-        >
-          お相手が上記の時間で同意しました。双方の同意で契約完了します。
-        </div>
+      <v-card-title class="text-h5">
+        {{ startTime.month }}/{{ startTime.day }}&nbsp;{{ startTime.hour }}:{{
+          startTime.minute
+        }}0&nbsp;-&nbsp;{{ finishTime.month }}/{{ finishTime.day }}&nbsp;{{
+          finishTime.hour
+        }}:{{ finishTime.minute }}0</v-card-title
+      >
 
-        <div v-if="state == 'conclusion'">
-          契約済みです。契約の変更は契約一覧から申請してください。
-        </div>
+      <v-card-subtitle
+        v-if="closed == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+        >お相手がトークルームから退出しました</v-card-subtitle
+      >
+      <v-card-subtitle v-if="state == $cookies.get('user')"
+        >上記の時間で同意しています。お相手の同意をお待ちください。</v-card-subtitle
+      >
+      <v-card-subtitle
+        v-if="state == ($cookies.get('user') == 'user' ? 'host' : 'user')"
+      >
+        お相手が上記の時間で同意しました。双方の同意で契約完了します。</v-card-subtitle
+      >
+      <v-card-subtitle v-if="state == 'conclusion'">
+        契約済みです。契約の変更は契約一覧から申請してください。</v-card-subtitle
+      >
+      <v-card-subtitle v-if="state == 'cancelled'">
+        やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
+      >
 
-        <div v-if="state == 'cancelled'">
-          やむを得ない理由により交渉がキャンセルされました。
-        </div>
-      </v-card-text>
       <v-card-actions>
         <v-btn
           v-if="state != 'conclusion' && state != 'cancelled'"
           text
-          color="warning accent-4"
           @click="updateState"
         >
           {{
             state == $cookies.get('user')
               ? '同意を解除する'
               : 'この時間で同意する'
-          }}
-        </v-btn>
-
+          }}</v-btn
+        >
         <v-btn
           v-if="state == 'negotiating' && state != 'cancelled'"
           text
-          color="warning accent-4"
           @click="openDatePicker"
         >
           時間を変更する
         </v-btn>
-
-        <v-btn
-          v-if="state != 'conclusion'"
-          text
-          color="red"
-          @click="cancellRoom"
-        >
-          トークルームを削除する
-        </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-container fluid>
+      <v-textarea
+        v-model="inputMessage"
+        append-icon="mdi-email-fast-outline"
+        filled
+        rows="2"
+        label="入力してください"
+        auto-grow
+        :counter="500"
+        @click:append="sendMessage"
+      ></v-textarea>
+    </v-container>
+
+    <v-card-text>
+      <div class="font-weight-bold ml-8 mb-2">最新</div>
+
+      <v-timeline
+        class="overflow-y-auto"
+        style="max-height: 500px"
+        align-top
+        dense
+      >
+        <v-timeline-item
+          v-for="message in mixedMessages"
+          :key="message.created_at"
+          :color="message.color"
+          small
+        >
+          <div>
+            <div class="font-weight-normal">
+              <strong>{{ message.name }}</strong> @{{
+                new Date(message.created_at).getMonth() + 1
+              }}/{{ new Date(message.created_at).getDate() }}&nbsp;{{
+                new Date(message.created_at).getHours()
+              }}:{{ new Date(message.created_at).getMinutes() }}
+            </div>
+            <div>{{ message.message }}</div>
+          </div>
+        </v-timeline-item>
+      </v-timeline>
+    </v-card-text>
     <DatePicker
       ref="datePicker"
       title="時間の登録"
       @register-button-click="updateTime"
     />
-
-    <v-list two-line dense>
-      <v-list-item v-for="(message, index) in mixedMessages" :key="index">
-        <v-list-item-avatar color="grey darken-1"> </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title>{{ message.name }}</v-list-item-title>
-
-          <v-list-item-subtitle>
-            {{ message.message }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-divider inset></v-divider>
-    </v-list>
-    <InputMessage ref="message" @send-button-click="sendMessage" />
-    <v-btn
-      fixed
-      fab
-      bottom
-      right
-      color="warning"
-      style="bottom: 50px"
-      @click="$refs.message.isDisplay = true"
-    >
-      <v-icon color="white">mdi-pencil</v-icon>
-    </v-btn>
   </v-card>
 </template>
 
-
-
 <script>
-import InputMessage from '@/components/dialog/InputMessage.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 export default {
   components: {
-    InputMessage,
     DatePicker,
   },
 
@@ -138,6 +144,7 @@ export default {
           partner: response.data.partner,
           state: response.data.state,
           closed: response.data.closed,
+          color: response.data.color,
           startTime: {
             year: startTime.getFullYear(),
             month: startTime.getMonth() + 1,
@@ -157,7 +164,9 @@ export default {
       })
   },
 
-  data: () => ({}),
+  data: () => ({
+    inputMessage: '',
+  }),
 
   head() {
     return {
@@ -184,7 +193,7 @@ export default {
 
     mixedMessages() {
       const messages = this.messages.slice().sort((a, b) => {
-        return new Date(a.created_at) - new Date(b.created_at)
+        return new Date(b.created_at) - new Date(a.created_at)
       })
       return messages
     },
@@ -203,19 +212,16 @@ export default {
       this.$refs.datePicker.finishTime = this.finishTime
     },
 
-    sendMessage(message) {
+    sendMessage() {
       this.$axios
         .post(
           `/api/${this.$cookies.get('user')}_messages/${this.$route.params.id}`,
-          { message },
+          { message: this.inputMessage },
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log(response)
           this.messages.push(response.data)
-        })
-        .catch((error) => {
-          console.log(error)
+          this.inputMessage = ''
         })
     },
 
