@@ -16,7 +16,7 @@
 
           <v-list btn dense>
             <v-list-item link>
-              <v-list-item-title @click="cancellRoom"
+              <v-list-item-title @click="confirmDialog = true"
                 >トークルームを削除する</v-list-item-title
               >
             </v-list-item>
@@ -119,14 +119,24 @@
       title="時間の登録"
       @register-button-click="updateTime"
     />
+    <Confirm
+      :dialog="confirmDialog"
+      :confirmTitle="confirmTitle"
+      :confirmDescription="confirmDescription"
+      :agreeButtonText="agreeButtonText"
+      @agree-button-click="cancellRoom"
+      @disagree-button-click="confirmDialog = false"
+    />
   </v-card>
 </template>
 
 <script>
 import DatePicker from '@/components/dialog/DatePicker.vue'
+import Confirm from '@/components/dialog/Confirm.vue'
 export default {
   components: {
     DatePicker,
+    Confirm,
   },
 
   asyncData({ $cookies, $axios, route }) {
@@ -166,6 +176,11 @@ export default {
 
   data: () => ({
     inputMessage: '',
+    confirmDialog: false,
+    confirmTitle: 'トークルームを削除',
+    agreeButtonText: '削除',
+    confirmDescription:
+      '削除されたトークルームは元に戻せません。本当に削除しますか？',
   }),
 
   head() {
@@ -235,11 +250,11 @@ export default {
           },
           { headers: this.$cookies.get('authInfo') }
         )
-        .then((response) => {
-          console.log(response)
-        })
-        .catch((error) => {
-          console.log(error)
+        .then(() => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            '希望時間を変更しました。'
+          )
         })
     },
 
@@ -262,8 +277,7 @@ export default {
                 headers: this.$cookies.get('authInfo'),
               }
             )
-            .then((response) => {
-              console.log(response)
+            .then(() => {
               this.$axios
                 .patch(
                   `/api/rooms/${this.$route.params.id}/update_room_state`,
@@ -273,15 +287,8 @@ export default {
                   }
                 )
                 .then((response) => {
-                  console.log(response)
                   this.state = response.data.state
                 })
-                .catch((error) => {
-                  console.log(error)
-                })
-            })
-            .catch((error) => {
-              console.log(error)
             })
           break
         default:
@@ -294,11 +301,7 @@ export default {
               }
             )
             .then((response) => {
-              console.log(response)
               this.state = response.data.state
-            })
-            .catch((error) => {
-              console.log(error)
             })
       }
     },
@@ -311,6 +314,10 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'トークルームを削除しました。'
+          )
           this.$store.dispatch('rooms/updateClosed', {
             id: this.id,
             closed: response.data.closed,
