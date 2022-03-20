@@ -141,8 +141,6 @@ RSpec.describe 'Api::Rooms', type: :request do
     end
   end
 
-  # #############################################3
-
   describe 'PATCh /update_room_time' do
     let(:room) { create(:room) }
 
@@ -213,12 +211,19 @@ RSpec.describe 'Api::Rooms', type: :request do
     end
 
     context 'userがログイン' do
-      it 'stateがnegotiatingならuserへ変更される' do
-        room = create(:room, state: 'negotiating')
+      it 'stateがnegotiatingでstart,finsish間が18時間ちょうどならuserへ変更される' do
+        room = create(:room, finish_time: 39.hours.from_now.change(usec: 0))
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
         expect do
           patch "/api/rooms/#{room.id}/update_room_state", headers: headers
         end.to change { room.reload.state }.to 'user'
+      end
+
+      it 'stateがnegotiatingでstart,finsish間が18時間より大きければ期待するmessageを返す' do
+        room = create(:room, finish_time: 39.hours.from_now.change(usec: 0) + 1.second)
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+        patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        expect(response.body).to include('勤務時間は18時間以内にする必要があります。')
       end
 
       it 'stateがuserならnegotiatingへ変更される' do
