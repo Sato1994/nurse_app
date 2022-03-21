@@ -9,7 +9,7 @@
         </template>
 
         <v-list v-if="!$store.state.info.info.myid" dense>
-          <v-list-item v-for="(item, i) in unAuthItems" :key="i" link>
+          <v-list-item v-for="(item, i) in unAuthItems" :key="i">
             <v-list-item-title @click="clickUnAuthMenu(i)">{{
               item.title
             }}</v-list-item-title>
@@ -17,7 +17,7 @@
         </v-list>
 
         <v-list v-if="$store.state.info.info.myid" dense>
-          <v-list-item v-for="(item, i) in authItems" :key="i" link>
+          <v-list-item v-for="(item, i) in authItems" :key="i">
             <v-list-item-title @click="clickAuthMenu(i)">{{
               item.title
             }}</v-list-item-title>
@@ -49,93 +49,26 @@
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
 
-          <v-menu
+          <v-tab
             v-if="$store.state.info.info.myid"
-            open-on-hover
-            offset-x
-            right
-            transition="scale-transition"
+            nuxt
+            :to="myPageURL"
+            class="primary--text"
           >
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                :to="myPageURL"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-home-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in homeItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+            <v-icon>mdi-home-outline</v-icon>
+          </v-tab>
 
-          <v-menu open-on-hover offset-x right transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab class="primary--text" nuxt to="/" v-bind="attrs" v-on="on">
-                <v-icon>mdi-magnify</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in topItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab nuxt to="/" class="primary--text">
+            <v-icon>mdi-magnify</v-icon>
+          </v-tab>
 
-          <v-menu open-on-hover offset-x left transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/agreements"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-text-box-check-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="(item, index) in agreementItems"
-                :key="index"
-                link
-              >
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab nuxt to="/agreements" class="primary--text">
+            <v-icon>mdi-text-box-check-outline</v-icon>
+          </v-tab>
 
-          <v-menu open-on-hover offset-x left transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/rooms"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-email-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in roomItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab nuxt to="/rooms" class="primary--text">
+            <v-icon>mdi-email-outline</v-icon>
+          </v-tab>
         </v-tabs>
       </template>
       <!-- ダイアログ -->
@@ -167,30 +100,6 @@ export default {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
       authItems: [{ title: 'ログアウト' }, { title: 'アカウント削除' }],
-      homeItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
-      topItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
-      agreementItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
-      roomItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
     }
   },
   computed: {
