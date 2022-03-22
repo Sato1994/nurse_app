@@ -21,16 +21,36 @@
         />
       </v-col>
     </v-row>
+    <Confirm
+      :dialog="dialog"
+      :confirm-title="confirmTitle"
+      :confirm-description="confirmDescription"
+      :agree-button-text="agreeButtonText"
+      @agree-button-click="cancellTime"
+      @disagree-button-click="hideDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Confirm from '@/components/dialog/Confirm.vue'
 import TimeCard from '@/components/TimeCard.vue'
 
 export default {
   components: {
+    Confirm,
     TimeCard,
+  },
+
+  data() {
+    return {
+      dialog: false,
+      confirmTitle: '募集時間の取り消し',
+      confirmDescription: `この時間の募集を取り消しますか？`,
+      agreeButtonText: '取り消す',
+      timeId: null,
+    }
   },
 
   computed: {
@@ -45,7 +65,19 @@ export default {
     },
 
     openDialog(timeId) {
-      this.$emit('click-open-dialog', timeId)
+      this.dialog = true
+      this.timeId = timeId
+    },
+
+    cancellTime() {
+      console.log('timeの削除機能をつくる予定だよ。', this.timeId)
+    },
+
+    hideDialog() {
+      this.dialog = false
+      this.confirmTitle = '募集時間の取り消し'
+      this.confirmDescription = `この時間の募集を取り消しますか？`
+      this.agreeButtonText = '取り消す'
     },
   },
 }
