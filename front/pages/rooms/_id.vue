@@ -1,77 +1,41 @@
 <template>
   <v-card>
-    <v-card color="warning" flat dark>
-      <v-app-bar flat color="rgba(0, 0, 0, 0)">
-        <v-btn :to="partnerLink" nuxt text class="text-h6 pl-0"
-          >{{ partner.name }}
-        </v-btn>
-        <v-spacer></v-spacer>
-
-        <v-menu v-if="state != 'conclusion'" bottom left>
-          <template #activator="{ on, attrs }">
-            <v-btn icon color="white" v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-
-          <v-list btn dense>
-            <v-list-item link>
-              <v-list-item-title @click="confirmDialog = true"
-                >トークルームを削除する</v-list-item-title
-              >
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-app-bar>
-
-      <v-card-title class="text-h5">
-        {{ startTime.month }}/{{ startTime.day }}&nbsp;{{ startTime.hour }}:{{
-          startTime.minute
-        }}0&nbsp;-&nbsp;{{ finishTime.month }}/{{ finishTime.day }}&nbsp;{{
-          finishTime.hour
-        }}:{{ finishTime.minute }}0</v-card-title
-      >
-
-      <v-card-subtitle
-        v-if="closed == ($cookies.get('user') == 'user' ? 'host' : 'user')"
-        >お相手がトークルームから退出しました</v-card-subtitle
-      >
-      <v-card-subtitle v-if="state == $cookies.get('user')"
-        >上記の時間で同意しています。お相手の同意をお待ちください。</v-card-subtitle
-      >
-      <v-card-subtitle
-        v-if="state == ($cookies.get('user') == 'user' ? 'host' : 'user')"
-      >
-        お相手が上記の時間で同意しました。双方の同意で契約完了します。</v-card-subtitle
-      >
-      <v-card-subtitle v-if="state == 'conclusion'">
-        契約済みです。契約の変更は契約一覧から申請してください。</v-card-subtitle
-      >
-      <v-card-subtitle v-if="state == 'cancelled'">
-        やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
-      >
-
-      <v-card-actions>
-        <v-btn
-          v-if="state != 'conclusion' && state != 'cancelled'"
-          text
-          @click="updateState"
+    <TimeCard
+      :partnerLink="partnerLink"
+      :partner="partner"
+      :startTime="startTime"
+      :finishTime="finishTime"
+      :firstButton="firstButton"
+      :secondButton="secondButton"
+      :buttonText="buttonText"
+      :dotsButton="dotsButton"
+      secondButtonText="時間を変更する"
+      dotsButtonText="トークルームを削除する"
+      @first-button-click="updateState"
+      @second-button-click="openDatePicker"
+      @dots-button-click="confirmDialog = true"
+    >
+      <template #description>
+        <v-card-subtitle
+          v-if="closed === ($cookies.get('user') === 'user' ? 'host' : 'user')"
+          >お相手がトークルームから退出しました</v-card-subtitle
         >
-          {{
-            state == $cookies.get('user')
-              ? '同意を解除する'
-              : 'この時間で同意する'
-          }}</v-btn
+        <v-card-subtitle v-if="state === $cookies.get('user')"
+          >上記の時間で同意しています。お相手の同意をお待ちください。</v-card-subtitle
         >
-        <v-btn
-          v-if="state == 'negotiating' && state != 'cancelled'"
-          text
-          @click="openDatePicker"
+        <v-card-subtitle
+          v-if="state === ($cookies.get('user') === 'user' ? 'host' : 'user')"
         >
-          時間を変更する
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+          お相手が上記の時間で同意しました。双方の同意で契約完了します。</v-card-subtitle
+        >
+        <v-card-subtitle v-if="state === 'conclusion'">
+          契約済みです。契約の変更は契約一覧から申請してください。</v-card-subtitle
+        >
+        <v-card-subtitle v-if="state === 'cancelled'">
+          やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
+        >
+      </template>
+    </TimeCard>
 
     <v-container fluid>
       <v-textarea
@@ -133,10 +97,12 @@
 <script>
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
+import TimeCard from '@/components/TimeCard.vue'
 export default {
   components: {
     DatePicker,
     Confirm,
+    TimeCard,
   },
 
   asyncData({ $cookies, $axios, route }) {
@@ -217,6 +183,20 @@ export default {
       return `/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${
         this.partner.myid
       }`
+    },
+    firstButton() {
+      return this.state !== 'conclusion' && this.state !== 'cancelled'
+    },
+    secondButton() {
+      return this.state === 'negotiating' && this.state !== 'cancelled'
+    },
+    buttonText() {
+      return this.state === this.$cookies.get('user')
+        ? '同意を解除する'
+        : 'この時間で同意する'
+    },
+    dotsButton() {
+      return this.state !== 'conclusion'
     },
   },
 
