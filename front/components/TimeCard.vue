@@ -81,7 +81,7 @@ export default {
     },
     secondButtonText: {
       type: String,
-      required: true,
+      default: null,
     },
     dotsButtonText: {
       type: String,

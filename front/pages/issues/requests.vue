@@ -1,25 +1,19 @@
 <template>
   <v-container>
-    <Agreements />
-    <Times />
     <Requests />
   </v-container>
 </template>
 
 
 <script>
-import Agreements from '@/components/issues/Agreements.vue'
-import Times from '@/components/issues/Times.vue'
 import Requests from '@/components/issues/Requests.vue'
 export default {
   components: {
-    Agreements,
-    Times,
     Requests,
   },
 
   head: {
-    title: '登録一覧',
+    title: '送ったリクエスト一覧',
   },
 }
 </script>
