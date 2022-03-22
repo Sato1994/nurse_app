@@ -96,7 +96,7 @@
               <v-tab
                 class="primary--text"
                 nuxt
-                to="/agreements"
+                to="/issues"
                 v-bind="attrs"
                 v-on="on"
               >
@@ -105,7 +105,7 @@
             </template>
             <v-list>
               <v-list-item
-                v-for="(item, index) in agreementItems"
+                v-for="(item, index) in issuesItems"
                 :key="index"
                 link
               >
@@ -158,7 +158,7 @@ export default {
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me 2', url: 'someting' },
       ],
-      agreementItems: [
+      issuesItems: [
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
