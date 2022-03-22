@@ -32,6 +32,7 @@ export const getters = {
         id: obj.id,
         roomId: obj.room.id,
         state: obj.state,
+        partner: obj.partner,
         partnerName: obj.partner.name,
         partnerMyid: obj.partner.myid,
         partnerPhone: obj.partner.phone,
