@@ -38,8 +38,7 @@ export const getters = {
         partnerName: obj.partner.name,
         partnerMyid: obj.partner.myid,
         partnerId: obj.partner.id,
-        startTime: obj.start_time,
-        finishTime: obj.finish_time,
+        partner: obj.partner,
         start: `${s.getFullYear()}-${s.getMonth() + 1
           }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
         end: `${f.getFullYear()}-${f.getMonth() + 1
@@ -50,6 +49,20 @@ export const getters = {
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
         displayFinish: `${f.getMonth() + 1
           }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+        startTime: {
+          year: s.getFullYear(),
+          month: s.getMonth() + 1,
+          day: s.getDate(),
+          hour: s.getHours(),
+          minute: s.getMinutes(),
+        },
+        finishTime: {
+          year: f.getFullYear(),
+          month: f.getMonth() + 1,
+          day: f.getDate(),
+          hour: f.getHours(),
+          minute: f.getMinutes(),
+        }
       }
       return newObject
     })

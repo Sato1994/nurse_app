@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="indigo" dark>
+    <v-toolbar class="mb-2" flat rounded dense color="lime" dark>
       <v-toolbar-title>送ったリクエスト</v-toolbar-title>
     </v-toolbar>
 
@@ -14,7 +14,7 @@
         lg="4"
       >
         <TimeCard
-          color="indigo darken-3"
+          color="lime darken-3"
           buttonText="取り消し"
           dotsButtonText="やあ"
           :partnerLink="`/${
@@ -74,15 +74,15 @@ export default {
       this.requestId = requestId
     },
 
-    cancellRequest() {
-      console.log('requestの削除機能をつくる予定だよ。', this.timeId)
-    },
-
     hideDialog() {
       this.dialog = false
       this.confirmTitle = 'リクエストの取り消し'
       this.confirmDescription = `このリクエストを取り消しますか？`
       this.agreeButtonText = '取り消す'
+    },
+
+    cancellRequest() {
+      console.log('requestの削除機能をつくる予定だよ。', this.timeId)
     },
   },
 }
