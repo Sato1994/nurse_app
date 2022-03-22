@@ -159,10 +159,11 @@ export default {
         { title: 'Click Me 2', url: 'someting' },
       ],
       issuesItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
+        { title: 'すべて', url: '/issues' },
+        { title: '契約', url: '/issues/agreements' },
+        { title: '募集時間', url: '/issues/times' },
+        { title: '届いたリクエスト', url: '/issues/offers' },
+        { title: '送ったリクエスト', url: '/issues/requests' },
       ],
     }
   },

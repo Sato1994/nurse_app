@@ -39,7 +39,7 @@ export default {
   },
 
   head: {
-    title: '登録一覧',
+    title: '契約一覧',
   },
 
   methods: {
