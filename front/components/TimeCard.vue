@@ -1,5 +1,5 @@
 <template>
-  <v-card color="warning" flat dark>
+  <v-card :color="color" flat dark>
     <v-app-bar flat color="rgba(0, 0, 0, 0)">
       <v-btn :to="partnerLink" nuxt text class="text-h6 pl-0"
         >{{ partner.name }}
@@ -84,6 +84,10 @@ export default {
       required: true,
     },
     dotsButtonText: {
+      type: String,
+      required: true,
+    },
+    color: {
       type: String,
       required: true,
     },

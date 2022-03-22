@@ -11,6 +11,7 @@
       :dotsButton="dotsButton"
       secondButtonText="時間を変更する"
       dotsButtonText="トークルームを削除する"
+      color="warning"
       @first-button-click="updateState"
       @second-button-click="openDatePicker"
       @dots-button-click="confirmDialog = true"

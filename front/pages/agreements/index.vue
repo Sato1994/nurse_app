@@ -1,5 +1,43 @@
 <template>
-  <v-card flat>
+  <v-container>
+    <v-toolbar class="mb-2" flat rounded dense color="red" dark>
+      <v-toolbar-title>契約中</v-toolbar-title>
+    </v-toolbar>
+
+    <v-row>
+      <v-col
+        v-for="(agreement, i) in agreementsInProgress"
+        :key="i"
+        cols="12"
+        sm="6"
+        md="6"
+        lg="4"
+      >
+        <TimeCard
+          color="red darken-3"
+          buttonText="時間を変更"
+          secondButtonText="キャンセル"
+          dotsButtonText="やあ"
+          :partnerLink="`/${
+            $cookies.get('user') === 'user' ? 'host' : 'user'
+          }/${agreement.partnerMyid}`"
+          :partner="agreement.partner"
+          :startTime="agreement.startTime"
+          :finishTime="agreement.finishTime"
+          :firstButton="true"
+          :secondButton="true"
+          :dotsButton="true"
+          @first-button-click="editAgreement(agreement.id, agreement.roomId)"
+          @second-button-click="
+            openDialog(agreement.id, agreement.roomId, agreement.partnerPhone)
+          "
+        />
+      </v-col>
+    </v-row>
+    <v-toolbar class="my-2" flat rounded dense color="red" dark>
+      <v-toolbar-title>勤務済</v-toolbar-title>
+    </v-toolbar>
+
     <Confirm
       :dialog="dialog"
       :confirm-title="confirmTitle"
@@ -10,75 +48,18 @@
       @agree-button-click="cancellAgreement"
       @disagree-button-click="hideDialog"
     />
-    <v-toolbar color="red" dark flat>
-      <v-toolbar-title>契約</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-    </v-toolbar>
-
-    <v-list dense subheader two-line>
-      <v-subheader inset>仕事の予定</v-subheader>
-
-      <v-list-item v-for="(agreement, i) in agreementsInProgress" :key="i">
-        <v-list-item-avatar>
-          <v-icon>mdi-hospital</v-icon>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title v-text="agreement.partnerName"></v-list-item-title>
-
-          <v-list-item-subtitle
-            >{{ agreement.startTime.month }}月{{ agreement.startTime.day }}日{{
-              agreement.startTime.hour
-            }}時{{ agreement.startTime.minute }}分から{{
-              agreement.finishTime.day
-            }}日{{ agreement.finishTime.hour }}時{{
-              agreement.finishTime.minute
-            }}分</v-list-item-subtitle
-          >
-        </v-list-item-content>
-        <v-subheader inset>{{ agreement.state }}</v-subheader>
-        <v-card-actions>
-          <v-btn
-            text
-            color="warning accent-4"
-            @click="jumpPartner(agreement.partnerMyid)"
-          >
-            お相手
-          </v-btn>
-          <v-btn
-            text
-            color="warning accent-4"
-            @click="editAgreement(agreement.id, agreement.roomId)"
-          >
-            時間変更
-          </v-btn>
-          <v-btn
-            text
-            color="warning accent-4"
-            @click="
-              openDialog(agreement.id, agreement.roomId, agreement.partnerPhone)
-            "
-          >
-            キャンセル
-          </v-btn>
-        </v-card-actions>
-      </v-list-item>
-
-      <v-divider inset></v-divider>
-
-      <v-subheader inset>何かしら</v-subheader>
-    </v-list>
-  </v-card>
+  </v-container>
 </template>
 
 
 <script>
 import { mapGetters } from 'vuex'
 import Confirm from '@/components/dialog/Confirm.vue'
+import TimeCard from '@/components/TimeCard.vue'
 export default {
   components: {
     Confirm,
+    TimeCard,
   },
 
   data() {
@@ -105,12 +86,6 @@ export default {
   },
 
   methods: {
-    jumpPartner(myid) {
-      this.$router.push(
-        `/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${myid}`
-      )
-    },
-
     editAgreement(agreementId, roomId) {
       this.$axios
         .patch(
@@ -153,6 +128,7 @@ export default {
           }
         })
     },
+
     openDialog(agreementId, roomId, phone) {
       this.dialog = true
       this.agreementId = agreementId
@@ -170,4 +146,3 @@ export default {
   },
 }
 </script>
-
