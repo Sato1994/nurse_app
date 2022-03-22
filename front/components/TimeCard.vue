@@ -40,6 +40,16 @@
       <v-btn v-if="secondButton" text @click="clickSecondButton">
         {{ secondButtonText }}
       </v-btn>
+
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="roomId"
+        text
+        depressed
+        @click="$router.push(`/rooms/${roomId}`)"
+      >
+        <v-icon>mdi-email-outline</v-icon>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -90,6 +100,10 @@ export default {
     color: {
       type: String,
       required: true,
+    },
+    roomId: {
+      type: Number,
+      default: null,
     },
   },
 

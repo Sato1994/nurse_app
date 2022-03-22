@@ -24,6 +24,7 @@
           :partner="agreement.partner"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
+          :roomId="agreement.roomId"
           :firstButton="true"
           :secondButton="true"
           :dotsButton="true"
