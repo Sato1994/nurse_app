@@ -1,7 +1,7 @@
 <template>
   <v-card :color="color" flat dark>
     <v-app-bar flat color="rgba(0, 0, 0, 0)">
-      <v-btn :to="partnerLink" nuxt text class="text-h6 pl-0"
+      <v-btn v-if="partner" :to="partnerLink" nuxt text class="text-h6 pl-0"
         >{{ partner.name }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -49,11 +49,11 @@ export default {
   props: {
     partnerLink: {
       type: String,
-      required: true,
+      default: null,
     },
     partner: {
       type: Object,
-      required: true,
+      default: null,
     },
     startTime: {
       type: Object,

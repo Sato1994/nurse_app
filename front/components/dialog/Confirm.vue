@@ -68,7 +68,7 @@ export default {
 
     phone: {
       type: String,
-      default: '',
+      default: null,
     },
   },
 
