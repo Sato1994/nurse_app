@@ -115,27 +115,6 @@
               </v-list-item>
             </v-list>
           </v-menu>
-
-          <v-menu open-on-hover offset-x left transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/rooms"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-email-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in roomItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
         </v-tabs>
       </template>
       <!-- ダイアログ -->
@@ -180,12 +159,6 @@ export default {
         { title: 'Click Me 2', url: 'someting' },
       ],
       agreementItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
-      roomItems: [
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
