@@ -96,7 +96,7 @@
               <v-tab
                 class="primary--text"
                 nuxt
-                to="/agreements"
+                to="/issues"
                 v-bind="attrs"
                 v-on="on"
               >
@@ -105,7 +105,7 @@
             </template>
             <v-list>
               <v-list-item
-                v-for="(item, index) in agreementItems"
+                v-for="(item, index) in issuesItems"
                 :key="index"
                 link
               >
@@ -129,7 +129,11 @@
               </v-tab>
             </template>
             <v-list>
-              <v-list-item v-for="(item, index) in roomItems" :key="index" link>
+              <v-list-item
+                v-for="(item, index) in roomsItems"
+                :key="index"
+                link
+              >
                 <v-list-item-title @click="$router.push(item.url)">{{
                   item.title
                 }}</v-list-item-title>
@@ -179,11 +183,12 @@ export default {
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me 2', url: 'someting' },
       ],
-      agreementItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
+      issuesItems: [
+        { title: 'すべて', url: '/issues' },
+        { title: '契約', url: '/issues/agreements' },
+        { title: '募集時間', url: '/issues/times' },
+        { title: '届いたリクエスト', url: '/issues/offers' },
+        { title: '送ったリクエスト', url: '/issues/requests' },
       ],
       roomItems: [
         { title: 'Click Me', url: 'someting' },

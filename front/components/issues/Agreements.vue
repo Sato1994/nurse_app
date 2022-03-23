@@ -24,6 +24,7 @@
           :partner="agreement.partner"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
+          :roomId="agreement.roomId"
           :firstButton="true"
           :secondButton="true"
           :dotsButton="true"
@@ -51,7 +52,6 @@
   </v-container>
 </template>
 
-
 <script>
 import { mapGetters } from 'vuex'
 import Confirm from '@/components/dialog/Confirm.vue'
@@ -75,10 +75,6 @@ export default {
     }
   },
 
-  head: {
-    title: '契約一覧',
-  },
-
   computed: {
     ...mapGetters({
       agreementsInProgress: 'agreements/agreementsInProgress',
@@ -86,20 +82,6 @@ export default {
   },
 
   methods: {
-    editAgreement(agreementId, roomId) {
-      this.$axios
-        .patch(
-          `/api/agreements/${agreementId}`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then(() => {
-          this.$router.push(`/rooms/${roomId}`)
-        })
-    },
-
     cancellAgreement(comment) {
       this.$axios
         .patch(
@@ -126,6 +108,20 @@ export default {
             this.confirmDescription = `お相手に電話して直接キャンセルを申し出てください。\nキャンセル後、簡単に理由を入力し確定を押してください。`
             this.agreeButtonText = '確定'
           }
+        })
+    },
+
+    editAgreement(agreementId, roomId) {
+      this.$axios
+        .patch(
+          `/api/agreements/${agreementId}`,
+          {},
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        .then(() => {
+          this.$router.push(`/rooms/${roomId}`)
         })
     },
 

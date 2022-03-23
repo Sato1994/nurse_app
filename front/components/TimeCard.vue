@@ -1,7 +1,7 @@
 <template>
   <v-card :color="color" flat dark>
     <v-app-bar flat color="rgba(0, 0, 0, 0)">
-      <v-btn :to="partnerLink" nuxt text class="text-h6 pl-0"
+      <v-btn v-if="partner" :to="partnerLink" nuxt text class="text-h6 pl-0"
         >{{ partner.name }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -40,6 +40,16 @@
       <v-btn v-if="secondButton" text @click="clickSecondButton">
         {{ secondButtonText }}
       </v-btn>
+
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="roomId"
+        text
+        depressed
+        @click="$router.push(`/rooms/${roomId}`)"
+      >
+        <v-icon>mdi-email-outline</v-icon>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -49,11 +59,11 @@ export default {
   props: {
     partnerLink: {
       type: String,
-      required: true,
+      default: null,
     },
     partner: {
       type: Object,
-      required: true,
+      default: null,
     },
     startTime: {
       type: Object,
@@ -81,7 +91,7 @@ export default {
     },
     secondButtonText: {
       type: String,
-      required: true,
+      default: null,
     },
     dotsButtonText: {
       type: String,
@@ -90,6 +100,10 @@ export default {
     color: {
       type: String,
       required: true,
+    },
+    roomId: {
+      type: Number,
+      default: null,
     },
   },
 
