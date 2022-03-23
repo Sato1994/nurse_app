@@ -115,6 +115,31 @@
               </v-list-item>
             </v-list>
           </v-menu>
+
+          <v-menu open-on-hover offset-x left transition="scale-transition">
+            <template #activator="{ on, attrs }">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/rooms"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-email-outline</v-icon>
+              </v-tab>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in roomsItems"
+                :key="index"
+                link
+              >
+                <v-list-item-title @click="$router.push(item.url)">{{
+                  item.title
+                }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-tabs>
       </template>
       <!-- ダイアログ -->
@@ -164,6 +189,12 @@ export default {
         { title: '募集時間', url: '/issues/times' },
         { title: '届いたリクエスト', url: '/issues/offers' },
         { title: '送ったリクエスト', url: '/issues/requests' },
+      ],
+      roomItems: [
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me 2', url: 'someting' },
       ],
     }
   },
