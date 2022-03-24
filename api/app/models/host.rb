@@ -18,6 +18,8 @@ class Host < ApplicationRecord
   has_many :rooms, dependent: :destroy
   has_many :host_messages, through: :rooms
 
+  mount_uploader :image, ImageUploader
+
   def to_param
     myid
   end
