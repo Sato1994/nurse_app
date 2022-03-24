@@ -28,20 +28,15 @@
                   <v-file-input
                     accept="image/*"
                     prepend-icon="mdi-image"
-                    @change="setImage"
                     placeholder="画像を選択"
+                    @change="setImage"
                   >
                   </v-file-input>
                 </v-col>
                 <v-col cols="6">
                   <div class="ml-4">
                     <v-avatar color="brown" size="80">
-                      <v-img
-                        :lazy-src="imgUrl"
-                        max-height="150"
-                        max-width="250"
-                        :src="imgUrl"
-                      ></v-img>
+                      <v-img :src="imgUrl"></v-img>
                     </v-avatar>
                   </div>
                   <input style="display: none" type="file" />
@@ -224,10 +219,8 @@ export default {
       this.copiedInfo.image = image
       if (image) {
         this.setImageUrl = URL.createObjectURL(image)
-        console.log(this.setImageUrl)
       } else {
         this.setImageUrl = null
-        console.log(this.setImageUrl)
       }
     },
 
@@ -239,16 +232,12 @@ export default {
         client: this.$cookies.get('authInfo').client,
         uid: this.$cookies.get('authInfo').uid,
       }
-      if (this.copiedInfo.image != null) {
-        formData.append('image', this.copiedInfo.image)
+      // 入力欄が埋まってるものだけformDataに
+      for (const key in this.copiedInfo) {
+        if (this.copiedInfo[key] != null) {
+          formData.append(key, this.copiedInfo[key])
+        }
       }
-      formData.append('name', this.copiedInfo.name)
-      formData.append('address', this.copiedInfo.address)
-      formData.append('profile', this.copiedInfo.profile)
-      formData.append('age', this.copiedInfo.age)
-      formData.append('year', this.copiedInfo.year)
-      formData.append('sex', this.copiedInfo.sex)
-      formData.append('wanted', this.copiedInfo.wanted)
 
       this.$axios
         .put(`/api/${this.$cookies.get('user')}`, formData, {
