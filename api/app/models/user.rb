@@ -19,6 +19,8 @@ class User < ApplicationRecord
   has_many :user_messages, through: :rooms
   has_many :cancell_comments, through: :agreements
 
+  mount_uploader :image, ImageUploader
+
   # 個人のページのURLをmyidにする。
   def to_param
     myid
@@ -35,7 +37,8 @@ class User < ApplicationRecord
   validates :profile, length: { maximum: 300 }
   validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 20, less_than_or_equal_to: 60, allow_nil: true }
   validates :year, numericality: { only_integer: true, less_than: 40, allow_nil: true }
-  validates :myid, presence: true, format: { with: /\A[a-zA-Z0-9]+\z/ }, length: { maximum: 15 }, uniqueness: { case_sensitive: true } # #デフォルトでは大文字小文字区別しない。
+  validates :myid, presence: true, format: { with: /\A[a-zA-Z0-9]+\z/ }, length: { maximum: 15 },
+                   uniqueness: { case_sensitive: true }
   # ##issue#5###
   # validates :password, presence: true, confirmation: true, length: { in: 8..20 }
   # validates :password_confirmation, presence: true
