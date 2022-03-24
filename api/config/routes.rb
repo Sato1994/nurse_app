@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       resources :host_skills, only: [:create, :destroy], shallow: true
     end
 
+    resources :free_times, only: [:create, :destroy]
   end
 
   namespace :api do
@@ -33,7 +34,6 @@ Rails.application.routes.draw do
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'
   post 'api/agreements/host/:host_id', to: 'api/agreements#create'
 
-  post 'api/free_times', to: 'api/free_times#create'
 
   post 'api/recruitment_times', to: 'api/recruitment_times#create'
 
