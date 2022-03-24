@@ -3,6 +3,9 @@
 variable "RAILS_MASTER_KEY" {}
 variable "API_DOMAIN" {}
 variable "DATABASE_URL" {}
+variable "AWS_ACCESS_KEY_ID" {}
+variable "AWS_SECRET_ACCESS_KEY" {}
+variable "AWS_DEFAULT_REGION" {}
 
 # front
 # variable "BASE_URL" {}
@@ -36,6 +39,24 @@ resource "aws_ssm_parameter" "API_DOMAIN" {
 resource "aws_ssm_parameter" "DATABASE_URL" {
   name = "DATABASE_URL"
   value = var.DATABASE_URL
+  type = "SecureString"
+}
+
+resource "aws_ssm_parameter" "ACCESS_KEY_ID" {
+  name = "ACCESS_KEY_ID"
+  value = var.AWS_ACCESS_KEY_ID
+  type = "SecureString"
+}
+
+resource "aws_ssm_parameter" "SECRET_ACCESS_KEY" {
+  name = "SECRET_ACCESS_KEY"
+  value = var.AWS_SECRET_ACCESS_KEY
+  type = "SecureString"
+}
+
+resource "aws_ssm_parameter" "DEFAULT_REGION" {
+  name = "DEFAULT_REGION"
+  value = var.AWS_DEFAULT_REGION
   type = "SecureString"
 }
 #####################################################

@@ -24,6 +24,23 @@
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
+                <v-col cols="6">
+                  <v-file-input
+                    accept="image/*"
+                    prepend-icon="mdi-image"
+                    placeholder="画像を選択"
+                    @change="setImage"
+                  >
+                  </v-file-input>
+                </v-col>
+                <v-col cols="6">
+                  <div class="ml-4">
+                    <v-avatar color="brown" size="80">
+                      <v-img :src="imgUrl"></v-img>
+                    </v-avatar>
+                  </div>
+                  <input style="display: none" type="file" />
+                </v-col>
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field
                     v-model="postalCode"
@@ -152,6 +169,7 @@ export default {
       { text: '男性', value: false },
     ],
     copiedInfo: [],
+    setImageUrl: null,
   }),
 
   computed: {
@@ -159,6 +177,15 @@ export default {
       return this.$cookies.get('user') === 'user'
         ? '名前（フルネーム）'
         : '病院名'
+    },
+
+    // 画像をセットしたらそのurlで表示
+    imgUrl() {
+      if (this.setImageUrl) {
+        return this.setImageUrl
+      } else {
+        return this.$store.getters['info/info'].image.url
+      }
     },
 
     nameLengthRule() {
@@ -173,28 +200,6 @@ export default {
   },
 
   methods: {
-    editUser() {
-      this.$axios
-        .put(`/api/${this.$cookies.get('user')}`, this.copiedInfo, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'プロフィールを変更しました。'
-          )
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${response.data.data.myid}`
-          )
-          this.$emit('edit-button-click', this.copiedInfo)
-          this.isDisplay = false
-          this.$store.dispatch('info/saveInfo', response.data.data)
-        })
-        .catch((error) => {
-          console.log('登録失敗', error)
-        })
-    },
-
     getAddress() {
       this.$axios
         .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
@@ -206,6 +211,46 @@ export default {
             'snackbar/setMessage',
             '住所の検索の取得に失敗しました。'
           )
+        })
+    },
+
+    // イメージがセットされているならされているurlを代入
+    setImage(image) {
+      this.copiedInfo.image = image
+      if (image) {
+        this.setImageUrl = URL.createObjectURL(image)
+      } else {
+        this.setImageUrl = null
+      }
+    },
+
+    editUser() {
+      const formData = new FormData()
+      const headers = {
+        'content-type': 'multipart/form-data',
+        'access-token': this.$cookies.get('authInfo')['access-token'],
+        client: this.$cookies.get('authInfo').client,
+        uid: this.$cookies.get('authInfo').uid,
+      }
+      // 入力欄が埋まってるものだけformDataに
+      for (const key in this.copiedInfo) {
+        if (this.copiedInfo[key] != null) {
+          formData.append(key, this.copiedInfo[key])
+        }
+      }
+
+      this.$axios
+        .put(`/api/${this.$cookies.get('user')}`, formData, {
+          headers,
+        })
+        .then((response) => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'プロフィールを変更しました。'
+          )
+          this.$emit('edit-button-click', this.copiedInfo)
+          this.isDisplay = false
+          this.$store.dispatch('info/saveInfo', response.data.data)
         })
     },
   },

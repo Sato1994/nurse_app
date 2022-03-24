@@ -190,7 +190,7 @@ export default {
         { title: '届いたリクエスト', url: '/issues/offers' },
         { title: '送ったリクエスト', url: '/issues/requests' },
       ],
-      roomItems: [
+      roomsItems: [
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
