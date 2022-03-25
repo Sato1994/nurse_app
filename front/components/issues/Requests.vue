@@ -26,17 +26,14 @@
           :firstButton="true"
           :secondButton="false"
           :dotsButton="true"
-          @first-button-click="cancellRequest(request.id)"
+          @first-button-click="displayConfirmAsRemoveRequest(request.id)"
         />
       </v-col>
     </v-row>
     <Confirm
-      :dialog="dialog"
-      :confirm-title="confirmTitle"
-      :confirm-description="confirmDescription"
-      :agree-button-text="agreeButtonText"
-      @agree-button-click="cancellRequest"
-      @disagree-button-click="hideDialog"
+      :confirmDisplay="confirmDisplay"
+      @agree-button-click="removeRequest(requestId)"
+      @disagree-button-click="hideConfirm"
     />
   </v-container>
 </template>
@@ -54,10 +51,7 @@ export default {
 
   data() {
     return {
-      dialog: false,
-      confirmTitle: 'リクエストの取り消し',
-      confirmDescription: `このリクエストを取り消しますか？`,
-      agreeButtonText: '取り消す',
+      confirmDisplay: false,
       requestId: null,
     }
   },
@@ -69,20 +63,20 @@ export default {
   },
 
   methods: {
-    openDialog(requestId) {
-      this.dialog = true
+    removeRequest(requestId) {
+      this.$store.dispatch('requests/removeRequest', requestId)
+      this.confirmDisplay = false
+    },
+
+    hideConfirm() {
+      this.$store.commit('display/hideConfirm')
+      this.confirmDisplay = false
+    },
+
+    displayConfirmAsRemoveRequest(requestId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveRequest')
       this.requestId = requestId
-    },
-
-    hideDialog() {
-      this.dialog = false
-      this.confirmTitle = 'リクエストの取り消し'
-      this.confirmDescription = `このリクエストを取り消しますか？`
-      this.agreeButtonText = '取り消す'
-    },
-
-    cancellRequest() {
-      console.log('requestの削除機能をつくる予定だよ。', this.timeId)
     },
   },
 }

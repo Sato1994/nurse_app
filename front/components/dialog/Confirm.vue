@@ -1,15 +1,15 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialogIsDisplay" persistent max-width="290">
+    <v-dialog v-model="confirmIsDisplay" persistent max-width="290">
       <v-card>
         <v-card-title class="text-h5">
-          {{ confirmTitle }}
+          {{ confirm.title }}
         </v-card-title>
         <v-card-text style="white-space: pre-wrap">{{
-          confirmDescription
+          confirm.description
         }}</v-card-text>
 
-        <v-row v-if="commentIsDisplay">
+        <v-row v-if="confirm.commentIsDisplay">
           <v-col cols="12">
             <v-card-title class="justify-center">
               <v-icon>mdi-phone</v-icon><a :href="phoneLink">{{ phone }}</a>
@@ -30,7 +30,7 @@
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="disAgree"> 戻る </v-btn>
           <v-btn color="red darken-1" text @click="agree">
-            {{ agreeButtonText }}
+            {{ confirm.agreeButtonText }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -39,29 +39,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
-    dialog: {
-      type: Boolean,
-      required: true,
-    },
-
-    confirmDescription: {
-      type: String,
-      required: true,
-    },
-
-    confirmTitle: {
-      type: String,
-      required: true,
-    },
-
-    agreeButtonText: {
-      type: String,
-      required: true,
-    },
-
-    commentIsDisplay: {
+    confirmDisplay: {
       type: Boolean,
       default: false,
     },
@@ -74,21 +55,22 @@ export default {
 
   data() {
     return {
-      dialogIsDisplay: this.dialog,
-
       comment: '',
+      confirmIsDisplay: false,
     }
   },
 
   computed: {
+    ...mapState('display', ['confirm']),
+
     phoneLink() {
       return 'tel:' + this.phone
     },
   },
 
   watch: {
-    dialog(newValue) {
-      this.dialogIsDisplay = newValue
+    confirmDisplay(newValue) {
+      this.confirmIsDisplay = newValue
     },
   },
 

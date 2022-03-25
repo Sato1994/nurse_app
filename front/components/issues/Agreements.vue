@@ -30,7 +30,11 @@
           :dotsButton="true"
           @first-button-click="editAgreement(agreement.id, agreement.roomId)"
           @second-button-click="
-            openDialog(agreement.id, agreement.roomId, agreement.partnerPhone)
+            displayConfirmAsCancellAgreement(
+              agreement.id,
+              agreement.roomId,
+              agreement.partnerPhone
+            )
           "
         />
       </v-col>
@@ -40,14 +44,10 @@
     </v-toolbar>
 
     <Confirm
-      :dialog="dialog"
-      :confirm-title="confirmTitle"
-      :confirm-description="confirmDescription"
-      :agree-button-text="agreeButtonText"
+      :confirmDisplay="confirmDisplay"
       :phone="phone"
-      :commentIsDisplay="commentIsDisplay"
       @agree-button-click="cancellAgreement"
-      @disagree-button-click="hideDialog"
+      @disagree-button-click="hideConfirm"
     />
   </v-container>
 </template>
@@ -64,11 +64,7 @@ export default {
 
   data() {
     return {
-      dialog: false,
-      commentIsDisplay: false,
-      confirmTitle: '契約のキャンセル',
-      confirmDescription: `一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`,
-      agreeButtonText: '契約をキャンセル',
+      confirmDisplay: false,
       agreementId: null,
       roomId: null,
       phone: null,
@@ -83,32 +79,27 @@ export default {
 
   methods: {
     cancellAgreement(comment) {
-      this.$axios
-        .patch(
-          '/api/agreements/cancell',
-          { id: this.agreementId, comment },
-          { headers: this.$cookies.get('authInfo') }
-        )
-        .then(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            '契約をキャンセルしました。'
-          )
-          this.$store.dispatch('agreements/updateState', {
-            id: this.agreementId,
-            state: 'cancelled',
-          })
-          this.$router.push(`/rooms/${this.roomId}`)
-          this.dialog = false
+      this.$store
+        .dispatch('agreements/cancellAgreement', {
+          agreementId: this.agreementId,
+          roomId: this.roomId,
+          comment,
         })
+        .then(() => {
+          this.confirmDisplay = false
+        })
+        // 48時間以内だった場合
         .catch((error) => {
           if (error.response.status === 400) {
-            this.commentIsDisplay = true
-            this.confirmTitle = '開始時刻まで48時間を切っています。'
-            this.confirmDescription = `お相手に電話して直接キャンセルを申し出てください。\nキャンセル後、簡単に理由を入力し確定を押してください。`
-            this.agreeButtonText = '確定'
+            this.confirmDisplay = true
+            this.$store.commit('display/displayConfirmWithComment')
           }
         })
+    },
+
+    hideConfirm() {
+      this.confirmDisplay = false
+      this.$store.commit('display/hideConfirm')
     },
 
     editAgreement(agreementId, roomId) {
@@ -125,19 +116,12 @@ export default {
         })
     },
 
-    openDialog(agreementId, roomId, phone) {
-      this.dialog = true
+    displayConfirmAsCancellAgreement(agreementId, roomId, phone) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsCancellAgreement')
       this.agreementId = agreementId
       this.roomId = roomId
       this.phone = phone
-    },
-
-    hideDialog() {
-      this.dialog = false
-      this.commentIsDisplay = false
-      this.confirmTitle = '契約のキャンセル'
-      this.confirmDescription = `一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`
-      this.agreeButtonText = '契約をキャンセル'
     },
   },
 }

@@ -19,8 +19,10 @@ export const actions = {
     commit('saveOffers', offers)
   },
 
-  removeOffer({ commit }, id) {
-    commit('removeOffer', id)
+
+  removeOffer({ commit, dispatch }, offerId) {
+    commit('display/hideConfirm', null, { root: true })
+    dispatch('snackbar/setMessage', 'オファーの削除機能を作る予定だよ。', { root: true })
   }
 }
 

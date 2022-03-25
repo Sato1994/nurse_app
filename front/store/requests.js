@@ -19,7 +19,13 @@ export const actions = {
 
   addRequest({ commit }, request) {
     commit('addRequest', request)
-  }
+  },
+
+  removeRequest({ commit, dispatch }, requestId) {
+    commit('display/hideConfirm', null, { root: true })
+    dispatch('snackbar/setMessage', 'リクエストを削除する機能を作る予定だよ！！', { root: true })
+
+  },
 }
 
 export const getters = {

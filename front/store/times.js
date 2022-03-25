@@ -12,6 +12,17 @@ export const actions = {
   saveTimes({ commit }, times) {
     commit('saveTimes', times)
   },
+
+  removeTime({ dispatch, commit }, timeId) {
+    this.$axios
+      .delete(`/api/free_times/${timeId}`, {
+        headers: this.$cookies.get('authInfo'),
+      })
+      .then(() => {
+        commit('display/hideConfirm', null, { root: true })
+        dispatch('snackbar/setMessage', '取り消しました。', { root: true })
+      })
+  }
 }
 
 export const getters = {
