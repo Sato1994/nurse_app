@@ -94,6 +94,7 @@
     <v-card-title>NG技術</v-card-title>
 
     <v-card-text>
+      {{ times }}
       <div>
         <v-chip
           v-for="(skill, i) in targetSkills"
@@ -133,6 +134,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
@@ -145,9 +147,33 @@ export default {
     Calendar,
   },
 
+  // 現在のレスポンス
+  // data: {
+  //   info: {
+  //     id: 49,
+  //     myid: 'yamada',
+  //     name: '山田 孝之',
+  //     address: '東京都港区芝公園',
+  //     image: [Object],
+  //     wanted: true,
+  //     sex: false,
+  //     age: 27,
+  //     year: 6,
+  //     profile: 'こんにちは',
+  //     created_at: '2022-03-24T17:07:29.053+09:00'
+  //   },
+  //   skills: [ [Object], [Object], [Object] ],
+  //   times: [ [Object], [Object], [Object], [Object] ],
+  //   requests: [],
+  //   agreements: [],
+  //   offers: [],
+  //   rooms: []
+  // }
   async asyncData({ route, $axios }) {
     try {
       const data = await $axios.get(`/api/users/${route.params.id}`)
+      console.log('ここでしゅとく！！')
+      console.log(data)
       const times = data.data.times.map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -215,6 +241,8 @@ export default {
     wantedChipColor() {
       return this.target.wanted === true ? 'green' : 'red'
     },
+
+    ...mapState('times', ['times']),
   },
 
   created() {

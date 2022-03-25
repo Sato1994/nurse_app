@@ -5,7 +5,13 @@ export const state = () => ({
 export const mutations = {
   saveTimes(state, times) {
     state.times = times
-  }
+  },
+
+  removeTime(state, id) {
+    const target = state.times.find(time => time.id === id)
+    const index = state.times.indexOf(target)
+    state.times.splice(index, 1)
+  },
 }
 
 export const actions = {
@@ -21,7 +27,9 @@ export const actions = {
       .then(() => {
         commit('display/hideConfirm', null, { root: true })
         dispatch('snackbar/setMessage', '取り消しました。', { root: true })
+        commit('removeTime', timeId)
       })
+
   }
 }
 
