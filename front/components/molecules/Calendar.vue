@@ -28,23 +28,6 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
-
-          <v-menu bottom right>
-            <template #activator="{ on, attrs }">
-              <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right> mdi-menu-down </v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="type = 'week'">
-                <v-list-item-title>週表示</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'month'">
-                <v-list-item-title>月表示</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
         </v-toolbar>
       </v-sheet>
       <v-sheet height="600">
@@ -53,9 +36,8 @@
           v-model="focus"
           color="primary"
           :events="events"
-          :type="type"
+          type="month"
           @click:event="showEvent"
-          @click:more="viewWeek"
           @click:date="viewWeek"
         ></v-calendar>
 
@@ -171,11 +153,6 @@ export default {
 
   data: () => ({
     focus: '',
-    type: 'month',
-    typeToLabel: {
-      month: '月表示',
-      week: '週表示',
-    },
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -219,7 +196,8 @@ export default {
 
     viewWeek({ date }) {
       this.focus = date
-      this.type = 'week'
+      console.log(date)
+      console.log('日付がおされたよ')
     },
 
     setToday() {
