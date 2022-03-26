@@ -23,7 +23,7 @@
     </v-row>
     <Confirm
       :confirmDisplay="confirmDisplay"
-      @agree-button-click="removeTime(timeId)"
+      @agree-button-click="removeTime"
       @disagree-button-click="hideConfirm"
     />
   </v-container>
@@ -55,8 +55,8 @@ export default {
   },
 
   methods: {
-    removeTime(timeId) {
-      this.$store.dispatch('times/removeTime', timeId)
+    removeTime() {
+      this.$store.dispatch('times/removeTime', this.timeId)
       this.confirmDisplay = false
     },
 

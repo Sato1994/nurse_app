@@ -48,82 +48,87 @@
           offset-x
         >
           <v-card class="mx-auto" max-width="">
-            <v-card-text>
-              <v-sheet color="green lighten-5">
-                <div v-if="selectedEvent.name === '募集中'">
-                  リクエストを待っています
-                </div>
-              </v-sheet>
-              <v-sheet color="warning lighten-5">
-                <div v-if="selectedEvent.name === 'リクエスト中'">
-                  リクエストを送っています
-                </div>
-              </v-sheet>
-              <v-sheet color="blue lighten-5">
-                <div v-if="selectedEvent.name === 'オファーがあります'">
-                  オファーが届いています
-                </div>
-              </v-sheet>
-              <v-sheet color="red lighten-5">
-                <div v-if="selectedEvent.name === '契約済み'">
-                  契約があります
-                </div>
-              </v-sheet>
-
-              <p class="text-h4 text--primary">
-                {{ selectedEvent.dislayStart }}～{{
-                  selectedEvent.displayFinish
-                }}
-              </p>
-              <nuxt-link
-                :to="`/${$cookies.get('user') === 'user' ? 'host' : 'user'}/${
-                  selectedEvent.partnerMyid
-                }`"
-                >{{ selectedEvent.partnerName }}</nuxt-link
-              >
-              <div class="text--primary">
-                well meaning and kindly.<br />
-                "a benevolent smile"
-              </div>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                v-if="
-                  selectedEvent.name === '募集中' &&
-                  $route.params.id != $store.state.info.info.myid
-                "
-                text
-                color="warning darken-1"
-                @click="
-                  request(
-                    selectedEvent.startTime,
-                    selectedEvent.finishTime,
-                    selectedEvent.id
-                  )
-                "
-              >
-                リクエストを送る
-              </v-btn>
-
-              <v-btn
-                v-if="
-                  selectedEvent.name === 'オファーがあります' &&
-                  $route.params.id === $store.state.info.info.myid
-                "
-                text
-                color="warning darken-1"
-                @click="
-                  createRoom({
-                    requestId: selectedEvent.id,
-                    partnerId: selectedEvent.partnerId,
-                    startTime: selectedEvent.start,
-                    finishTime: selectedEvent.end,
-                  })
-                "
-              >
-                オファーを受けとる
-              </v-btn>
-            </v-card-actions>
+            <TimeCard
+              v-if="selectedEvent.name === '募集中'"
+              :startTime="selectedEvent.startTime"
+              :finishTime="selectedEvent.finishTime"
+              :firstButton="true"
+              :secondButton="true"
+              :dotsButton="true"
+              buttonText="時間を変更"
+              secondButtonText="取り消し"
+              color="green darken-3"
+              dotsButtonText="やあ"
+              @first-button-click="editTime(selectedEvent.id)"
+              @second-button-click="
+                displayConfirmAsRemoveTime(selectedEvent.id)
+              "
+            />
+            <TimeCard
+              v-if="selectedEvent.name == '契約済み'"
+              color="red darken-3"
+              buttonText="時間を変更"
+              secondButtonText="キャンセル"
+              dotsButtonText="やあ"
+              :partnerLink="`/${
+                $cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${selectedEvent.partnerMyid}`"
+              :partner="selectedEvent.partner"
+              :startTime="selectedEvent.startTime"
+              :finishTime="selectedEvent.finishTime"
+              :roomId="selectedEvent.roomId"
+              :firstButton="true"
+              :secondButton="true"
+              :dotsButton="true"
+              @first-button-click="
+                editAgreement(selectedEvent.id, selectedEvent.roomId)
+              "
+              @second-button-click="
+                displayConfirmAsCancellAgreement(
+                  selectedEvent.id,
+                  selectedEvent.roomId,
+                  selectedEvent.partnerPhone
+                )
+              "
+            />
+            <TimeCard
+              v-if="selectedEvent.name == 'オファーがあります'"
+              color="blue darken-3"
+              buttonText="受け取る"
+              secondButtonText="拒否する"
+              dotsButtonText="やあ"
+              :partnerLink="`/${
+                $cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${selectedEvent.partnerMyid}`"
+              :partner="selectedEvent.partner"
+              :startTime="selectedEvent.startTime"
+              :finishTime="selectedEvent.finishTime"
+              :firstButton="true"
+              :secondButton="true"
+              :dotsButton="true"
+              @first-button-click="createRoom(selectedEvent.id)"
+              @second-button-click="
+                displayConfirmAsRemoveOffer(selectedEvent.id)
+              "
+            />
+            <TimeCard
+              v-if="selectedEvent.name == 'リクエスト中'"
+              color="lime darken-3"
+              buttonText="取り消し"
+              dotsButtonText="やあ"
+              :partnerLink="`/${
+                $cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${selectedEvent.partnerMyid}`"
+              :partner="selectedEvent.partner"
+              :startTime="selectedEvent.startTime"
+              :finishTime="selectedEvent.finishTime"
+              :firstButton="true"
+              :secondButton="false"
+              :dotsButton="true"
+              @first-button-click="
+                displayConfirmAsRemoveRequest(selectedEvent.id)
+              "
+            />
           </v-card>
         </v-menu>
         <DatePicker
@@ -131,17 +136,27 @@
           title="リクエストを送る"
           @register-button-click="createRequest"
         />
+        <Confirm
+          :confirmDisplay="confirmDisplay"
+          @agree-button-click="actionAgreeConfirm"
+          @disagree-button-click="hideConfirm"
+        />
       </v-sheet>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
+import TimeCard from '@/components/TimeCard.vue'
+import Confirm from '@/components/dialog/Confirm.vue'
+
 export default {
   components: {
     DatePicker,
+    TimeCard,
+    Confirm,
   },
 
   props: {
@@ -156,6 +171,7 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
+    confirmDisplay: false,
   }),
 
   mounted() {
@@ -163,14 +179,105 @@ export default {
   },
 
   methods: {
-    ...mapActions('rooms', ['createRoom']),
-
-    request(startTime, finishTime, timeId) {
-      this.$refs.datePicker.isDisplay = true
-      this.$refs.datePicker.startTime = startTime
-      this.$refs.datePicker.finishTime = finishTime
-      this.$refs.datePicker.timeId = timeId
+    // それぞれのConfirmでagreeButtonを押したときの挙動
+    actionAgreeConfirm(comment) {
+      switch (this.selectedEvent.name) {
+        case '募集中':
+          this.$store.dispatch('times/removeTime', this.selectedEvent.id)
+          this.confirmDisplay = false
+          break
+        case '契約済み':
+          this.$store
+            .dispatch('agreements/cancellAgreement', {
+              agreementId: this.selectedEvent.id,
+              roomId: this.selectedEvent.roomId,
+              comment,
+            })
+            .then(() => {
+              this.confirmDisplay = false
+            })
+            // 48時間以内だった場合
+            .catch((error) => {
+              if (error.response.status === 400) {
+                this.confirmDisplay = true
+                this.$store.commit('display/displayConfirmWithComment')
+              }
+            })
+          break
+        case 'オファーがあります':
+          this.$store.dispatch('offers/removeOffer', this.selectedEvent.id)
+          this.confirmDisplay = false
+          break
+        case 'リクエスト中':
+          this.$store.dispatch('requests/removeRequest', this.selectedEvent.id)
+          this.confirmDisplay = false
+          break
+        default:
+          break
+      }
     },
+
+    hideConfirm() {
+      this.$store.commit('display/hideConfirm')
+      this.confirmDisplay = false
+    },
+
+    // ...mapActions('rooms', ['createRoom']),
+
+    editTime(timeId) {
+      console.log('timeの編集機能を作成予定だよ', timeId)
+    },
+
+    displayConfirmAsRemoveTime(timeId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveTime')
+      this.timeId = timeId
+    },
+
+    editAgreement(agreementId, roomId) {
+      this.$axios
+        .patch(
+          `/api/agreements/${agreementId}`,
+          {},
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        .then(() => {
+          this.$router.push(`/rooms/${roomId}`)
+        })
+    },
+
+    displayConfirmAsCancellAgreement(agreementId, roomId, phone) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsCancellAgreement')
+      this.agreementId = agreementId
+      this.roomId = roomId
+      this.phone = phone
+    },
+
+    displayConfirmAsRemoveOffer(offerId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveOffer')
+      this.offerId = offerId
+    },
+
+    createRoom(offerId) {
+      console.log('roomをさくせいするよ', offerId)
+    },
+
+    displayConfirmAsRemoveRequest(requestId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveRequest')
+      this.requestId = requestId
+    },
+
+    // request(startTime, finishTime, timeId) {
+    //   this.$refs.datePicker.isDisplay = true
+    //   this.$refs.datePicker.startTime = startTime
+    //   this.$refs.datePicker.finishTime = finishTime
+    //   this.$refs.datePicker.timeId = timeId
+    // },
 
     createRequest(startTime, finishTime, timeId) {
       this.$axios
