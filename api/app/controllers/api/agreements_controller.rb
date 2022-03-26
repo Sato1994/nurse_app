@@ -51,7 +51,7 @@ class Api::AgreementsController < ApplicationController
     agreement = Agreement.find(params[:id])
     return unless user_login_and_own?(agreement.user_id)
 
-    if agreement.start_time > (30.days.from_now)
+    if agreement.start_time > (48.hours.from_now)
       agreement.cancell_agreement
     else
       if params[:comment].blank?

@@ -55,7 +55,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
     context 'userとしてログインしている場合' do
       let(:params) do
-        { start_time: host_request.start_time, finish_time: host_request.finish_time, request_id: host_request.id }
+        { request_id: host_request.id }
       end
 
       before do
@@ -90,7 +90,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
     context 'hostとしてログインしている場合' do
       let(:params) do
-        { start_time: user_request.start_time, finish_time: user_request.finish_time, request_id: user_request.id }
+        {  request_id: user_request.id }
       end
 
       before do
@@ -127,8 +127,7 @@ RSpec.describe 'Api::Rooms', type: :request do
     context 'ログインしていない場合' do
       it '失敗する' do
         post "/api/rooms/host/#{host_request.user.id}",
-             params: { start_time: host_request.start_time, finish_time: host_request.finish_time,
-                       request_id: host_request.id }
+             params: { request_id: host_request.id }
         expect(Room.count).to eq(0)
       end
 

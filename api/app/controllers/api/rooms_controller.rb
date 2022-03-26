@@ -28,11 +28,13 @@ class Api::RoomsController < ApplicationController
 
   def create
     if api_user_signed_in?
-      method = room_user_signed_in_params
       request = 'Host'
+      host_request = HostRequest.find(params[:request_id])
+      method = room_user_signed_in_params_create(host_request.start_time, host_request.finish_time)
     elsif api_host_signed_in?
-      method = room_host_signed_in_params
       request = 'User'
+      user_request = UserRequest.find(params[:request_id])
+      method = room_host_signed_in_params_create(user_request.start_time, user_request.finish_time)
     else
       render body: nil, status: :unauthorized
       return
@@ -52,9 +54,9 @@ class Api::RoomsController < ApplicationController
     room = Room.find(params[:id])
     if user_login_and_own?(room.user.id)
       # 時間が更新される
-      render json: room.errors, status: :bad_request unless room.update(room_user_signed_in_params)
+      render json: room.errors, status: :bad_request unless room.update(room_user_signed_in_params_update)
     elsif host_login_and_own?(room.host.id)
-      render json: room.errors, status: :bad_request unless room.update(room_host_signed_in_params)
+      render json: room.errors, status: :bad_request unless room.update(room_host_signed_in_params_update)
     else
       render body: nil, status: :forbidden
     end
@@ -131,12 +133,22 @@ class Api::RoomsController < ApplicationController
 
   private
 
-  def room_user_signed_in_params
+  def room_user_signed_in_params_create(start_time, finish_time)
+    params.permit(:host_id).merge(user_id: current_api_user.id, start_time: start_time,
+                                  finish_time: finish_time)
+  end
+
+  def room_host_signed_in_params_create(start_time, finish_time)
+    params.permit(:user_id).merge(host_id: current_api_host.id, start_time: start_time,
+                                  finish_time: finish_time)
+  end
+
+  def room_user_signed_in_params_update
     params.permit(:host_id).merge(user_id: current_api_user.id, start_time: Time.zone.parse(params[:start_time]),
                                   finish_time: Time.zone.parse(params[:finish_time]))
   end
 
-  def room_host_signed_in_params
+  def room_host_signed_in_params_update
     params.permit(:user_id).merge(host_id: current_api_host.id, start_time: Time.zone.parse(params[:start_time]),
                                   finish_time: Time.zone.parse(params[:finish_time]))
   end
