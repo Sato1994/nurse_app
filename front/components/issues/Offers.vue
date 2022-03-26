@@ -81,8 +81,8 @@ export default {
       this.offerId = offerId
     },
 
-    createRoom(offerId) {
-      console.log('roomをさくせいするよ', offerId)
+    createRoom(requestId) {
+      this.$store.dispatch('rooms/createRoom', requestId)
     },
   },
 }
