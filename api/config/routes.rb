@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :users, except: :destroy
     resources :hosts, except: :destroy
     resources :free_times, only: [:create, :destroy]
+    resources :recruitment_times, only: [:create, :destroy]
     resources :health_checks, only: :index
 
     resources :skills do
@@ -27,8 +28,6 @@ Rails.application.routes.draw do
   end
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'
   post 'api/agreements/host/:host_id', to: 'api/agreements#create'
-
-  post 'api/recruitment_times', to: 'api/recruitment_times#create'
 
   post 'api/host_requests/:free_time_id', to: 'api/host_requests#create'
   post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'

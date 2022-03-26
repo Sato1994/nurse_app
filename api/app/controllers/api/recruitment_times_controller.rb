@@ -10,6 +10,13 @@ class Api::RecruitmentTimesController < ApplicationController
     end
   end
 
+  def destroy
+    recruitment_time = RecruitmentTime.find(params[:id])
+    return unless host_login_and_own?(recruitment_time.host_id)
+
+    recruitment_time.destroy
+  end
+
   private
 
   def recruitment_time_params
