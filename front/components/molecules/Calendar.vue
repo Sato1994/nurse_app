@@ -147,7 +147,6 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import TimeCard from '@/components/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
@@ -222,7 +221,9 @@ export default {
       this.confirmDisplay = false
     },
 
-    // ...mapActions('rooms', ['createRoom']),
+    createRoom(requestId) {
+      this.$store.dispatch('rooms/createRoom', requestId)
+    },
 
     editTime(timeId) {
       console.log('timeの編集機能を作成予定だよ', timeId)
@@ -260,10 +261,6 @@ export default {
       this.confirmDisplay = true
       this.$store.commit('display/displayConfirmAsRemoveOffer')
       this.offerId = offerId
-    },
-
-    createRoom(offerId) {
-      console.log('roomをさくせいするよ', offerId)
     },
 
     displayConfirmAsRemoveRequest(requestId) {

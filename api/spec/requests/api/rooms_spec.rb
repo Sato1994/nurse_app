@@ -55,7 +55,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
     context 'userとしてログインしている場合' do
       let(:params) do
-        { start_time: host_request.start_time, finish_time: host_request.finish_time, request_id: host_request.id }
+        { request_id: host_request.id }
       end
 
       before do
@@ -64,7 +64,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       context 'roomを作成すると' do
         before do
-          post "/api/rooms/host/#{host_request.host.id}", params: params, headers: headers
+          post "/api/rooms", params: params, headers: headers
         end
 
         it 'roomが一つ増える' do
@@ -83,14 +83,14 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it '作成したらhost_requestが削除される' do
         expect do
-          post "/api/rooms/host/#{host_request.host.id}", params: params, headers: headers
+          post "/api/rooms", params: params, headers: headers
         end.to change(HostRequest, :count).by(-1)
       end
     end
 
     context 'hostとしてログインしている場合' do
       let(:params) do
-        { start_time: user_request.start_time, finish_time: user_request.finish_time, request_id: user_request.id }
+        {  request_id: user_request.id }
       end
 
       before do
@@ -100,7 +100,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       context 'roomを作成すると' do
         before do
-          post "/api/rooms/user/#{user_request.user.id}", params: params, headers: headers
+          post "/api/rooms", params: params, headers: headers
         end
 
         it 'roomが一つ増える' do
@@ -119,21 +119,20 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it '作成したらuser_requestが削除される' do
         expect do
-          post "/api/rooms/user/#{user_request.user.id}", params: params, headers: headers
+          post "/api/rooms", params: params, headers: headers
         end.to change(UserRequest, :count).by(-1)
       end
     end
 
     context 'ログインしていない場合' do
       it '失敗する' do
-        post "/api/rooms/host/#{host_request.user.id}",
-             params: { start_time: host_request.start_time, finish_time: host_request.finish_time,
-                       request_id: host_request.id }
+        post "/api/rooms",
+             params: { request_id: host_request.id }
         expect(Room.count).to eq(0)
       end
 
       it '失敗する' do
-        post "/api/rooms/user/#{user_request.user.id}",
+        post "/api/rooms",
              params: { start_time: user_request.start_time, finish_time: user_request.finish_time,
                        request_id: user_request.id }
         expect(Room.count).to eq(0)
