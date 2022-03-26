@@ -30,16 +30,22 @@ class Api::RoomsController < ApplicationController
     if api_user_signed_in?
       request = 'Host'
       host_request = HostRequest.find(params[:request_id])
-      method = room_user_signed_in_params_create(host_request.start_time, host_request.finish_time)
+
+      payload = { user_id: current_api_user.id, host_id: host_request.host_id, start_time: host_request.start_time,
+                  finish_time: host_request.finish_time }
+
     elsif api_host_signed_in?
       request = 'User'
       user_request = UserRequest.find(params[:request_id])
-      method = room_host_signed_in_params_create(user_request.start_time, user_request.finish_time)
+
+      payload = { user_id: user_request.user_id, host_id: current_api_host.id, start_time: user_request.start_time,
+                  finish_time: user_request.finish_time }
+
     else
       render body: nil, status: :unauthorized
       return
     end
-    room = Room.new(method)
+    room = Room.new(payload)
     if room.save
       eval("#{request}Request").find(params[:request_id]).destroy
       render json: { id: room.id, state: room.state, closed: room.closed, user: room.user,
@@ -132,16 +138,6 @@ class Api::RoomsController < ApplicationController
   end
 
   private
-
-  def room_user_signed_in_params_create(start_time, finish_time)
-    params.permit(:host_id).merge(user_id: current_api_user.id, start_time: start_time,
-                                  finish_time: finish_time)
-  end
-
-  def room_host_signed_in_params_create(start_time, finish_time)
-    params.permit(:user_id).merge(host_id: current_api_host.id, start_time: start_time,
-                                  finish_time: finish_time)
-  end
 
   def room_user_signed_in_params_update
     params.permit(:host_id).merge(user_id: current_api_user.id, start_time: Time.zone.parse(params[:start_time]),

@@ -32,8 +32,7 @@ Rails.application.routes.draw do
   post 'api/host_requests/:free_time_id', to: 'api/host_requests#create'
   post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
 
-  post 'api/rooms/user/:user_id', to: 'api/rooms#create'
-  post 'api/rooms/host/:host_id', to: 'api/rooms#create'
+  post 'api/rooms', to: 'api/rooms#create'
   patch 'api/rooms/:id/update_room_time', to: 'api/rooms#update_room_time'
   patch 'api/rooms/:id/update_room_state', to: 'api/rooms#update_room_state'
 
