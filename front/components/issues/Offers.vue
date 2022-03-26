@@ -34,7 +34,7 @@
     </v-row>
     <Confirm
       :confirmDisplay="confirmDisplay"
-      @agree-button-click="removeOffer(offerId)"
+      @agree-button-click="removeOffer"
       @disagree-button-click="hideConfirm()"
     />
   </v-container>
@@ -65,8 +65,8 @@ export default {
   },
 
   methods: {
-    removeOffer(offerId) {
-      this.$store.dispatch('offers/removeOffer', offerId)
+    removeOffer() {
+      this.$store.dispatch('offers/removeOffer', this.offerId)
       this.confirmDisplay = false
     },
 
