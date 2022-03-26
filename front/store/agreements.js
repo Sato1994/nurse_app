@@ -6,6 +6,7 @@ export const mutations = {
   saveAgreements(state, agreements) {
     state.agreements = agreements
   },
+
   updateState(state, payload) {
     state.agreements.find(obj => obj.id === payload.id).state = payload.state
   },
@@ -15,8 +16,31 @@ export const actions = {
   saveAgreements({ commit }, agreements) {
     commit('saveAgreements', agreements)
   },
+
   updateState({ commit }, payload) {
     commit('updateState', payload)
+  },
+
+  cancellAgreement({ commit, dispatch }, payload) {
+    return this.$axios
+      .patch(
+        '/api/agreements/cancell',
+        { id: payload.agreementId, comment: payload.comment },
+        { headers: this.$cookies.get('authInfo') }
+      )
+      .then(() => {
+        dispatch(
+          'snackbar/setMessage',
+          '契約をキャンセルしました。', { root: true }
+        )
+        dispatch('agreements/updateState', {
+          id: payload.agreementId,
+          state: 'cancelled',
+        },
+          { root: true })
+        this.$router.push(`/rooms/${payload.roomId}`)
+        commit('display/hideConfirm', null, { root: true })
+      })
   },
 }
 

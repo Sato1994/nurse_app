@@ -28,17 +28,14 @@
           :secondButton="true"
           :dotsButton="true"
           @first-button-click="createRoom(offer.id)"
-          @second-button-click="openDialog(offer.id)"
+          @second-button-click="displayConfirmAsRemoveOffer(offer.id)"
         />
       </v-col>
     </v-row>
     <Confirm
-      :dialog="dialog"
-      :confirm-title="confirmTitle"
-      :confirm-description="confirmDescription"
-      :agree-button-text="agreeButtonText"
-      @agree-button-click="cancellOffer"
-      @disagree-button-click="hideDialog"
+      :confirmDisplay="confirmDisplay"
+      @agree-button-click="removeOffer(offerId)"
+      @disagree-button-click="hideConfirm()"
     />
   </v-container>
 </template>
@@ -56,11 +53,8 @@ export default {
 
   data() {
     return {
-      dialog: false,
-      confirmTitle: 'リクエストの拒否',
-      confirmDescription: `このリクエストを拒否しますか？`,
-      agreeButtonText: '拒否する',
-      requestId: null,
+      confirmDisplay: false,
+      offerId: null,
     }
   },
 
@@ -71,20 +65,20 @@ export default {
   },
 
   methods: {
-    openDialog(offerId) {
-      this.dialog = true
+    removeOffer(offerId) {
+      this.$store.dispatch('offers/removeOffer', offerId)
+      this.confirmDisplay = false
+    },
+
+    hideConfirm() {
+      this.$store.commit('display/hideConfirm')
+      this.confirmDisplay = false
+    },
+
+    displayConfirmAsRemoveOffer(offerId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveOffer')
       this.offerId = offerId
-    },
-
-    hideDialog() {
-      this.dialog = false
-      this.confirmTitle = 'リクエストの拒否'
-      this.confirmDescription = `このリクエストを拒否しますか？`
-      this.agreeButtonText = '拒否する'
-    },
-
-    cancellOffer() {
-      console.log('Offer拒否削除機能だよあ', this.offerId)
     },
 
     createRoom(offerId) {

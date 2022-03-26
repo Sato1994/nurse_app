@@ -19,8 +19,10 @@ export const actions = {
     commit('saveOffers', offers)
   },
 
-  removeOffer({ commit }, id) {
-    commit('removeOffer', id)
+
+  removeOffer({ commit, dispatch }, offerId) {
+    commit('display/hideConfirm', null, { root: true })
+    dispatch('snackbar/setMessage', 'オファーの削除機能を作る予定だよ。', { root: true })
   }
 }
 
@@ -39,10 +41,10 @@ export const getters = {
         partnerMyid: obj.partner.myid,
         partnerId: obj.partner.id,
         partner: obj.partner,
-        start: `${s.getFullYear()}-${s.getMonth() + 1
-          }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-        end: `${f.getFullYear()}-${f.getMonth() + 1
-          }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+        start: `${s.getFullYear()}-${(s.getMonth() + 1).toString().padStart(2, '0')
+          }-${(s.getDate()).toString().padStart(2, '0')}T${(s.getHours()).toString().padStart(2, '0')}:${(s.getMinutes()).toString().padStart(2, '0')}`,
+        end: `${f.getFullYear()}-${(f.getMonth() + 1).toString().padStart(2, '0')
+          }-${(f.getDate()).toString().padStart(2, '0')}T${(f.getHours()).toString().padStart(2, '0')}:${(f.getMinutes()).toString().padStart(2, '0')}`,
         name: "オファーがあります",
         color: 'blue',
         dislayStart: `${s.getMonth() + 1

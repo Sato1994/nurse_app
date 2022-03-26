@@ -16,6 +16,13 @@ class Api::FreeTimesController < ApplicationController
     end
   end
 
+  def destroy
+    free_time = FreeTime.find(params[:id])
+    return unless user_login_and_own?(free_time.user_id)
+
+    free_time.destroy
+  end
+
   private
 
   def free_time_params

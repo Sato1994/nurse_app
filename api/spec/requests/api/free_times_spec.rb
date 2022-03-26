@@ -3,9 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::FreeTimes', type: :request do
-  let(:uid) { response.headers['uid'] }
-  let(:client) { response.headers['client'] }
-  let(:access_token) { response.headers['access-token'] }
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
 
   # describe "GET /index" do
   #   it ""
@@ -18,7 +19,7 @@ RSpec.describe 'Api::FreeTimes', type: :request do
       before do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         post '/api/free_times', params: { start_time: '2030-08-06T00:00:00', finish_time: '2030-08-06T08:00:00' },
-                                headers: { uid: uid, client: client, 'access-token': access_token }
+                                headers: headers
       end
 
       it 'free_timeを作成できる' do
@@ -41,9 +42,29 @@ RSpec.describe 'Api::FreeTimes', type: :request do
       it '失敗したらステータス400を返す' do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         post '/api/free_times', params: { start_time: '2030-08-06T00:00:00', finish_time: '2030-08-06T00:00:00' },
-                                headers: { uid: uid, client: client, 'access-token': access_token }
+                                headers: headers
         expect(response.status).to eq(400)
       end
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    let!(:free_time) { create(:free_time) }
+
+    it '成功したら削除される' do
+      post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
+      expect do
+        delete "/api/free_times/#{free_time.id}", headers: headers
+      end.to change(FreeTime, :count).from(1).to(0)
+    end
+
+    it '別ユーザーなら削除されない' do
+      user_2 = create(:user)
+
+      post '/api/user/sign_in', params: { email: user_2.email, password: user_2.password }
+      expect do
+        delete "/api/free_times/#{free_time.id}", headers: headers
+      end.not_to change(FreeTime, :count).from(1)
     end
   end
 end

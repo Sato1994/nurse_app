@@ -5,13 +5,32 @@ export const state = () => ({
 export const mutations = {
   saveTimes(state, times) {
     state.times = times
-  }
+  },
+
+  removeTime(state, id) {
+    const target = state.times.find(time => time.id === id)
+    const index = state.times.indexOf(target)
+    state.times.splice(index, 1)
+  },
 }
 
 export const actions = {
   saveTimes({ commit }, times) {
     commit('saveTimes', times)
   },
+
+  removeTime({ dispatch, commit }, timeId) {
+    this.$axios
+      .delete(`/api/free_times/${timeId}`, {
+        headers: this.$cookies.get('authInfo'),
+      })
+      .then(() => {
+        commit('display/hideConfirm', null, { root: true })
+        dispatch('snackbar/setMessage', '取り消しました。', { root: true })
+        commit('removeTime', timeId)
+      })
+
+  }
 }
 
 export const getters = {

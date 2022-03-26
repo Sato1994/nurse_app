@@ -17,17 +17,14 @@
           :secondButton="true"
           :dotsButton="true"
           @first-button-click="editTime(time.id)"
-          @second-button-click="openDialog(time.id)"
+          @second-button-click="displayConfirmAsRemoveTime(time.id)"
         />
       </v-col>
     </v-row>
     <Confirm
-      :dialog="dialog"
-      :confirm-title="confirmTitle"
-      :confirm-description="confirmDescription"
-      :agree-button-text="agreeButtonText"
-      @agree-button-click="cancellTime"
-      @disagree-button-click="hideDialog"
+      :confirmDisplay="confirmDisplay"
+      @agree-button-click="removeTime(timeId)"
+      @disagree-button-click="hideConfirm"
     />
   </v-container>
 </template>
@@ -45,10 +42,8 @@ export default {
 
   data() {
     return {
-      dialog: false,
-      confirmTitle: '募集時間の取り消し',
-      confirmDescription: `この時間の募集を取り消しますか？`,
-      agreeButtonText: '取り消す',
+      // 表示の切り替えだけはstoreの一か所を見るわけにはいかない
+      confirmDisplay: false,
       timeId: null,
     }
   },
@@ -60,24 +55,24 @@ export default {
   },
 
   methods: {
+    removeTime(timeId) {
+      this.$store.dispatch('times/removeTime', timeId)
+      this.confirmDisplay = false
+    },
+
+    hideConfirm() {
+      this.$store.commit('display/hideConfirm')
+      this.confirmDisplay = false
+    },
+
     editTime(timeId) {
       console.log('timeの編集機能を作成予定だよ', timeId)
     },
 
-    openDialog(timeId) {
-      this.dialog = true
+    displayConfirmAsRemoveTime(timeId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveTime')
       this.timeId = timeId
-    },
-
-    cancellTime() {
-      console.log('timeの削除機能をつくる予定だよ。', this.timeId)
-    },
-
-    hideDialog() {
-      this.dialog = false
-      this.confirmTitle = '募集時間の取り消し'
-      this.confirmDescription = `この時間の募集を取り消しますか？`
-      this.agreeButtonText = '取り消す'
     },
   },
 }

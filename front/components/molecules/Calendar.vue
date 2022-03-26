@@ -131,12 +131,12 @@
                 text
                 color="warning darken-1"
                 @click="
-                  createRoom(
-                    selectedEvent.id,
-                    selectedEvent.partnerId,
-                    selectedEvent.startTime,
-                    selectedEvent.finishTime
-                  )
+                  createRoom({
+                    requestId: selectedEvent.id,
+                    partnerId: selectedEvent.partnerId,
+                    startTime: selectedEvent.start,
+                    finishTime: selectedEvent.end,
+                  })
                 "
               >
                 オファーを受けとる
@@ -155,6 +155,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 export default {
   components: {
@@ -185,29 +186,7 @@ export default {
   },
 
   methods: {
-    createRoom(requestId, partnerId, startTime, finishTime) {
-      this.$axios
-        .post(
-          `/api/rooms/${
-            this.$cookies.get('user') === 'user' ? 'host' : 'user'
-          }/${partnerId}`,
-          {
-            start_time: startTime,
-            finish_time: finishTime,
-            request_id: requestId,
-          },
-          { headers: this.$cookies.get('authInfo') }
-        )
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'トークルームが作成されました。'
-          )
-          this.$store.dispatch('offers/removeOffer', requestId)
-          this.$store.dispatch('rooms/addRoom', response.data)
-          this.$router.push(`/rooms/${response.data.id}`)
-        })
-    },
+    ...mapActions('rooms', ['createRoom']),
 
     request(startTime, finishTime, timeId) {
       this.$refs.datePicker.isDisplay = true
