@@ -52,22 +52,27 @@
               v-if="selectedEvent.name === '募集中'"
               :startTime="selectedEvent.startTime"
               :finishTime="selectedEvent.finishTime"
-              :firstButton="true"
-              :secondButton="true"
+              :firstButton="freeTimeCardConfig.firstButton"
+              :secondButton="freeTimeCardConfig.secondButton"
               :dotsButton="true"
-              buttonText="時間を変更"
-              secondButtonText="取り消し"
+              :firstButtonText="freeTimeCardConfig.firstButtonText"
+              :secondButtonText="freeTimeCardConfig.secondButtonText"
               color="green darken-3"
               dotsButtonText="やあ"
               @first-button-click="editTime(selectedEvent.id)"
               @second-button-click="
-                displayConfirmAsRemoveTime(selectedEvent.id)
+                actionPushSecondTimeButton({
+                  startTime: selectedEvent.startTime,
+                  finishTime: selectedEvent.finishTime,
+                  timeId: selectedEvent.id,
+                })
               "
             />
+
             <TimeCard
               v-if="selectedEvent.name == '契約済み'"
               color="red darken-3"
-              buttonText="時間を変更"
+              firstButtonText="時間を変更"
               secondButtonText="キャンセル"
               dotsButtonText="やあ"
               :partnerLink="`/${
@@ -94,7 +99,7 @@
             <TimeCard
               v-if="selectedEvent.name == 'オファーがあります'"
               color="blue darken-3"
-              buttonText="受け取る"
+              firstButtonText="受け取る"
               secondButtonText="拒否する"
               dotsButtonText="やあ"
               :partnerLink="`/${
@@ -114,7 +119,7 @@
             <TimeCard
               v-if="selectedEvent.name == 'リクエスト中'"
               color="lime darken-3"
-              buttonText="取り消し"
+              firstButtonText="取り消し"
               dotsButtonText="やあ"
               :partnerLink="`/${
                 $cookies.get('user') === 'user' ? 'host' : 'user'
@@ -147,6 +152,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import TimeCard from '@/components/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
@@ -177,7 +183,36 @@ export default {
     this.$refs.calendar.checkChange()
   },
 
+  computed: {
+    ...mapState('info', ['info']),
+
+    freeTimeCardConfig() {
+      let config = ''
+      // ログインしていて且つ自分のページならば
+      if (
+        this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
+      ) {
+        config = {
+          firstButton: true,
+          secondButton: true,
+          firstButtonText: '時間を変更',
+          secondButtonText: '取り消し',
+        }
+      } else {
+        config = {
+          firstButton: false,
+          secondButton: true,
+          firstButtonText: '',
+          secondButtonText: 'リクエストを送る',
+        }
+      }
+      return config
+    },
+  },
+
   methods: {
+    ...mapActions('rooms', ['createRoom']),
+
     // それぞれのConfirmでagreeButtonを押したときの挙動
     actionAgreeConfirm(comment) {
       switch (this.selectedEvent.name) {
@@ -216,23 +251,35 @@ export default {
       }
     },
 
+    // timeのsecondButtonが押されたときの他人のページか自分のページかでのそれぞれの挙動
+    actionPushSecondTimeButton(payload) {
+      if (
+        this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
+      ) {
+        this.confirmDisplay = true
+        this.$store.commit('display/displayConfirmAsRemoveTime')
+        this.timeId = payload.timeId
+      } else {
+        this.$refs.datePicker.isDisplay = true
+        this.$refs.datePicker.startTime = payload.startTime
+        this.$refs.datePicker.finishTime = payload.finishTime
+        this.$refs.datePicker.timeId = payload.timeId
+      }
+    },
+
+    displayConfirmAsRemoveRequest(requestId) {
+      this.confirmDisplay = true
+      this.$store.commit('display/displayConfirmAsRemoveRequest')
+      this.requestId = requestId
+    },
+
     hideConfirm() {
       this.$store.commit('display/hideConfirm')
       this.confirmDisplay = false
     },
 
-    createRoom(requestId) {
-      this.$store.dispatch('rooms/createRoom', requestId)
-    },
-
     editTime(timeId) {
       console.log('timeの編集機能を作成予定だよ', timeId)
-    },
-
-    displayConfirmAsRemoveTime(timeId) {
-      this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveTime')
-      this.timeId = timeId
     },
 
     editAgreement(agreementId, roomId) {
@@ -262,19 +309,6 @@ export default {
       this.$store.commit('display/displayConfirmAsRemoveOffer')
       this.offerId = offerId
     },
-
-    displayConfirmAsRemoveRequest(requestId) {
-      this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveRequest')
-      this.requestId = requestId
-    },
-
-    // request(startTime, finishTime, timeId) {
-    //   this.$refs.datePicker.isDisplay = true
-    //   this.$refs.datePicker.startTime = startTime
-    //   this.$refs.datePicker.finishTime = finishTime
-    //   this.$refs.datePicker.timeId = timeId
-    // },
 
     createRequest(startTime, finishTime, timeId) {
       this.$axios

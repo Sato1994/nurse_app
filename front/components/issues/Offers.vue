@@ -15,7 +15,7 @@
       >
         <TimeCard
           color="blue darken-3"
-          buttonText="受け取る"
+          firstButtonText="受け取る"
           secondButtonText="拒否する"
           dotsButtonText="やあ"
           :partnerLink="`/${
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Confirm from '@/components/dialog/Confirm.vue'
 import TimeCard from '@/components/TimeCard.vue'
 
@@ -65,6 +65,8 @@ export default {
   },
 
   methods: {
+    ...mapActions('rooms', ['createRoom']),
+
     removeOffer() {
       this.$store.dispatch('offers/removeOffer', this.offerId)
       this.confirmDisplay = false
@@ -79,10 +81,6 @@ export default {
       this.confirmDisplay = true
       this.$store.commit('display/displayConfirmAsRemoveOffer')
       this.offerId = offerId
-    },
-
-    createRoom(requestId) {
-      this.$store.dispatch('rooms/createRoom', requestId)
     },
   },
 }

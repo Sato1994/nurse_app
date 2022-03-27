@@ -36,7 +36,7 @@ export const actions = {
     commit('addRoom', room)
   },
 
-  createRoom({ dispatch }, requestId) {
+  createRoom({ dispatch, commit }, requestId) {
     this.$axios
       .post(
         '/api/rooms',
@@ -47,7 +47,7 @@ export const actions = {
       )
       .then((response) => {
         dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
-        dispatch('offers/removeOffer', requestId, { root: true })
+        commit('offers/removeOffer', requestId, { root: true })
         dispatch('addRoom', response.data)
         this.$router.push(`/rooms/${response.data.id}`)
       })
