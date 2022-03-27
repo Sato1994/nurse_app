@@ -3,9 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::UserRequests', type: :request do
-  let(:uid) { response.headers['uid'] }
-  let(:client) { response.headers['client'] }
-  let(:access_token) { response.headers['access-token'] }
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
 
   describe 'POST /create' do
     let(:user) { create(:user) }
@@ -16,7 +17,7 @@ RSpec.describe 'Api::UserRequests', type: :request do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         post "/api/user_requests/#{recruitment_time.id}",
              params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now },
-             headers: { uid: uid, client: client, 'access-token': access_token }
+             headers: headers
       end
 
       it 'user_requestを作成できる' do
@@ -38,8 +39,53 @@ RSpec.describe 'Api::UserRequests', type: :request do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         post "/api/user_requests/#{recruitment_time.id}",
              params: { start_time: Time.current, finish_time: Time.current },
-             headers: { uid: uid, client: client, 'access-token': access_token }
+             headers: headers
         expect(response.status).to eq(400)
+      end
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    let!(:user_request) { create(:user_request) }
+    let!(:user_request_2) { create(:user_request) }
+
+    context 'userがログインしている場合' do
+      it 'requestが本人の物の場合削除される' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/user/sign_in', params: { email: user_request.user.email, password: user_request.user.password }
+        expect do
+          delete "/api/user_requests/#{user_request.id}",
+                 headers: headers
+        end.to change(UserRequest, :count).from(2).to(1)
+      end
+
+      it 'requestが他人の物の場合、失敗する' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/user/sign_in', params: { email: user_request.user.email, password: user_request.user.password }
+        expect do
+          delete "/api/user_requests/#{user_request_2.id}",
+                 headers: headers
+        end.not_to change(UserRequest, :count)
+      end
+    end
+
+    context 'hostがログインしている場合' do
+      it 'user_request.recruitment_timeが本人の物の場合削除される' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        expect do
+          delete "/api/user_requests/#{user_request.id}",
+                 headers: headers
+        end.to change(UserRequest, :count).from(2).to(1)
+      end
+
+      it 'user_request.recruitment_timeが他人の物の場合、失敗する' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        expect do
+          delete "/api/user_requests/#{user_request_2.id}",
+                 headers: headers
+        end.not_to change(UserRequest, :count)
       end
     end
   end

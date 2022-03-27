@@ -14,6 +14,14 @@ class Api::HostRequestsController < ApplicationController
     end
   end
 
+  def destroy
+    host_request = HostRequest.find(params[:id])
+    free_time = FreeTime.find(host_request.free_time_id)
+    return unless host_login_and_own?(host_request.host_id) || user_login_and_own?(free_time.user_id)
+
+    host_request.destroy
+  end
+
   private
 
   def host_request_params

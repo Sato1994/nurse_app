@@ -40,6 +40,14 @@ class Api::UserRequestsController < ApplicationController
     end
   end
 
+  def destroy
+    user_request = UserRequest.find(params[:id])
+    recruitment_time = RecruitmentTime.find(user_request.recruitment_time_id)
+    return unless user_login_and_own?(user_request.user_id) || host_login_and_own?(recruitment_time.host_id)
+
+    user_request.destroy
+  end
+
   private
 
   def user_request_params

@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     resources :free_times, only: [:create, :destroy]
     resources :recruitment_times, only: [:create, :destroy]
     resources :health_checks, only: :index
+    resources :user_requests, only: [:destroy]
+    resources :host_requests, only: [:destroy]
 
     resources :skills do
       resources :user_skills, only: [:create, :destroy], shallow: true
@@ -31,6 +33,11 @@ Rails.application.routes.draw do
 
   post 'api/host_requests/:free_time_id', to: 'api/host_requests#create'
   post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
+
+  delete 'api/user_requests', to: 'api/user_requests#destroy'
+  delete 'api/host_requests', to: 'api/host_requests#destroy'
+
+  
 
   post 'api/rooms', to: 'api/rooms#create'
   patch 'api/rooms/:id/update_room_time', to: 'api/rooms#update_room_time'
