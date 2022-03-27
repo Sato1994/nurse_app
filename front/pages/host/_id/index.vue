@@ -290,39 +290,6 @@ export default {
           }
           this.events.push(newObj)
         })
-        .catch((error) => {
-          console.log('とりあえず失敗', error)
-        })
-    },
-
-    selectedMenu(i, agreementId, roomId, userMyId) {
-      switch (i) {
-        case 0:
-          this.$router.push(`/user/${userMyId}`)
-          break
-        case 1:
-          this.$axios
-            .patch(
-              `/api/agreements/${agreementId}`,
-              {},
-              {
-                headers: this.$cookies.get('authInfo'),
-              }
-            )
-            .then((response) => {
-              console.log(response)
-              this.$router.push(`/rooms/${roomId}`)
-            })
-            .catch((error) => {
-              console.log(error)
-            })
-          break
-        case 2:
-          console.log('2ですよ')
-          break
-        default:
-          console.log('menuClickでエラー')
-      }
     },
   },
 }

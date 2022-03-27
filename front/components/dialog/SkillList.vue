@@ -97,15 +97,9 @@ export default {
   },
 
   created() {
-    this.$axios
-      .get('/api/skills')
-      .then((response) => {
-        this.allSkills = response.data
-        console.log('allSkillsをセット', response.data)
-      })
-      .catch((error) => {
-        console.log('createdでエラー', error)
-      })
+    this.$axios.get('/api/skills').then((response) => {
+      this.allSkills = response.data
+    })
   },
 
   methods: {
@@ -119,12 +113,8 @@ export default {
           }
         )
         .then((response) => {
-          console.log(response.data)
           this.$emit('add-button-click', skill)
           this.$store.dispatch('skills/addNewSkill', response.data)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
 
@@ -134,12 +124,8 @@ export default {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
-          console.log(response.data)
           this.$emit('remove-button-click', skill)
           this.$store.dispatch('skills/removeSkill', response.data)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
   },
