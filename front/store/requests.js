@@ -9,6 +9,12 @@ export const mutations = {
 
   addRequest(state, request) {
     state.requests.push(request)
+  },
+
+  removeRequest(state, id) {
+    const target = state.requests.find(request => request.id === id)
+    const index = state.requests.indexOf(target)
+    state.requests.splice(index, 1)
   }
 }
 
@@ -22,9 +28,27 @@ export const actions = {
   },
 
   removeRequest({ commit, dispatch }, requestId) {
-    commit('display/hideConfirm', null, { root: true })
-    dispatch('snackbar/setMessage', 'リクエストを削除する機能を作る予定だよ！！', { root: true })
-
+    if (this.$cookies.get('user') === 'user') {
+      this.$axios.delete(`/api/user_requests/${requestId}`,
+        {
+          headers: this.$cookies.get('authInfo')
+        })
+        .then(() => {
+          commit('display/hideConfirm', null, { root: true })
+          dispatch('snackbar/setMessage', 'リクエストを削除しました。', { root: true })
+          commit('removeRequest', requestId)
+        })
+    } else {
+      this.$axios.delete(`/api/host_requests/${requestId}`,
+        {
+          headers: this.$cookies.get('authInfo')
+        })
+        .then(() => {
+          commit('display/hideConfirm', null, { root: true })
+          dispatch('snackbar/setMessage', 'リクエストを削除しました。', { root: true })
+          commit('removeRequest', requestId)
+        })
+    }
   },
 }
 

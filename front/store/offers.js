@@ -21,8 +21,28 @@ export const actions = {
 
 
   removeOffer({ commit, dispatch }, offerId) {
-    commit('display/hideConfirm', null, { root: true })
-    dispatch('snackbar/setMessage', 'オファーの削除機能を作る予定だよ。', { root: true })
+    if (this.$cookies.get('user') === 'user') {
+      this.$axios.delete(`/api/host_requests/${offerId}`,
+        {
+          headers: this.$cookies.get('authInfo')
+        })
+        .then(() => {
+          commit('display/hideConfirm', null, { root: true })
+          dispatch('snackbar/setMessage', 'オファーを拒否しました。', { root: true })
+          commit('removeOffer', offerId)
+        })
+    } else {
+      this.$axios.delete(`/api/user_requests/${offerId}`,
+        {
+          headers: this.$cookies.get('authInfo')
+        })
+        .then(() => {
+          commit('display/hideConfirm', null, { root: true })
+          dispatch('snackbar/setMessage', 'オファーを拒否しました。', { root: true })
+          commit('removeOffer', offerId)
+        })
+    }
+
   }
 }
 
