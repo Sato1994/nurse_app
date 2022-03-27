@@ -75,12 +75,8 @@ export default {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
-          console.log('user_request成功', response.data)
           this.$store.dispatch('requests/addRequest', response.data)
           this.$router.push(`/user/${this.$store.state.info.info.myid}`)
-        })
-        .catch((error) => {
-          console.log('user_request失敗', error)
         })
     },
   },

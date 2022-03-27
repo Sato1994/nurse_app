@@ -15,7 +15,7 @@
       >
         <TimeCard
           color="red darken-3"
-          buttonText="時間を変更"
+          firstButtonText="時間を変更"
           secondButtonText="キャンセル"
           dotsButtonText="やあ"
           :partnerLink="`/${

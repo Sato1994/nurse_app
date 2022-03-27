@@ -35,7 +35,7 @@
 
     <v-card-actions>
       <v-btn v-if="firstButton" text @click="clickFirstButton">
-        {{ buttonText }}</v-btn
+        {{ firstButtonText }}</v-btn
       >
       <v-btn v-if="secondButton" text @click="clickSecondButton">
         {{ secondButtonText }}
@@ -85,7 +85,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    buttonText: {
+    firstButtonText: {
       type: String,
       required: true,
     },

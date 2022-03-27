@@ -7,7 +7,7 @@
       :finishTime="finishTime"
       :firstButton="firstButton"
       :secondButton="secondButton"
-      :buttonText="buttonText"
+      :firstButtonText="firstButtonText"
       :dotsButton="dotsButton"
       secondButtonText="時間を変更する"
       dotsButtonText="トークルームを削除する"
@@ -191,7 +191,7 @@ export default {
     secondButton() {
       return this.state === 'negotiating' && this.state !== 'cancelled'
     },
-    buttonText() {
+    firstButtonText() {
       return this.state === this.$cookies.get('user')
         ? '同意を解除する'
         : 'この時間で同意する'

@@ -8,7 +8,7 @@
       <v-col v-for="(time, i) in times" :key="i" cols="12" sm="6" md="6" lg="4">
         <TimeCard
           color="green darken-3"
-          buttonText="時間を変更"
+          firstButtonText="時間を変更"
           secondButtonText="取り消し"
           dotsButtonText="やあ"
           :startTime="time.startTime"

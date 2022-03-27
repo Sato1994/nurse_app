@@ -147,33 +147,9 @@ export default {
     Calendar,
   },
 
-  // 現在のレスポンス
-  // data: {
-  //   info: {
-  //     id: 49,
-  //     myid: 'yamada',
-  //     name: '山田 孝之',
-  //     address: '東京都港区芝公園',
-  //     image: [Object],
-  //     wanted: true,
-  //     sex: false,
-  //     age: 27,
-  //     year: 6,
-  //     profile: 'こんにちは',
-  //     created_at: '2022-03-24T17:07:29.053+09:00'
-  //   },
-  //   skills: [ [Object], [Object], [Object] ],
-  //   times: [ [Object], [Object], [Object], [Object] ],
-  //   requests: [],
-  //   agreements: [],
-  //   offers: [],
-  //   rooms: []
-  // }
   async asyncData({ route, $axios }) {
     try {
       const data = await $axios.get(`/api/users/${route.params.id}`)
-      console.log('ここでしゅとく！！')
-      console.log(data)
       const times = data.data.times.map((obj) => {
         const s = new Date(obj.start_time)
         const f = new Date(obj.finish_time)
@@ -335,53 +311,6 @@ export default {
           }
           this.events.push(newObj)
         })
-        .catch((error) => {
-          console.log('とりあえず失敗', error)
-        })
-    },
-
-    selectedMenu(i, agreementId, roomId, hostMyId) {
-      switch (i) {
-        case 0:
-          this.$router.push(`/host/${hostMyId}`)
-          break
-        case 1:
-          this.$axios
-            .patch(
-              `/api/agreements/${agreementId}`,
-              {},
-              {
-                headers: this.$cookies.get('authInfo'),
-              }
-            )
-            .then((response) => {
-              console.log(response)
-              this.$router.push(`/rooms/${roomId}`)
-            })
-            .catch((error) => {
-              console.log(error)
-            })
-          break
-        case 2:
-          this.$axios
-            .patch(
-              '/api/agreements/cancell',
-              { id: agreementId },
-              { headers: this.$cookies.get('authInfo') }
-            )
-            .then((response) => {
-              console.log(response)
-              this.$store.dispatch('agreements/updateState', {
-                id: agreementId,
-                state: 'cancelled',
-              })
-              this.$router.push(`/rooms/${roomId}`)
-            })
-            .catch((error) => {
-              console.log(error)
-            })
-          break
-      }
     },
   },
 }
