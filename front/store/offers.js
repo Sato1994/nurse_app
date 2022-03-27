@@ -32,7 +32,7 @@ export const actions = {
           commit('removeOffer', offerId)
         })
     } else {
-      this.$axios.delete(`/api/user_request/${offerId}`,
+      this.$axios.delete(`/api/user_requests/${offerId}`,
         {
           headers: this.$cookies.get('authInfo')
         })

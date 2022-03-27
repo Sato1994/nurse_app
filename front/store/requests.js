@@ -27,9 +27,9 @@ export const actions = {
     commit('addRequest', request)
   },
 
-  removeOffer({ commit, dispatch }, requestId) {
+  removeRequest({ commit, dispatch }, requestId) {
     if (this.$cookies.get('user') === 'user') {
-      this.$axios.delete(`/api/user_request/${requestId}`,
+      this.$axios.delete(`/api/user_requests/${requestId}`,
         {
           headers: this.$cookies.get('authInfo')
         })
