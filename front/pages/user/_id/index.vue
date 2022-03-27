@@ -147,28 +147,6 @@ export default {
     Calendar,
   },
 
-  // 現在のレスポンス
-  // data: {
-  //   info: {
-  //     id: 49,
-  //     myid: 'yamada',
-  //     name: '山田 孝之',
-  //     address: '東京都港区芝公園',
-  //     image: [Object],
-  //     wanted: true,
-  //     sex: false,
-  //     age: 27,
-  //     year: 6,
-  //     profile: 'こんにちは',
-  //     created_at: '2022-03-24T17:07:29.053+09:00'
-  //   },
-  //   skills: [ [Object], [Object], [Object] ],
-  //   times: [ [Object], [Object], [Object], [Object] ],
-  //   requests: [],
-  //   agreements: [],
-  //   offers: [],
-  //   rooms: []
-  // }
   async asyncData({ route, $axios }) {
     try {
       const data = await $axios.get(`/api/users/${route.params.id}`)

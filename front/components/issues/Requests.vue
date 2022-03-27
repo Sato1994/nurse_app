@@ -15,7 +15,7 @@
       >
         <TimeCard
           color="lime darken-3"
-          buttonText="取り消し"
+          firstButtonText="取り消し"
           dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
