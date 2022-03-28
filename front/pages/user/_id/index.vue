@@ -5,8 +5,8 @@
       height="250"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
-
-    <template v-else>
+    <!-- 節約中 v-else に変えてね -->
+    <template v-if="true">
       <GmapMap
         map-type-id="roadmap"
         :center="maplocation"
@@ -223,7 +223,7 @@ export default {
       { title: '契約の取り消し申請' },
     ],
     events: [],
-    maplocation: { lng: 140.017462, lat: 35.963027 },
+
     mapOptions: {
       streetViewControl: false,
       mapTypeControl: false,
@@ -238,11 +238,18 @@ export default {
   },
 
   computed: {
+    ...mapState('times', ['times']),
+
     wantedChipColor() {
       return this.target.wanted === true ? 'green' : 'red'
     },
 
-    ...mapState('times', ['times']),
+    maplocation() {
+      return {
+        lng: this.target.lng,
+        lat: this.target.lat,
+      }
+    },
   },
 
   created() {
