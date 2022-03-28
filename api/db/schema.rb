@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_15_110355) do
+ActiveRecord::Schema.define(version: 2022_03_28_031301) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 2022_03_15_110355) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "myid", null: false
     t.string "phone", null: false
+    t.float "lat", limit: 53
+    t.float "lng", limit: 53
     t.index ["confirmation_token"], name: "index_hosts_on_confirmation_token", unique: true
     t.index ["email"], name: "index_hosts_on_email", unique: true
     t.index ["myid"], name: "index_hosts_on_myid", unique: true
@@ -195,6 +197,8 @@ ActiveRecord::Schema.define(version: 2022_03_15_110355) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "myid", null: false
+    t.float "lat", limit: 53
+    t.float "lng", limit: 53
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["myid"], name: "index_users_on_myid", unique: true
