@@ -20,6 +20,28 @@ RSpec.describe 'user登録', type: :request do
     end
   end
 
+  describe 'PUT /api/user' do
+    let(:headers) do
+      { uid: response.headers['uid'], client: response.headers['client'],
+        'access-token': response.headers['access-token'] }
+    end
+
+    let(:user) { create(:user) }
+    it "addressを入力していればlat, lngも登録される" do
+      login
+      put '/api/user', params: {address: "東京都港区芝公園" }, headers: headers
+      expect(user.reload.lat).not_to be_nil
+      expect(user.reload.lng).not_to be_nil
+    end
+
+    it 'addressを入力していなければlat,lngは登録されない' do
+      login
+      put '/api/user', params: { name: "もちむぎ" }, headers: headers
+      expect(user.reload.lat).to be_nil
+      expect(user.reload.lng).to be_nil
+    end
+  end
+
   describe 'DELETE /api/user/sign_out' do
     let(:user) { create(:user) }
 
