@@ -10,7 +10,8 @@ variable "AWS_DEFAULT_REGION" {}
 # front
 # variable "BASE_URL" {}
 # variable "BROWSER_BASE_URL" {}
-variable "API_URL"{}
+variable "API_URL" {}
+variable "MAPS_API_KEY" {}
 
 # db
 variable "DATABASE_USER_NAME" {}
@@ -65,6 +66,12 @@ resource "aws_ssm_parameter" "DEFAULT_REGION" {
 resource "aws_ssm_parameter" "API_URL" {
   name = "API_URL"
   value = var.API_URL
+  type = "SecureString"
+}
+
+resource "aws_ssm_parameter" "MAPS_API_KEY" {
+  name = "MAPS_API_KEY"
+  value = var.MAPS_API_KEY
   type = "SecureString"
 }
 #####################################################

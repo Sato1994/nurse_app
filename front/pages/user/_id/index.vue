@@ -1,9 +1,27 @@
 <template>
   <v-card class="mx-auto">
     <v-img
+      v-if="!target.address"
       height="250"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
+
+    <template v-else>
+      <GmapMap
+        map-type-id="roadmap"
+        :center="maplocation"
+        :zoom="15"
+        :style="{ width: '100%', height: '250px' }"
+        :options="mapOptions"
+      >
+        <GmapMarker
+          :title="target.address"
+          :position="maplocation"
+          :clickable="false"
+          :draggable="false"
+        />
+      </GmapMap>
+    </template>
 
     <v-card-title
       >{{ target.name }}
@@ -205,6 +223,12 @@ export default {
       { title: '契約の取り消し申請' },
     ],
     events: [],
+    maplocation: { lng: 140.017462, lat: 35.963027 },
+    mapOptions: {
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoomControl: false,
+    },
   }),
 
   head() {
