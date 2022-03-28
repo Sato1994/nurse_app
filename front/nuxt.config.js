@@ -9,6 +9,10 @@ export default {
 
   },
 
+  publicRuntimeConfig: {
+    MAPS_API_KEY: process.env.MAPS_API_KEY
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s | NurseHop',
@@ -42,6 +46,8 @@ export default {
       src: '~/plugins/main.js',
       mode: 'client'
     },
+
+    { src: '~/plugins/vue2-google-maps.js' },
     'plugins/axios',
     'plugins/vee-validate'
   ],
@@ -93,7 +99,8 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     transpile: [
-      "vee-validate/dist/rules"
+      "vee-validate/dist/rules",
+      /^vue2-google-maps($|\/)/
     ]
   }
 }

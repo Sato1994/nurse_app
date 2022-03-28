@@ -32,6 +32,7 @@ services:
     environment:
       BASE_URL: $BASE_URL
       BROWSER_BASE_URL: $BROWSER_BASE_URL
+      MAPS_API_KEY: $MAPS_API_KEY
     volumes:
       - ./front:/app
     ports:
