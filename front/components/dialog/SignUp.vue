@@ -38,10 +38,17 @@
                   </ValidationProvider>
                 </v-col>
                 <v-col v-if="$cookies.get('user') === 'host'" cols="12">
-                  <v-text-field
-                    v-model="info.address"
-                    label="住所"
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required|numeric"
+                    name="電話番号"
+                  >
+                    <v-text-field
+                      v-model="info.phone"
+                      label="電話番号"
+                    ></v-text-field>
+                    <span class="red--text">{{ errors[0] }}</span>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12">
                   <ValidationProvider
