@@ -19,6 +19,8 @@ class Host < ApplicationRecord
   has_many :host_messages, through: :rooms
 
   mount_uploader :image, ImageUploader
+  geocoded_by :address, latitude: :lat, longitude: :lng
+  after_validation :geocode
 
   def to_param
     myid

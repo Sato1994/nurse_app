@@ -1,4 +1,7 @@
 # 一覧 ##############################################
+# common
+variable "MAPS_API_KEY" {}
+
 # api
 variable "RAILS_MASTER_KEY" {}
 variable "API_DOMAIN" {}
@@ -11,11 +14,18 @@ variable "AWS_DEFAULT_REGION" {}
 # variable "BASE_URL" {}
 # variable "BROWSER_BASE_URL" {}
 variable "API_URL" {}
-variable "MAPS_API_KEY" {}
 
 # db
 variable "DATABASE_USER_NAME" {}
 variable "DATABASE_PASSWORD" {}
+#####################################################
+
+# common ############################################
+resource "aws_ssm_parameter" "MAPS_API_KEY" {
+  name = "MAPS_API_KEY"
+  value = var.MAPS_API_KEY
+  type = "SecureString"
+}
 #####################################################
 
 # api ###############################################
@@ -66,12 +76,6 @@ resource "aws_ssm_parameter" "DEFAULT_REGION" {
 resource "aws_ssm_parameter" "API_URL" {
   name = "API_URL"
   value = var.API_URL
-  type = "SecureString"
-}
-
-resource "aws_ssm_parameter" "MAPS_API_KEY" {
-  name = "MAPS_API_KEY"
-  value = var.MAPS_API_KEY
   type = "SecureString"
 }
 #####################################################
