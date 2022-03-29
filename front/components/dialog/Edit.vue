@@ -1,6 +1,10 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" persistent max-width="600px">
+    <v-dialog
+      v-model="$store.state.display.edit.editIsDisplay"
+      persistent
+      max-width="600px"
+    >
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -16,7 +20,7 @@
                     name="名前"
                   >
                     <v-text-field
-                      v-model="copiedInfo.name"
+                      v-model="info.name"
                       :label="nameLabel"
                       color="warning"
                       required
@@ -58,7 +62,7 @@
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="copiedInfo.address"
+                    v-model="info.address"
                     label="住所"
                     required
                     color="warning"
@@ -69,7 +73,7 @@
                 <v-col cols="12">
                   <ValidationProvider rules="max:300" name="プロフィール">
                     <v-textarea
-                      v-model="copiedInfo.profile"
+                      v-model="info.profile"
                       label="プロフィール"
                       :counter="300"
                       required
@@ -89,7 +93,7 @@
                     name="年齢"
                   >
                     <v-text-field
-                      v-model="copiedInfo.age"
+                      v-model="info.age"
                       label="年齢"
                       type="number"
                       color="warning"
@@ -110,7 +114,7 @@
                     name="経験年数"
                   >
                     <v-text-field
-                      v-model="copiedInfo.year"
+                      v-model="info.year"
                       label="経験年数"
                       type="number"
                       color="warning"
@@ -121,7 +125,7 @@
                 </v-col>
                 <v-col v-if="$cookies.get('user') === 'user'" cols="12">
                   <v-select
-                    v-model="copiedInfo.sex"
+                    v-model="info.sex"
                     :items="sex"
                     label="性別"
                     color="warning"
@@ -130,7 +134,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-switch
-                    v-model="copiedInfo.wanted"
+                    v-model="info.wanted"
                     label="お相手からのリクエストを受け付けますか？"
                     color="warning"
                   ></v-switch>
@@ -141,7 +145,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="isDisplay = false">
+            <v-btn color="warning darken-1" text @click="hideEdit">
               閉じる
             </v-btn>
             <v-btn
@@ -160,19 +164,24 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   data: () => ({
-    isDisplay: false,
     postalCode: '',
     sex: [
       { text: '女性', value: true },
       { text: '男性', value: false },
     ],
-    copiedInfo: [],
     setImageUrl: null,
   }),
 
   computed: {
+    info: {
+      get() {
+        return Object.assign({}, this.$store.getters['info/info'])
+      },
+    },
+
     nameLabel() {
       return this.$cookies.get('user') === 'user'
         ? '名前（フルネーム）'
@@ -195,16 +204,14 @@ export default {
     },
   },
 
-  created() {
-    this.copiedInfo = Object.assign({}, this.$store.getters['info/info'])
-  },
-
   methods: {
+    ...mapMutations('display', ['hideEdit']),
+
     getAddress() {
       this.$axios
         .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
         .then((response) => {
-          this.copiedInfo.address = response.data.data.fullAddress
+          this.info.address = response.data.data.fullAddress
         })
         .catch(() => {
           this.$store.dispatch(
@@ -216,7 +223,7 @@ export default {
 
     // イメージがセットされているならされているurlを代入
     setImage(image) {
-      this.copiedInfo.image = image
+      this.info.image = image
       if (image) {
         this.setImageUrl = URL.createObjectURL(image)
       } else {
@@ -233,9 +240,9 @@ export default {
         uid: this.$cookies.get('authInfo').uid,
       }
       // 入力欄が埋まってるものだけformDataに
-      for (const key in this.copiedInfo) {
-        if (this.copiedInfo[key] != null) {
-          formData.append(key, this.copiedInfo[key])
+      for (const key in this.info) {
+        if (this.info[key] != null) {
+          formData.append(key, this.info[key])
         }
       }
 
@@ -248,9 +255,8 @@ export default {
             'snackbar/setMessage',
             'プロフィールを変更しました。'
           )
-          this.$emit('edit-button-click', this.copiedInfo)
-          this.isDisplay = false
-          this.$store.dispatch('info/saveInfo', response.data.data)
+          this.$store.commit('display/hideEdit')
+          this.$store.commit('info/saveInfo', response.data.data)
         })
     },
   },

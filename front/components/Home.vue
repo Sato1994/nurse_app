@@ -24,7 +24,7 @@
     </template>
 
     <v-card-title
-      >{{ target.name }} {{ $route.path }}
+      >{{ target.name }}{{ $store.state.info.info.name }}
       <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
         target.wanted === true ? '募集中' : '募集していません'
       }}</v-chip>
@@ -82,7 +82,7 @@
         color="amber lighten-4"
         small
         depressed
-        @click="$refs.edit.isDisplay = true"
+        @click="displayEdit"
       >
         <v-icon>mdi-cog-outline</v-icon>
       </v-btn>
@@ -134,7 +134,7 @@
         <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-    <Edit ref="edit" @edit-button-click="editInfo" />
+    <Edit />
     <SkillList />
   </v-card>
 </template>
@@ -205,17 +205,8 @@ export default {
   methods: {
     ...mapMutations('display', ['displaySkillList']),
     ...mapMutations('display', ['displayDatePicker']),
+    ...mapMutations('display', ['displayEdit']),
     ...mapActions('times', ['createTime']),
-
-    editInfo(copiedInfo) {
-      this.$set(this.target, 'name', copiedInfo.name)
-      this.$set(this.target, 'address', copiedInfo.address)
-      this.$set(this.target, 'profile', copiedInfo.profile)
-      this.$set(this.target, 'age', copiedInfo.age)
-      this.$set(this.target, 'year', copiedInfo.year)
-      this.$set(this.target, 'sex', copiedInfo.sex)
-      this.$set(this.target, 'wanted', copiedInfo.wanted)
-    },
   },
 }
 </script>

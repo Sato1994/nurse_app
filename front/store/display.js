@@ -13,6 +13,10 @@ export const state = () => ({
   datePicker: {
     datePickerIsDisplay: false,
   },
+
+  edit: {
+    editIsDisplay: false,
+  }
 })
 
 export const mutations = {
@@ -71,10 +75,26 @@ export const mutations = {
   hideDatePicker(state) {
     state.datePicker.datePickerIsDisplay = false
   },
+
+  // Edit
+  displayEdit(state) {
+    state.edit.editIsDisplay = true
+  },
+
+  hideEdit(state) {
+    state.edit.editIsDisplay = false
+  },
+}
+
+export const actions = {
 }
 
 export const getters = {
   datePicker(state) {
     return state.datePicker
+  },
+
+  edit(state) {
+    return state.edit
   },
 }
