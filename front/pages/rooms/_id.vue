@@ -79,11 +79,7 @@
         </v-timeline-item>
       </v-timeline>
     </v-card-text>
-    <DatePicker
-      ref="datePicker"
-      title="時間の登録"
-      @register-button-click="updateTime"
-    />
+    <DatePicker title="時間の登録" @register-button-click="updateTime" />
     <Confirm
       :dialog="confirmDialog"
       :confirmTitle="confirmTitle"

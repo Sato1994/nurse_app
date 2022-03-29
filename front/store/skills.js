@@ -7,8 +7,8 @@ export const mutations = {
     state.skills = skills
   },
 
-  addNewSkill(state, newSkill) {
-    state.skills.push(newSkill)
+  addSkill(state, skill) {
+    state.skills.push(skill)
   },
 
   removeSkill(state, payload) {
@@ -23,12 +23,29 @@ export const actions = {
     commit('saveSkills', skills)
   },
 
-  addNewSkill({ commit }, newSkill) {
-    commit('addNewSkill', newSkill)
+
+  addSkill({ commit }, payload) {
+    this.$axios
+      .post(
+        `/api/skills/${payload.id}/${this.$cookies.get('user')}_skills`,
+        {},
+        {
+          headers: this.$cookies.get('authInfo'),
+        }
+      )
+      .then((response) => {
+        commit('addSkill', response.data)
+      })
   },
 
   removeSkill({ commit }, payload) {
-    commit('removeSkill', payload)
+    this.$axios
+      .delete(`/api/${this.$cookies.get('user')}_skills/${payload.id}`, {
+        headers: this.$cookies.get('authInfo'),
+      })
+      .then((response) => {
+        commit('skills/removeSkill', response.data)
+      })
   },
 }
 

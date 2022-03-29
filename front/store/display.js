@@ -1,16 +1,22 @@
-// '@/components/dialog/Confirm.vue'
 export const state = () => ({
   confirm: {
-    // isDisplay: false,
     commentIsDisplay: false,
     title: '',
     description: '',
     agreeButtonText: '',
-  }
+  },
+
+  skillList: {
+    skillListIsDisplay: false,
+  },
+
+  datePicker: {
+    datePickerIsDisplay: false,
+  },
 })
 
 export const mutations = {
-
+  // Confirm
   displayConfirmAsRemoveTime(state) {
     state.confirm.title = '募集時間の取り消し'
     state.confirm.description = 'この時間の募集を取り消しますか？'
@@ -28,6 +34,7 @@ export const mutations = {
     state.confirm.description = 'このリクエストを拒否しますか？'
     state.confirm.agreeButtonText = '拒否する'
   },
+
   displayConfirmAsCancellAgreement(state) {
     state.confirm.title = '契約のキャンセル'
     state.confirm.description = '一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`'
@@ -40,13 +47,34 @@ export const mutations = {
     state.confirm.commentIsDisplay = true
   },
 
-
   hideConfirm(state) {
     state.confirm.commentIsDisplay = false
     state.confirm.title = ''
     state.confirm.description = ''
     state.confirm.agreeButtonText = ''
-  }
+  },
 
+  // SkillList
+  displaySkillList(state) {
+    state.skillList.skillListIsDisplay = true
+  },
 
+  hideSkillList(state) {
+    state.skillList.skillListIsDisplay = false
+  },
+
+  // DatePicker
+  displayDatePicker(state) {
+    state.datePicker.datePickerIsDisplay = true
+  },
+
+  hideDatePicker(state) {
+    state.datePicker.datePickerIsDisplay = false
+  },
+}
+
+export const getters = {
+  datePicker(state) {
+    return state.datePicker
+  },
 }

@@ -1,6 +1,10 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" persistent max-width="600px">
+    <v-dialog
+      v-model="skillList.skillListIsDisplay"
+      persistent
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
           <span>登録済みスキル</span>
@@ -63,7 +67,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="isDisplay = false">
+          <v-btn color="warning darken-1" text @click="hideSkillList">
             閉じる
           </v-btn>
         </v-card-actions>
@@ -73,14 +77,16 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   data: () => ({
-    isDisplay: false,
     allSkills: [],
     inputValue: '',
   }),
 
   computed: {
+    ...mapState('display', ['skillList']),
+
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
         (obj) => !this.skills.map((obj) => obj.id).includes(obj.id)
@@ -103,31 +109,36 @@ export default {
   },
 
   methods: {
-    addSkill(skill) {
-      this.$axios
-        .post(
-          `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then((response) => {
-          this.$emit('add-button-click', skill)
-          this.$store.dispatch('skills/addNewSkill', response.data)
-        })
-    },
+    // 試す
+    ...mapActions('skills', ['addSkill']),
+    ...mapActions('skills,', ['removeSkill']),
+    ...mapMutations('display', ['hideSkillList']),
 
-    removeSkill(skill) {
-      this.$axios
-        .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$emit('remove-button-click', skill)
-          this.$store.dispatch('skills/removeSkill', response.data)
-        })
-    },
+    // addSkill(skill) {
+    //   this.$axios
+    //     .post(
+    //       `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
+    //       {},
+    //       {
+    //         headers: this.$cookies.get('authInfo'),
+    //       }
+    //     )
+    //     .then((response) => {
+    //       this.$emit('add-button-click', skill)
+    //       this.$store.commit('skills/addSkill', response.data)
+    //     })
+    // },
+
+    // removeSkill(skill) {
+    //   this.$axios
+    //     .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
+    //       headers: this.$cookies.get('authInfo'),
+    //     })
+    //     .then((response) => {
+    //       this.$emit('remove-button-click', skill)
+    //       this.$store.commit('skills/removeSkill', response.data)
+    //     })
+    // },
   },
 }
 </script>
