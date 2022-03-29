@@ -1,6 +1,9 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" max-width="600px">
+    <v-dialog
+      v-model="$store.state.display.selectUserType.selectUserTypeIsDisplay"
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
           <span class="text-h5"><v-icon>あなたは...</v-icon></span>
@@ -38,32 +41,25 @@
 
 <script>
 export default {
-  data: () => ({
-    isDisplay: false,
-    isSignIn: true,
-  }),
+  data: () => ({}),
 
   methods: {
     selectUser() {
       this.$cookies.set('user', 'user')
-      this.back()
+      this.go()
     },
 
     selectHost() {
       this.$cookies.set('user', 'host')
-      this.back()
+      this.go()
     },
 
-    back() {
-      switch (this.isSignIn) {
-        case true:
-          this.isDisplay = false
-          this.$emit('sign-in-button-click')
-          break
-        case false:
-          this.isDisplay = false
-          this.$emit('sign-up-button-click')
-          break
+    go() {
+      this.$store.commit('display/hideSelectUserType')
+      if (this.$cookies.get('sign') === 'in') {
+        this.$store.commit('display/displaySignIn')
+      } else {
+        this.$store.commit('display/displaySignUp')
       }
     },
   },
