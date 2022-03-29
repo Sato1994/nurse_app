@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { ValidationProvider, ValidationObserver, extend, localize } from 'vee-validate'
 // inmportするルール
-import { between, max, required, email, min, alpha_num as alphaNum, confirmed } from 'vee-validate/dist/rules';
+import { numeric, between, max, required, email, min, alpha_num as alphaNum, confirmed } from 'vee-validate/dist/rules';
 import ja from 'vee-validate/dist/locale/ja.json';
 
 localize('ja', ja);
@@ -14,6 +14,7 @@ extend('alpha_num', alphaNum)
 extend('confirmed', confirmed)
 extend('max', max)
 extend('between', between)
+extend('numeric', numeric)
 
 
 Vue.component('ValidationProvider', ValidationProvider);

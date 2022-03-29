@@ -55,6 +55,10 @@
       {
         "name": "AWS_DEFAULT_REGION",
         "valueFrom": "DEFAULT_REGION"
+      },
+      {
+        "name": "MAPS_API_KEY",
+        "valueFrom": "MAPS_API_KEY"
       }
     ],
     "command": [

@@ -21,6 +21,10 @@
       {
         "name": "API_URL",
         "valueFrom": "API_URL"
+      },
+      {
+        "name": "MAPS_API_KEY",
+        "valueFrom": "MAPS_API_KEY"
       }
     ],
     "command": [

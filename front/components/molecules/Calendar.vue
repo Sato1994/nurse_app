@@ -137,7 +137,6 @@
           </v-card>
         </v-menu>
         <DatePicker
-          ref="datePicker"
           title="リクエストを送る"
           @register-button-click="createRequest"
         />

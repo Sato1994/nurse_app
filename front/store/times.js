@@ -7,6 +7,10 @@ export const mutations = {
     state.times = times
   },
 
+  addTime(state, time) {
+    state.times.push(time)
+  },
+
   removeTime(state, id) {
     const target = state.times.find(time => time.id === id)
     const index = state.times.indexOf(target)
@@ -29,8 +33,26 @@ export const actions = {
         dispatch('snackbar/setMessage', '取り消しました。', { root: true })
         commit('removeTime', timeId)
       })
+  },
 
-  }
+  createTime({ commit, dispatch }, payload) {
+    const startTime = `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}:00`
+    const finsihTime = `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}:00`
+    this.$axios
+      .post(
+        `/api/${this.$cookies.get('user') === 'user' ? 'free' : 'recruitment'}_times`,
+        {
+          start_time: startTime,
+          finish_time: finsihTime,
+        },
+        { headers: this.$cookies.get('authInfo') }
+      )
+      .then((response) => {
+        commit('addTime', response.data)
+        commit('display/hideDatePicker', null, { root: true })
+        dispatch('snackbar/setMessage', '募集時間を登録しました。', { root: true })
+      })
+  },
 }
 
 export const getters = {
@@ -73,7 +95,5 @@ export const getters = {
       return newObject
     })
     return times
-
   },
-
 }

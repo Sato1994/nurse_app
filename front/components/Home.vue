@@ -1,0 +1,212 @@
+<template>
+  <v-card class="mx-auto">
+    <v-img
+      v-if="!target.address"
+      height="250"
+      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+    ></v-img>
+    <!-- 節約中だよ。  v-else に変えてね -->
+    <template v-if="false">
+      <GmapMap
+        map-type-id="roadmap"
+        :center="maplocation"
+        :zoom="15"
+        :style="{ width: '100%', height: '250px' }"
+        :options="mapOptions"
+      >
+        <GmapMarker
+          :title="target.address"
+          :position="maplocation"
+          :clickable="false"
+          :draggable="false"
+        />
+      </GmapMap>
+    </template>
+
+    <v-card-title
+      >{{ target.name }}{{ $store.state.info.info.name }}
+      <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
+        target.wanted === true ? '募集中' : '募集していません'
+      }}</v-chip>
+    </v-card-title>
+
+    <v-card-subtitle>
+      {{ target.age ? `年齢${target.age}歳` : '年齢を登録していません。' }}
+    </v-card-subtitle>
+
+    <v-card-text>
+      <v-row align="center" class="mx-0">
+        <v-rating
+          :value="4.5"
+          color="amber"
+          dense
+          half-increments
+          readonly
+          size="14"
+        ></v-rating>
+
+        <div class="grey--text ms-4">4.5 (413)</div>
+      </v-row>
+
+      <div class="my-4 text-subtitle-2">
+        {{ target.sex === true ? '女性' : '男性' }}
+      </div>
+
+      <div class="my-4 text-subtitle-2">
+        {{
+          target.year ? `経験${target.year}年` : '経験年数を登録していません。'
+        }}
+      </div>
+
+      <div class="my-4 text-subtitle-2">
+        {{ target.address ? `${target.address}` : '住所を登録していません。' }}
+      </div>
+
+      <div>
+        {{
+          target.profile
+            ? `${target.profile}`
+            : 'プロフィールを登録していません。'
+        }}
+      </div>
+    </v-card-text>
+
+    <v-card-actions
+      v-if="
+        $route.path ===
+        `/${$cookies.get('user')}/${$store.state.info.info.myid}`
+      "
+    >
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="displayEdit"
+      >
+        <v-icon>mdi-cog-outline</v-icon>
+      </v-btn>
+
+      <v-btn
+        class="ma-2"
+        color="green lighten-4"
+        small
+        depressed
+        @click="displayDatePicker"
+      >
+        <v-icon>mdi-clock-plus-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
+
+    <v-divider class="mx-4"></v-divider>
+
+    <Calendar :events="events" />
+    <DatePicker title="募集時間を登録" @register-button-click="createTime" />
+
+    <v-divider class="mx-4"></v-divider>
+
+    <v-card-title>NG技術</v-card-title>
+
+    <v-card-text>
+      <div>
+        <v-chip
+          v-for="(skill, i) in targetSkills"
+          :key="i"
+          class="ma-1"
+          color="warning"
+          small
+        >
+          {{ skill.name }}
+        </v-chip>
+      </div>
+    </v-card-text>
+
+    <v-card-actions
+      v-if="$route.path === `/user/${$store.state.info.info.myid}`"
+    >
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="displaySkillList"
+      >
+        <v-icon>mdi-plus-box-multiple-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
+    <Edit />
+    <SkillList />
+  </v-card>
+</template>
+
+
+<script>
+import { mapMutations, mapActions } from 'vuex'
+import DatePicker from '@/components/dialog/DatePicker.vue'
+import Edit from '@/components/dialog/Edit.vue'
+import SkillList from '@/components/dialog/SkillList.vue'
+import Calendar from '@/components/molecules/Calendar.vue'
+export default {
+  components: {
+    DatePicker,
+    Edit,
+    SkillList,
+    Calendar,
+  },
+
+  props: {
+    target: {
+      type: Object,
+      default: null,
+    },
+    targetSkills: {
+      type: Array,
+      default: null,
+    },
+    events: {
+      type: Array,
+      default: null,
+    },
+  },
+
+  data: () => ({
+    items: [
+      { title: 'お相手のページへ移動' },
+      { title: '契約時間の変更申請' },
+      { title: '契約の取り消し申請' },
+    ],
+
+    mapOptions: {
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoomControl: false,
+    },
+  }),
+
+  head() {
+    return {
+      title: this.target.name,
+    }
+  },
+
+  computed: {
+    wantedChipColor() {
+      return this.target.wanted === true ? 'green' : 'red'
+    },
+
+    maplocation() {
+      return {
+        lng: this.target.lng,
+        lat: this.target.lat,
+      }
+    },
+  },
+
+  methods: {
+    ...mapMutations('display', ['displaySkillList']),
+    ...mapMutations('display', ['displayDatePicker']),
+    ...mapMutations('display', ['displayEdit']),
+    ...mapActions('times', ['createTime']),
+  },
+}
+</script>

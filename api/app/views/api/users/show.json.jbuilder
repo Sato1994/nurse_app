@@ -1,6 +1,6 @@
 if @user
   json.info do
-    json.extract! @user, :id, :myid, :name, :address, :image, :wanted, :sex, :age, :year, :profile, :created_at
+    json.extract! @user, :id, :myid, :name, :address, :lat, :lng, :image, :wanted, :sex, :age, :year, :profile, :created_at
   end
 end
 
