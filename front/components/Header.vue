@@ -142,20 +142,15 @@
           </v-menu>
         </v-tabs>
       </template>
-      <!-- ダイアログ -->
-      <SignUp ref="signUp" />
-      <SignIn ref="signIn" />
-      <SelectUserType
-        ref="selectUserType"
-        @sign-in-button-click="$refs.signIn.isDisplay = true"
-        @sign-up-button-click="$refs.signUp.isDisplay = true"
-      />
-      <!-- -->
+      <SignUp />
+      <SignIn />
+      <SelectUserType />
     </v-app-bar>
   </v-card>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
@@ -205,16 +200,19 @@ export default {
   },
 
   methods: {
+    ...mapActions('info', ['loginAsGuestUser']),
+    ...mapActions('info', ['loginAsGuestHost']),
+
     clickUnAuthMenu(i) {
       switch (i) {
         case 0:
-          this.$refs.selectUserType.isSignIn = true
-          this.$refs.selectUserType.isDisplay = true
+          this.$cookies.set('sign', 'in')
+          this.$store.commit('display/displaySelectUserType')
 
           break
         case 1:
-          this.$refs.selectUserType.isSignIn = false
-          this.$refs.selectUserType.isDisplay = true
+          this.$cookies.set('sign', 'up')
+          this.$store.commit('display/displaySelectUserType')
           break
       }
     },
@@ -241,100 +239,6 @@ export default {
             })
           break
       }
-    },
-
-    loginAsGuestUser() {
-      this.$axios
-        .post('/api/user/sign_in', {
-          email: 'yamada@guest.user',
-          password: 'yamadapass',
-        })
-        .then((response) => {
-          this.$cookies.set('user', 'user')
-          this.isDisplay = false
-          this.$cookies.set('myid', response.data.data.myid)
-          const authInfo = {
-            'access-token': response.headers['access-token'],
-            client: response.headers.client,
-            uid: response.headers.uid,
-          }
-          this.$cookies.set('authInfo', authInfo)
-          // ログイン者情報の取得
-          this.$axios
-            .get(
-              `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
-              { headers: this.$cookies.get('authInfo') }
-            )
-            .then((response) => {
-              this.$store.dispatch('snackbar/setMessage', 'ログインしました。')
-              this.$store.dispatch('info/saveInfo', response.data.info)
-              this.$store.dispatch('skills/saveSkills', response.data.skills)
-              this.$store.dispatch('times/saveTimes', response.data.times)
-              this.$store.dispatch(
-                'requests/saveRequests',
-                response.data.requests
-              )
-              this.$store.dispatch(
-                'agreements/saveAgreements',
-                response.data.agreements
-              )
-              this.$store.dispatch('offers/saveOffers', response.data.offers)
-              this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-              this.$router.push(
-                `/${this.$cookies.get('user')}/${response.data.info.myid}`
-              )
-            })
-            .catch(() => {
-              this.$cookies.removeAll()
-            })
-        })
-    },
-
-    loginAsGuestHost() {
-      this.$axios
-        .post('/api/host/sign_in', {
-          email: 'takayuki@guest.host',
-          password: 'takayukipass',
-        })
-        .then((response) => {
-          this.$store.dispatch('snackbar/setMessage', 'ログインしました。')
-          this.$cookies.set('user', 'host')
-          this.isDisplay = false
-          this.$cookies.set('myid', response.data.data.myid)
-          const authInfo = {
-            'access-token': response.headers['access-token'],
-            client: response.headers.client,
-            uid: response.headers.uid,
-          }
-          this.$cookies.set('authInfo', authInfo)
-          // ログイン者情報の取得
-          this.$axios
-            .get(
-              `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
-              { headers: this.$cookies.get('authInfo') }
-            )
-            .then((response) => {
-              this.$store.dispatch('info/saveInfo', response.data.info)
-              this.$store.dispatch('skills/saveSkills', response.data.skills)
-              this.$store.dispatch('times/saveTimes', response.data.times)
-              this.$store.dispatch(
-                'requests/saveRequests',
-                response.data.requests
-              )
-              this.$store.dispatch(
-                'agreements/saveAgreements',
-                response.data.agreements
-              )
-              this.$store.dispatch('offers/saveOffers', response.data.offers)
-              this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-              this.$router.push(
-                `/${this.$cookies.get('user')}/${response.data.info.myid}`
-              )
-            })
-            .catch(() => {
-              this.$cookies.removeAll()
-            })
-        })
     },
   },
 }

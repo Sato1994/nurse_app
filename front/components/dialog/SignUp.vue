@@ -1,6 +1,10 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" persistent max-width="600px">
+    <v-dialog
+      v-model="$store.state.display.signUp.signUpIsDisplay"
+      persistent
+      max-width="600px"
+    >
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -99,14 +103,14 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="closeDialog">
+            <v-btn color="warning darken-1" text @click="hideSignUp">
               閉じる
             </v-btn>
             <v-btn
               color="warning darken-1"
               text
               :disabled="invalid"
-              @click="signUp"
+              @click="signUp(info)"
             >
               登録
             </v-btn>
@@ -118,9 +122,9 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   data: () => ({
-    isDisplay: false,
     info: {},
   }),
 
@@ -133,53 +137,12 @@ export default {
   },
 
   methods: {
-    signUp() {
-      // サインアップ
-      this.$axios
-        .post(`/api/${this.$cookies.get('user')}`, this.info)
-        .then((response) => {
-          this.isDisplay = false
-          this.$cookies.set('myid', response.data.data.myid)
-          const authInfo = {
-            'access-token': response.headers['access-token'],
-            client: response.headers.client,
-            uid: response.headers.uid,
-          }
-          this.$cookies.set('authInfo', authInfo)
-          // サインアップ者情報の取得
-          this.$axios
-            .get(
-              `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
-              { headers: this.$cookies.get('authInfo') }
-            )
-            .then((response) => {
-              this.$store.dispatch('info/saveInfo', response.data.info)
-              this.$store.dispatch('skills/saveSkills', response.data.skills)
-              this.$store.dispatch('times/saveTimes', response.data.times)
-              this.$store.dispatch(
-                'requests/saveRequests',
-                response.data.requests
-              )
-              this.$store.dispatch(
-                'agreements/saveAgreements',
-                response.data.agreements
-              )
-              this.$store.dispatch('offers/saveOffers', response.data.offers)
-              this.$store.dispatch('rooms/saveRooms', response.data.rooms)
-              this.$router.push(
-                `/${this.$cookies.get('user')}/${response.data.info.myid}`
-              )
-            })
-            .catch(() => {
-              this.$cookies.removeAll()
-            })
-        })
-    },
+    ...mapActions('display', ['signUp']),
 
-    closeDialog() {
+    hideSignUp() {
+      this.$store.commit('display/hideSignUp')
       this.$cookies.removeAll()
-      this.isDisplay = false
-      this.info = ''
+      this.info = {}
     },
   },
 }
