@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_many :rooms, dependent: :destroy
   has_many :user_messages, through: :rooms
   has_many :cancell_comments, through: :agreements
+  has_many :rates, through: :agreements
 
   mount_uploader :image, ImageUploader
   geocoded_by :address, latitude: :lat, longitude: :lng
