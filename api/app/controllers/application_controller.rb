@@ -10,4 +10,8 @@ class ApplicationController < ActionController::API
   def host_login_and_own?(id)
     api_host_signed_in? && current_api_host.id == id
   end
+
+  def render_message message, status
+    render json: { message: [message]}, status: status
+  end
 end
