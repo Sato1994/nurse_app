@@ -56,10 +56,6 @@ RSpec/MultipleExpectations:
 Style/Documentation:
   Enabled: false
 
-Rails/SkipsModelValidations:
-  Whitelist:
-    - update_all
-
 Style/ClassAndModuleChildren:
   Enabled: false
 

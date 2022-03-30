@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_28_031301) do
+ActiveRecord::Schema.define(version: 2022_03_30_000051) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -107,6 +107,15 @@ ActiveRecord::Schema.define(version: 2022_03_28_031301) do
     t.index ["myid"], name: "index_hosts_on_myid", unique: true
     t.index ["reset_password_token"], name: "index_hosts_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_hosts_on_uid_and_provider", unique: true
+  end
+
+  create_table "rates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "star", null: false
+    t.text "comment", null: false
+    t.bigint "agreement_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["agreement_id"], name: "index_rates_on_agreement_id"
   end
 
   create_table "recruitment_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -216,6 +225,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_031301) do
   add_foreign_key "host_requests", "hosts"
   add_foreign_key "host_skills", "hosts"
   add_foreign_key "host_skills", "skills"
+  add_foreign_key "rates", "agreements"
   add_foreign_key "recruitment_times", "hosts"
   add_foreign_key "rooms", "hosts"
   add_foreign_key "rooms", "users"

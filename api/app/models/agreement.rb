@@ -5,14 +5,12 @@ class Agreement < ApplicationRecord
   belongs_to :host
   belongs_to :room
   has_one :cancell_comment
+  has_one :rates
 
-  validates :user, presence: :true
-  validates :host, presence: :true
-  validates :room, presence: :true
-  validates_uniqueness_of :room_id
-  validates :start_time, presence: :true
-  validates :finish_time, presence: :true
-  validates :state, inclusion: { in: %w(before during finished requesting cancelled) }
+  validates :room_id, uniqueness: true
+  validates :start_time, presence: true
+  validates :finish_time, presence: true
+  validates :state, inclusion: { in: %w[before during finished requesting cancelled] }
 
   validate :limitation_of_working_hours
   validate :agreement_has_some_hours_grace
