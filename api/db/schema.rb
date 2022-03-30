@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_30_000051) do
+ActiveRecord::Schema.define(version: 2022_03_30_062225) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -49,6 +49,18 @@ ActiveRecord::Schema.define(version: 2022_03_30_000051) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["room_id"], name: "index_host_messages_on_room_id"
+  end
+
+  create_table "host_notices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "host_id", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["host_id"], name: "index_host_notices_on_host_id"
+    t.index ["source_type", "source_id"], name: "index_host_notices_on_source_type_and_source_id"
   end
 
   create_table "host_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -155,6 +167,18 @@ ActiveRecord::Schema.define(version: 2022_03_30_000051) do
     t.index ["room_id"], name: "index_user_messages_on_room_id"
   end
 
+  create_table "user_notices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "user_id", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["source_type", "source_id"], name: "index_user_notices_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_user_notices_on_user_id"
+  end
+
   create_table "user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.datetime "start_time", null: false
     t.datetime "finish_time", null: false
@@ -221,6 +245,7 @@ ActiveRecord::Schema.define(version: 2022_03_30_000051) do
   add_foreign_key "cancell_comments", "agreements"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"
+  add_foreign_key "host_notices", "hosts"
   add_foreign_key "host_requests", "free_times"
   add_foreign_key "host_requests", "hosts"
   add_foreign_key "host_skills", "hosts"
@@ -230,6 +255,7 @@ ActiveRecord::Schema.define(version: 2022_03_30_000051) do
   add_foreign_key "rooms", "hosts"
   add_foreign_key "rooms", "users"
   add_foreign_key "user_messages", "rooms"
+  add_foreign_key "user_notices", "users"
   add_foreign_key "user_requests", "recruitment_times"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_skills", "skills"

@@ -4,6 +4,7 @@ class HostRequest < ApplicationRecord
   belongs_to :free_time
   belongs_to :host
   has_one :user, through: :free_time
+  has_one :user_notice, as: :source, dependent: :destroy
 
   validates :free_time, presence: true
   validates :host, presence: true

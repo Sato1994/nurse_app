@@ -6,6 +6,8 @@ class Room < ApplicationRecord
   has_many :user_messages, dependent: :destroy
   has_many :host_messages, dependent: :destroy
   has_one :agreement
+  has_many :user_notices, as: :source, dependent: :destroy
+  has_many :host_notices, as: :source, dependent: :destroy
 
   validates :user, presence: true
   validates :host, presence: true

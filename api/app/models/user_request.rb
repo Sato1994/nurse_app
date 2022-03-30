@@ -4,6 +4,7 @@ class UserRequest < ApplicationRecord
   belongs_to :user
   belongs_to :recruitment_time
   has_one :host, through: :recruitment_time
+  has_one :host_notice, as: :source, dependent: :destroy
 
   validates :user, presence: true
   validates :recruitment_time, presence: true
