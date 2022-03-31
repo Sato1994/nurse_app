@@ -30,8 +30,10 @@ class Api::UserRequestsController < ApplicationController
   # user_request作成
   def create
     user_request = UserRequest.new(user_request_params)
+    
     if user_request.save
       recruitment_time = RecruitmentTime.find(params[:recruitment_time_id])
+      user_request.create_host_notice!(host_id: recruitment_time.host_id, action: 'created')
       render json: { id: user_request.id, start_time: user_request.start_time, finish_time: user_request.finish_time,
                      partner: recruitment_time.host },
              status: :created

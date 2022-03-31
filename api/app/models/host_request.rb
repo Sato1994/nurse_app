@@ -6,11 +6,9 @@ class HostRequest < ApplicationRecord
   has_one :user, through: :free_time
   has_one :user_notice, as: :source, dependent: :destroy
 
-  validates :free_time, presence: true
-  validates :host, presence: true
   validates :start_time, presence: true
   validates :finish_time, presence: true
-  
+
   validate :included_in_the_free_time
   validate :duplication_of_host_request
   validate :duplication_of_user_request

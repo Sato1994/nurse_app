@@ -6,6 +6,7 @@ class Api::HostRequestsController < ApplicationController
     host_request = HostRequest.new(host_request_params)
     if host_request.save
       free_time = FreeTime.find(params[:free_time_id])
+      host_request.create_user_notice!(user_id: free_time.user_id, action: 'created')
       render json: { id: host_request.id, start_time: host_request.start_time, finish_time: host_request.finish_time,
                      partner: free_time.user },
              status: :created
