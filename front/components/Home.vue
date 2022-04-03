@@ -203,7 +203,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('display', ['displaySkillList']),
+    ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('display', ['displayDatePicker']),
     ...mapMutations('display', ['displayEdit']),
     ...mapActions('times', ['createTime']),

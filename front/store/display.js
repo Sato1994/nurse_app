@@ -1,9 +1,4 @@
 export const state = () => ({
-
-  skillList: {
-    skillListIsDisplay: false,
-  },
-
   datePicker: {
     datePickerIsDisplay: false,
   },
@@ -26,16 +21,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-
-
-  // SkillList
-  displaySkillList(state) {
-    state.skillList.skillListIsDisplay = true
-  },
-
-  hideSkillList(state) {
-    state.skillList.skillListIsDisplay = false
-  },
 
   // DatePicker
   displayDatePicker(state) {
