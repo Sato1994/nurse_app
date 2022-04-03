@@ -28,7 +28,7 @@
           :secondButton="true"
           :dotsButton="true"
           @first-button-click="createRoom(offer.id)"
-          @second-button-click="displayConfirmAsRemoveOffer(offer.id)"
+          @second-button-click="displayAsRemoveOffer(offer.id)"
         />
       </v-col>
     </v-row>
@@ -73,13 +73,13 @@ export default {
     },
 
     hideConfirm() {
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
     },
 
-    displayConfirmAsRemoveOffer(offerId) {
+    displayAsRemoveOffer(offerId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveOffer')
+      this.$store.commit('dialog/confirm/displayAsRemoveOffer')
       this.offerId = offerId
     },
   },

@@ -34,7 +34,7 @@ export const actions = {
           headers: this.$cookies.get('authInfo')
         })
         .then(() => {
-          commit('display/hideConfirm', null, { root: true })
+          commit('dialog/confirm/hideConfirm', null, { root: true })
           dispatch('snackbar/setMessage', 'リクエストを削除しました。', { root: true })
           commit('removeRequest', requestId)
         })
@@ -44,7 +44,7 @@ export const actions = {
           headers: this.$cookies.get('authInfo')
         })
         .then(() => {
-          commit('display/hideConfirm', null, { root: true })
+          commit('dialog/confirm/hideConfirm', null, { root: true })
           dispatch('snackbar/setMessage', 'リクエストを削除しました。', { root: true })
           commit('removeRequest', requestId)
         })

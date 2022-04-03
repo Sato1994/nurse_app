@@ -3,13 +3,13 @@
     <v-dialog v-model="confirmIsDisplay" persistent max-width="290">
       <v-card>
         <v-card-title class="text-h5">
-          {{ confirm.title }}
+          {{ title }}
         </v-card-title>
         <v-card-text style="white-space: pre-wrap">{{
-          confirm.description
+          description
         }}</v-card-text>
 
-        <v-row v-if="confirm.commentIsDisplay">
+        <v-row v-if="commentIsDisplay">
           <v-col cols="12">
             <v-card-title class="justify-center">
               <v-icon>mdi-phone</v-icon><a :href="phoneLink">{{ phone }}</a>
@@ -30,7 +30,7 @@
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="disAgree"> 戻る </v-btn>
           <v-btn color="red darken-1" text @click="agree">
-            {{ confirm.agreeButtonText }}
+            {{ agreeButtonText }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -61,7 +61,12 @@ export default {
   },
 
   computed: {
-    ...mapState('display', ['confirm']),
+    ...mapState('dialog/confirm', [
+      'title',
+      'description',
+      'agreeButtonText',
+      'commentIsDisplay',
+    ]),
 
     phoneLink() {
       return 'tel:' + this.phone

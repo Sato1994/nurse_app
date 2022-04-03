@@ -89,7 +89,7 @@
                 editAgreement(selectedEvent.id, selectedEvent.roomId)
               "
               @second-button-click="
-                displayConfirmAsCancellAgreement(
+                displayAsCancellAgreement(
                   selectedEvent.id,
                   selectedEvent.roomId,
                   selectedEvent.partnerPhone
@@ -112,9 +112,7 @@
               :secondButton="true"
               :dotsButton="true"
               @first-button-click="createRoom(selectedEvent.id)"
-              @second-button-click="
-                displayConfirmAsRemoveOffer(selectedEvent.id)
-              "
+              @second-button-click="displayAsRemoveOffer(selectedEvent.id)"
             />
             <TimeCard
               v-if="selectedEvent.name == 'リクエスト中'"
@@ -130,9 +128,7 @@
               :firstButton="true"
               :secondButton="false"
               :dotsButton="true"
-              @first-button-click="
-                displayConfirmAsRemoveRequest(selectedEvent.id)
-              "
+              @first-button-click="displayAsRemoveRequest(selectedEvent.id)"
             />
           </v-card>
         </v-menu>
@@ -233,7 +229,7 @@ export default {
             .catch((error) => {
               if (error.response.status === 400) {
                 this.confirmDisplay = true
-                this.$store.commit('display/displayConfirmWithComment')
+                this.$store.commit('dialog/confirm/displayWithComment')
               }
             })
           break
@@ -256,7 +252,7 @@ export default {
         this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
       ) {
         this.confirmDisplay = true
-        this.$store.commit('display/displayConfirmAsRemoveTime')
+        this.$store.commit('dialog/confirm/displayAsRemoveTime')
         this.timeId = payload.timeId
       } else {
         this.$refs.datePicker.isDisplay = true
@@ -266,14 +262,14 @@ export default {
       }
     },
 
-    displayConfirmAsRemoveRequest(requestId) {
+    displayAsRemoveRequest(requestId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveRequest')
+      this.$store.commit('dialog/confirm/displayAsRemoveRequest')
       this.requestId = requestId
     },
 
     hideConfirm() {
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
     },
 
@@ -295,17 +291,17 @@ export default {
         })
     },
 
-    displayConfirmAsCancellAgreement(agreementId, roomId, phone) {
+    displayAsCancellAgreement(agreementId, roomId, phone) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsCancellAgreement')
+      this.$store.commit('dialog/confirm/displayAsCancellAgreement')
       this.agreementId = agreementId
       this.roomId = roomId
       this.phone = phone
     },
 
-    displayConfirmAsRemoveOffer(offerId) {
+    displayAsRemoveOffer(offerId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveOffer')
+      this.$store.commit('dialog/confirm/displayAsRemoveOffer')
       this.offerId = offerId
     },
 
