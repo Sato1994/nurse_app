@@ -47,9 +47,19 @@
 
       <v-spacer> </v-spacer>
 
-      <v-btn @click="displayNotice" icon>
-        <v-icon>mdi-bell-outline</v-icon>
-      </v-btn>
+      <v-badge
+        :value="value"
+        bordered
+        bottom
+        color="warning"
+        dot
+        offset-x="20"
+        offset-y="20"
+      >
+        <v-btn @click="displayNotice" icon>
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn>
+      </v-badge>
 
       <template #extension>
         <v-tabs v-model="tabs" fixed-tabs>
@@ -205,6 +215,10 @@ export default {
   computed: {
     myPageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+    },
+
+    value() {
+      return this.$store.state.notices.notices.length
     },
   },
 

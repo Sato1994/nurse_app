@@ -79,8 +79,6 @@ export const mutations = {
           creatdAt = `${new Date(obj.created_at).getMonth() + 1}月${new Date(obj.created_at).getDate()}日`
       }
 
-
-
       const newObject = {
         id: obj.id,
         title,
