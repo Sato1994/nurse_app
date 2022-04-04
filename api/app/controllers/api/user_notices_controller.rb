@@ -3,10 +3,6 @@
 class Api::UserNoticesController < ApplicationController
   def index
     return unless api_user_signed_in?
-    # 必須パラメータ
-    # host_request created(action, checked, created_at, id, source_id, source_type,  source.host.name, source.host.myid)
-    # room created(action, checked, created_at, id, source_id, source_type, source.host.name, source.host.myid)
-
     notices = UserNotice.where(user_id: current_api_user.id, checked: false).includes(source: :host)
     render json: notices.as_json(
       only: %i[action checked created_at id source_id source_type],
