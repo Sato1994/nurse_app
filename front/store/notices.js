@@ -61,10 +61,30 @@ export const mutations = {
           title = '評価されました！'
           break
       }
+      const today = new Date()
+      const diff = today - new Date(obj.created_at)
+      let creatdAt = ''
+
+      switch (true) {
+        case (diff) / 1000 / 60 < 5:
+          creatdAt = '今'
+          break
+        case (diff) / 1000 / 60 < 60:
+          creatdAt = '60分未満'
+          break
+        case (diff) / 1000 / 60 < 1440 && (today - new Date(obj.created_at)) / 1000 / 60 >= 60:
+          creatdAt = '一日未満'
+          break
+        default:
+          creatdAt = `${new Date(obj.created_at).getMonth() + 1}月${new Date(obj.created_at).getDate()}日`
+      }
+
+
+
       const newObject = {
         id: obj.id,
         title,
-        created_at: new Date(obj.created_at),
+        creatdAt,
         source_id: obj.source_id,
         partnerName: this.$cookies.get('user') === 'user' ? obj.source.host.name : obj.source.user.name,
         partnerMyId: this.$cookies.get('user') === 'user' ? obj.source.host.myid : obj.source.user.myid,

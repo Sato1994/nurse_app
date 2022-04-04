@@ -26,7 +26,7 @@
 
                   <v-list-item-action>
                     <v-list-item-action-text
-                      v-text="notice.partnerMyId"
+                      v-text="notice.creatdAt"
                     ></v-list-item-action-text>
 
                     <v-icon
