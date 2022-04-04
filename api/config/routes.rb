@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     resources :user_requests, only: [:destroy]
     resources :host_requests, only: [:destroy]
     resources :rates, only: [:create]
-    resources :user_notices, only: [:index]
-    resources :host_notices, only: [:index]
+    resources :user_notices, only: %i[index destroy]
+    resources :host_notices, only: %i[index destroy]
 
     resources :skills do
       resources :user_skills, only: %i[create destroy], shallow: true

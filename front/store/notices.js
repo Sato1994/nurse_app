@@ -13,6 +13,12 @@ export const mutations = {
     state.noticeIsDisplay = false
   },
 
+  removeNotice(state, payload) {
+    const target = state.notices.find(notice => notice.id === payload.noticeId)
+    const index = state.notices.indexOf(target)
+    state.notices.splice(index, 1)
+  },
+
   saveFormedNotices(state, notices) {
     const formedNotices = notices.map((obj) => {
       let title = ''
@@ -70,6 +76,14 @@ export const mutations = {
 }
 
 export const actions = {
+  removeNotice({ commit }, payload) {
+    this.$axios.delete(`/api/${this.$cookies.get('user') === 'user' ? 'user' : 'host'}_notices/${payload.noticeId}`, {
+      headers: this.$cookies.get('authInfo'),
+    })
+      .then(() => {
+        commit('removeNotice', payload)
+      })
+  },
 }
 
 export const getters = {
