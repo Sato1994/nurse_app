@@ -23,6 +23,14 @@ export const mutations = {
               title = '新しいオファーが届いています！'
               break
           }
+          break
+        case 'Room':
+          switch (obj.action) {
+            case 'created':
+              title = 'リクエストが受け取られました！'
+              break
+          }
+          break
       }
       const newObject = {
         id: obj.id,

@@ -8,7 +8,7 @@
           <v-list two-line dense>
             <v-list-item-group>
               <template v-for="(notice, index) in noticesOnDialog">
-                <v-list-item :key="notice.title">
+                <v-list-item :key="notice.index">
                   <v-list-item-content>
                     <v-list-item-title
                       v-text="notice.title"
