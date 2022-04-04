@@ -24,6 +24,12 @@ export const mutations = {
     state.agreeButtonText = '拒否する'
   },
 
+  displayAsLeaveRoom(state) {
+    state.title = 'トークルームを削除'
+    state.description = '削除されたトークルームは元に戻せません。本当に削除しますか？'
+    state.agreeButtonText = '削除'
+  },
+
   displayAsCancellAgreement(state) {
     state.title = '契約のキャンセル'
     state.description = '一度確定した契約のキャンセルは推奨されません。\nやむを得ない理由によりキャンセルしますか？`'

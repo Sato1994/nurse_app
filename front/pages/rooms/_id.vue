@@ -14,7 +14,7 @@
       color="warning"
       @first-button-click="updateState"
       @second-button-click="openDatePicker"
-      @dots-button-click="confirmDialog = true"
+      @dots-button-click="displayConfirm"
     >
       <template #description>
         <v-card-subtitle
@@ -88,12 +88,9 @@
       @close-button-click="hideDatePicker"
     />
     <Confirm
-      :dialog="confirmDialog"
-      :confirmTitle="confirmTitle"
-      :confirmDescription="confirmDescription"
-      :agreeButtonText="agreeButtonText"
+      :confirmDisplay="confirmDialog"
       @agree-button-click="cancellRoom"
-      @disagree-button-click="confirmDialog = false"
+      @disagree-button-click="hideConfirm"
     />
   </v-card>
 </template>
@@ -148,10 +145,6 @@ export default {
     datePickerDisplay: false,
     inputMessage: '',
     confirmDialog: false,
-    confirmTitle: 'トークルームを削除',
-    agreeButtonText: '削除',
-    confirmDescription:
-      '削除されたトークルームは元に戻せません。本当に削除しますか？',
   }),
 
   head() {
@@ -190,6 +183,15 @@ export default {
   },
 
   methods: {
+    displayConfirm() {
+      this.confirmDialog = true
+      this.$store.commit('dialog/confirm/displayAsLeaveRoom')
+    },
+
+    hideConfirm() {
+      this.confirmDialog = false
+    },
+
     hideDatePicker() {
       this.datePickerDisplay = false
     },
