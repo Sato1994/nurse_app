@@ -73,14 +73,14 @@ export default {
 
   computed: {
     ...mapGetters({
-      agreementsInProgress: 'agreements/agreementsInProgress',
+      agreementsInProgress: 'issues/agreements/agreementsInProgress',
     }),
   },
 
   methods: {
     cancellAgreement(comment) {
       this.$store
-        .dispatch('agreements/cancellAgreement', {
+        .dispatch('issues/agreements/cancellAgreement', {
           agreementId: this.agreementId,
           roomId: this.roomId,
           comment,

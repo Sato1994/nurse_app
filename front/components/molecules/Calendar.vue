@@ -217,7 +217,7 @@ export default {
           break
         case '契約済み':
           this.$store
-            .dispatch('agreements/cancellAgreement', {
+            .dispatch('issues/agreements/cancellAgreement', {
               agreementId: this.selectedEvent.id,
               roomId: this.selectedEvent.roomId,
               comment,
