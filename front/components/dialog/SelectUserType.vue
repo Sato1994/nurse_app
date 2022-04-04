@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="$store.state.display.selectUserType.selectUserTypeIsDisplay"
+      v-model="$store.state.dialog.selectUserType.selectUserTypeIsDisplay"
       max-width="600px"
     >
       <v-card>
@@ -55,7 +55,7 @@ export default {
     },
 
     go() {
-      this.$store.commit('display/hideSelectUserType')
+      this.$store.commit('dialog/selectUserType/hideSelectUserType')
       if (this.$cookies.get('sign') === 'in') {
         this.$store.commit('dialog/signIn/displaySignIn')
       } else {

@@ -2,12 +2,6 @@ export const state = () => ({
   datePicker: {
     datePickerIsDisplay: false,
   },
-
-  selectUserType: {
-    selectUserTypeIsDisplay: false,
-  },
-
-
 })
 
 export const mutations = {
@@ -19,15 +13,6 @@ export const mutations = {
 
   hideDatePicker(state) {
     state.datePicker.datePickerIsDisplay = false
-  },
-
-  // SelectUserType
-  displaySelectUserType(state) {
-    state.selectUserType.selectUserTypeIsDisplay = true
-  },
-
-  hideSelectUserType(state) {
-    state.selectUserType.selectUserTypeIsDisplay = false
   },
 }
 
