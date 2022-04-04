@@ -58,13 +58,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      requests: 'requests/requestsOnCalendar',
+      requests: 'issues/requests/requestsOnCalendar',
     }),
   },
 
   methods: {
     removeRequest() {
-      this.$store.dispatch('requests/removeRequest', this.requestId)
+      this.$store.dispatch('issues/requests/removeRequest', this.requestId)
       this.confirmDisplay = false
     },
 

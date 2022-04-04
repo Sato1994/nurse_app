@@ -238,7 +238,10 @@ export default {
           this.confirmDisplay = false
           break
         case 'リクエスト中':
-          this.$store.dispatch('requests/removeRequest', this.selectedEvent.id)
+          this.$store.dispatch(
+            'issues/requests/removeRequest',
+            this.selectedEvent.id
+          )
           this.confirmDisplay = false
           break
         default:
@@ -320,7 +323,7 @@ export default {
             'snackbar/setMessage',
             'リクエストを送信しました。'
           )
-          this.$store.dispatch('requests/addRequest', response.data)
+          this.$store.dispatch('issues/requests/addRequest', response.data)
           this.$router.push(
             `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
           )

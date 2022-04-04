@@ -15,7 +15,7 @@ export default {
   async asyncData({ route, $axios, store }) {
     if (route.path === `/user/${store.state.info.info.myid}`) {
       let events = []
-      const requests = store.getters['requests/requestsOnCalendar']
+      const requests = store.getters['issues/requests/requestsOnCalendar']
       const offers = store.getters['offers/offersOnCalendar']
       const agreements = store.getters['issues/agreements/agreementsOnCalendar']
       const times = store.getters['times/timesOnCalendar']

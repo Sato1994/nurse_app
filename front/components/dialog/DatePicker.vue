@@ -150,7 +150,7 @@ export default {
 
   computed: {
     // props にしたほうがいい
-    ...mapGetters('display', ['datePicker']),
+    ...mapGetters('dialog/datePicker', ['datePicker']),
 
     copiedStartTime: {
       get() {

@@ -10,7 +10,7 @@ export const actions = {
           commit('info/saveInfo', response.data.info)
           commit('skills/saveSkills', response.data.skills)
           commit('times/saveTimes', response.data.times)
-          commit('requests/saveRequests', response.data.requests)
+          commit('issues/requests/saveRequests', response.data.requests)
           commit(
             'issues/agreements/saveAgreements',
             response.data.agreements
