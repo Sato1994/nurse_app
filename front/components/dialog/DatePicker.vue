@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="datePicker.datePickerIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog v-model="datePicker" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ title }}</span>
@@ -153,6 +149,7 @@ export default {
   }),
 
   computed: {
+    // props にしたほうがいい
     ...mapGetters('display', ['datePicker']),
 
     copiedStartTime: {
@@ -168,7 +165,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('display', ['hideDatePicker']),
+    ...mapMutations('dialog/datePicker', ['hideDatePicker']),
 
     register() {
       this.$emit('register-button-click', {

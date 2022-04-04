@@ -204,7 +204,7 @@ export default {
 
   methods: {
     ...mapMutations('dialog/skillList', ['displaySkillList']),
-    ...mapMutations('display', ['displayDatePicker']),
+    ...mapMutations('dialog/datePicker', ['displayDatePicker']),
     ...mapMutations('dialog/edit', ['displayEdit']),
     ...mapActions('times', ['createTime']),
   },
