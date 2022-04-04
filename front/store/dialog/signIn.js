@@ -1,56 +1,25 @@
 export const state = () => ({
-  datePicker: {
-    datePickerIsDisplay: false,
-  },
-
-  selectUserType: {
-    selectUserTypeIsDisplay: false,
-  },
-
-  signUp: {
-    signUpIsDisplay: false,
-  },
+  signInIsDisplay: false,
 })
 
 export const mutations = {
-
-  // DatePicker
-  displayDatePicker(state) {
-    state.datePicker.datePickerIsDisplay = true
+  displaySignIn(state) {
+    console.log('fefeefe')
+    state.signInIsDisplay = true
   },
 
-  hideDatePicker(state) {
-    state.datePicker.datePickerIsDisplay = false
-  },
-
-  // SelectUserType
-  displaySelectUserType(state) {
-    state.selectUserType.selectUserTypeIsDisplay = true
-  },
-
-  hideSelectUserType(state) {
-    state.selectUserType.selectUserTypeIsDisplay = false
-  },
-
-  // SignUp
-  displaySignUp(state) {
-    state.signUp.signUpIsDisplay = true
-  },
-
-  hideSignUp(state) {
-    state.signUp.signUpIsDisplay = false
+  hideSignIn(state) {
+    state.signInIsDisplay = false
   },
 }
 
 export const actions = {
-
-
-  signUp({ commit, dispatch }, payload) {
-    // サインアップ
+  signIn({ commit, dispatch }, payload) {
     this.$axios
-      .post(`/api/${this.$cookies.get('user')}`, payload)
+      .post(`/api/${this.$cookies.get('user')}/sign_in`, payload)
       .then((response) => {
-        commit('hideSignUp')
+        dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
+        commit('hideSignIn')
         this.$cookies.set('myid', response.data.data.myid)
         const authInfo = {
           'access-token': response.headers['access-token'],
@@ -58,7 +27,7 @@ export const actions = {
           uid: response.headers.uid,
         }
         this.$cookies.set('authInfo', authInfo)
-        // サインアップ者情報の取得
+        // ログイン者情報の取得
         // いる？
         this.$axios
           .get(
@@ -86,8 +55,5 @@ export const actions = {
 }
 
 export const getters = {
-  datePicker(state) {
-    return state.datePicker
-  },
 
 }

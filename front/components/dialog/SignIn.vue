@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="$store.state.display.signIn.signInIsDisplay"
+      v-model="$store.state.dialog.signIn.signInIsDisplay"
       persistent
       max-width="600px"
     >
@@ -62,10 +62,10 @@ export default {
   }),
 
   methods: {
-    ...mapActions('display', ['signIn']),
+    ...mapActions('dialog/signIn', ['signIn']),
 
     hideSignIn() {
-      this.$store.commit('display/hideSignIn')
+      this.$store.commit('dialog/signIn/hideSignIn')
       this.$cookies.removeAll()
       this.info = {}
     },
