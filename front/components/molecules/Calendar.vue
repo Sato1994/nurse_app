@@ -234,7 +234,10 @@ export default {
             })
           break
         case 'オファーがあります':
-          this.$store.dispatch('offers/removeOffer', this.selectedEvent.id)
+          this.$store.dispatch(
+            'issues/offers/removeOffer',
+            this.selectedEvent.id
+          )
           this.confirmDisplay = false
           break
         case 'リクエスト中':

@@ -60,7 +60,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      offers: 'offers/offersOnCalendar',
+      offers: 'issues/offers/offersOnCalendar',
     }),
   },
 
@@ -68,7 +68,7 @@ export default {
     ...mapActions('rooms', ['createRoom']),
 
     removeOffer() {
-      this.$store.dispatch('offers/removeOffer', this.offerId)
+      this.$store.dispatch('issues/offers/removeOffer', this.offerId)
       this.confirmDisplay = false
     },
 

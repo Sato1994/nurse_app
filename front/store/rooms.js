@@ -47,7 +47,7 @@ export const actions = {
       )
       .then((response) => {
         dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
-        commit('offers/removeOffer', requestId, { root: true })
+        commit('issues/offers/removeOffer', requestId, { root: true })
         dispatch('addRoom', response.data)
         this.$router.push(`/rooms/${response.data.id}`)
       })

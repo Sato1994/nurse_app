@@ -15,7 +15,7 @@ export const actions = {
             'issues/agreements/saveAgreements',
             response.data.agreements
           )
-          commit('offers/saveOffers', response.data.offers)
+          commit('issues/offers/saveOffers', response.data.offers)
           commit('rooms/saveRooms', response.data.rooms)
         })
         .catch(() => {
