@@ -47,9 +47,27 @@ export const actions = {
       )
       .then((response) => {
         dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
-        commit('offers/removeOffer', requestId, { root: true })
+        commit('issues/offers/removeOffer', requestId, { root: true })
         dispatch('addRoom', response.data)
         this.$router.push(`/rooms/${response.data.id}`)
+      })
+  },
+
+  updateTime({ dispatch }, payload) {
+    this.$axios
+      .patch(
+        `/api/rooms/${payload.roomId}/update_room_time`,
+        {
+          start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
+          finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
+        },
+        { headers: this.$cookies.get('authInfo') }
+      )
+      .then(() => {
+        dispatch(
+          'snackbar/setMessage',
+          '希望時間を変更しました。', { root: true }
+        )
       })
   },
 }

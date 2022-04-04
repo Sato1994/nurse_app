@@ -6,6 +6,8 @@ class Agreement < ApplicationRecord
   belongs_to :room
   has_one :cancell_comment
   has_one :rates
+  has_many :user_notices, as: :source
+  has_many :host_notices, as: :source
 
   validates :room_id, uniqueness: true
   validates :start_time, presence: true

@@ -39,7 +39,7 @@ export const actions = {
         },
           { root: true })
         this.$router.push(`/rooms/${payload.roomId}`)
-        commit('display/hideConfirm', null, { root: true })
+        commit('dialog/confirm/hideConfirm', null, { root: true })
       })
   },
 }

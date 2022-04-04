@@ -26,6 +26,13 @@ RSpec.describe 'Api::Rates', type: :request do
         expect(response.body).to include('勤務お疲れさまでした。')
       end
 
+      it '作成されたらhost_noticeが作成される' do
+        post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }
+        expect do
+          post_rates
+        end.to change(HostNotice, :count).to(1).from(0)
+      end
+
       it 'agreementのstateが2以外ならば期待するmessageを返す' do
         agreement = create(:agreement, state: 1)
         post '/api/user/sign_in', params: { email: agreement.user.email, password: agreement.user.password }

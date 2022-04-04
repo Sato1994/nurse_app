@@ -27,7 +27,7 @@ export const actions = {
           headers: this.$cookies.get('authInfo')
         })
         .then(() => {
-          commit('display/hideConfirm', null, { root: true })
+          commit('dialog/confirm/hideConfirm', null, { root: true })
           dispatch('snackbar/setMessage', 'オファーを拒否しました。', { root: true })
           commit('removeOffer', offerId)
         })
@@ -37,7 +37,7 @@ export const actions = {
           headers: this.$cookies.get('authInfo')
         })
         .then(() => {
-          commit('display/hideConfirm', null, { root: true })
+          commit('dialog/confirm/hideConfirm', null, { root: true })
           dispatch('snackbar/setMessage', 'オファーを拒否しました。', { root: true })
           commit('removeOffer', offerId)
         })

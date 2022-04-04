@@ -15,6 +15,7 @@ class Api::RatesController < ApplicationController
 
     rate = Rate.new(rate_params)
     if rate.save
+      rate.create_host_notice!(host_id: rate.host.id, action: 'created')
       render_message '勤務お疲れさまでした。', :ok
     else
       render json: rate.errors

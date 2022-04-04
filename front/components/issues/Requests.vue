@@ -26,7 +26,7 @@
           :firstButton="true"
           :secondButton="false"
           :dotsButton="true"
-          @first-button-click="displayConfirmAsRemoveRequest(request.id)"
+          @first-button-click="displayAsRemoveRequest(request.id)"
         />
       </v-col>
     </v-row>
@@ -58,24 +58,24 @@ export default {
 
   computed: {
     ...mapGetters({
-      requests: 'requests/requestsOnCalendar',
+      requests: 'issues/requests/requestsOnCalendar',
     }),
   },
 
   methods: {
     removeRequest() {
-      this.$store.dispatch('requests/removeRequest', this.requestId)
+      this.$store.dispatch('issues/requests/removeRequest', this.requestId)
       this.confirmDisplay = false
     },
 
     hideConfirm() {
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
     },
 
-    displayConfirmAsRemoveRequest(requestId) {
+    displayAsRemoveRequest(requestId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveRequest')
+      this.$store.commit('dialog/confirm/displayAsRemoveRequest')
       this.requestId = requestId
     },
   },

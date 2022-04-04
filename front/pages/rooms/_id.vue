@@ -3,8 +3,8 @@
     <TimeCard
       :partnerLink="partnerLink"
       :partner="partner"
-      :startTime="startTime"
-      :finishTime="finishTime"
+      :startTime="datePickerStartTime"
+      :finishTime="datePickerFinishTime"
       :firstButton="firstButton"
       :secondButton="secondButton"
       :firstButtonText="firstButtonText"
@@ -14,7 +14,7 @@
       color="warning"
       @first-button-click="updateState"
       @second-button-click="openDatePicker"
-      @dots-button-click="confirmDialog = true"
+      @dots-button-click="displayConfirm"
     >
       <template #description>
         <v-card-subtitle
@@ -79,14 +79,18 @@
         </v-timeline-item>
       </v-timeline>
     </v-card-text>
-    <DatePicker title="時間の登録" @register-button-click="updateTime" />
+    <DatePicker
+      title="時間の登録"
+      :datePickerDisplay="datePickerDisplay"
+      :startTime="datePickerStartTime"
+      :finishTime="datePickerFinishTime"
+      @register-button-click="updateTime"
+      @close-button-click="hideDatePicker"
+    />
     <Confirm
-      :dialog="confirmDialog"
-      :confirmTitle="confirmTitle"
-      :confirmDescription="confirmDescription"
-      :agreeButtonText="agreeButtonText"
+      :confirmDisplay="confirmDialog"
       @agree-button-click="cancellRoom"
-      @disagree-button-click="confirmDialog = false"
+      @disagree-button-click="hideConfirm"
     />
   </v-card>
 </template>
@@ -118,14 +122,14 @@ export default {
           state: response.data.state,
           closed: response.data.closed,
           color: response.data.color,
-          startTime: {
+          datePickerStartTime: {
             year: startTime.getFullYear(),
             month: startTime.getMonth() + 1,
             day: startTime.getDate(),
             hour: startTime.getHours(),
             minute: startTime.getMinutes(),
           },
-          finishTime: {
+          datePickerFinishTime: {
             year: finishTime.getFullYear(),
             month: finishTime.getMonth() + 1,
             day: finishTime.getDate(),
@@ -138,12 +142,9 @@ export default {
   },
 
   data: () => ({
+    datePickerDisplay: false,
     inputMessage: '',
     confirmDialog: false,
-    confirmTitle: 'トークルームを削除',
-    agreeButtonText: '削除',
-    confirmDescription:
-      '削除されたトークルームは元に戻せません。本当に削除しますか？',
   }),
 
   head() {
@@ -153,22 +154,6 @@ export default {
   },
 
   computed: {
-    formedStartTime() {
-      return `${String(this.startTime.year)}-${String(
-        this.startTime.month
-      )}-${String(this.startTime.day)}T${String(this.startTime.hour)}:${String(
-        this.startTime.minute
-      )}`
-    },
-
-    formedFinishTime() {
-      return `${String(this.finishTime.year)}-${String(
-        this.finishTime.month
-      )}-${String(this.finishTime.day)}T${String(
-        this.finishTime.hour
-      )}:${String(this.finishTime.minute)}`
-    },
-
     mixedMessages() {
       const messages = this.messages.slice().sort((a, b) => {
         return new Date(b.created_at) - new Date(a.created_at)
@@ -198,10 +183,21 @@ export default {
   },
 
   methods: {
+    displayConfirm() {
+      this.confirmDialog = true
+      this.$store.commit('dialog/confirm/displayAsLeaveRoom')
+    },
+
+    hideConfirm() {
+      this.confirmDialog = false
+    },
+
+    hideDatePicker() {
+      this.datePickerDisplay = false
+    },
+
     openDatePicker() {
-      this.$refs.datePicker.isDisplay = true
-      this.$refs.datePicker.startTime = this.startTime
-      this.$refs.datePicker.finishTime = this.finishTime
+      this.datePickerDisplay = true
     },
 
     sendMessage() {
@@ -217,21 +213,17 @@ export default {
         })
     },
 
-    updateTime(startTime, finishTime) {
-      this.$axios
-        .patch(
-          `/api/rooms/${this.$route.params.id}/update_room_time`,
-          {
-            start_time: startTime,
-            finish_time: finishTime,
-          },
-          { headers: this.$cookies.get('authInfo') }
-        )
+    updateTime(payload) {
+      this.datePickerDisplay = false
+      this.$store
+        .dispatch('rooms/updateTime', {
+          startTime: payload.startTime,
+          finishTime: payload.finishTime,
+          roomId: this.$route.params.id,
+        })
         .then(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            '希望時間を変更しました。'
-          )
+          this.datePickerStartTime = payload.startTime
+          this.datePickerFinishTime = payload.finishTime
         })
     },
 
@@ -247,8 +239,8 @@ export default {
               }/${this.partner.id}`,
               {
                 room_id: this.id,
-                start_time: this.formedStartTime,
-                finish_time: this.formedFinishTime,
+                start_time: this.datePickerStartTime,
+                finish_time: this.datePickerFinishTime,
               },
               {
                 headers: this.$cookies.get('authInfo'),

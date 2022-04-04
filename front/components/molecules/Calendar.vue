@@ -89,7 +89,7 @@
                 editAgreement(selectedEvent.id, selectedEvent.roomId)
               "
               @second-button-click="
-                displayConfirmAsCancellAgreement(
+                displayAsCancellAgreement(
                   selectedEvent.id,
                   selectedEvent.roomId,
                   selectedEvent.partnerPhone
@@ -112,9 +112,7 @@
               :secondButton="true"
               :dotsButton="true"
               @first-button-click="createRoom(selectedEvent.id)"
-              @second-button-click="
-                displayConfirmAsRemoveOffer(selectedEvent.id)
-              "
+              @second-button-click="displayAsRemoveOffer(selectedEvent.id)"
             />
             <TimeCard
               v-if="selectedEvent.name == 'リクエスト中'"
@@ -130,15 +128,18 @@
               :firstButton="true"
               :secondButton="false"
               :dotsButton="true"
-              @first-button-click="
-                displayConfirmAsRemoveRequest(selectedEvent.id)
-              "
+              @first-button-click="displayAsRemoveRequest(selectedEvent.id)"
             />
           </v-card>
         </v-menu>
         <DatePicker
           title="リクエストを送る"
+          :datePickerDisplay="datePickerDisplay"
+          :startTime="datePickerStartTime"
+          :finishTime="datePickerFinishTime"
+          :timeId="timeId"
           @register-button-click="createRequest"
+          @close-button-click="hideDatePicker"
         />
         <Confirm
           :confirmDisplay="confirmDisplay"
@@ -155,6 +156,7 @@ import { mapState, mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import TimeCard from '@/components/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
+const today = new Date()
 
 export default {
   components: {
@@ -176,6 +178,22 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     confirmDisplay: false,
+    datePickerDisplay: false,
+    datePickerStartTime: {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+      hour: today.getHours(),
+      minute: 0,
+    },
+    datePickerFinishTime: {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+      hour: today.getHours(),
+      minute: 0,
+    },
+    timeId: null,
   }),
 
   mounted() {
@@ -212,16 +230,20 @@ export default {
   methods: {
     ...mapActions('rooms', ['createRoom']),
 
+    hideDatePicker() {
+      this.datePickerDisplay = false
+    },
+
     // それぞれのConfirmでagreeButtonを押したときの挙動
     actionAgreeConfirm(comment) {
       switch (this.selectedEvent.name) {
         case '募集中':
-          this.$store.dispatch('times/removeTime', this.selectedEvent.id)
+          this.$store.dispatch('issues/times/removeTime', this.selectedEvent.id)
           this.confirmDisplay = false
           break
         case '契約済み':
           this.$store
-            .dispatch('agreements/cancellAgreement', {
+            .dispatch('issues/agreements/cancellAgreement', {
               agreementId: this.selectedEvent.id,
               roomId: this.selectedEvent.roomId,
               comment,
@@ -233,16 +255,22 @@ export default {
             .catch((error) => {
               if (error.response.status === 400) {
                 this.confirmDisplay = true
-                this.$store.commit('display/displayConfirmWithComment')
+                this.$store.commit('dialog/confirm/displayWithComment')
               }
             })
           break
         case 'オファーがあります':
-          this.$store.dispatch('offers/removeOffer', this.selectedEvent.id)
+          this.$store.dispatch(
+            'issues/offers/removeOffer',
+            this.selectedEvent.id
+          )
           this.confirmDisplay = false
           break
         case 'リクエスト中':
-          this.$store.dispatch('requests/removeRequest', this.selectedEvent.id)
+          this.$store.dispatch(
+            'issues/requests/removeRequest',
+            this.selectedEvent.id
+          )
           this.confirmDisplay = false
           break
         default:
@@ -256,24 +284,24 @@ export default {
         this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
       ) {
         this.confirmDisplay = true
-        this.$store.commit('display/displayConfirmAsRemoveTime')
+        this.$store.commit('dialog/confirm/displayAsRemoveTime')
         this.timeId = payload.timeId
       } else {
-        this.$refs.datePicker.isDisplay = true
-        this.$refs.datePicker.startTime = payload.startTime
-        this.$refs.datePicker.finishTime = payload.finishTime
-        this.$refs.datePicker.timeId = payload.timeId
+        this.datePickerDisplay = true
+        this.datePickerStartTime = payload.startTime
+        this.datePickerFinishTime = payload.finishTime
+        this.timeId = payload.timeId
       }
     },
 
-    displayConfirmAsRemoveRequest(requestId) {
+    displayAsRemoveRequest(requestId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveRequest')
+      this.$store.commit('dialog/confirm/displayAsRemoveRequest')
       this.requestId = requestId
     },
 
     hideConfirm() {
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
     },
 
@@ -295,40 +323,27 @@ export default {
         })
     },
 
-    displayConfirmAsCancellAgreement(agreementId, roomId, phone) {
+    displayAsCancellAgreement(agreementId, roomId, phone) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsCancellAgreement')
+      this.$store.commit('dialog/confirm/displayAsCancellAgreement')
       this.agreementId = agreementId
       this.roomId = roomId
       this.phone = phone
     },
 
-    displayConfirmAsRemoveOffer(offerId) {
+    displayAsRemoveOffer(offerId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveOffer')
+      this.$store.commit('dialog/confirm/displayAsRemoveOffer')
       this.offerId = offerId
     },
 
-    createRequest(startTime, finishTime, timeId) {
-      this.$axios
-        .post(
-          `/api/${this.$cookies.get('user')}_requests/${timeId}`,
-          {
-            start_time: startTime,
-            finish_time: finishTime,
-          },
-          { headers: this.$cookies.get('authInfo') }
-        )
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'リクエストを送信しました。'
-          )
-          this.$store.dispatch('requests/addRequest', response.data)
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-          )
-        })
+    createRequest(payload) {
+      this.datePickerDisplay = false
+      this.$store.dispatch('issues/requests/createRequest', {
+        startTime: payload.startTime,
+        finishTime: payload.finishTime,
+        timeId: payload.timeId,
+      })
     },
 
     viewWeek({ date }) {

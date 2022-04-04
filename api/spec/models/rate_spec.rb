@@ -59,7 +59,7 @@ RSpec.describe Rate, type: :model do
     it 'なければ無効' do
       rate = build(:rate, agreement: nil)
       rate.valid?
-      expect(rate.errors[:agreement]).to include("can't be blank")
+      expect(rate.errors[:agreement]).to include("must exist")
     end
 
     it '同じagreementには作れない' do

@@ -64,11 +64,15 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       context 'roomを作成すると' do
         before do
-          post "/api/rooms", params: params, headers: headers
+          post '/api/rooms', params: params, headers: headers
         end
 
         it 'roomが一つ増える' do
           expect(Room.count).to eq(1)
+        end
+
+        it 'host_noticeが作られる' do
+          expect(HostNotice.count).to eq(1)
         end
 
         it '必要カラムだけのjsonを返す' do
@@ -83,14 +87,14 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it '作成したらhost_requestが削除される' do
         expect do
-          post "/api/rooms", params: params, headers: headers
+          post '/api/rooms', params: params, headers: headers
         end.to change(HostRequest, :count).by(-1)
       end
     end
 
     context 'hostとしてログインしている場合' do
       let(:params) do
-        {  request_id: user_request.id }
+        { request_id: user_request.id }
       end
 
       before do
@@ -100,11 +104,15 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       context 'roomを作成すると' do
         before do
-          post "/api/rooms", params: params, headers: headers
+          post '/api/rooms', params: params, headers: headers
         end
 
         it 'roomが一つ増える' do
           expect(Room.count).to eq(1)
+        end
+
+        it 'user_noticeが作られる' do
+          expect(UserNotice.count).to eq(1)
         end
 
         it '必要カラムだけのjsonを返す' do
@@ -119,23 +127,24 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it '作成したらuser_requestが削除される' do
         expect do
-          post "/api/rooms", params: params, headers: headers
+          post '/api/rooms', params: params, headers: headers
         end.to change(UserRequest, :count).by(-1)
       end
     end
 
     context 'ログインしていない場合' do
-      it '失敗する' do
-        post "/api/rooms",
-             params: { request_id: host_request.id }
-        expect(Room.count).to eq(0)
+      before do
+        post '/api/rooms',
+             params: { start_time: user_request.start_time, finish_time: user_request.finish_time,
+                       request_id: user_request.id }
       end
 
       it '失敗する' do
-        post "/api/rooms",
-             params: { start_time: user_request.start_time, finish_time: user_request.finish_time,
-                       request_id: user_request.id }
         expect(Room.count).to eq(0)
+      end
+
+      it '失敗したらuser_noticeは作られない' do
+        expect(UserNotice.count).to eq(0)
       end
     end
   end
@@ -169,6 +178,28 @@ RSpec.describe 'Api::Rooms', type: :request do
                 headers: headers
         end.not_to change { room.reload.start_time }
       end
+
+      context 'host_noticeとの連携' do
+        it '同一source、同一actionが存在してもcheckedがtrueならば作成される' do
+          user_login
+          host_notice = create(:host_notice, source: room, host: room.host, action: 'changed', checked: true)
+          expect do
+            patch "/api/rooms/#{room.id}/update_room_time",
+                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                  headers: headers
+          end.to change(HostNotice, :count).to(2).from(1)
+        end
+
+        it '同一source、同一actionが存在しておりcheckedがfalseならば作成されない' do
+          user_login
+          host_notice = create(:host_notice, source: room, host: room.host, action: 'changed', checked: false)
+          expect do
+            patch "/api/rooms/#{room.id}/update_room_time",
+                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                  headers: headers
+          end.not_to change(HostNotice, :count)
+        end
+      end
     end
 
     context 'hostとしてログイン' do
@@ -189,6 +220,28 @@ RSpec.describe 'Api::Rooms', type: :request do
                 params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
         end.not_to change { room.reload.start_time }
+      end
+
+      context 'user_noticeとの連携' do
+        it '同一source、同一actionが存在してもcheckedがtrueならば作成される' do
+          host_login
+          user_notice = create(:user_notice, source: room, user: room.user, action: 'changed', checked: true)
+          expect do
+            patch "/api/rooms/#{room.id}/update_room_time",
+                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                  headers: headers
+          end.to change(UserNotice, :count).to(2).from(1)
+        end
+
+        it '同一source、同一actionが存在しておりcheckedがfalseならば作成されない' do
+          host_login
+          user_notice = create(:user_notice, source: room, user: room.user, action: 'changed', checked: false)
+          expect do
+            patch "/api/rooms/#{room.id}/update_room_time",
+                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+                  headers: headers
+          end.not_to change(UserNotice, :count)
+        end
       end
     end
 
@@ -248,6 +301,40 @@ RSpec.describe 'Api::Rooms', type: :request do
           patch "/api/rooms/#{room.id}/update_room_state", headers: headers
         end.not_to change { room.reload.state }
       end
+
+      context 'host_noticeとの連携' do
+        context 'stateがuserへ変更された場合' do
+          it '同一source、同一actionが存在してもcheckedがtrueならば作成される' do
+            room = create(:room, state: 'negotiating')
+            post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+            host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: true)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.to change(HostNotice, :count).to(2).from(1)
+          end
+
+          it '同一source、同一actionが存在しておりcheckedがfalseならば作成されない' do
+            room = create(:room, state: 'negotiating')
+            post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+            host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: false)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.not_to change(HostNotice, :count)
+          end
+        end
+
+        it 'stateがuser以外へ変更された場合にはhost_noticeは作成されない' do
+          array = %w[user host conclusion cancelled]
+          array.each do |i|
+            room = create(:room, state: i)
+            post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+            host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: true)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.not_to change(HostNotice, :count)
+          end
+        end
+      end
     end
 
     context 'hostがログイン' do
@@ -282,6 +369,40 @@ RSpec.describe 'Api::Rooms', type: :request do
           patch "/api/rooms/#{room.id}/update_room_state", headers: headers
         end.not_to change { room.reload.state }
       end
+
+      context 'user_noticeとの連携' do
+        context 'stateがhostへ変更された場合' do
+          it '同一source、同一actionが存在してもcheckedがtrueならば作成される' do
+            room = create(:room, state: 'negotiating')
+            post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+            user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: true)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.to change(UserNotice, :count).to(2).from(1)
+          end
+
+          it '同一source、同一actionが存在しておりcheckedがfalseならば作成されない' do
+            room = create(:room, state: 'negotiating')
+            post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+            user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: false)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.not_to change(UserNotice, :count)
+          end
+        end
+
+        it 'stateがhost以外へ変更された場合にはuser_noticeは作成されない' do
+          array = %w[user host conclusion cancelled]
+          array.each do |i|
+            room = create(:room, state: i)
+            post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+            user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: true)
+            expect do
+              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+            end.not_to change(UserNotice, :count)
+          end
+        end
+      end
     end
   end
 
@@ -309,6 +430,19 @@ RSpec.describe 'Api::Rooms', type: :request do
         json = JSON.parse(response.body)
         expect(json.count).to eq(1)
       end
+
+      it 'closedがuserへ変更された場合host_noticeが作成される' do
+        expect  do
+          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        end.to change(HostNotice, :count).to(1).from(0)
+      end
+
+      it 'closedがbothへ変更された場合host_noticeは作成されない' do
+        room = create(:room, closed: 'host')
+        expect  do
+          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        end.not_to change(HostNotice, :count)
+      end
     end
 
     context 'hostとしてログインしている場合' do
@@ -331,6 +465,19 @@ RSpec.describe 'Api::Rooms', type: :request do
       it '成功したら適切なjsonを返す' do
         json = JSON.parse(response.body)
         expect(json.count).to eq(1)
+      end
+
+      it 'closedがhostへ変更された場合user_noticeが作成される' do
+        expect  do
+          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        end.to change(UserNotice, :count).to(1).from(0)
+      end
+
+      it 'closedがbothへ変更された場合user_noticeは作成されない' do
+        room = create(:room, closed: 'user')
+        expect  do
+          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        end.not_to change(UserNotice, :count)
       end
     end
 

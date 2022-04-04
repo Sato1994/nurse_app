@@ -44,7 +44,7 @@ export const actions = {
         headers: this.$cookies.get('authInfo'),
       })
       .then((response) => {
-        commit('skills/removeSkill', response.data)
+        commit('removeSkill', response.data)
       })
   },
 }

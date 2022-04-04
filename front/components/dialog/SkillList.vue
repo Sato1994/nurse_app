@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="skillList.skillListIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog v-model="skillListIsDisplay" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span>登録済みスキル</span>
@@ -85,7 +81,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('display', ['skillList']),
+    ...mapState('dialog/skillList', ['skillListIsDisplay']),
 
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
@@ -111,8 +107,11 @@ export default {
   methods: {
     // 試す
     ...mapActions('skills', ['addSkill']),
-    ...mapActions('skills,', ['removeSkill']),
-    ...mapMutations('display', ['hideSkillList']),
+    ...mapActions('skills', ['removeSkill']),
+    ...mapMutations('dialog/skillList', ['hideSkillList']),
+
+    // モジュールの階層分け中
+    // 現在はskill追加ボタンを押すとエラーが出てきている
 
     // addSkill(skill) {
     //   this.$axios

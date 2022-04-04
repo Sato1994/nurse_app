@@ -9,13 +9,13 @@ export const actions = {
         .then((response) => {
           commit('info/saveInfo', response.data.info)
           commit('skills/saveSkills', response.data.skills)
-          commit('times/saveTimes', response.data.times)
-          commit('requests/saveRequests', response.data.requests)
+          commit('issues/times/saveTimes', response.data.times)
+          commit('issues/requests/saveRequests', response.data.requests)
           commit(
-            'agreements/saveAgreements',
+            'issues/agreements/saveAgreements',
             response.data.agreements
           )
-          commit('offers/saveOffers', response.data.offers)
+          commit('issues/offers/saveOffers', response.data.offers)
           commit('rooms/saveRooms', response.data.rooms)
         })
         .catch(() => {

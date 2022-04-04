@@ -30,7 +30,7 @@
           :dotsButton="true"
           @first-button-click="editAgreement(agreement.id, agreement.roomId)"
           @second-button-click="
-            displayConfirmAsCancellAgreement(
+            displayAsCancellAgreement(
               agreement.id,
               agreement.roomId,
               agreement.partnerPhone
@@ -73,14 +73,14 @@ export default {
 
   computed: {
     ...mapGetters({
-      agreementsInProgress: 'agreements/agreementsInProgress',
+      agreementsInProgress: 'issues/agreements/agreementsInProgress',
     }),
   },
 
   methods: {
     cancellAgreement(comment) {
       this.$store
-        .dispatch('agreements/cancellAgreement', {
+        .dispatch('issues/agreements/cancellAgreement', {
           agreementId: this.agreementId,
           roomId: this.roomId,
           comment,
@@ -92,14 +92,14 @@ export default {
         .catch((error) => {
           if (error.response.status === 400) {
             this.confirmDisplay = true
-            this.$store.commit('display/displayConfirmWithComment')
+            this.$store.commit('dialog/confirm/displayWithComment')
           }
         })
     },
 
     hideConfirm() {
       this.confirmDisplay = false
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
     },
 
     editAgreement(agreementId, roomId) {
@@ -116,9 +116,9 @@ export default {
         })
     },
 
-    displayConfirmAsCancellAgreement(agreementId, roomId, phone) {
+    displayAsCancellAgreement(agreementId, roomId, phone) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsCancellAgreement')
+      this.$store.commit('dialog/confirm/displayAsCancellAgreement')
       this.agreementId = agreementId
       this.roomId = roomId
       this.phone = phone

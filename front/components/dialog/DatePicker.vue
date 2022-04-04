@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="datePicker.datePickerIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog v-model="datePickerIsDisplay" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ title }}</span>
@@ -99,12 +95,20 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
-
 const today = new Date()
 
 export default {
   props: {
+    datePickerDisplay: {
+      type: Boolean,
+      default: false,
+    },
+
+    timeId: {
+      type: Number,
+      default: null,
+    },
+
     title: {
       type: String,
       required: true,
@@ -134,6 +138,8 @@ export default {
   },
 
   data: () => ({
+    datePickerIsDisplay: false,
+
     // 今日の日付をとってきて今日から１年後くらいまでを自動でセットしたい
     yearList: [
       2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031,
@@ -149,12 +155,9 @@ export default {
       21, 22, 23,
     ],
     minuteList: [0, 15, 30, 45],
-    timeId: '',
   }),
 
   computed: {
-    ...mapGetters('display', ['datePicker']),
-
     copiedStartTime: {
       get() {
         return Object.assign({}, this.startTime)
@@ -166,9 +169,16 @@ export default {
       },
     },
   },
+  watch: {
+    datePickerDisplay(newValue) {
+      this.datePickerIsDisplay = newValue
+    },
+  },
 
   methods: {
-    ...mapMutations('display', ['hideDatePicker']),
+    hideDatePicker() {
+      this.$emit('close-button-click')
+    },
 
     register() {
       this.$emit('register-button-click', {

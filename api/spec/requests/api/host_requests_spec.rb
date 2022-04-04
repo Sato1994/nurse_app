@@ -24,6 +24,10 @@ RSpec.describe 'Api::HostRequests', type: :request do
         expect(HostRequest.count).to eq(1)
       end
 
+      it 'user_noticeが作成される' do
+        expect(UserNotice.count).to eq(1)
+      end
+
       it '必要なプロパティの数だけjsonを返す' do
         json = JSON.parse(response.body)
         expect(json.count).to eq(4)
@@ -35,11 +39,18 @@ RSpec.describe 'Api::HostRequests', type: :request do
     end
 
     context 'リクエストが失敗する場合' do
-      it 'ステータス400を返す' do
+      before do
         post '/api/host/sign_in', params: { email: host.email, password: host.password }
         post "/api/host_requests/#{free_time.id}", params: { start_time: Time.current, finish_time: Time.current },
                                                    headers: headers
+      end
+
+      it 'ステータス400を返す' do
         expect(response.status).to eq(400)
+      end
+
+      it 'user_noticeは作成されない' do
+        expect(UserNotice.count).to eq(0)
       end
     end
   end

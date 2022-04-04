@@ -17,7 +17,7 @@
           :secondButton="true"
           :dotsButton="true"
           @first-button-click="editTime(time.id)"
-          @second-button-click="displayConfirmAsRemoveTime(time.id)"
+          @second-button-click="displayAsRemoveTime(time.id)"
         />
       </v-col>
     </v-row>
@@ -50,18 +50,18 @@ export default {
 
   computed: {
     ...mapGetters({
-      times: 'times/timesOnCalendar',
+      times: 'issues/times/timesOnCalendar',
     }),
   },
 
   methods: {
     removeTime() {
-      this.$store.dispatch('times/removeTime', this.timeId)
+      this.$store.dispatch('issues/times/removeTime', this.timeId)
       this.confirmDisplay = false
     },
 
     hideConfirm() {
-      this.$store.commit('display/hideConfirm')
+      this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
     },
 
@@ -69,9 +69,9 @@ export default {
       console.log('timeの編集機能を作成予定だよ', timeId)
     },
 
-    displayConfirmAsRemoveTime(timeId) {
+    displayAsRemoveTime(timeId) {
       this.confirmDisplay = true
-      this.$store.commit('display/displayConfirmAsRemoveTime')
+      this.$store.commit('dialog/confirm/displayAsRemoveTime')
       this.timeId = timeId
     },
   },

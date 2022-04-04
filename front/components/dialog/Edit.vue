@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="$store.state.display.edit.editIsDisplay"
+      v-model="$store.state.dialog.edit.editIsDisplay"
       persistent
       max-width="600px"
     >
@@ -205,7 +205,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('display', ['hideEdit']),
+    ...mapMutations('dialog/edit', ['hideEdit']),
 
     getAddress() {
       this.$axios
@@ -232,6 +232,7 @@ export default {
     },
 
     editUser() {
+      this.$store.commit('dialog/edit/hideEdit')
       const formData = new FormData()
       const headers = {
         'content-type': 'multipart/form-data',
@@ -255,8 +256,13 @@ export default {
             'snackbar/setMessage',
             'プロフィールを変更しました。'
           )
-          this.$store.commit('display/hideEdit')
           this.$store.commit('info/saveInfo', response.data.data)
+        })
+        .catch(() => {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'プロフィールの更新に失敗しました。'
+          )
         })
     },
   },

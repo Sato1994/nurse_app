@@ -29,7 +29,7 @@ export const actions = {
         headers: this.$cookies.get('authInfo'),
       })
       .then(() => {
-        commit('display/hideConfirm', null, { root: true })
+        commit('dialog/confirm/hideConfirm', null, { root: true })
         dispatch('snackbar/setMessage', '取り消しました。', { root: true })
         commit('removeTime', timeId)
       })
@@ -49,7 +49,7 @@ export const actions = {
       )
       .then((response) => {
         commit('addTime', response.data)
-        commit('display/hideDatePicker', null, { root: true })
+        commit('dialog/datePicker/hideDatePicker', null, { root: true })
         dispatch('snackbar/setMessage', '募集時間を登録しました。', { root: true })
       })
   },

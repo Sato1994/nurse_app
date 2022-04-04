@@ -112,10 +112,15 @@ RSpec.describe 'Api::Agreements', type: :request do
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
       end
 
-      context '未だagreementが作られて以内場合' do
+      context '未だagreementが作られていない場合' do
         it 'agreementを作成できる' do
           correct_post
           expect(Agreement.count).to eq(1)
+        end
+
+        it 'agreementが作成されたらhost_noticeが作成される' do
+          correct_post
+          expect(HostNotice.count).to eq(1)
         end
 
         it 'agreementを作成したらその期間と重複しているfree_timeが削除される' do
@@ -152,6 +157,12 @@ RSpec.describe 'Api::Agreements', type: :request do
           expect { correct_post }.to change { room.agreement.reload.start_time }
         end
 
+        it 'agreementの時間を更新したらuser_noticeが作成される' do
+          expect do
+            correct_post
+          end.to change(HostNotice, :count).to(1).from(0)
+        end
+
         it '更新した時間帯と重複しているfree_timeが削除される' do
           create(:free_time, start_time: Time.current.change(usec: 0) + 30.hours,
                              finish_time: Time.current.change(usec: 0) + 38.hours, user: room.user)
@@ -174,10 +185,20 @@ RSpec.describe 'Api::Agreements', type: :request do
           expect(response.status).to eq(200)
         end
 
-        it '失敗したときのステータス400を返す' do
-          post "/api/agreements/host/#{room.host.id}",
-               params: { room_id: room.id, start_time: Time.current.change(usec: 0) + 1.hour,
-                         finish_time: Time.current.change(usec: 0) + 2.hours }, headers: headers
+        context '登録失敗' do
+          before do
+            post "/api/agreements/host/#{room.host.id}",
+                 params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
+                 headers: headers
+          end
+
+          it 'ステータス400を返す' do
+            expect(response.status).to eq(400)
+          end
+
+          it '失敗したらhost_noticeは作成されない' do
+            expect(HostNotice.count).to eq(0)
+          end
         end
       end
     end
@@ -189,10 +210,15 @@ RSpec.describe 'Api::Agreements', type: :request do
         post '/api/host/sign_in', params: { room_id: room.id, email: room.host.email, password: room.host.password }
       end
 
-      context '未だagreementが作られて以内場合' do
+      context '未だagreementが作られていない場合' do
         it 'agreementを作成できる' do
           correct_post
           expect(Agreement.count).to eq(1)
+        end
+
+        it 'agreementが作成されたらuser_noticeが作成される' do
+          correct_post
+          expect(UserNotice.count).to eq(1)
         end
 
         it 'agreementを作成したらその期間と重複しているfree_timeが削除される' do
@@ -211,11 +237,20 @@ RSpec.describe 'Api::Agreements', type: :request do
           expect(response.status).to eq(201)
         end
 
-        it '失敗したらステータス400を返す' do
-          post "/api/agreements/user/#{room.user.id}",
-               params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
-               headers: headers
-          expect(response.status).to eq(400)
+        context '登録失敗' do
+          before do
+            post "/api/agreements/user/#{room.user.id}",
+                 params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
+                 headers: headers
+          end
+
+          it 'ステータス400を返す' do
+            expect(response.status).to eq(400)
+          end
+
+          it '失敗したらuser_noticeは作成されない' do
+            expect(UserNotice.count).to eq(0)
+          end
         end
       end
 
@@ -227,6 +262,12 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it 'agreementの時間を更新できる' do
           expect { correct_post }.to change { room.agreement.reload.start_time }
+        end
+
+        it 'agreementの時間を更新したらuser_noticeが作成される' do
+          expect do
+            correct_post
+          end.to change(UserNotice, :count).to(1).from(0)
         end
 
         it '更新した時間帯と重複しているfree_timeが削除される' do
@@ -305,6 +346,12 @@ RSpec.describe 'Api::Agreements', type: :request do
           end.to change { agreement.reload.state }.from('before').to('requesting')
         end
 
+        it 'agreement.stateがrequestingに変更されればhost_noticeが作成される' do
+          expect  do
+            patch "/api/agreements/#{agreement.id}", headers: headers
+          end.to change(HostNotice, :count).to(1).from(0)
+        end
+
         it 'room.stateがnegotiatingに変更される' do
           expect  do
             patch "/api/agreements/#{agreement.id}", headers: headers
@@ -355,6 +402,12 @@ RSpec.describe 'Api::Agreements', type: :request do
           end.to change { agreement.reload.state }.from('before').to('requesting')
         end
 
+        it 'agreement.stateがrequestingに変更されればuser_noticeが作成される' do
+          expect  do
+            patch "/api/agreements/#{agreement.id}", headers: headers
+          end.to change(UserNotice, :count).to(1).from(0)
+        end
+
         it 'room.stateがnegotiatingに変更される' do
           expect  do
             patch "/api/agreements/#{agreement.id}", headers: headers
@@ -394,6 +447,12 @@ RSpec.describe 'Api::Agreements', type: :request do
         expect(agreement.reload.state).to eq('cancelled')
       end
 
+      it 'agreementがキャンセルされればhost_noticeが作成される' do
+        expect do
+          patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
+        end.to change(HostNotice, :count).to(1).from(0)
+      end
+
       it 'userとしてログインしていればroom.stateをcancelledに変更できる' do
         patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
         expect(room.reload.state).to eq('cancelled')
@@ -429,6 +488,12 @@ RSpec.describe 'Api::Agreements', type: :request do
           end.to change { room.reload.state }.to('cancelled')
         end
 
+        it 'agreementがキャンセルされればhost_noticeが作成される' do
+          expect do
+            patch '/api/agreements/cancell', params: { id: agreement.id, comment: 'こんにちは' }, headers: headers
+          end.to change(HostNotice, :count).to(1).from(0)
+        end
+
         it 'agreement.stateがcancelledに変更される' do
           expect do
             patch '/api/agreements/cancell', params: { id: agreement.id, comment: 'こんにちは' }, headers: headers
@@ -457,7 +522,7 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it 'status bad_requestを返す(400)' do
           patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
-          expect(response.status).to eq(400)     
+          expect(response.status).to eq(400)
         end
       end
 

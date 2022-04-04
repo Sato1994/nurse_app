@@ -18,6 +18,7 @@ class Host < ApplicationRecord
   has_many :rooms, dependent: :destroy
   has_many :host_messages, through: :rooms
   has_many :rates, through: :agreements
+  has_many :host_notices, dependent: :destroy
 
   mount_uploader :image, ImageUploader
   geocoded_by :address, latitude: :lat, longitude: :lng

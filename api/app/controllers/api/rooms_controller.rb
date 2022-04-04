@@ -45,8 +45,17 @@ class Api::RoomsController < ApplicationController
       render body: nil, status: :unauthorized
       return
     end
+
     room = Room.new(payload)
+
     if room.save
+
+      if api_user_signed_in?
+        room.create_host_notice!(host_id: room.host_id, action: 'created')
+      elsif api_host_signed_in?
+        room.create_user_notice!(user_id: room.user_id, action: 'created')
+      end
+
       eval("#{request}Request").find(params[:request_id]).destroy
       render json: { id: room.id, state: room.state, closed: room.closed, user: room.user,
                      host: room.host, created_at: room.created_at },
@@ -58,11 +67,23 @@ class Api::RoomsController < ApplicationController
 
   def update_room_time
     room = Room.find(params[:id])
+
     if user_login_and_own?(room.user.id)
-      # 時間が更新される
-      render json: room.errors, status: :bad_request unless room.update(room_user_signed_in_params_update)
+
+      if room.update(room_user_signed_in_params_update)
+        room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'changed')
+      else
+        render json: room.errors, status: :bad_request
+      end
+
     elsif host_login_and_own?(room.host.id)
-      render json: room.errors, status: :bad_request unless room.update(room_host_signed_in_params_update)
+
+      if room.update(room_host_signed_in_params_update)
+        room.create_user_notice_with_checked_validate!(user_id: room.user_id, action: 'changed')
+      else
+        render json: room.errors, status: :bad_request
+      end
+
     else
       render body: nil, status: :forbidden
     end
@@ -93,22 +114,32 @@ class Api::RoomsController < ApplicationController
       end
 
       if room.update(state: negotiating_to)
+        case negotiating_to
+        when 'user'
+          room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'agreed')
+        when 'host'
+          room.create_user_notice_with_checked_validate!(user_id: room.user_id, action: 'agreed')
+        end
         render json: room, status: :ok
+
       else
         render json: room.errors, status: :bad_request
       end
+
     when 'user'
       if room.update(state: user_to)
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
       end
+
     when 'host'
       if room.update(state: host_to)
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
       end
+
     else
       render body: nil, status: :bad_request
     end
@@ -126,8 +157,19 @@ class Api::RoomsController < ApplicationController
     end
 
     case room.closed
+
     when 'na'
-      room.update(closed: na_to)
+      if room.update(closed: na_to)
+        case na_to
+        when 'user'
+          room.create_host_notice!(host_id: room.host_id, action: 'left')
+
+        when 'host'
+          room.create_user_notice!(user_id: room.user_id, action: 'left')
+        end
+
+      end
+
     when 'host' || 'user'
       room.update(closed: 'both')
     else

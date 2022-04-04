@@ -15,45 +15,90 @@ class Api::AgreementsController < ApplicationController
     # agreementが未だ作られていない場合
     if room.agreement.nil?
       agreement = Agreement.new(eval("agreement_#{@me}_signed_in_params"))
+
       if agreement.save
+
+        if api_user_signed_in?
+          agreement.create_host_notice!(host_id: agreement.host_id, action: 'created')
+
+        elsif api_host_signed_in?
+          agreement.create_user_notice!(user_id: agreement.user_id, action: 'created')
+
+        end
+
         FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                     Time.zone.parse(params[:finish_time]))
         render json: agreement, status: :created
+
       else
         render json: agreement.errors, status: :bad_request
+
       end
+
     # agreementが既に存在した場合
     elsif room.agreement.update(eval("agreement_#{@me}_signed_in_params"))
+
+      if api_user_signed_in?
+        room.agreement.create_host_notice!(host_id: room.agreement.host_id, action: 'agreed')
+
+      elsif api_host_signed_in?
+        room.agreement.create_user_notice!(user_id: room.agreement.user_id, action: 'agreed')
+
+      end
+
       FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                   Time.zone.parse(params[:finish_time]))
       render json: room.agreement, status: :ok
+
     else
       render json: room.agreement.errors, status: :bad_request
+
     end
   end
 
   # agreementの変更申請
   def update
     agreement = Agreement.find(params[:id])
+
     if user_login_and_own?(agreement.user.id) || host_login_and_own?(agreement.host.id)
+
       if agreement.start_time > 24.hours.since
-        render json: agreement.update_state
+
+        if state = agreement.update_state
+
+          if api_user_signed_in?
+            agreement.create_host_notice!(host_id: agreement.host_id, action: 'changed')
+
+          elsif api_host_signed_in?
+            agreement.create_user_notice!(user_id: agreement.user_id, action: 'changed')
+
+          end
+          render json: state
+
+        end
+
       else
         render body: nil, status: :bad_request
+
       end
+
     else
       render body: nil, status: :forbidden
+
     end
   end
 
   # agreementキャンセル
   def cancell
     agreement = Agreement.find(params[:id])
+
     return unless user_login_and_own?(agreement.user_id)
 
     if agreement.start_time > (48.hours.from_now)
-      agreement.cancell_agreement
+      agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled') if agreement.cancell_agreement
+
     else
+
       if params[:comment].blank?
         render body: nil, status: :bad_request
         return
@@ -61,7 +106,11 @@ class Api::AgreementsController < ApplicationController
 
       # cancell comment 作成
       cancell_comment = CancellComment.new(cancell_comment_params)
-      agreement.cancell_agreement if cancell_comment.save
+
+      if cancell_comment.save && agreement.cancell_agreement
+        agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled')
+
+      end
     end
   end
 

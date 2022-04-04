@@ -203,10 +203,10 @@ export default {
   },
 
   methods: {
-    ...mapMutations('display', ['displaySkillList']),
-    ...mapMutations('display', ['displayDatePicker']),
-    ...mapMutations('display', ['displayEdit']),
-    ...mapActions('times', ['createTime']),
+    ...mapMutations('dialog/skillList', ['displaySkillList']),
+    ...mapMutations('dialog/datePicker', ['displayDatePicker']),
+    ...mapMutations('dialog/edit', ['displayEdit']),
+    ...mapActions('issues/times', ['createTime']),
   },
 }
 </script>
