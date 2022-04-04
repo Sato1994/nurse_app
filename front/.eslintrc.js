@@ -17,6 +17,7 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    "vue/attribute-hyphenation": "off",
     "no-console": "off",
     "no-restricted-syntax": [
       "error",

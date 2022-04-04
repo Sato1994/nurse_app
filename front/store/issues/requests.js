@@ -27,6 +27,25 @@ export const actions = {
     commit('addRequest', request)
   },
 
+  createRequest({ dispatch, commit }, payload) {
+    this.$axios
+      .post(
+        `/api/${this.$cookies.get('user')}_requests/${payload.timeId}`,
+        {
+          start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
+          finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
+        },
+        { headers: this.$cookies.get('authInfo') }
+      )
+      .then((response) => {
+        dispatch(
+          'snackbar/setMessage',
+          'リクエストを送信しました。', { root: true }
+        )
+        commit('addRequest', response.data)
+      })
+  },
+
   removeRequest({ commit, dispatch }, requestId) {
     if (this.$cookies.get('user') === 'user') {
       this.$axios.delete(`/api/user_requests/${requestId}`,

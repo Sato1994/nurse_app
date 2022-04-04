@@ -134,7 +134,12 @@
         </v-menu>
         <DatePicker
           title="リクエストを送る"
+          :datePickerDisplay="datePickerDisplay"
+          :startTime="datePickerStartTime"
+          :finishTime="datePickerFinishTime"
+          :timeId="timeId"
           @register-button-click="createRequest"
+          @close-button-click="hideDatePicker"
         />
         <Confirm
           :confirmDisplay="confirmDisplay"
@@ -151,6 +156,7 @@ import { mapState, mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import TimeCard from '@/components/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
+const today = new Date()
 
 export default {
   components: {
@@ -172,6 +178,22 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     confirmDisplay: false,
+    datePickerDisplay: false,
+    datePickerStartTime: {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+      hour: today.getHours(),
+      minute: 0,
+    },
+    datePickerFinishTime: {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+      hour: today.getHours(),
+      minute: 0,
+    },
+    timeId: null,
   }),
 
   mounted() {
@@ -207,6 +229,10 @@ export default {
 
   methods: {
     ...mapActions('rooms', ['createRoom']),
+
+    hideDatePicker() {
+      this.datePickerDisplay = false
+    },
 
     // それぞれのConfirmでagreeButtonを押したときの挙動
     actionAgreeConfirm(comment) {
@@ -261,10 +287,10 @@ export default {
         this.$store.commit('dialog/confirm/displayAsRemoveTime')
         this.timeId = payload.timeId
       } else {
-        this.$refs.datePicker.isDisplay = true
-        this.$refs.datePicker.startTime = payload.startTime
-        this.$refs.datePicker.finishTime = payload.finishTime
-        this.$refs.datePicker.timeId = payload.timeId
+        this.datePickerDisplay = true
+        this.datePickerStartTime = payload.startTime
+        this.datePickerFinishTime = payload.finishTime
+        this.timeId = payload.timeId
       }
     },
 
@@ -311,26 +337,13 @@ export default {
       this.offerId = offerId
     },
 
-    createRequest(startTime, finishTime, timeId) {
-      this.$axios
-        .post(
-          `/api/${this.$cookies.get('user')}_requests/${timeId}`,
-          {
-            start_time: startTime,
-            finish_time: finishTime,
-          },
-          { headers: this.$cookies.get('authInfo') }
-        )
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'リクエストを送信しました。'
-          )
-          this.$store.dispatch('issues/requests/addRequest', response.data)
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-          )
-        })
+    createRequest(payload) {
+      this.datePickerDisplay = false
+      this.$store.dispatch('issues/requests/createRequest', {
+        startTime: payload.startTime,
+        finishTime: payload.finishTime,
+        timeId: payload.timeId,
+      })
     },
 
     viewWeek({ date }) {
