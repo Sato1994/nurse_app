@@ -57,9 +57,9 @@ export default {
     go() {
       this.$store.commit('display/hideSelectUserType')
       if (this.$cookies.get('sign') === 'in') {
-        this.$store.commit('display/displaySignIn')
+        this.$store.commit('dialog/signIn/displaySignIn')
       } else {
-        this.$store.commit('display/displaySignUp')
+        this.$store.commit('dialog/signUp/displaySignUp')
       }
     },
   },
