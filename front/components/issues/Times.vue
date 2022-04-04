@@ -50,13 +50,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      times: 'times/timesOnCalendar',
+      times: 'issues/times/timesOnCalendar',
     }),
   },
 
   methods: {
     removeTime() {
-      this.$store.dispatch('times/removeTime', this.timeId)
+      this.$store.dispatch('issues/times/removeTime', this.timeId)
       this.confirmDisplay = false
     },
 

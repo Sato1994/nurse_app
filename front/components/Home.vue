@@ -206,7 +206,7 @@ export default {
     ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
     ...mapMutations('dialog/edit', ['displayEdit']),
-    ...mapActions('times', ['createTime']),
+    ...mapActions('issues/times', ['createTime']),
   },
 }
 </script>

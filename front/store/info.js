@@ -45,7 +45,7 @@ export const actions = {
           .then((response) => {
             dispatch('saveInfo', response.data.info)
             dispatch('skills/saveSkills', response.data.skills, { root: true })
-            dispatch('times/saveTimes', response.data.times, { root: true })
+            dispatch('issues/times/saveTimes', response.data.times, { root: true })
             dispatch('issues/requests/saveRequests', response.data.requests, { root: true })
             dispatch('issues/agreements/saveAgreements', response.data.agreements, { root: true })
             dispatch('issues/offers/saveOffers', response.data.offers, { root: true })
@@ -86,7 +86,7 @@ export const actions = {
           .then((response) => {
             dispatch('saveInfo', response.data.info)
             dispatch('skills/saveSkills', response.data.skills, { root: true })
-            dispatch('times/saveTimes', response.data.times, { root: true })
+            dispatch('issues/times/saveTimes', response.data.times, { root: true })
             dispatch('issues/requests/saveRequests', response.data.requests, { root: true })
             dispatch('issues/agreements/saveAgreements', response.data.agreements, { root: true })
             dispatch('issues/offers/saveOffers', response.data.offers, { root: true })

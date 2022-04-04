@@ -9,7 +9,7 @@ export const actions = {
         .then((response) => {
           commit('info/saveInfo', response.data.info)
           commit('skills/saveSkills', response.data.skills)
-          commit('times/saveTimes', response.data.times)
+          commit('issues/times/saveTimes', response.data.times)
           commit('issues/requests/saveRequests', response.data.requests)
           commit(
             'issues/agreements/saveAgreements',

@@ -18,7 +18,7 @@ export default {
       const requests = store.getters['issues/requests/requestsOnCalendar']
       const offers = store.getters['issues/offers/offersOnCalendar']
       const agreements = store.getters['issues/agreements/agreementsOnCalendar']
-      const times = store.getters['times/timesOnCalendar']
+      const times = store.getters['issues/times/timesOnCalendar']
       events = events.concat(requests)
       events = events.concat(offers)
       events = events.concat(agreements)

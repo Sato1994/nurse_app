@@ -212,7 +212,7 @@ export default {
     actionAgreeConfirm(comment) {
       switch (this.selectedEvent.name) {
         case '募集中':
-          this.$store.dispatch('times/removeTime', this.selectedEvent.id)
+          this.$store.dispatch('issues/times/removeTime', this.selectedEvent.id)
           this.confirmDisplay = false
           break
         case '契約済み':
