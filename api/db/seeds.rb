@@ -552,3 +552,93 @@ UserMessage.create(
   end
 end
 ##################################################################################################################################
+##################################################################################################################################
+# guest host rates とりあえず3つほど #############################################################################################
+
+# 2日前の8:00~17:00
+Room.new(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(2.days).beginning_of_day + 8.hours,
+  finish_time: a + 9.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_2_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_2_days_ago.user_id,
+  host_id: room_2_days_ago.host_id,
+  start_time: room_2_days_ago.start_time,
+  finish_time: room_2_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_2_days_ago.id
+).save(validate: false)
+
+agreement_2_days_ago = Agreement.last
+
+rate_2_days_ago = Rate.create(
+  star: 4,
+  comment: '. 社会福祉法人恩賜財団済生会京都府病院凄く毎日が業務に追われていました。帰れない時は日勤でも2時間以上残業している日もあります。毎日ベッドコントロールが続き、... 藤田医科大学　岡崎医療センター外来・病棟・透析室いずれも職場の雰囲気や人間関係は良かったほうだと思います。トップの考えや方針からくるものかは分からない... ていね泌尿器科ポイントのために投稿させていただきます。実習で',
+  agreement_id: agreement_2_days_ago.id
+)
+
+# 10日前の12:00~21:00
+Room.new(
+  user_id: other_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(10.days).beginning_of_day + 12.hours,
+  finish_time: a + 9.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_10_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_10_days_ago.user_id,
+  host_id: room_10_days_ago.host_id,
+  start_time: room_10_days_ago.start_time,
+  finish_time: room_10_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_10_days_ago.id
+).save(validate: false)
+
+agreement_10_days_ago = Agreement.last
+
+rate_10_days_ago = Rate.create(
+  star: 4,
+  comment: '. 都府病院凄く毎日が業務に追われていました。帰れもあります。毎日ベッドコントロールが続き、... 藤田医科大学　岡崎医療センター外来・病棟・透析室いずれも職場の雰囲気や人間関係は良かったほうだと思います。トップの考えや方針からくるものかは分からない... ていね泌尿器科ポイントのために投稿させていただきます。実習で',
+  agreement_id: agreement_10_days_ago.id
+)
+
+# 15日前の18:00~21:00
+Room.new(
+  user_id: users_ids.sample,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(15.days).beginning_of_day + 18.hours,
+  finish_time: a + 3.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_15_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_15_days_ago.user_id,
+  host_id: room_15_days_ago.host_id,
+  start_time: room_15_days_ago.start_time,
+  finish_time: room_15_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_15_days_ago.id
+).save(validate: false)
+
+agreement_15_days_ago = Agreement.last
+
+rate_15_days_ago = Rate.create(
+  star: 4,
+  comment: '. 社会福祉法人恩賜財団済生会京都府病院凄く毎日が業務2時間以上残業している日もあります。毎日ベッドコントロールが続き、... 藤田医科大学　岡崎医療センター外来・病棟・透析室いずれも職場の雰囲気や人間関係は良かったほうだと思います。トップの考えや方針からくるものかは分からない... ていね泌尿器科ポイントのために投稿させていただきます。実習で',
+  agreement_id: agreement_15_days_ago.id
+)
+##################################################################################################################################
