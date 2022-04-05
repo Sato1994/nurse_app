@@ -98,6 +98,18 @@
       </v-btn>
     </v-card-actions>
 
+    <v-card-actions v-if="$route.path === `/host/${target.myid}`">
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="$router.push(`/host/${target.myid}/rates`)"
+      >
+        <v-icon>mdi-star-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
+
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" />
