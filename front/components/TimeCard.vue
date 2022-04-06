@@ -1,8 +1,8 @@
 <template>
   <v-card :color="color" flat dark>
     <v-app-bar flat color="rgba(0, 0, 0, 0)">
-      <v-btn v-if="partner" :to="partnerLink" nuxt text class="text-h6 pl-0"
-        >{{ partner.name }}
+      <v-btn v-if="partnerName" :to="partnerLink" nuxt text class="text-h6 pl-0"
+        >{{ partnerName }}
       </v-btn>
       <v-spacer></v-spacer>
 
@@ -61,8 +61,8 @@ export default {
       type: String,
       default: null,
     },
-    partner: {
-      type: Object,
+    partnerName: {
+      type: String,
       default: null,
     },
     startTime: {

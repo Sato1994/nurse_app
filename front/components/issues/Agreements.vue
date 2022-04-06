@@ -21,7 +21,7 @@
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
           }/${agreement.partnerMyid}`"
-          :partner="agreement.partner"
+          :partnerName="agreement.partner.name"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
           :roomId="agreement.roomId"

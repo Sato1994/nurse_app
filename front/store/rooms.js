@@ -7,14 +7,6 @@ export const mutations = {
     state.rooms = rooms
   },
 
-  updateClosed(state, payload) {
-    state.rooms.find(obj => obj.id === payload.id).closed = payload.closed
-  },
-
-  updateState(state, payload) {
-    state.rooms.find(obj => obj.id === payload.id).state = payload.state
-  },
-
   addRoom(state, payload) {
     state.rooms.push(payload)
   }
@@ -25,13 +17,6 @@ export const actions = {
     commit('saveRooms', rooms)
   },
 
-  updateClosed({ commit }, payload) {
-    commit('updateClosed', payload)
-  },
-
-  updateState({ commit }, payload) {
-    commit('updateState', payload)
-  },
   addRoom({ commit }, room) {
     commit('addRoom', room)
   },
@@ -53,23 +38,6 @@ export const actions = {
       })
   },
 
-  updateTime({ dispatch }, payload) {
-    this.$axios
-      .patch(
-        `/api/rooms/${payload.roomId}/update_room_time`,
-        {
-          start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
-          finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
-        },
-        { headers: this.$cookies.get('authInfo') }
-      )
-      .then(() => {
-        dispatch(
-          'snackbar/setMessage',
-          '希望時間を変更しました。', { root: true }
-        )
-      })
-  },
 }
 
 export const getters = {
