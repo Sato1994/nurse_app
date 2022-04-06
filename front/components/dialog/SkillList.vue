@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isDisplay" persistent max-width="600px">
+    <v-dialog v-model="skillListIsDisplay" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span>登録済みスキル</span>
@@ -63,7 +63,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="isDisplay = false">
+          <v-btn color="warning darken-1" text @click="hideSkillList">
             閉じる
           </v-btn>
         </v-card-actions>
@@ -73,14 +73,16 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   data: () => ({
-    isDisplay: false,
     allSkills: [],
     inputValue: '',
   }),
 
   computed: {
+    ...mapState('dialog/skillList', ['skillListIsDisplay']),
+
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
         (obj) => !this.skills.map((obj) => obj.id).includes(obj.id)
@@ -97,51 +99,45 @@ export default {
   },
 
   created() {
-    this.$axios
-      .get('/api/skills')
-      .then((response) => {
-        this.allSkills = response.data
-        console.log('allSkillsをセット', response.data)
-      })
-      .catch((error) => {
-        console.log('createdでエラー', error)
-      })
+    this.$axios.get('/api/skills').then((response) => {
+      this.allSkills = response.data
+    })
   },
 
   methods: {
-    addSkill(skill) {
-      this.$axios
-        .post(
-          `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then((response) => {
-          console.log(response.data)
-          this.$emit('add-button-click', skill)
-          this.$store.dispatch('skills/addNewSkill', response.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
+    // 試す
+    ...mapActions('skills', ['addSkill']),
+    ...mapActions('skills', ['removeSkill']),
+    ...mapMutations('dialog/skillList', ['hideSkillList']),
 
-    removeSkill(skill) {
-      this.$axios
-        .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          console.log(response.data)
-          this.$emit('remove-button-click', skill)
-          this.$store.dispatch('skills/removeSkill', response.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
+    // モジュールの階層分け中
+    // 現在はskill追加ボタンを押すとエラーが出てきている
+
+    // addSkill(skill) {
+    //   this.$axios
+    //     .post(
+    //       `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
+    //       {},
+    //       {
+    //         headers: this.$cookies.get('authInfo'),
+    //       }
+    //     )
+    //     .then((response) => {
+    //       this.$emit('add-button-click', skill)
+    //       this.$store.commit('skills/addSkill', response.data)
+    //     })
+    // },
+
+    // removeSkill(skill) {
+    //   this.$axios
+    //     .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
+    //       headers: this.$cookies.get('authInfo'),
+    //     })
+    //     .then((response) => {
+    //       this.$emit('remove-button-click', skill)
+    //       this.$store.commit('skills/removeSkill', response.data)
+    //     })
+    // },
   },
 }
 </script>

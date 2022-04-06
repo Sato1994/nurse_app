@@ -1,110 +1,242 @@
 <template>
-  <v-app-bar app color="white" flat>
-    <v-menu offset-x>
-      <template #activator="{ on, attrs }">
-        <div class="my-2">
-          <v-btn small color="warning" fab v-bind="attrs" v-on="on">
-            <v-icon>mdi-account-circle</v-icon>
+  <v-card>
+    <v-app-bar dense app color="white" flat>
+      <v-menu bottom left>
+        <template #activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-app-bar-nav-icon></v-app-bar-nav-icon>
           </v-btn>
-        </div>
-      </template>
-      <v-list v-if="!$store.state.info.info.myid" dense>
-        <v-list-item v-for="(item, i) in unAuthItems" :key="i">
-          <v-list-item-title @click="clickUnAuthMenu(i)">{{
-            item.title
-          }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
+        </template>
 
-      <v-list v-if="$store.state.info.info.myid" dense>
-        <v-list-item v-for="(item, i) in authItems" :key="i">
-          <v-list-item-title @click="clickAuthMenu(i)">{{
-            item.title
-          }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+        <v-list v-if="!$store.state.info.info.myid" dense>
+          <v-list-item v-for="(item, i) in unAuthItems" :key="i" link>
+            <v-list-item-title @click="clickUnAuthMenu(i)">{{
+              item.title
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
 
-    <v-row align="center" justify="space-around">
-      <v-btn
-        v-for="(item, i) in linkItems"
-        :key="i"
-        text
-        @click="clickLinkMenu(i)"
+        <v-list v-if="$store.state.info.info.myid" dense>
+          <v-list-item v-for="(item, i) in authItems" :key="i" link>
+            <v-list-item-title @click="clickAuthMenu(i)">{{
+              item.title
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-app-bar-title>NurseHop</v-app-bar-title>
+
+      <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestUser">
+            <v-icon>mdi-doctor</v-icon>
+          </v-btn>
+        </template>
+        <span>ゲスト看護師 ログイン</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestHost">
+            <v-icon>mdi-hospital-building</v-icon>
+          </v-btn>
+        </template>
+        <span>ゲスト病院 ログイン</span>
+      </v-tooltip>
+
+      <v-spacer> </v-spacer>
+
+      <v-badge
+        :value="value"
+        bordered
+        bottom
+        color="warning"
+        dot
+        offset-x="20"
+        offset-y="20"
       >
-        {{ item.title }}
-      </v-btn>
-    </v-row>
+        <v-btn @click="displayNotice" icon>
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn>
+      </v-badge>
 
-    <v-spacer></v-spacer>
-    <!-- ダイアログ -->
-    <SignUp ref="signUp" />
-    <SignIn ref="signIn" />
-    <SelectUserType
-      ref="selectUserType"
-      @sign-in-button-click="$refs.signIn.isDisplay = true"
-      @sign-up-button-click="$refs.signUp.isDisplay = true"
-    />
-    <!-- -->
-  </v-app-bar>
+      <template #extension>
+        <v-tabs v-model="tabs" fixed-tabs>
+          <v-tabs-slider></v-tabs-slider>
+
+          <v-menu
+            v-if="$store.state.info.info.myid"
+            open-on-hover
+            offset-x
+            right
+            transition="scale-transition"
+          >
+            <template #activator="{ on, attrs }">
+              <v-tab
+                class="primary--text"
+                nuxt
+                :to="myPageURL"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-home-outline</v-icon>
+              </v-tab>
+            </template>
+            <v-list>
+              <v-list-item v-for="(item, index) in homeItems" :key="index" link>
+                <v-list-item-title @click="$router.push(item.url)">{{
+                  item.title
+                }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <v-menu open-on-hover offset-x right transition="scale-transition">
+            <template #activator="{ on, attrs }">
+              <v-tab class="primary--text" nuxt to="/" v-bind="attrs" v-on="on">
+                <v-icon>mdi-magnify</v-icon>
+              </v-tab>
+            </template>
+            <v-list>
+              <v-list-item v-for="(item, index) in topItems" :key="index" link>
+                <v-list-item-title @click="$router.push(item.url)">{{
+                  item.title
+                }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <v-menu open-on-hover offset-x left transition="scale-transition">
+            <template #activator="{ on, attrs }">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/issues"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-text-box-check-outline</v-icon>
+              </v-tab>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in issuesItems"
+                :key="index"
+                link
+              >
+                <v-list-item-title @click="$router.push(item.url)">{{
+                  item.title
+                }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <v-menu open-on-hover offset-x left transition="scale-transition">
+            <template #activator="{ on, attrs }">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/rooms"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-email-outline</v-icon>
+              </v-tab>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in roomsItems"
+                :key="index"
+                link
+              >
+                <v-list-item-title @click="$router.push(item.url)">{{
+                  item.title
+                }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-tabs>
+      </template>
+      <SignUp />
+      <SignIn />
+      <SelectUserType />
+      <Notice />
+    </v-app-bar>
+  </v-card>
 </template>
 
 <script>
+import { mapActions, mapMutations } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
+import Notice from '@/components/dialog/Notice.vue'
 export default {
   components: {
     SignUp,
     SignIn,
     SelectUserType,
+    Notice,
   },
 
-  data: () => ({
-    linkItems: [
-      { title: 'お相手検索' },
-      { title: 'リクエスト一覧' },
-      { title: 'メッセージ' },
-    ],
+  data() {
+    return {
+      tabs: null,
+      unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
+      authItems: [{ title: 'ログアウト' }, { title: 'アカウント削除' }],
+      homeItems: [
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me 2', url: 'someting' },
+      ],
+      topItems: [
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me 2', url: 'someting' },
+      ],
+      issuesItems: [
+        { title: 'すべて', url: '/issues' },
+        { title: '契約', url: '/issues/agreements' },
+        { title: '募集時間', url: '/issues/times' },
+        { title: '届いたリクエスト', url: '/issues/offers' },
+        { title: '送ったリクエスト', url: '/issues/requests' },
+      ],
+      roomsItems: [
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me', url: 'someting' },
+        { title: 'Click Me 2', url: 'someting' },
+      ],
+    }
+  },
+  computed: {
+    myPageURL() {
+      return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+    },
 
-    unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
-
-    authItems: [
-      { title: 'マイページ' },
-      { title: 'ログアウト' },
-      { title: 'アカウント削除' },
-    ],
-  }),
+    value() {
+      return this.$store.state.notices.notices.length
+    },
+  },
 
   methods: {
-    clickLinkMenu(i) {
-      switch (i) {
-        case 0:
-          this.$router.push('/')
-          break
-        case 1:
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${
-              this.$store.state.info.info.myid
-            }/agreements`
-          )
-          break
-        case 2:
-          this.$router.push('/rooms')
-          break
-      }
-    },
+    ...mapActions('info', ['loginAsGuestUser']),
+    ...mapActions('info', ['loginAsGuestHost']),
+    ...mapMutations('notices', ['displayNotice']),
 
     clickUnAuthMenu(i) {
       switch (i) {
         case 0:
-          this.$refs.selectUserType.isSignIn = true
-          this.$refs.selectUserType.isDisplay = true
+          this.$cookies.set('sign', 'in')
+          this.$store.commit('dialog/selectUserType/displaySelectUserType')
 
           break
         case 1:
-          this.$refs.selectUserType.isSignIn = false
-          this.$refs.selectUserType.isDisplay = true
+          this.$cookies.set('sign', 'up')
+          this.$store.commit('dialog/selectUserType/displaySelectUserType')
           break
       }
     },
@@ -112,16 +244,13 @@ export default {
     clickAuthMenu(i) {
       switch (i) {
         case 0:
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-          )
-          break
-        case 1:
           this.$cookies.removeAll()
           this.$router.push('/')
           this.$store.dispatch('info/logout')
+          this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
-        case 2:
+
+        case 1:
           this.$axios
             .delete(`/api/${this.$cookies.get('user')}`, {
               headers: this.$cookies.get('authInfo'),
@@ -130,10 +259,22 @@ export default {
               this.$cookies.removeAll()
               this.$router.push('/')
               this.$store.dispatch('info/logout')
+              this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })
           break
       }
     },
+  },
+  async mounted() {
+    if (this.$store.state.info.info.myid) {
+      await this.$axios
+        .get(`/api/${this.$cookies.get('user')}_notices`, {
+          headers: this.$cookies.get('authInfo'),
+        })
+        .then((response) => {
+          this.$store.commit('notices/saveFormedNotices', response.data)
+        })
+    }
   },
 }
 </script>

@@ -9,10 +9,14 @@ export default {
 
   },
 
+  publicRuntimeConfig: {
+    MAPS_API_KEY: process.env.MAPS_API_KEY
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - front',
-    title: 'front',
+    titleTemplate: '%s | NurseHop',
+    title: 'Good Nurses and Good Hospitals are here.',
     htmlAttrs: {
       lang: 'en'
     },
@@ -23,7 +27,12 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href:
+          'https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Oswald:wght@700&family=Roboto&display=swap',
+      }
     ]
   },
 
@@ -37,7 +46,10 @@ export default {
       src: '~/plugins/main.js',
       mode: 'client'
     },
-    'plugins/axios'
+
+    { src: '~/plugins/vue2-google-maps.js' },
+    'plugins/axios',
+    'plugins/vee-validate'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -55,7 +67,6 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/proxy',
     'cookie-universal-nuxt'
   ],
 
@@ -68,6 +79,7 @@ export default {
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
     theme: {
       dark: false,
       themes: {
@@ -86,5 +98,9 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    transpile: [
+      "vee-validate/dist/rules",
+      /^vue2-google-maps($|\/)/
+    ]
   }
 }

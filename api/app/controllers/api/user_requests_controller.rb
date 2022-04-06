@@ -1,5 +1,6 @@
-class Api::UserRequestsController < ApplicationController
+# frozen_string_literal: true
 
+class Api::UserRequestsController < ApplicationController
   ####################################
   # def index
   #   # 1.存在する自分が関与するAgreementsを取得
@@ -26,21 +27,33 @@ class Api::UserRequestsController < ApplicationController
   # end
   #############################################################
 
-  ########## user_request作成 ##########
+  # user_request作成
   def create
     user_request = UserRequest.new(user_request_params)
+    
     if user_request.save
       recruitment_time = RecruitmentTime.find(params[:recruitment_time_id])
-      render json: {id: user_request.id, start_time: user_request.start_time, finish_time: user_request.finish_time, partner: recruitment_time.host }, status: 201
+      user_request.create_host_notice!(host_id: recruitment_time.host_id, action: 'created')
+      render json: { id: user_request.id, start_time: user_request.start_time, finish_time: user_request.finish_time,
+                     partner: recruitment_time.host },
+             status: :created
     else
-      render json: user_request.errors, status: 400
+      render json: user_request.errors, status: :bad_request
     end
+  end
+
+  def destroy
+    user_request = UserRequest.find(params[:id])
+    recruitment_time = RecruitmentTime.find(user_request.recruitment_time_id)
+    return unless user_login_and_own?(user_request.user_id) || host_login_and_own?(recruitment_time.host_id)
+
+    user_request.destroy
   end
 
   private
 
   def user_request_params
-    params.permit(:recruitment_time_id).merge(user_id: current_api_user.id, start_time:Time.zone.parse(params[:start_time]), finish_time: Time.zone.parse(params[:finish_time]))
+    params.permit(:recruitment_time_id).merge(user_id: current_api_user.id, start_time: Time.zone.parse(params[:start_time]),
+                                              finish_time: Time.zone.parse(params[:finish_time]))
   end
-
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_03_115650) do
+ActiveRecord::Schema.define(version: 2022_03_30_062225) do
 
   create_table "agreements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -24,6 +24,14 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.index ["host_id"], name: "index_agreements_on_host_id"
     t.index ["room_id"], name: "index_agreements_on_room_id"
     t.index ["user_id"], name: "index_agreements_on_user_id"
+  end
+
+  create_table "cancell_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "agreement_id", null: false
+    t.text "comment", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["agreement_id"], name: "index_cancell_comments_on_agreement_id"
   end
 
   create_table "free_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -41,6 +49,18 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["room_id"], name: "index_host_messages_on_room_id"
+  end
+
+  create_table "host_notices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "host_id", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["host_id"], name: "index_host_notices_on_host_id"
+    t.index ["source_type", "source_id"], name: "index_host_notices_on_source_type_and_source_id"
   end
 
   create_table "host_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -91,11 +111,23 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "myid", null: false
+    t.string "phone", null: false
+    t.float "lat", limit: 53
+    t.float "lng", limit: 53
     t.index ["confirmation_token"], name: "index_hosts_on_confirmation_token", unique: true
     t.index ["email"], name: "index_hosts_on_email", unique: true
     t.index ["myid"], name: "index_hosts_on_myid", unique: true
     t.index ["reset_password_token"], name: "index_hosts_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_hosts_on_uid_and_provider", unique: true
+  end
+
+  create_table "rates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "star", null: false
+    t.text "comment", null: false
+    t.bigint "agreement_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["agreement_id"], name: "index_rates_on_agreement_id"
   end
 
   create_table "recruitment_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -133,6 +165,18 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["room_id"], name: "index_user_messages_on_room_id"
+  end
+
+  create_table "user_notices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "user_id", null: false
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["source_type", "source_id"], name: "index_user_notices_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_user_notices_on_user_id"
   end
 
   create_table "user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -186,6 +230,8 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "myid", null: false
+    t.float "lat", limit: 53
+    t.float "lng", limit: 53
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["myid"], name: "index_users_on_myid", unique: true
@@ -196,16 +242,20 @@ ActiveRecord::Schema.define(version: 2021_12_03_115650) do
   add_foreign_key "agreements", "hosts"
   add_foreign_key "agreements", "rooms"
   add_foreign_key "agreements", "users"
+  add_foreign_key "cancell_comments", "agreements"
   add_foreign_key "free_times", "users"
   add_foreign_key "host_messages", "rooms"
+  add_foreign_key "host_notices", "hosts"
   add_foreign_key "host_requests", "free_times"
   add_foreign_key "host_requests", "hosts"
   add_foreign_key "host_skills", "hosts"
   add_foreign_key "host_skills", "skills"
+  add_foreign_key "rates", "agreements"
   add_foreign_key "recruitment_times", "hosts"
   add_foreign_key "rooms", "hosts"
   add_foreign_key "rooms", "users"
   add_foreign_key "user_messages", "rooms"
+  add_foreign_key "user_notices", "users"
   add_foreign_key "user_requests", "recruitment_times"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_skills", "skills"

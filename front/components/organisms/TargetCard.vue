@@ -10,7 +10,7 @@
 
     <v-card-title> {{ target.address }}</v-card-title>
 
-    <v-chip small class="ma-2" text-color="white" color="green">{{
+    <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
       target.wanted === true ? '募集中' : '募集していません'
     }}</v-chip>
 
@@ -54,9 +54,13 @@ export default {
 
   computed: {
     targetPageURL() {
-      return `${this.$cookies.get('user') === 'user' ? 'host' : 'user'}/${
+      return `${this.$cookies.get('user') === 'host' ? 'user' : 'host'}/${
         this.target.myid
       }`
+    },
+
+    wantedChipColor() {
+      return this.target.wanted === true ? 'green' : 'red'
     },
   },
 }

@@ -1,19 +1,7 @@
 <template>
-  <v-card>
-    <v-toolbar color="warning" dark>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
+  <v-container>
+    <v-toolbar color="warning" flat dark dense>
       <v-toolbar-title>メッセージ</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-view-module</v-icon>
-      </v-btn>
     </v-toolbar>
 
     <v-list dense subheader two-line>
@@ -40,12 +28,17 @@
 
       <v-subheader inset>交渉済み</v-subheader>
     </v-list>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
 export default {
   data: () => ({}),
+
+  head: {
+    title: 'メッセージ',
+  },
+
   computed: {
     myRooms() {
       return this.$store.getters['rooms/unclosedRooms'](

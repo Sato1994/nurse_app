@@ -13,14 +13,13 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
-    "@nuxtjs/proxy": "^2.1.0",
     "cookie-universal-nuxt": "^2.1.5",
     "core-js": "^3.15.1",
     "nuxt": "^2.15.7",
+    "vee-validate": "^3.4.14",
     "vue-infinite-loading": "^2.4.5",
-    "vue-js-modal": "^2.0.1",
-    "vuetify": "^2.5.5",
-    "vuex-persistedstate": "^4.1.0"
+    "vue2-google-maps": "^0.10.7",
+    "vuetify": "^2.5.5"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",

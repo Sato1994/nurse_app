@@ -1,66 +1,109 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Api::UserRequests", type: :request do
-  let(:uid) { response.headers["uid"] }
-  let(:client) { response.headers["client"] }
-  let(:access_token) { response.headers["access-token"]}
+RSpec.describe 'Api::UserRequests', type: :request do
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
 
-  describe "POST /create" do
+  describe 'POST /create' do
     let(:user) { create(:user) }
     let(:recruitment_time) { create(:recruitment_time) }
 
-    context "リクエストが成功する場合" do
+    context 'リクエストが成功する場合' do
       before do
-        post "/api/user/sign_in", params: { email: user.email, password: user.password }
-        post "/api/user_requests/#{recruitment_time.id}", params: { start_time: Time.current + 21.hour, finish_time: Time.current + 29.hour }, headers: {uid: uid, client: client, "access-token": access_token}
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        post "/api/user_requests/#{recruitment_time.id}",
+             params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now },
+             headers: headers
       end
-      it "user_requestを作成できる" do
+
+      it 'user_requestを作成できる' do
         expect(UserRequest.count).to eq(1)
       end
 
-      it "必要なプロパティの数だけjsonを返す" do
+      it 'host_noticeが作成される' do
+        expect(HostNotice.count).to eq(1)
+      end
+
+      it '必要なプロパティの数だけjsonを返す' do
         json = JSON.parse(response.body)
         expect(json.count).to eq(4)
       end
 
-      it "ステータス201を返す" do
+      it 'ステータス201を返す' do
         expect(response.status).to eq(201)
       end
     end
 
-    context "リクエストが失敗する場合" do
-      it "ステータス400を返す" do
-        post "/api/user/sign_in", params: { email: user.email, password: user.password }
-        post "/api/user_requests/#{recruitment_time.id}", params: { start_time: Time.current, finish_time: Time.current }, headers: {uid: uid, client: client, "access-token": access_token}
+    context 'リクエストが失敗する場合' do
+      before do
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        post "/api/user_requests/#{recruitment_time.id}",
+             params: { start_time: Time.current, finish_time: Time.current },
+             headers: headers
+      end
+
+      it 'ステータス400を返す' do
         expect(response.status).to eq(400)
+      end
+
+      it 'host_noticeは作成されない' do
+        expect(HostNotice.count).to eq(0)
+      end
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    let!(:user_request) { create(:user_request) }
+    let!(:user_request_2) { create(:user_request) }
+
+    context 'userがログインしている場合' do
+      it 'requestが本人の物の場合削除される' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/user/sign_in', params: { email: user_request.user.email, password: user_request.user.password }
+        expect do
+          delete "/api/user_requests/#{user_request.id}",
+                 headers: headers
+        end.to change(UserRequest, :count).from(2).to(1)
+      end
+
+      it 'requestが他人の物の場合、失敗する' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/user/sign_in', params: { email: user_request.user.email, password: user_request.user.password }
+        expect do
+          delete "/api/user_requests/#{user_request_2.id}",
+                 headers: headers
+        end.not_to change(UserRequest, :count)
       end
     end
 
+    context 'hostがログインしている場合' do
+      it 'user_request.recruitment_timeが本人の物の場合削除される' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        expect do
+          delete "/api/user_requests/#{user_request.id}",
+                 headers: headers
+        end.to change(UserRequest, :count).from(2).to(1)
+      end
+
+      it 'user_request.recruitment_timeが他人の物の場合、失敗する' do
+        recruitment_time = user_request.recruitment_time
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        expect do
+          delete "/api/user_requests/#{user_request_2.id}",
+                 headers: headers
+        end.not_to change(UserRequest, :count)
+      end
+    end
   end
 
+  #   describe "GET /index" do
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#   describe "GET /index" do
-
-
-
-    #########################################################
+  #########################################################
   #   context "stateが0の現在時刻より6時間以内のものは削除される" do
   #       before do
   #         create(:agreement)
@@ -73,7 +116,8 @@ RSpec.describe "Api::UserRequests", type: :request do
   #       travel 18.hour
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.count}.from(2).to(1)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.count}.from(2).to(1)
   #     end
 
   #     it "userがログインしている場合" do
@@ -82,7 +126,8 @@ RSpec.describe "Api::UserRequests", type: :request do
   #       travel 18.hour
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.count}.from(2).to(1)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.count}.from(2).to(1)
   #     end
   #   end
 
@@ -96,7 +141,8 @@ RSpec.describe "Api::UserRequests", type: :request do
   #       travel 24.hour - 1.second
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.where(state: 2).count}.from(0).to(1)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.where(state: 2).count}.from(0).to(1)
   #     end
 
   #     it "userがログインしている場合" do
@@ -108,7 +154,8 @@ RSpec.describe "Api::UserRequests", type: :request do
   #       travel 24.hour - 1.second
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.where(state: 2).count}.from(0).to(1)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.where(state: 2).count}.from(0).to(1)
   #     end
   #   end
 
@@ -121,22 +168,26 @@ RSpec.describe "Api::UserRequests", type: :request do
 
   #     it "userがログインしている場合" do
   #       user = agreement.user
-  #       create(:agreement, state: 2, user: user, start_time: Time.current + 33.hour, finish_time: Time.current + 41.hour)
+  #       create(:agreement, state: 2, user: user, start_time: Time.current + 33.hour,
+  #       finish_time: Time.current + 41.hour)
   #       post "/api/user/sign_in", params: { email: user.email, password: user.password }
   #       travel 41.hour
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.where(state: 3).count}.from(1).to(2)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.where(state: 3).count}.from(1).to(2)
   #     end
 
   #     it "userがログインしている場合" do
   #       user = agreement.user
-  #       create(:agreement, state: 2, user: user, start_time: Time.current + 33.hour, finish_time: Time.current + 41.hour)
+  #       create(:agreement, state: 2, user: user, start_time: Time.current + 33.hour,
+  #       finish_time: Time.current + 41.hour)
   #       post "/api/user/sign_in", params: { email: user.email, password: user.password }
   #       travel 41.hour
   #       get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}
   #       travel 1.second
-  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to change{Agreement.where(state: 3).count}.from(1).to(2)
+  #       expect{get "/api/agreements", headers: {uid: uid, client: client, "access-token": access_token}}.to
+  #       change{Agreement.where(state: 3).count}.from(1).to(2)
   #     end
   #   end
   # end

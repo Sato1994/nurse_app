@@ -31,9 +31,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TargetCard from '@/components/organisms/TargetCard.vue'
 import Search from '@/components/dialog/Search.vue'
-import { mapGetters } from 'vuex'
 export default {
   components: {
     TargetCard,
@@ -84,11 +84,10 @@ export default {
             } else {
               $state.complete()
             }
-          }, 700)
+          }, 5)
         })
-        .catch((error) => {
+        .catch(() => {
           $state.complete()
-          console.log(error)
         })
     },
 
@@ -107,7 +106,7 @@ export default {
       this.wanted = wanted
       this.$axios
         .get(
-          `/api/${this.$cookies.get('user') === 'user' ? 'host' : 'user'}s`,
+          `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
           {
             params: {
               page: 1,
@@ -122,9 +121,6 @@ export default {
         .then((response) => {
           this.targets = []
           this.targets.push(...response.data.users)
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
   },
