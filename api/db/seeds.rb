@@ -552,3 +552,93 @@ UserMessage.create(
   end
 end
 ##################################################################################################################################
+##################################################################################################################################
+# guest host rates とりあえず3つほど #############################################################################################
+
+# 2日前の8:00~17:00
+Room.new(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(2.days).beginning_of_day + 8.hours,
+  finish_time: a + 9.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_2_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_2_days_ago.user_id,
+  host_id: room_2_days_ago.host_id,
+  start_time: room_2_days_ago.start_time,
+  finish_time: room_2_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_2_days_ago.id
+).save(validate: false)
+
+agreement_2_days_ago = Agreement.last
+
+rate_2_days_ago = Rate.create(
+  star: 4,
+  comment: '雰囲気が良いところもあれば、全体的にピリピリしている所もあります。どっちかと言うと雰囲気が悪いところの方が多い印象です。子供のいるママさんでも働きやすい印象を受けています。病棟ごとに忙しさや人間関係は異なります。',
+  agreement_id: agreement_2_days_ago.id
+)
+
+# 10日前の12:00~21:00
+Room.new(
+  user_id: other_user.id,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(10.days).beginning_of_day + 12.hours,
+  finish_time: a + 9.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_10_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_10_days_ago.user_id,
+  host_id: room_10_days_ago.host_id,
+  start_time: room_10_days_ago.start_time,
+  finish_time: room_10_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_10_days_ago.id
+).save(validate: false)
+
+agreement_10_days_ago = Agreement.last
+
+rate_10_days_ago = Rate.create(
+  star: 4,
+  comment: 'とても素敵な病院です。 皆さん仲良くて、すごくわきあいあいとしています。 患者さんにもとても優しくて働くには最適なところだと思います。急性期病院でなんでも受け入れる方針なので、症例は多くとても勉強になります。 急性期看護が好きな人はICU、救命で働けばとても充実した毎日を送れそうです。暇な時間も多くて将棋ばかりやっています。',
+  agreement_id: agreement_10_days_ago.id
+)
+
+# 15日前の18:00~21:00
+Room.new(
+  user_id: users_ids.sample,
+  host_id: guest_host.id,
+  start_time: a = Time.current.ago(15.days).beginning_of_day + 18.hours,
+  finish_time: a + 3.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_15_days_ago = Room.last
+
+Agreement.new(
+  user_id: room_15_days_ago.user_id,
+  host_id: room_15_days_ago.host_id,
+  start_time: room_15_days_ago.start_time,
+  finish_time: room_15_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_15_days_ago.id
+).save(validate: false)
+
+agreement_15_days_ago = Agreement.last
+
+rate_15_days_ago = Rate.create(
+  star: 4,
+  comment: '忙しくてナースコール頻回の病棟でしたが、皆がせっせと働くのでチーム医療は充実してました。向上心もありいい職場でした。バイトなので委員会などで忙しそうにしている常勤の看護師をみるとこのサイトを教えてあげたくなります。',
+  agreement_id: agreement_15_days_ago.id
+)
+##################################################################################################################################

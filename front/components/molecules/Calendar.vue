@@ -78,7 +78,7 @@
               :partnerLink="`/${
                 $cookies.get('user') === 'user' ? 'host' : 'user'
               }/${selectedEvent.partnerMyid}`"
-              :partner="selectedEvent.partner"
+              :partnerName="selectedEvent.partner.name"
               :startTime="selectedEvent.startTime"
               :finishTime="selectedEvent.finishTime"
               :roomId="selectedEvent.roomId"
@@ -105,7 +105,7 @@
               :partnerLink="`/${
                 $cookies.get('user') === 'user' ? 'host' : 'user'
               }/${selectedEvent.partnerMyid}`"
-              :partner="selectedEvent.partner"
+              :partnerName="selectedEvent.partner.name"
               :startTime="selectedEvent.startTime"
               :finishTime="selectedEvent.finishTime"
               :firstButton="true"
@@ -122,7 +122,7 @@
               :partnerLink="`/${
                 $cookies.get('user') === 'user' ? 'host' : 'user'
               }/${selectedEvent.partnerMyid}`"
-              :partner="selectedEvent.partner"
+              :partnerName="selectedEvent.partner.name"
               :startTime="selectedEvent.startTime"
               :finishTime="selectedEvent.finishTime"
               :firstButton="true"

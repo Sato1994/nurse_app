@@ -1,7 +1,8 @@
 <template>
   <v-card class="mx-auto">
+    <!-- 節約中だよ。v-if="!target.address"に変えてね -->
     <v-img
-      v-if="!target.address"
+      v-if="target.address"
       height="250"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
@@ -95,6 +96,18 @@
         @click="displayDatePicker"
       >
         <v-icon>mdi-clock-plus-outline</v-icon>
+      </v-btn>
+    </v-card-actions>
+
+    <v-card-actions v-if="$route.path === `/host/${target.myid}`">
+      <v-btn
+        class="ma-2"
+        color="amber lighten-4"
+        small
+        depressed
+        @click="$router.push(`/host/${target.myid}/rates`)"
+      >
+        <v-icon>mdi-star-outline</v-icon>
       </v-btn>
     </v-card-actions>
 
