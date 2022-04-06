@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     resources :health_checks, only: :index
     resources :user_requests, only: [:destroy]
     resources :host_requests, only: [:destroy]
-    resources :rates, only: [:create]
+    resources :rates, only: [:create, :show]
     resources :user_notices, only: %i[index destroy]
     resources :host_notices, only: %i[index destroy]
 
