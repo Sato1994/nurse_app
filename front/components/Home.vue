@@ -1,7 +1,8 @@
 <template>
   <v-card class="mx-auto">
+    <!-- 節約中だよ。v-if="!target.address"に変えてね -->
     <v-img
-      v-if="!target.address"
+      v-if="target.address"
       height="250"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>

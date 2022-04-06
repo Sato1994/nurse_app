@@ -20,7 +20,6 @@ export const state = () => ({
     minute: null,
   },
   messages: []
-
 })
 export const mutations = {
   saveRoom(state, payload) {
@@ -76,7 +75,10 @@ export const actions = {
     const { data } = await this.$axios.get(`/api/rooms/${payload.roomId}`, {
       headers: this.$cookies.get('authInfo'),
     })
-    commit('saveRoom', data)
+    commit('saveRoom', data.room)
+    if (data.agreement !== null) {
+      commit('agreement/saveAgreement', data.agreement, { root: true })
+    }
   },
 
   async sendMessage({ commit }, payload) {
@@ -87,7 +89,6 @@ export const actions = {
         { headers: this.$cookies.get('authInfo') }
       )
     commit('addMessage', { message: data })
-    console.log(data)
   },
 
   async updateTime({ commit, dispatch }, payload) {
