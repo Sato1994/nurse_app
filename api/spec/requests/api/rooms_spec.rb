@@ -29,20 +29,58 @@ RSpec.describe 'Api::Rooms', type: :request do
     end
 
     context 'userがログイン' do
-      it '自分のroomなら必要数のjsonを返す' do
+      before do
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+      end
+
+      it 'プロパティroomは期待した数のjsonを返す' do
         get "/api/rooms/#{room.id}", headers: headers
         json = JSON.parse(response.body)
-        expect(json.count).to eq(8)
+        expect(json['room'].count).to eq(8)
+      end
+
+      context 'プロパティagreement' do
+        it '紐づいたroomがあるとき期待した数のjsonを返す' do
+          create(:agreement, user: room.user, host: room.host, room: room, start_time: room.start_time,
+                             finish_time: room.finish_time)
+          get "/api/rooms/#{room.id}", headers: headers
+          json = JSON.parse(response.body)
+          expect(json['agreement'].count).to eq(4)
+        end
+
+        it '紐づいたroomがないときnullを返す' do
+          get "/api/rooms/#{room.id}", headers: headers
+          json = JSON.parse(response.body)
+          expect(json['agreement']).to be_nil
+        end
       end
     end
 
     context 'hostがログイン' do
-      it '自分のroomなら必要数のjsonを返す' do
+      before do
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+      end
+
+      it 'プロパティroomは期待した数のjsonを返す' do
         get "/api/rooms/#{room.id}", headers: headers
         json = JSON.parse(response.body)
-        expect(json.count).to eq(8)
+        expect(json['room'].count).to eq(8)
+      end
+
+      context 'プロパティagreement' do
+        it '紐づいたroomがあるとき期待した数のjsonを返す' do
+          create(:agreement, user: room.user, host: room.host, room: room, start_time: room.start_time,
+                             finish_time: room.finish_time)
+          get "/api/rooms/#{room.id}", headers: headers
+          json = JSON.parse(response.body)
+          expect(json['agreement'].count).to eq(4)
+        end
+
+        it '紐づいたroomがないときnullを返す' do
+          get "/api/rooms/#{room.id}", headers: headers
+          json = JSON.parse(response.body)
+          expect(json['agreement']).to be_nil
+        end
       end
     end
   end

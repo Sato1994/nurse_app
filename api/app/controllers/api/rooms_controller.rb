@@ -2,28 +2,38 @@
 
 class Api::RoomsController < ApplicationController
   def show
-    @room = Room.find(params[:id])
-    if user_login_and_own?(@room.user.id)
-      @partner = @room.host
-      @user_messages = @room.user_messages
-      @host_messages = @room.host_messages
-      @start_time = @room.start_time
-      @finish_time = @room.finish_time
-      @state = @room.state
-      @closed = @room.closed
-      render 'show', formats: :json, handlers: :jbuilder
-    elsif host_login_and_own?(@room.host.id)
-      @user_messages = @room.user_messages
-      @host_messages = @room.host_messages
-      @start_time = @room.start_time
-      @finish_time = @room.finish_time
-      @state = @room.state
-      @closed = @room.closed
-      @partner = @room.user
-      render 'show', formats: :json, handlers: :jbuilder
-    else
+    room = Room.find(params[:id])
+
+    unless user_login_and_own?(room.user.id) || host_login_and_own?(room.host.id)
       render json: nil, status: :unauthorized
+      return
     end
+
+    render_room = if api_user_signed_in?
+                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
+                      partner: {
+                        id: room.host.id, name: room.host.name, myid: room.host.myid
+                      },
+                      user_messages: room.user_messages,
+                      host_messages: room.host_messages }
+
+                  else
+                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time,
+                      state: room.state, closed: room.closed,
+                      partner: {
+                        id: room.user.id,
+                        name: room.user.name,
+                        myid: room.user.myid
+                      },
+                      user_messages: room.user_messages,
+                      host_messages: room.host_messages }
+
+                  end
+    if room.agreement
+      agreement = { id: room.agreement.id, start_time: room.agreement.start_time, finish_time: room.agreement.finish_time,
+                    state: room.agreement.state }
+    end
+    render json: { room: render_room, agreement: agreement }
   end
 
   def create
