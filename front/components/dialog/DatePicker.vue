@@ -178,8 +178,27 @@ export default {
     datePickerDisplay(newValue) {
       this.datePickerIsDisplay = newValue
     },
+
+    // createdで定義したs_yearをリアクティブにする必要がある
+    startTime(newValue) {
+      console.log('良さそう！', newValue)
+      this.s_year = newValue.year
+      this.s_month = newValue.month
+      this.s_day = newValue.day
+      this.s_hour = newValue.hour
+      this.s_minute = newValue.minute
+    },
+
+    finishTime(newValue) {
+      this.f_year = newValue.year
+      this.f_month = newValue.month
+      this.f_day = newValue.day
+      this.f_hour = newValue.hour
+      this.f_minute = newValue.minute
+    },
   },
 
+  // computedでオブジェクトにしてしまうと変更を検知されないのでこの書き方で仕方なしか
   mounted() {
     this.s_year = this.startTime.year
     this.s_month = this.startTime.month

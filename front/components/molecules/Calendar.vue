@@ -133,12 +133,12 @@
           </v-card>
         </v-menu>
         <DatePicker
-          title="リクエストを送る"
+          :title="datePickerTitle"
           :datePickerDisplay="datePickerDisplay"
           :startTime="datePickerStartTime"
           :finishTime="datePickerFinishTime"
           :timeId="timeId"
-          @register-button-click="createRequest"
+          @register-button-click="ActionDatePickerAgree"
           @close-button-click="hideDatePicker"
         />
         <Confirm
@@ -180,10 +180,10 @@ export default {
     confirmDisplay: false,
     datePickerDisplay: false,
     datePickerStartTime: {
-      year: today.getFullYear(),
-      month: today.getMonth() + 1,
-      day: today.getDate(),
-      hour: today.getHours(),
+      year: '',
+      month: '',
+      day: '',
+      hour: '',
       minute: 0,
     },
     datePickerFinishTime: {
@@ -225,10 +225,21 @@ export default {
       }
       return config
     },
+
+    datePickerTitle() {
+      if (
+        this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
+      ) {
+        return '募集時間を登録'
+      } else {
+        return 'リクエストを送る'
+      }
+    },
   },
 
   methods: {
     ...mapActions('rooms', ['createRoom']),
+    ...mapActions('issues/times', ['createTime']),
 
     hideDatePicker() {
       this.datePickerDisplay = false
@@ -281,12 +292,14 @@ export default {
     // timeのsecondButtonが押されたときの他人のページか自分のページかでのそれぞれの挙動
     actionPushSecondTimeButton(payload) {
       if (
+        // 自分のページなら
         this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
       ) {
         this.confirmDisplay = true
         this.$store.commit('dialog/confirm/displayAsRemoveTime')
         this.timeId = payload.timeId
       } else {
+        // 他人のページなら
         this.datePickerDisplay = true
         this.datePickerStartTime = payload.startTime
         this.datePickerFinishTime = payload.finishTime
@@ -337,19 +350,40 @@ export default {
       this.offerId = offerId
     },
 
-    createRequest(payload) {
-      this.datePickerDisplay = false
-      this.$store.dispatch('issues/requests/createRequest', {
-        startTime: payload.startTime,
-        finishTime: payload.finishTime,
-        timeId: payload.timeId,
-      })
+    ActionDatePickerAgree(payload) {
+      // time登録
+      if (payload.timeId === null) {
+        this.datePickerDisplay = false
+        this.createTime({
+          startTime: payload.startTime,
+          finishTime: payload.finishTime,
+        })
+
+        // リクエスト送信
+      } else if (payload.timeId !== null) {
+        this.datePickerDisplay = false
+        this.$store.dispatch('issues/requests/createRequest', {
+          startTime: payload.startTime,
+          finishTime: payload.finishTime,
+          timeId: payload.timeId,
+        })
+      }
     },
 
     viewWeek({ date }) {
       this.focus = date
-      console.log(date)
-      console.log('日付がおされたよ')
+      const selectedDate = new Date(date)
+
+      const newValue = {
+        year: selectedDate.getFullYear(),
+        month: selectedDate.getMonth() + 1,
+        day: selectedDate.getDate(),
+        hour: selectedDate.getHours(),
+        minute: 0,
+      }
+      // オブジェクトをそのまま変更することで変更を検知させる
+      this.datePickerStartTime = this.datePickerFinishTime = newValue
+      this.datePickerDisplay = true
     },
 
     setToday() {
