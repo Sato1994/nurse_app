@@ -78,8 +78,13 @@ export const getters = {
 
   requestsOnCalendar(state) {
     const requests = state.requests.map((obj) => {
-      const s = new Date(obj.start_time)
-      const f = new Date(obj.finish_time)
+      let s = new Date(obj.start_time)
+      let f = new Date(obj.finish_time)
+      // UTCを見る場合に差分プラスする
+      if (process.server) {
+        s = new Date(s.setHours(s.getHours() + 9))
+        f = new Date(f.setHours(f.getHours() + 9))
+      }
       const newObject = {
         id: obj.id,
         partnerName: obj.partner.name,
