@@ -30,15 +30,19 @@ export const mutations = {
     state.state = payload.state
     state.closed = payload.closed
 
-    const startTime = new Date(payload.start_time)
+    let startTime = new Date(payload.start_time)
+    let finishTime = new Date(payload.finish_time)
+    // UTCを見る場合に差分プラスする
+    if (process.server) {
+      startTime = new Date(startTime.setHours(startTime.getHours() + 9))
+      finishTime = new Date(finishTime.setHours(finishTime.getHours() + 9))
+    }
     state.startTime.year = startTime.getFullYear()
     state.startTime.month = startTime.getMonth() + 1
     state.startTime.day = startTime.getDate()
     state.startTime.hour = startTime.getHours()
     state.startTime.minute = startTime.getMinutes()
 
-
-    const finishTime = new Date(payload.finish_time)
     state.finishTime.year = finishTime.getFullYear()
     state.finishTime.month = finishTime.getMonth() + 1
     state.finishTime.day = finishTime.getDate()
