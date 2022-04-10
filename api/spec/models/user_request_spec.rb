@@ -51,7 +51,7 @@ RSpec.describe UserRequest, type: :model do
     end
 
     context '期間制限チェック' do
-      it '作成時点で開始時刻が時間以上猶予があれば有効' do
+      it '作成時点で開始時刻が8時間以上猶予があれば有効' do
         recruitment_time = create(:recruitment_time, start_time: 13.hours.from_now,
                                                      finish_time: 23.hours.from_now)
         travel 6.hours - 1.second

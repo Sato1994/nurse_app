@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 class Api::RecruitmentTimesController < ApplicationController
+  def index
+    RecruitmentTime.where('host_id = ? && start_time <= ?', params[:host_id], 8.hours.from_now).destroy_all
+
+    render json: {
+      times: RecruitmentTime.where(host_id: params[:host_id]).as_json(
+        only: %i[id start_time finish_time]
+      )
+    }
+  end
+
   def create
     recruitment_time = RecruitmentTime.new(recruitment_time_params)
     if recruitment_time.save

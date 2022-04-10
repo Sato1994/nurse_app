@@ -44,21 +44,21 @@ RSpec.describe HostRequest, type: :model do
     end
 
     context '期間制限チェック' do
-      it '作成時点で開始時刻が7時間以上猶予があれば有効' do
+      it '作成時点で開始時刻が8時間以上猶予があれば有効' do
         free_time = create(:free_time, start_time: 13.hours.from_now, finish_time: 23.hours.from_now)
         travel 6.hours - 1.second
-        host_request = build(:host_request, start_time: 7.hours.from_now + 1.second,
+        host_request = build(:host_request, start_time: 8.hours.from_now + 1.second,
                                             finish_time: 10.hours.from_now, free_time: free_time)
         expect(host_request).to be_valid
       end
 
-      it '作成時点で開始時刻が現時刻から7時間ちょうどなら期待するエラーメッセージを返す' do
+      it '作成時点で開始時刻が現時刻から8時間ちょうどなら期待するエラーメッセージを返す' do
         free_time = create(:free_time, start_time: 13.hours.from_now, finish_time: 23.hours.from_now)
         travel 6.hours
-        host_request = build(:host_request, start_time: 7.hours.from_now, finish_time: 10.hours.from_now,
+        host_request = build(:host_request, start_time: 8.hours.from_now, finish_time: 10.hours.from_now,
                                             free_time: free_time)
         host_request.valid?
-        expect(host_request.errors[:message]).to include('申請時間は現時刻より7時間以上の猶予が必要です。')
+        expect(host_request.errors[:message]).to include('申請時間は現時刻より8時間以上の猶予が必要です。')
       end
 
       it '登録時間が1時間以上なら有効' do

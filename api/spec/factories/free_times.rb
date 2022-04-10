@@ -5,5 +5,9 @@ FactoryBot.define do
     association :user
     start_time { 20.hours.from_now }
     finish_time { 30.hours.from_now }
+
+    trait :skip_validate do
+      to_create {|instance| free_time.save(validate: false)}
+    end
   end
 end

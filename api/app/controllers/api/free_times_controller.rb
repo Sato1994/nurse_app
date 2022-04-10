@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 class Api::FreeTimesController < ApplicationController
-  # def index
-  #   #
-  #   #finish_timeまでTime.currentから8時間以下になったfree_timeを削除すると良さそうか。
-  #   FreeTime.where('? >= finish_time')
-  # end
+  def index
+    FreeTime.where('user_id = ? && start_time <= ?', params[:user_id], 8.hours.from_now).destroy_all
+    
+    render json: {
+      times: FreeTime.where(user_id: params[:user_id]).as_json(
+        only: %i[id start_time finish_time]
+      )
+    }
+  end
 
   def create
     free_time = FreeTime.new(free_time_params)
