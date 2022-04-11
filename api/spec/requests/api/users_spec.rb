@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::Users', type: :request do
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
+
   let(:json) { JSON.parse(response.body) }
 
   describe 'GET /index' do
@@ -21,11 +26,23 @@ RSpec.describe 'Api::Users', type: :request do
   end
 
   describe 'GET /show' do
-    let(:user_skill) { create(:user_skill) }
+    let(:user) { create(:user) }
 
-    it 'responseには7つの配列が入る' do
-      get "/api/users/#{user_skill.user.myid}"
-      expect(json.count).to eq(7)
+    context '本人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        get "/api/users/#{user.myid}", {
+          headers: headers
+        }
+        expect(json.count).to eq(7)
+      end
+    end
+
+    context '他人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        get "/api/users/#{user.myid}"
+        expect(json.count).to eq(3)
+      end
     end
   end
 end

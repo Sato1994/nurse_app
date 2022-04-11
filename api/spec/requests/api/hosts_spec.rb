@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'api::hosts', type: :request do
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
+
   let(:json) { JSON.parse(response.body) }
 
   describe 'GET /index' do
@@ -22,11 +27,23 @@ RSpec.describe 'api::hosts', type: :request do
   end
 
   describe 'GET /show' do
-    let(:host_skill) { create(:host_skill) }
+    let(:host) { create(:host) }
 
-    it 'responseには7つの配列が入る' do
-      get "/api/hosts/#{host_skill.host.myid}"
-      expect(json.count).to eq(7)
+    context '本人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        post '/api/host/sign_in', params: { email: host.email, password: host.password }
+        get "/api/hosts/#{host.myid}", {
+          headers: headers
+        }
+        expect(json.count).to eq(7)
+      end
+    end
+
+    context '他人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        get "/api/hosts/#{host.myid}"
+        expect(json.count).to eq(3)
+      end
     end
   end
 end

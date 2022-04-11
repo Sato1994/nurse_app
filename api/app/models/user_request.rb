@@ -58,7 +58,7 @@ class UserRequest < ApplicationRecord
   end
 
   def user_request_has_some_hours_grace
-    errors.add(:message, '申請時間は現時刻より7時間以上の猶予が必要です。') unless start_time > (7.hours.from_now)
+    errors.add(:message, '申請時間は現時刻より8時間以上の猶予が必要です。') unless start_time > (8.hours.from_now)
   end
 
   def limitation_of_user_request_hours

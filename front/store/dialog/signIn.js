@@ -4,7 +4,6 @@ export const state = () => ({
 
 export const mutations = {
   displaySignIn(state) {
-    console.log('fefeefe')
     state.signInIsDisplay = true
   },
 
