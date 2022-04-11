@@ -154,7 +154,7 @@
 
 
 <script>
-import { mapMutations, mapActions } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
@@ -176,8 +176,24 @@ export default {
       type: Array,
       default: null,
     },
-    events: {
+    requests: {
       type: Array,
+      default: null,
+    },
+    offers: {
+      type: Array,
+      default: null,
+    },
+    agreements: {
+      type: Array,
+      default: null,
+    },
+    times: {
+      type: Array,
+      default: null,
+    },
+    reloadTimesPath: {
+      type: String,
       default: null,
     },
   },
@@ -207,12 +223,70 @@ export default {
       return this.target.wanted === true ? 'green' : 'red'
     },
 
+    ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
+
     maplocation() {
       return {
         lng: this.target.lng,
         lat: this.target.lat,
       }
     },
+
+    events() {
+      let newArray = []
+      newArray = newArray.concat(this.times)
+      if (
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        newArray = newArray.concat(this.requests)
+        newArray = newArray.concat(this.offers)
+        newArray = newArray.concat(this.agreements)
+      }
+      return newArray
+    },
+  },
+
+  // 自分のページならstoreの更新を監視
+  watch: {
+    timesOnCalendar(newValue) {
+      this.updateTimes(newValue)
+    },
+  },
+
+  async mounted() {
+    // 時間切れにより無効なものがあれば削除して更新
+    const today = new Date()
+    const unavailableTimes = this.times.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= today.setHours(today.getHours() + 8)
+    )
+    if (unavailableTimes) {
+      const { data } = await this.$axios.get(this.reloadTimesPath, {
+        params: {
+          id: this.target.id,
+        },
+      })
+      if (
+        // 自分のページならstoreを更新
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        this.$store.commit('issues/times/saveTimes', data.times)
+      } else {
+        // 他人のページなら親data更新
+        const newTimes = this.$store.getters['issues/times/formatting'](
+          data.times
+        )
+        this.updateTimes(newTimes)
+      }
+    }
   },
 
   methods: {
@@ -220,6 +294,10 @@ export default {
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
     ...mapMutations('dialog/edit', ['displayEdit']),
     ...mapActions('issues/times', ['createTime']),
+
+    updateTimes(newValue) {
+      this.$emit('update-times', newValue)
+    },
   },
 }
 </script>

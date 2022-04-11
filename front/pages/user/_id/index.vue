@@ -1,6 +1,15 @@
 <template>
   <v-container>
-    <Home :target="target" :targetSkills="targetSkills" :events="events" />
+    <Home
+      :target="target"
+      :targetSkills="targetSkills"
+      :requests="requests"
+      :offers="offers"
+      :agreements="agreements"
+      :times="times"
+      :reloadTimesPath="reloadTimesPath"
+      @update-times="updateTimes"
+    />
   </v-container>
 </template>
 
@@ -14,74 +23,82 @@ export default {
 
   async asyncData({ route, $axios, store }) {
     if (route.path === `/user/${store.state.info.info.myid}`) {
-      let events = []
-      const requests = store.getters['issues/requests/requestsOnCalendar']
-      const offers = store.getters['issues/offers/offersOnCalendar']
-      const agreements = store.getters['issues/agreements/agreementsOnCalendar']
-      const times = store.getters['issues/times/timesOnCalendar']
-      events = events.concat(requests)
-      events = events.concat(offers)
-      events = events.concat(agreements)
-      events = events.concat(times)
-
       return {
         target: store.getters['info/info'],
         targetSkills: store.getters['skills/skills'],
-        events,
+        requests: store.getters['issues/requests/requestsOnCalendar'],
+        offers: store.getters['issues/offers/offersOnCalendar'],
+        agreements: store.getters['issues/agreements/agreementsOnCalendar'],
+        times: store.getters['issues/times/timesOnCalendar'],
       }
     } else {
-      try {
-        const data = await $axios.get(`/api/users/${route.params.id}`)
-        const times = data.data.times.map((obj) => {
-          let s = new Date(obj.start_time)
-          let f = new Date(obj.finish_time)
-          // UTCを見る場合に差分プラスする
-          if (process.server) {
-            s = new Date(s.setHours(s.getHours() + 9))
-            f = new Date(f.setHours(f.getHours() + 9))
-          }
-          const newObject = {
-            id: obj.id,
-            start: `${s.getFullYear()}-${
-              s.getMonth() + 1
-            }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-            end: `${f.getFullYear()}-${
-              f.getMonth() + 1
-            }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-            name: '募集中',
-            color: 'green',
-            dislayStart: `${
-              s.getMonth() + 1
-            }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-            displayFinish: `${
-              f.getMonth() + 1
-            }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-            startTime: {
-              year: s.getFullYear(),
-              month: s.getMonth() + 1,
-              day: s.getDate(),
-              hour: s.getHours(),
-              minute: s.getMinutes(),
-            },
-            finishTime: {
-              year: f.getFullYear(),
-              month: f.getMonth() + 1,
-              day: f.getDate(),
-              hour: f.getHours(),
-              minute: f.getMinutes(),
-            },
-          }
-          return newObject
-        })
-        return {
-          target: data.data.info,
-          targetSkills: data.data.skills,
-          events: times,
+      const data = await $axios.get(`/api/users/${route.params.id}`)
+      const times = data.data.times.map((obj) => {
+        let s = new Date(obj.start_time)
+        let f = new Date(obj.finish_time)
+        // UTCを見る場合に差分プラスする
+        if (process.server) {
+          s = new Date(s.setHours(s.getHours() + 9))
+          f = new Date(f.setHours(f.getHours() + 9))
         }
-      } catch (error) {
-        console.log('asyncdataエラー', error)
+        const newObject = {
+          id: obj.id,
+          start: `${s.getFullYear()}-${
+            s.getMonth() + 1
+          }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
+          end: `${f.getFullYear()}-${
+            f.getMonth() + 1
+          }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
+          name: '募集中',
+          color: 'green',
+          dislayStart: `${
+            s.getMonth() + 1
+          }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
+          displayFinish: `${
+            f.getMonth() + 1
+          }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
+          startTime: {
+            year: s.getFullYear(),
+            month: s.getMonth() + 1,
+            day: s.getDate(),
+            hour: s.getHours(),
+            minute: s.getMinutes(),
+          },
+          finishTime: {
+            year: f.getFullYear(),
+            month: f.getMonth() + 1,
+            day: f.getDate(),
+            hour: f.getHours(),
+            minute: f.getMinutes(),
+          },
+        }
+        return newObject
+      })
+      return {
+        target: data.data.info,
+        targetSkills: data.data.skills,
+        times,
       }
     }
+  },
+
+  data: () => ({
+    times: [],
+    agreements: [],
+    offers: [],
+    requests: [],
+  }),
+
+  computed: {
+    reloadTimesPath() {
+      return '/api/free_times'
+    },
+  },
+
+  methods: {
+    updateTimes(newValue) {
+      this.times = newValue
+    },
   },
 }
 </script>

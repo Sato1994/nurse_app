@@ -60,8 +60,12 @@ export const getters = {
     return state.times
   },
 
-  timesOnCalendar(state) {
-    const times = state.times.map((obj) => {
+  timesOnCalendar(state, getters) {
+    return getters.formatting(state.times)
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
       let s = new Date(obj.start_time)
       let f = new Date(obj.finish_time)
       // UTCを見る場合に差分プラスする
@@ -100,6 +104,5 @@ export const getters = {
 
       return newObject
     })
-    return times
-  },
+  }
 }
