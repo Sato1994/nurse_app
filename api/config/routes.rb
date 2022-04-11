@@ -14,8 +14,8 @@ Rails.application.routes.draw do
     resources :free_times, only: %i[index create destroy]
     resources :recruitment_times, only: %i[index create destroy]
     resources :health_checks, only: :index
-    resources :user_requests, only: [:destroy]
-    resources :host_requests, only: [:destroy]
+    resources :user_requests, only: %i[index destroy]
+    resources :host_requests, only: %i[index destroy]
     resources :rates, only: [:create, :show]
     resources :user_notices, only: %i[index destroy]
     resources :host_notices, only: %i[index destroy]

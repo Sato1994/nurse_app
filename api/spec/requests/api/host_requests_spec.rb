@@ -8,6 +8,26 @@ RSpec.describe 'Api::HostRequests', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  describe 'GET /index' do
+    before do
+      free_time = create(:free_time)
+      free_time_2 = create(:free_time)
+      host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now)
+      host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 1.second)
+      get '/api/host_requests', params: { id: host_request_2.host_id }
+    end
+
+    let(:json) { JSON.parse(response.body) }
+
+    it '現在時刻からちょうど8時間を超えるものだけ削除される' do
+      expect(HostRequest.count).to eq(1)
+    end
+
+    it '期待した数のプロパティを返すこと' do
+      expect(json.count).to eq(1)
+    end
+  end
+
   describe 'POST /create' do
     let(:host) { create(:host) }
     let(:free_time) { create(:free_time) }

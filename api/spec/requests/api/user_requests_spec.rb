@@ -8,6 +8,26 @@ RSpec.describe 'Api::UserRequests', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  describe 'GET /index' do
+    before do
+      recruitment_time = create(:recruitment_time)
+      recruitment_time_2 = create(:recruitment_time)
+      user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now)
+      user_request_2 = create(:user_request, :skip_validate, user: user_request.user, start_time: 7.hours.from_now + 1.second)
+      get '/api/user_requests', params: { id: user_request_2.user_id }
+    end
+
+    let(:json) { JSON.parse(response.body) }
+
+    it '現在時刻からちょうど8時間を超えるものだけ削除される' do
+      expect(UserRequest.count).to eq(1)
+    end
+
+    it '期待した数のプロパティを返すこと' do
+      expect(json.count).to eq(1)
+    end
+  end
+
   describe 'POST /create' do
     let(:user) { create(:user) }
     let(:recruitment_time) { create(:recruitment_time) }
