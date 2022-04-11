@@ -8,7 +8,9 @@
       :agreements="agreements"
       :times="times"
       :reloadTimesPath="reloadTimesPath"
+      :reloadRequestsPath="reloadRequestsPath"
       @update-times="updateTimes"
+      @update-requests="updateRequests"
     />
   </v-container>
 </template>
@@ -93,11 +95,17 @@ export default {
     reloadTimesPath() {
       return '/api/free_times'
     },
+    reloadRequestsPath() {
+      return '/api/user_requests'
+    },
   },
 
   methods: {
     updateTimes(newValue) {
       this.times = newValue
+    },
+    updateRequests(newValue) {
+      this.requests = newValue
     },
   },
 }

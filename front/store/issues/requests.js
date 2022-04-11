@@ -76,8 +76,12 @@ export const getters = {
     return state.requests
   },
 
-  requestsOnCalendar(state) {
-    const requests = state.requests.map((obj) => {
+  requestsOnCalendar(state, getters) {
+    return getters.formatting(state.requests)
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
       let s = new Date(obj.start_time)
       let f = new Date(obj.finish_time)
       // UTCを見る場合に差分プラスする
@@ -118,7 +122,5 @@ export const getters = {
       }
       return newObject
     })
-    return requests
-
-  },
+  }
 }

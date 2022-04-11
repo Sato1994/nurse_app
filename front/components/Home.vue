@@ -196,6 +196,10 @@ export default {
       type: String,
       default: null,
     },
+    reloadRequestsPath: {
+      type: String,
+      default: null,
+    },
   },
 
   data: () => ({
@@ -224,6 +228,7 @@ export default {
     },
 
     ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
+    ...mapGetters({ requestsOnCalendar: 'issues/requests/requestsOnCalendar' }),
 
     maplocation() {
       return {
@@ -252,10 +257,15 @@ export default {
     timesOnCalendar(newValue) {
       this.updateTimes(newValue)
     },
+
+    requestsOnCalendar(newValue) {
+      this.updateRequests(newValue)
+    },
   },
 
   async mounted() {
     // 時間切れにより無効なものがあれば削除して更新
+    // timesのチェック
     const today = new Date()
     const unavailableTimes = this.times.some(
       (value) =>
@@ -267,6 +277,7 @@ export default {
           value.startTime.minute
         ) <= today.setHours(today.getHours() + 8)
     )
+
     if (unavailableTimes) {
       const { data } = await this.$axios.get(this.reloadTimesPath, {
         params: {
@@ -287,6 +298,27 @@ export default {
         this.updateTimes(newTimes)
       }
     }
+
+    // requestsのチェック
+    const unavailableRequests = this.requests.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= today.setHours(today.getHours() + 7)
+    )
+
+    if (unavailableRequests) {
+      const { data } = await this.$axios.get(this.reloadRequestsPath, {
+        params: {
+          id: this.target.id,
+        },
+      })
+      this.$store.commit('issues/requests/saveRequests', data.requests)
+    }
   },
 
   methods: {
@@ -297,6 +329,9 @@ export default {
 
     updateTimes(newValue) {
       this.$emit('update-times', newValue)
+    },
+    updateRequests(newValue) {
+      this.$emit('update-requests', newValue)
     },
   },
 }
