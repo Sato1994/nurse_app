@@ -7,7 +7,7 @@ FactoryBot.define do
     finish_time { 30.hours.from_now }
 
     trait :skip_validate do
-      to_create {|instance| free_time.save(validate: false)}
+      to_create {|free_time| free_time.save(validate: false)}
     end
   end
 end

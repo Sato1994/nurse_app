@@ -16,10 +16,10 @@ RSpec.describe 'Api::FreeTimes', type: :request do
     let(:json) { JSON.parse(response.body) }
 
     before do
-      get '/api/free_times', params: { user_id: free_time_2.user_id }
+      get '/api/free_times', params: { id: free_time_2.user_id }
     end
 
-    it '現在時刻からちょうど8時間なものだけ削除される' do
+    it '現在時刻からちょうど8時間を超えるものだけ削除される' do
       expect(FreeTime.count).to eq(1)
     end
 

@@ -2,10 +2,10 @@
 
 class Api::RecruitmentTimesController < ApplicationController
   def index
-    RecruitmentTime.where('host_id = ? && start_time <= ?', params[:host_id], 8.hours.from_now).destroy_all
+    RecruitmentTime.where('host_id = ? && start_time <= ?', params[:id], 8.hours.from_now).destroy_all
 
     render json: {
-      times: RecruitmentTime.where(host_id: params[:host_id]).as_json(
+      times: RecruitmentTime.where(host_id: params[:id]).as_json(
         only: %i[id start_time finish_time]
       )
     }

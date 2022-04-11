@@ -2,10 +2,10 @@
 
 class Api::FreeTimesController < ApplicationController
   def index
-    FreeTime.where('user_id = ? && start_time <= ?', params[:user_id], 8.hours.from_now).destroy_all
-    
+    FreeTime.where('user_id = ? && start_time <= ?', params[:id], 8.hours.from_now).destroy_all
+
     render json: {
-      times: FreeTime.where(user_id: params[:user_id]).as_json(
+      times: FreeTime.where(user_id: params[:id]).as_json(
         only: %i[id start_time finish_time]
       )
     }

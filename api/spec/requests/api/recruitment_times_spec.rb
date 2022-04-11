@@ -16,10 +16,10 @@ RSpec.describe 'Api::RecruitmentTimes', type: :request do
     let(:json) { JSON.parse(response.body) }
 
     before do
-      get '/api/recruitment_times', params: { host_id: recruitment_time_2.host_id }
+      get '/api/recruitment_times', params: { id: recruitment_time_2.host_id }
     end
 
-    it '現在時刻からちょうど8時間なものだけ削除される' do
+    it '現在時刻からちょうど8時間を超えるのだけ削除される' do
       expect(RecruitmentTime.count).to eq(1)
     end
 
