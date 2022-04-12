@@ -200,6 +200,10 @@ export default {
       type: String,
       default: null,
     },
+    reloadOffersPath: {
+      type: String,
+      default: null,
+    },
   },
 
   data: () => ({
@@ -229,6 +233,7 @@ export default {
 
     ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
     ...mapGetters({ requestsOnCalendar: 'issues/requests/requestsOnCalendar' }),
+    ...mapGetters({ offersOnCalendar: 'issues/offers/offersOnCalendar' }),
 
     maplocation() {
       return {
@@ -261,12 +266,16 @@ export default {
     requestsOnCalendar(newValue) {
       this.updateRequests(newValue)
     },
+
+    offersOnCalendar(newValue) {
+      this.updateOffers(newValue)
+    },
   },
 
   async mounted() {
+    const laterHours8 = new Date().setHours(new Date().getHours() + 8)
     // 時間切れにより無効なものがあれば削除して更新
     // timesのチェック
-    const today = new Date()
     const unavailableTimes = this.times.some(
       (value) =>
         new Date(
@@ -275,7 +284,7 @@ export default {
           value.startTime.day,
           value.startTime.hour,
           value.startTime.minute
-        ) <= today.setHours(today.getHours() + 8)
+        ) <= laterHours8
     )
 
     if (unavailableTimes) {
@@ -300,6 +309,7 @@ export default {
     }
 
     // requestsのチェック
+    const laterHours7 = new Date().setHours(new Date().getHours() + 7)
     const unavailableRequests = this.requests.some(
       (value) =>
         new Date(
@@ -308,7 +318,7 @@ export default {
           value.startTime.day,
           value.startTime.hour,
           value.startTime.minute
-        ) <= today.setHours(today.getHours() + 7)
+        ) <= laterHours7
     )
 
     if (unavailableRequests) {
@@ -318,6 +328,29 @@ export default {
         },
       })
       this.$store.commit('issues/requests/saveRequests', data.requests)
+    }
+
+    // offersのチェック
+    const unavailableOffers = this.offers.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= laterHours7
+    )
+
+    if (unavailableOffers) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+        params: {
+          id: this.target.id,
+        },
+      }
+      const { data } = await this.$axios.get(this.reloadOffersPath, config)
+      this.$store.commit('issues/offers/saveOffers', data.offers)
     }
   },
 
@@ -332,6 +365,9 @@ export default {
     },
     updateRequests(newValue) {
       this.$emit('update-requests', newValue)
+    },
+    updateOffers(newValue) {
+      this.$emit('update-offers', newValue)
     },
   },
 }

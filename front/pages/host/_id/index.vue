@@ -9,8 +9,10 @@
       :times="times"
       :reloadTimesPath="reloadTimesPath"
       :reloadRequestsPath="reloadRequestsPath"
+      :reloadOffersPath="reloadOffersPath"
       @update-times="updateTimes"
       @update-requests="updateRequests"
+      @update-offers="updateOffers"
     />
   </v-container>
 </template>
@@ -99,6 +101,9 @@ export default {
     reloadRequestsPath() {
       return '/api/host_requests'
     },
+    reloadOffersPath() {
+      return '/api/user_requests'
+    },
   },
 
   methods: {
@@ -108,6 +113,10 @@ export default {
 
     updateRequests(newValue) {
       this.requests = newValue
+    },
+
+    updateOffers(newValue) {
+      this.offers = newValue
     },
   },
 }
