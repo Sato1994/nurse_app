@@ -73,7 +73,7 @@ class Api::UsersController < ApplicationController
         agreement['partner'] = agreement.delete('host')
       end
 
-      render_rooms = user.rooms.as_json(
+      render_rooms = user.rooms.display_room_for_user.as_json(
         only: %i[id state closed start_time finish_time created_at],
         include: {
           host: {
