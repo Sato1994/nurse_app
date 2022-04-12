@@ -39,7 +39,6 @@ RSpec.describe Agreement, type: :model do
       agreement = build(:agreement, room: room, start_time: 6.hours.from_now)
       agreement.valid?
       expect(agreement.errors[:message]).to include('勤務開始時間は現在時刻より6時間以上の猶予が必要です。')
-
     end
   end
 
@@ -80,6 +79,24 @@ RSpec.describe Agreement, type: :model do
     it '全てあれば有効' do
       agreement = build(:agreement, room: room)
       expect(agreement).to be_valid
+    end
+  end
+
+  describe 'methods' do
+    let(:agreement_1) { create(:agreement, state: 'before') }
+    let(:agreement_2) { create(:agreement, state: 'during') }
+    let(:agreement_3) { create(:agreement, state: 'finished') }
+    let(:agreement_4) { create(:agreement, state: 'requesting') }
+    let(:agreement_5) { create(:agreement, state: 'cancelled') }
+
+    context 'in_progress' do
+      it 'stateがbefore, duringまたはrequestingのものが検索される' do
+        expect(described_class.in_progress).to include(agreement_1, agreement_2, agreement_4)
+      end
+
+      it 'その他は検索されない' do
+        expect(described_class.in_progress).not_to include(agreement_3, agreement_5)
+      end
     end
   end
 end

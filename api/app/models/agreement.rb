@@ -20,6 +20,8 @@ class Agreement < ApplicationRecord
 
   enum state: { before: 0, during: 1, finished: 2, requesting: 3, cancelled: 4 }
 
+  scope :in_progress, -> { where(state: 'before').or(self.where(state: 'during')).or(self.where(state: 'requesting'))}
+
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
       errors.add(:message,

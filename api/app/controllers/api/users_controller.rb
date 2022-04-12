@@ -56,7 +56,7 @@ class Api::UsersController < ApplicationController
         only: %i[id myid name address lat lng image wanted sex age year profile created_at]
       )
 
-      render_agreements = user.agreements.as_json(
+      render_agreements = user.agreements.in_progress.as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {

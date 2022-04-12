@@ -56,7 +56,7 @@ class Api::HostsController < ApplicationController
         only: %i[id myid name address lat lng image wanted phone profile created_at]
       )
 
-      render_agreements = host.agreements.as_json(
+      render_agreements = host.agreements.in_progress.as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {
