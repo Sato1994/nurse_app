@@ -91,6 +91,7 @@ export default {
     agreements: [],
     offers: [],
     requests: [],
+    target: [],
   }),
 
   computed: {

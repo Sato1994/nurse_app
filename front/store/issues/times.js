@@ -64,6 +64,20 @@ export const getters = {
     return getters.formatting(state.times)
   },
 
+  checkUnavailableTimes: _ => (payload) => {
+    const laterHours8 = new Date().setHours(new Date().getHours() + 8)
+    return payload.times.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= laterHours8
+    )
+  },
+
   formatting: _ => (payload) => {
     return payload.map((obj) => {
       let s = new Date(obj.start_time)

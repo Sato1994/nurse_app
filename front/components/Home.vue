@@ -273,21 +273,14 @@ export default {
   },
 
   async mounted() {
-    const laterHours8 = new Date().setHours(new Date().getHours() + 8)
     // 時間切れにより無効なものがあれば削除して更新
-    // timesのチェック
-    const unavailableTimes = this.times.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours8
-    )
 
-    if (unavailableTimes) {
+    // timesのチェック
+    const checkUnavailableTimes = this.$store.getters[
+      'issues/times/checkUnavailableTimes'
+    ]({ times: this.times })
+
+    if (checkUnavailableTimes) {
       const { data } = await this.$axios.get(this.reloadTimesPath, {
         params: {
           id: this.target.id,
@@ -309,19 +302,11 @@ export default {
     }
 
     // requestsのチェック
-    const laterHours7 = new Date().setHours(new Date().getHours() + 7)
-    const unavailableRequests = this.requests.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours7
-    )
+    const checkUnavailableRequests = this.$store.getters[
+      'issues/requests/checkUnavailableRequests'
+    ]({ requests: this.requests })
 
-    if (unavailableRequests) {
+    if (checkUnavailableRequests) {
       const { data } = await this.$axios.get(this.reloadRequestsPath, {
         params: {
           id: this.target.id,
@@ -331,18 +316,11 @@ export default {
     }
 
     // offersのチェック
-    const unavailableOffers = this.offers.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours7
-    )
+    const checkUnavailableOffers = this.$store.getters[
+      'issues/offers/checkUnavailableOffers'
+    ]({ offers: this.offers })
 
-    if (unavailableOffers) {
+    if (checkUnavailableOffers) {
       const config = {
         headers: this.$cookies.get('authInfo'),
         params: {
