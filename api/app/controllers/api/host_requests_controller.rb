@@ -2,24 +2,57 @@
 
 class Api::HostRequestsController < ApplicationController
   def index
-    HostRequest.where('host_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
+    # Host本人のrequestが無効だった場合
+    if api_host_signed_in?
+      HostRequest.where('host_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
 
-    render_host_requests = HostRequest.where(host_id: params[:id]).includes(:user).as_json(
-      only: %i[id start_time finish_time],
-      include: {
-        user: {
-          only: %i[id name image myid]
-        }
+      render_host_requests = HostRequest.where(host_id: params[:id])
+                                        .includes(:user)
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            user: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
+
+      render_host_requests.each do |request|
+        request['partner'] = request.delete('user')
+      end
+
+      render json: {
+        requests: render_host_requests
       }
-    )
 
-    render_host_requests.each do |request|
-      request['partner'] = request.delete('user')
+    elsif api_user_signed_in?
+      # Userがもらったoffersが無効だった場合
+      HostRequest.left_joins(:free_time).includes(free_time: :user)
+                 .where('host_requests.start_time <= ?', 7.hours.from_now)
+                 .merge(FreeTime.where(user_id: current_api_user.id))
+                 .destroy_all
+
+      render_host_requests = HostRequest.left_joins(:free_time)
+                                        .includes(free_time: :user)
+                                        .merge(FreeTime.where(user_id: current_api_user.id))
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            host: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
+      render_host_requests.each do |request|
+        request['partner'] = request.delete('host')
+      end
+
+      render json: {
+        offers: render_host_requests
+      }
+    else
+      render json: nil, status: :unauthorized
     end
-
-    render json: {
-      requests: render_host_requests
-    }
   end
 
   def create

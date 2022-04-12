@@ -9,22 +9,57 @@ RSpec.describe 'Api::HostRequests', type: :request do
   end
 
   describe 'GET /index' do
-    before do
-      free_time = create(:free_time)
-      free_time_2 = create(:free_time)
-      host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now)
-      host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 1.second)
-      get '/api/host_requests', params: { id: host_request_2.host_id }
-    end
-
     let(:json) { JSON.parse(response.body) }
 
-    it '現在時刻からちょうど8時間を超えるものだけ削除される' do
-      expect(HostRequest.count).to eq(1)
+    context 'hostがログインしてる場合' do
+      before do
+        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now)
+        host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 1.second)
+        post '/api/host/sign_in', params: { email: host_request_2.host.email, password: host_request_2.host.password }
+        get '/api/host_requests', params: { id: host_request_2.host_id }, headers: headers
+      end
+
+      it '現在時刻からちょうど8時間を超えるものだけ削除される' do
+        expect(HostRequest.count).to eq(1)
+      end
+
+      it '期待した数のプロパティを返す' do
+        expect(json.count).to eq(1)
+      end
     end
 
-    it '期待した数のプロパティを返すこと' do
-      expect(json.count).to eq(1)
+    context 'userがログインしている場合' do
+      let(:free_time) { create(:free_time) }
+
+      it '現在時刻からちょうど8時間を超えたものだけ削除される' do
+        create(:host_request, :skip_validate, start_time: 7.hours.from_now, free_time: free_time)
+        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 1.second, free_time: free_time)
+        post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
+        get '/api/host_requests', params: { id: free_time.user_id }, headers: headers
+        expect(HostRequest.count).to eq(1)
+      end
+
+      it '関連しないインスタンスは削除しない' do
+        create(:host_request, :skip_validate, start_time: 7.hours.from_now, free_time: free_time)
+        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 1.second, free_time: free_time)
+        create(:host_request, :skip_validate, start_time: 7.hours.from_now, host: host_request.host)
+        post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
+        get '/api/host_requests', params: { id: free_time.user_id }, headers: headers
+        expect(HostRequest.count).to eq(2)
+      end
+
+      it '期待した数のプロパティを返す' do
+        create(:host_request, :skip_validate, start_time: 7.hours.from_now + 1.second, free_time: free_time)
+        post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
+        get '/api/host_requests', params: { id: free_time.user_id }, headers: headers
+        expect(json.count).to eq(1)
+      end
+    end
+
+    it 'ログインしていない場合ステータス401を返す' do
+      free_time = create(:free_time)
+      get '/api/host_requests', params: { id: free_time.user_id }
+      expect(response.status).to eq(401)
     end
   end
 

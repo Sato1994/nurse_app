@@ -2,27 +2,59 @@
 
 class Api::UserRequestsController < ApplicationController
   def index
-    UserRequest.where('user_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
+    if api_user_signed_in?
+      UserRequest.where('user_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
 
-    render_user_requests = UserRequest.where(user_id: params[:id]).includes(:host).as_json(
-      only: %i[id start_time finish_time],
-      include: {
-        host: {
-          only: %i[id name image myid]
-        }
+      render_user_requests = UserRequest.where(user_id: params[:id])
+                                        .includes(:host)
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            host: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
+
+      render_user_requests.each do |request|
+        request['partner'] = request.delete('host')
+      end
+
+      render json: {
+        requests: render_user_requests
       }
-    )
 
-    render_user_requests.each do |request|
-      request['partner'] = request.delete('host')
+    elsif api_host_signed_in?
+      # Hostのoffersが無効だった場合
+      UserRequest.left_joins(:recruitment_time)
+                 .includes(recruitment_time: :host)
+                 .where('user_requests.start_time <= ?', 7.hours.from_now)
+                 .merge(RecruitmentTime.where(host_id: current_api_host.id))
+                 .destroy_all
+
+      render_user_requests = UserRequest.left_joins(:recruitment_time)
+                                        .includes(recruitment_time: :host)
+                                        .merge(RecruitmentTime.where(host_id: current_api_host.id))
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            user: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
+      render_user_requests.each do |request|
+        request['partner'] = request.delete('user')
+      end
+
+      render json: {
+        offers: render_user_requests
+      }
+    else
+      render json: nil, status: :unauthorized
     end
-
-    render json: {
-      requests: render_user_requests
-    }
   end
 
-  # user_request作成
   def create
     user_request = UserRequest.new(user_request_params)
 
