@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
 class Api::AgreementsController < ApplicationController
-  before_action :set_me, only: %i[index create]
-
-  def index
-    Agreement.update_state_when_view_index(@id, @me)
-    @agreements = Agreement.where("#{@me}_id": @id)
-    render 'index', formats: :json, handlers: :jbuilder
-  end
+  before_action :set_me, only: %i[create]
 
   def in_progress
     if api_user_signed_in?

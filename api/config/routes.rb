@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       resources :host_skills, only: %i[create destroy], shallow: true
     end
 
-    resources :agreements, only: %i[index update] do
+    resources :agreements, only: %i[update] do
       get 'in_progress', on: :collection
       patch 'cancell', on: :collection
     end
