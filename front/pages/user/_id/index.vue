@@ -38,47 +38,8 @@ export default {
       }
     } else {
       const data = await $axios.get(`/api/users/${route.params.id}`)
-      const times = data.data.times.map((obj) => {
-        let s = new Date(obj.start_time)
-        let f = new Date(obj.finish_time)
-        // UTCを見る場合に差分プラスする
-        if (process.server) {
-          s = new Date(s.setHours(s.getHours() + 9))
-          f = new Date(f.setHours(f.getHours() + 9))
-        }
-        const newObject = {
-          id: obj.id,
-          start: `${s.getFullYear()}-${
-            s.getMonth() + 1
-          }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
-          end: `${f.getFullYear()}-${
-            f.getMonth() + 1
-          }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
-          name: '募集中',
-          color: 'green',
-          dislayStart: `${
-            s.getMonth() + 1
-          }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
-          displayFinish: `${
-            f.getMonth() + 1
-          }/${f.getDate()}  ${f.getHours()}:${f.getMinutes()}`,
-          startTime: {
-            year: s.getFullYear(),
-            month: s.getMonth() + 1,
-            day: s.getDate(),
-            hour: s.getHours(),
-            minute: s.getMinutes(),
-          },
-          finishTime: {
-            year: f.getFullYear(),
-            month: f.getMonth() + 1,
-            day: f.getDate(),
-            hour: f.getHours(),
-            minute: f.getMinutes(),
-          },
-        }
-        return newObject
-      })
+      const times = store.getters['issues/times/formatting'](data.data.times)
+
       return {
         target: data.data.info,
         targetSkills: data.data.skills,
