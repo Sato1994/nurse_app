@@ -46,21 +46,7 @@
       </v-tooltip>
 
       <v-spacer> </v-spacer>
-
-      <v-badge
-        :value="value"
-        bordered
-        bottom
-        color="warning"
-        dot
-        offset-x="20"
-        offset-y="20"
-      >
-        <v-btn @click="displayNotice" icon>
-          <v-icon>mdi-bell-outline</v-icon>
-        </v-btn>
-      </v-badge>
-
+      <Notice />
       <template #extension>
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
@@ -161,13 +147,12 @@
       <SignUp />
       <SignIn />
       <SelectUserType />
-      <Notice />
     </v-app-bar>
   </v-card>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
@@ -216,16 +201,23 @@ export default {
     myPageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
     },
+  },
 
-    value() {
-      return this.$store.state.notices.notices.length
-    },
+  async mounted() {
+    if (this.$store.state.info.info.myid) {
+      await this.$axios
+        .get(`/api/${this.$cookies.get('user')}_notices`, {
+          headers: this.$cookies.get('authInfo'),
+        })
+        .then((response) => {
+          this.$store.commit('notices/saveFormedNotices', response.data)
+        })
+    }
   },
 
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),
-    ...mapMutations('notices', ['displayNotice']),
 
     clickUnAuthMenu(i) {
       switch (i) {
@@ -264,17 +256,6 @@ export default {
           break
       }
     },
-  },
-  async mounted() {
-    if (this.$store.state.info.info.myid) {
-      await this.$axios
-        .get(`/api/${this.$cookies.get('user')}_notices`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$store.commit('notices/saveFormedNotices', response.data)
-        })
-    }
   },
 }
 </script>
