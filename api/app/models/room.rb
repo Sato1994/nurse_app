@@ -24,7 +24,9 @@ class Room < ApplicationRecord
   enum state: { negotiating: 0, user: 1, host: 2, conclusion: 3, cancelled: 4 }, _suffix: true
   enum closed: { na: 0, user: 1, host: 2, both: 3 }, _suffix: true
 
-  # バリデーション
+  scope :display_room_for_user, -> { where(closed: 'na').or(self.where(closed: 'host')) }
+  scope :display_room_for_host, -> { where(closed: 'na').or(self.where(closed: 'user')) }
+
   def duplication_of_room_create
     if Room.exists?(['finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id,
                      host_id])

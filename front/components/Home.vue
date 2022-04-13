@@ -234,6 +234,9 @@ export default {
     ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
     ...mapGetters({ requestsOnCalendar: 'issues/requests/requestsOnCalendar' }),
     ...mapGetters({ offersOnCalendar: 'issues/offers/offersOnCalendar' }),
+    ...mapGetters({
+      inProgress: 'issues/agreements/inProgress',
+    }),
 
     maplocation() {
       return {
@@ -270,24 +273,21 @@ export default {
     offersOnCalendar(newValue) {
       this.updateOffers(newValue)
     },
+
+    inProgress(newValue) {
+      this.updateAgreements(newValue)
+    },
   },
 
   async mounted() {
-    const laterHours8 = new Date().setHours(new Date().getHours() + 8)
     // 時間切れにより無効なものがあれば削除して更新
-    // timesのチェック
-    const unavailableTimes = this.times.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours8
-    )
 
-    if (unavailableTimes) {
+    // timesのチェック
+    const checkUnavailableTimes = this.$store.getters[
+      'issues/times/checkUnavailableTimes'
+    ]({ times: this.times })
+
+    if (checkUnavailableTimes) {
       const { data } = await this.$axios.get(this.reloadTimesPath, {
         params: {
           id: this.target.id,
@@ -309,19 +309,11 @@ export default {
     }
 
     // requestsのチェック
-    const laterHours7 = new Date().setHours(new Date().getHours() + 7)
-    const unavailableRequests = this.requests.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours7
-    )
+    const checkUnavailableRequests = this.$store.getters[
+      'issues/requests/checkUnavailableRequests'
+    ]({ requests: this.requests })
 
-    if (unavailableRequests) {
+    if (checkUnavailableRequests) {
       const { data } = await this.$axios.get(this.reloadRequestsPath, {
         params: {
           id: this.target.id,
@@ -331,18 +323,11 @@ export default {
     }
 
     // offersのチェック
-    const unavailableOffers = this.offers.some(
-      (value) =>
-        new Date(
-          value.startTime.year,
-          value.startTime.month - 1,
-          value.startTime.day,
-          value.startTime.hour,
-          value.startTime.minute
-        ) <= laterHours7
-    )
+    const checkUnavailableOffers = this.$store.getters[
+      'issues/offers/checkUnavailableOffers'
+    ]({ offers: this.offers })
 
-    if (unavailableOffers) {
+    if (checkUnavailableOffers) {
       const config = {
         headers: this.$cookies.get('authInfo'),
         params: {
@@ -351,6 +336,23 @@ export default {
       }
       const { data } = await this.$axios.get(this.reloadOffersPath, config)
       this.$store.commit('issues/offers/saveOffers', data.offers)
+    }
+
+    // agreementsのチェック
+    const checkAgreementsState = this.$store.getters[
+      'issues/agreements/checkAgreementsState'
+    ]({ agreements: this.agreements })
+
+    if (checkAgreementsState) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+      }
+
+      const { data } = await this.$axios.get(
+        '/api/agreements/in_progress',
+        config
+      )
+      this.$store.commit('issues/agreements/saveAgreements', data.agreements)
     }
   },
 
@@ -368,6 +370,9 @@ export default {
     },
     updateOffers(newValue) {
       this.$emit('update-offers', newValue)
+    },
+    updateAgreements(newValue) {
+      this.$emit('update-agreements', newValue)
     },
   },
 }

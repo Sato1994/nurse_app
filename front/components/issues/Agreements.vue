@@ -6,7 +6,7 @@
 
     <v-row>
       <v-col
-        v-for="(agreement, i) in agreementsInProgress"
+        v-for="(agreement, i) in inProgress"
         :key="i"
         cols="12"
         sm="6"
@@ -73,7 +73,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      agreementsInProgress: 'issues/agreements/agreementsInProgress',
+      inProgress: 'issues/agreements/inProgress',
     }),
   },
 

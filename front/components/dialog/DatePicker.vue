@@ -181,7 +181,6 @@ export default {
 
     // createdで定義したs_yearをリアクティブにする必要がある
     startTime(newValue) {
-      console.log('良さそう！', newValue)
       this.s_year = newValue.year
       this.s_month = newValue.month
       this.s_day = newValue.day

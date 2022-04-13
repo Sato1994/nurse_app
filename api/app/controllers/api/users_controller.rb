@@ -56,7 +56,7 @@ class Api::UsersController < ApplicationController
         only: %i[id myid name address lat lng image wanted sex age year profile created_at]
       )
 
-      render_agreements = user.agreements.as_json(
+      render_agreements = user.agreements.in_progress.as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {
@@ -73,7 +73,7 @@ class Api::UsersController < ApplicationController
         agreement['partner'] = agreement.delete('host')
       end
 
-      render_rooms = user.rooms.as_json(
+      render_rooms = user.rooms.display_room_for_user.as_json(
         only: %i[id state closed start_time finish_time created_at],
         include: {
           host: {

@@ -71,4 +71,30 @@ RSpec.describe Room, type: :model do
       expect(Host.count).to eq(1)
     end
   end
+
+  describe 'methods' do
+    let(:room_1) { create(:room, closed: 'na') }
+    let(:room_2) { create(:room, closed: 'user') }
+    let(:room_3) { create(:room, closed: 'host') }
+
+    context 'display_room_for_user' do
+      it 'closedがnaまたはhostのものが検索される' do
+        expect(described_class.display_room_for_user).to include(room_1, room_3)
+      end
+
+      it 'その他は検索されない' do
+        expect(described_class.display_room_for_user).not_to include(room_2)
+      end
+    end
+
+    context 'display_room_for_host' do
+      it 'closedがnaまたはuserのものが検索される' do
+        expect(described_class.display_room_for_host).to include(room_1, room_2)
+      end
+
+      it 'その他は検索されない' do
+        expect(described_class.display_room_for_host).not_to include(room_3)
+      end
+    end
+  end
 end

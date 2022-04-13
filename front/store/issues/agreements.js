@@ -45,48 +45,64 @@ export const actions = {
 }
 
 export const getters = {
-  agreementsInProgress(state) {
-    const filter = state.agreements.filter((obj) => {
-      return obj.state !== ('cancelled' || 'finished')
+  checkAgreementsState: _ => (payload) => {
+    const now = new Date()
+    const laterHours6 = new Date().setHours(new Date().getHours() + 6)
+
+    const before = []
+    const during = []
+    const requesting = []
+    payload.agreements.forEach((obj) => {
+      if (obj.state === 'before') { before.push(obj) }
+      else if (obj.state === 'during') { during.push(obj) }
+      else if (obj.state === 'requesting') { requesting.push(obj) }
     })
-    const agreements = filter.map((obj) => {
-      let s = new Date(obj.start_time)
-      let f = new Date(obj.finish_time)
-      // UTCを見る場合に差分プラスする
-      if (process.server) {
-        s = new Date(s.setHours(s.getHours() + 9))
-        f = new Date(f.setHours(f.getHours() + 9))
-      }
-      const newObject = {
-        id: obj.id,
-        roomId: obj.room.id,
-        state: obj.state,
-        partner: obj.partner,
-        partnerName: obj.partner.name,
-        partnerMyid: obj.partner.myid,
-        partnerPhone: obj.partner.phone,
-        startTime: {
-          year: s.getFullYear(),
-          month: s.getMonth() + 1,
-          day: s.getDate(),
-          hour: s.getHours(),
-          minute: s.getMinutes(),
-        },
-        finishTime: {
-          year: f.getFullYear(),
-          month: f.getMonth() + 1,
-          day: f.getDate(),
-          hour: f.getHours(),
-          minute: f.getMinutes(),
-        }
-      }
-      return newObject
-    })
-    return agreements
+
+    // beforeは時刻から勤務時間より下回っているならtrue
+    const beforeSome = before.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= now
+    )
+
+    // duringは時刻がfinish_timeより下回っているならtrue
+    const duringSome = during.some(
+      (value) =>
+        new Date(
+          value.finishTime.year,
+          value.finishTime.month - 1,
+          value.finishTime.day,
+          value.finishTime.hour,
+          value.finishTime.minute
+        ) <= now
+    )
+
+    // requestingは時刻が6時間より下回っているならtrue
+    const requestingSome = requesting.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= laterHours6
+    )
+
+    if (beforeSome || duringSome || requestingSome) { return true } else { return false }
   },
 
-  agreementsOnCalendar(state) {
-    const agreements = state.agreements.map((obj) => {
+  inProgress(state, getters) {
+    return getters.formatting(state.agreements)
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
       let s = new Date(obj.start_time)
       let f = new Date(obj.finish_time)
       // UTCを見る場合に差分プラスする
@@ -101,6 +117,7 @@ export const getters = {
         partnerMyid: obj.partner.myid,
         partnerPhone: obj.partner.phone,
         roomId: obj.room.id,
+        state: obj.state,
         start: `${s.getFullYear()}-${s.getMonth() + 1
           }-${s.getDate()}T${s.getHours()}:${s.getMinutes()}`,
         end: `${f.getFullYear()}-${f.getMonth() + 1
@@ -128,6 +145,5 @@ export const getters = {
       }
       return newObject
     })
-    return agreements
   }
 }
