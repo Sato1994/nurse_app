@@ -13,6 +13,7 @@
       @update-times="updateTimes"
       @update-requests="updateRequests"
       @update-offers="updateOffers"
+      @update-agreements="updateAgreements"
     />
   </v-container>
 </template>
@@ -32,7 +33,7 @@ export default {
         targetSkills: store.getters['skills/skills'],
         requests: store.getters['issues/requests/requestsOnCalendar'],
         offers: store.getters['issues/offers/offersOnCalendar'],
-        agreements: store.getters['issues/agreements/agreementsOnCalendar'],
+        agreements: store.getters['issues/agreements/inProgress'],
         times: store.getters['issues/times/timesOnCalendar'],
       }
     } else {
@@ -118,6 +119,9 @@ export default {
 
     updateOffers(newValue) {
       this.offers = newValue
+    },
+    updateAgreements(newValue) {
+      this.agreements = newValue
     },
   },
 }

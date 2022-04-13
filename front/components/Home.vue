@@ -234,6 +234,9 @@ export default {
     ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
     ...mapGetters({ requestsOnCalendar: 'issues/requests/requestsOnCalendar' }),
     ...mapGetters({ offersOnCalendar: 'issues/offers/offersOnCalendar' }),
+    ...mapGetters({
+      inProgress: 'issues/agreements/inProgress',
+    }),
 
     maplocation() {
       return {
@@ -269,6 +272,10 @@ export default {
 
     offersOnCalendar(newValue) {
       this.updateOffers(newValue)
+    },
+
+    inProgress(newValue) {
+      this.updateAgreements(newValue)
     },
   },
 
@@ -330,6 +337,23 @@ export default {
       const { data } = await this.$axios.get(this.reloadOffersPath, config)
       this.$store.commit('issues/offers/saveOffers', data.offers)
     }
+
+    // agreementsのチェック
+    const checkAgreementsState = this.$store.getters[
+      'issues/agreements/checkAgreementsState'
+    ]({ agreements: this.agreements })
+
+    if (checkAgreementsState) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+      }
+
+      const { data } = await this.$axios.get(
+        '/api/agreements/in_progress',
+        config
+      )
+      this.$store.commit('issues/agreements/saveAgreements', data.agreements)
+    }
   },
 
   methods: {
@@ -346,6 +370,9 @@ export default {
     },
     updateOffers(newValue) {
       this.$emit('update-offers', newValue)
+    },
+    updateAgreements(newValue) {
+      this.$emit('update-agreements', newValue)
     },
   },
 }

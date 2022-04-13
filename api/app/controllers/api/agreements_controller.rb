@@ -9,6 +9,62 @@ class Api::AgreementsController < ApplicationController
     render 'index', formats: :json, handlers: :jbuilder
   end
 
+  def in_progress
+    if api_user_signed_in?
+
+      Agreement.where(user_id: current_api_user.id).update_to_correct_state
+
+      render_agreements = Agreement.includes(:room, :host)
+                                   .where(state: %w[before during requesting], user_id: current_api_user.id)
+                                   .as_json(
+                                     only: %i[id start_time finish_time state],
+                                     include: {
+                                       room: {
+                                         only: %i[id]
+                                       },
+                                       host: {
+                                         only: %i[name myid phone]
+                                       }
+                                     }
+                                   )
+
+      render_agreements.each do |agreement|
+        agreement['partner'] = agreement.delete('host')
+      end
+
+      render json: {
+        agreements: render_agreements
+      }
+
+    elsif api_host_signed_in?
+
+      Agreement.where(host_id: current_api_host.id).update_to_correct_state
+
+      render_agreements = Agreement.includes(:room, :user)
+                                   .where(state: %w[before during requesting], host_id: current_api_host.id)
+                                   .as_json(
+                                     only: %i[id start_time finish_time state],
+                                     include: {
+                                       room: {
+                                         only: %i[id]
+                                       },
+                                       user: {
+                                         only: %i[name myid]
+                                       }
+                                     }
+                                   )
+
+      render_agreements.each do |agreement|
+        agreement['partner'] = agreement.delete('user')
+      end
+
+      render json: {
+        agreements: render_agreements
+      }
+
+    end
+  end
+
   # agreement登録または時間の変更
   def create
     room = Room.find(params[:room_id])

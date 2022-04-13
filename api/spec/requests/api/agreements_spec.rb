@@ -8,6 +8,8 @@ RSpec.describe 'Api::Agreements', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  let(:json) { JSON.parse(response.body) }
+
   describe 'GET /index' do
     context 'stateが0のものは勤務時間内であればstate1へ変更される' do
       it 'userがログインしている場合' do
@@ -77,7 +79,7 @@ RSpec.describe 'Api::Agreements', type: :request do
                            finish_time: Time.current.change(usec: 0) + 41.hours)
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         get '/api/agreements', headers: headers
-        json = JSON.parse(response.body)
+
         expect(json.count).to eq(2)
       end
 
@@ -87,7 +89,6 @@ RSpec.describe 'Api::Agreements', type: :request do
                            finish_time: Time.current.change(usec: 0) + 41.hours)
         post '/api/host/sign_in', params: { email: host.email, password: host.password }
         get '/api/agreements', headers: headers
-        json = JSON.parse(response.body)
         expect(json.count).to eq(2)
       end
     end
@@ -95,6 +96,50 @@ RSpec.describe 'Api::Agreements', type: :request do
     it 'ログインしてない場合ステータス401を返す' do
       get '/api/agreements'
       expect(response.status).to eq(401)
+    end
+  end
+
+  describe 'GET /in_progress' do
+    context 'userとしてログインしている場合' do
+      before do
+        user = create(:user)
+        create(:agreement, user: user)
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        get '/api/agreements/in_progress', headers: headers
+      end
+
+      it 'プロパティagreementsは期待した数のプロパティを返す' do
+        expect(json['agreements'][0].count).to eq(6)
+      end
+
+      it 'プロパティagreements.roomは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['room'].count).to eq(1)
+      end
+
+      it 'プロパティagreements.partnerは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['partner'].count).to eq(3)
+      end
+    end
+
+    context 'hostとしてログインしている場合' do
+      before do
+        host = create(:host)
+        create(:agreement, host: host)
+        post '/api/host/sign_in', params: { email: host.email, password: host.password }
+        get '/api/agreements/in_progress', headers: headers
+      end
+
+      it 'プロパティagreementsは期待した数のプロパティを返す' do
+        expect(json['agreements'][0].count).to eq(6)
+      end
+
+      it 'プロパティagreements.roomは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['room'].count).to eq(1)
+      end
+
+      it 'プロパティagreements.partnerは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['partner'].count).to eq(2)
+      end
     end
   end
 
@@ -130,7 +175,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -176,7 +220,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '更新成功したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -228,7 +271,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -283,7 +325,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '更新成功したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -360,7 +401,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '成功したら時のjsonを2つ返す' do
           patch "/api/agreements/#{agreement.id}", headers: headers
-          json = JSON.parse(response.body)
           expect(json.count).to eq(2)
         end
 
@@ -416,7 +456,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '成功したら時のjsonを2つ返す' do
           patch "/api/agreements/#{agreement.id}", headers: headers
-          json = JSON.parse(response.body)
           expect(json.count).to eq(2)
         end
 

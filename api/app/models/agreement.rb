@@ -20,7 +20,7 @@ class Agreement < ApplicationRecord
 
   enum state: { before: 0, during: 1, finished: 2, requesting: 3, cancelled: 4 }
 
-  scope :in_progress, -> { where(state: 'before').or(self.where(state: 'during')).or(self.where(state: 'requesting'))}
+  scope :in_progress, -> { where(state: %i[before during requesting])}
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
@@ -74,5 +74,12 @@ class Agreement < ApplicationRecord
           Time.current).update_all(state: 1)
     where("#{me}_id = ? && finish_time < ? && (state = 0 || 1)", id,
           Time.current).update_all(state: 2)
+  end
+
+  def self.update_to_correct_state
+    now = Time.current.freeze
+    where('start_time <= ? && ? < finish_time && state = 0', now, now).update_all(state: 'during')
+    where(state: %i[before during]).where('finish_time <= ?', now).update_all(state: 'finished')
+    where(state: 'requesting').where('start_time <= ?', now + 6.hours).update_all(state: 'cancelled')
   end
 end
