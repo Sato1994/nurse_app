@@ -70,18 +70,19 @@ export const actions = {
     )
   },
 
-  async updateState({ commit, state }) {
-    switch (state.room.state) {
+  async updateState({ commit, getters }) {
+    const room = getters.room
+    switch (room.state) {
       case this.$cookies.get('user') === 'user' ? 'host' : 'user': {
         // agreement create
         await this.$axios
           .post(
             `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-            }/${state.room.partnerId}`,
+            }/${room.partnerId}`,
             {
-              room_id: state.room.id,
-              start_time: `${state.room.startTime.year}-${state.room.startTime.month}-${state.room.startTime.day}T${state.room.startTime.hour}:${state.room.startTime.minute}`,
-              finish_time: `${state.room.finishTime.year}-${state.room.finishTime.month}-${state.room.finishTime.day}T${state.room.finishTime.hour}:${state.room.finishTime.minute}`,
+              room_id: room.id,
+              start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
+              finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
             },
             {
               headers: this.$cookies.get('authInfo'),
@@ -90,7 +91,7 @@ export const actions = {
         // 成功したらstate変更
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.room.id}/update_room_state`,
+            `/api/rooms/${room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
@@ -102,7 +103,7 @@ export const actions = {
       default: {
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.room.id}/update_room_state`,
+            `/api/rooms/${room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
