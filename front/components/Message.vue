@@ -42,7 +42,7 @@
       </template>
     </TimeCard>
 
-    <v-container fluid>
+    <v-container v-if="inputEnabled" fluid>
       <v-textarea
         v-model="inputMessage"
         append-icon="mdi-email-fast-outline"
@@ -67,9 +67,14 @@
         <v-timeline-item
           v-for="message in room.messages"
           :key="message.created_at"
-          :color="message.color"
           small
         >
+          <template v-slot:icon>
+            <v-avatar>
+              <img src="https://i.pravatar.cc/64" />
+            </v-avatar>
+          </template>
+
           <div>
             <div class="font-weight-normal">
               <strong>{{ message.name }}</strong> @{{
@@ -122,6 +127,14 @@ export default {
       get() {
         return Object.assign({}, this.$store.getters['room/room'])
       },
+    },
+
+    inputEnabled() {
+      if (this.room.closed === 'na') {
+        return true
+      } else {
+        return false
+      }
     },
 
     partnerLink() {
