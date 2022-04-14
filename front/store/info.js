@@ -1,12 +1,21 @@
 export const state = () => ({
   info: [],
-  me: 'user',
+  me: '',
 })
 
 export const mutations = {
   saveInfo(state, info) {
     state.info = info
   },
+
+  iAmUser(state) {
+    state.me = 'user'
+  },
+
+  iAmHost(state) {
+    state.me = 'host'
+  },
+
   logout(state) {
     state.info = []
   },
@@ -20,7 +29,7 @@ export const actions = {
     commit('logout')
   },
 
-  loginAsGuestUser({ dispatch }) {
+  loginAsGuestUser({ dispatch, commit }) {
     this.$axios
       .post('/api/user/sign_in', {
         email: 'yamada@guest.user',
@@ -29,6 +38,9 @@ export const actions = {
       .then((response) => {
         dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
         this.$cookies.set('user', 'user')
+
+        commit('iAmUser')
+
         this.$cookies.set('myid', response.data.data.myid)
         const authInfo = {
           'access-token': response.headers['access-token'],
@@ -62,7 +74,7 @@ export const actions = {
       })
   },
 
-  loginAsGuestHost({ dispatch }) {
+  loginAsGuestHost({ dispatch, commit }) {
     this.$axios
       .post('/api/host/sign_in', {
         email: 'takayuki@guest.host',
@@ -71,6 +83,9 @@ export const actions = {
       .then((response) => {
         dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
         this.$cookies.set('user', 'host')
+
+        commit('iAmHost')
+
         this.$cookies.set('myid', response.data.data.myid)
         const authInfo = {
           'access-token': response.headers['access-token'],
