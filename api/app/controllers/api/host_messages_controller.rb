@@ -6,10 +6,12 @@ class Api::HostMessagesController < ApplicationController
     return unless host_login_and_own?(room.host.id)
 
     host_message = HostMessage.new(host_message_params)
+
     if host_message.save
-      render json: { id: host_message.id, message: host_message.message, name: room.host.name,
-                     created_at: host_message.created_at },
-             status: :created
+      render_message = {
+        message: host_message.message, created_at: host_message.created_at
+      }
+      render json: { host_message: render_message }
     else
       render json: host_message.errors, status: :bad_request
     end

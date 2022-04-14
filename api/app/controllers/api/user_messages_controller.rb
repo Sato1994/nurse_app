@@ -6,10 +6,12 @@ class Api::UserMessagesController < ApplicationController
     return unless user_login_and_own?(room.user.id)
 
     user_message = UserMessage.new(user_message_params)
+    
     if user_message.save
-      render json: { id: user_message.id, message: user_message.message, name: room.user.name,
-                     created_at: user_message.created_at },
-             status: :created
+      render_message = {
+        message: user_message.message, created_at: user_message.created_at
+      }
+      render json: { user_message: render_message }
     else
       render json: user_message.errors, status: :bad_request
     end

@@ -20,7 +20,7 @@ RSpec.describe 'Api::UserMessages', type: :request do
       post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
       post "/api/user_messages/#{room.id}", params: { message: 'こんにちは' }, headers: headers
       json = JSON.parse(response.body)
-      expect(json.count).to eq(4)
+      expect(json['user_message'].count).to eq(2)
     end
   end
 end

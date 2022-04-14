@@ -2,38 +2,62 @@
 
 class Api::RoomsController < ApplicationController
   def show
-    room = Room.find(params[:id])
+    room = Room.includes(:user, :host, :user_messages, :host_messages, :agreement).find(params[:id])
 
     unless user_login_and_own?(room.user.id) || host_login_and_own?(room.host.id)
       render json: nil, status: :unauthorized
       return
     end
 
-    render_room = if api_user_signed_in?
-                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
-                      partner: {
-                        id: room.host.id, name: room.host.name, myid: room.host.myid
-                      },
-                      user_messages: room.user_messages,
-                      host_messages: room.host_messages }
+    if api_user_signed_in?
+      render_room = room.as_json(
+        only: %i[id start_time finish_time state closed],
+        include: {
+          host: {
+            only: %i[id name myid image]
+          },
+          user_messages: {
+            only: %i[message created_at]
+          },
+          host_messages: {
+            only: %i[message created_at]
+          }
+        }
+      )
 
-                  else
-                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time,
-                      state: room.state, closed: room.closed,
-                      partner: {
-                        id: room.user.id,
-                        name: room.user.name,
-                        myid: room.user.myid
-                      },
-                      user_messages: room.user_messages,
-                      host_messages: room.host_messages }
+      render_room['partner'] = render_room.delete('host')
 
-                  end
-    if room.agreement
-      agreement = { id: room.agreement.id, start_time: room.agreement.start_time, finish_time: room.agreement.finish_time,
-                    state: room.agreement.state }
+      render_agreement = room.agreement.as_json(
+        only: %i[id start_time finish_time state]
+      )
+
+      render json: { room: render_room, agreement: render_agreement }
+
+    elsif api_host_signed_in?
+      render_room = room.as_json(
+        only: %i[id start_time finish_time state closed],
+        include: {
+          user: {
+            only: %i[id name myid image]
+          },
+          user_messages: {
+            only: %i[message created_at]
+          },
+          host_messages: {
+            only: %i[message created_at]
+          }
+        }
+      )
+
+      render_room['partner'] = render_room.delete('user')
+
+      render_agreement = room.agreement.as_json(
+        only: %i[id start_time finish_time state]
+      )
+
+      render json: { room: render_room, agreement: render_agreement }
+
     end
-    render json: { room: render_room, agreement: agreement }
   end
 
   def create

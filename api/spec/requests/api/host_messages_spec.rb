@@ -20,7 +20,7 @@ RSpec.describe 'Api::HostMessages', type: :request do
       post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
       post "/api/host_messages/#{room.id}", params: { message: 'こんにちは' }, headers: headers
       json = JSON.parse(response.body)
-      expect(json.count).to eq(4)
+      expect(json['host_message'].count).to eq(2)
     end
   end
 end

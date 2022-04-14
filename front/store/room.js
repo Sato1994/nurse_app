@@ -1,63 +1,18 @@
 export const state = () => ({
-  id: null,
-  partnerId: null,
-  partnerMyid: null,
-  partnerName: null,
-  state: null,
-  closed: null,
-  startTime: {
-    year: null,
-    month: null,
-    day: null,
-    hour: null,
-    minute: null,
-  },
-  finishTime: {
-    year: null,
-    month: null,
-    day: null,
-    hour: null,
-    minute: null,
-  },
-  messages: []
+  room: [],
+
 })
 export const mutations = {
   saveRoom(state, payload) {
-    state.id = payload.id
-    state.partnerId = payload.partner.id
-    state.partnerName = payload.partner.name
-    state.partnerMyid = payload.partner.myid
-    state.state = payload.state
-    state.closed = payload.closed
-
-    let startTime = new Date(payload.start_time)
-    let finishTime = new Date(payload.finish_time)
-    // UTCを見る場合に差分プラスする
-    if (process.server) {
-      startTime = new Date(startTime.setHours(startTime.getHours() + 9))
-      finishTime = new Date(finishTime.setHours(finishTime.getHours() + 9))
-    }
-    state.startTime.year = startTime.getFullYear()
-    state.startTime.month = startTime.getMonth() + 1
-    state.startTime.day = startTime.getDate()
-    state.startTime.hour = startTime.getHours()
-    state.startTime.minute = startTime.getMinutes()
-
-    state.finishTime.year = finishTime.getFullYear()
-    state.finishTime.month = finishTime.getMonth() + 1
-    state.finishTime.day = finishTime.getDate()
-    state.finishTime.hour = finishTime.getHours()
-    state.finishTime.minute = finishTime.getMinutes()
-
-    let messages = payload.user_messages
-    messages = messages.concat(payload.host_messages).slice().sort((a, b) => {
-      return new Date(b.created_at) - new Date(a.created_at)
-    })
-    state.messages = messages
+    state.room = payload
   },
 
-  addMessage(state, payload) {
-    state.messages.unshift(payload.message)
+  addUserMessage(state, payload) {
+    state.room.user_messages.push(payload.user_message)
+  },
+
+  addHostMessage(state, payload) {
+    state.room.host_messages.push(payload.host_message)
   },
 
   updateTime(state, payload) {
@@ -85,14 +40,16 @@ export const actions = {
     }
   },
 
-  async sendMessage({ commit }, payload) {
+  async sendMessage({ commit, rootState }, payload) {
     const { data } = await this.$axios
       .post(
         `/api/${this.$cookies.get('user')}_messages/${payload.roomId}`,
         { message: payload.message },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('addMessage', { message: data })
+    rootState.info.me === 'user'
+      ? commit('addUserMessage', { user_message: data.user_message })
+      : commit('addHostMessage', { host_message: data.host_message })
   },
 
   async updateTime({ commit, dispatch }, payload) {
@@ -172,7 +129,86 @@ export const actions = {
 }
 
 export const getters = {
-  room(state) {
-    return state
+  room(state, _, rootState) {
+
+    let startTime = new Date(state.room.start_time)
+    let finishTime = new Date(state.room.finish_time)
+    // UTCを見る場合に差分プラスする
+    if (process.server) {
+      startTime = new Date(startTime.setHours(startTime.getHours() + 9))
+      finishTime = new Date(finishTime.setHours(finishTime.getHours() + 9))
+    }
+
+    const newStartTime = {
+      year: startTime.getFullYear(),
+      month: startTime.getMonth() + 1,
+      day: startTime.getDate(),
+      hour: startTime.getHours(),
+      minute: startTime.getMinutes()
+    }
+
+    const newFinishTime = {
+      year: finishTime.getFullYear(),
+      month: finishTime.getMonth() + 1,
+      day: finishTime.getDate(),
+      hour: finishTime.getHours(),
+      minute: finishTime.getMinutes()
+    }
+
+    let userName = ''
+    let userImage = ''
+    let hostName = ''
+    let hostImage = ''
+
+    if (rootState.info.me === 'user') {
+      userName = rootState.info.info.name
+      userImage = rootState.info.info.image.url
+      hostName = state.room.partner.name
+      hostImage = state.room.partner.image.url
+
+    } else if (rootState.info.me === 'host') {
+      userName = state.room.partner.name
+      userImage = state.room.partner.image.url
+      hostName = rootState.info.info.name
+      hostImage = rootState.info.info.image.url
+    }
+
+    const userMessages = state.room.user_messages.map((obj) => {
+      const newObject = {
+        message: obj.message,
+        createdAt: obj.created_at,
+        name: userName,
+        image: userImage
+      }
+      return newObject
+    })
+
+    const hostMessages = state.room.host_messages.map((obj) => {
+      const newObject = {
+        message: obj.message,
+        createdAt: obj.created_at,
+        name: hostName,
+        image: hostImage
+      }
+      return newObject
+    })
+
+
+    const messages = userMessages.concat(hostMessages).slice().sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt)
+    })
+
+    const returnObject = {
+      id: state.room.id,
+      partnerId: state.room.partner.id,
+      partnerName: state.room.partner.name,
+      partnerMyid: state.room.partner.myid,
+      state: state.room.state,
+      closed: state.room.closed,
+      startTime: newStartTime,
+      finishTime: newFinishTime,
+      messages
+    }
+    return returnObject
   }
 }

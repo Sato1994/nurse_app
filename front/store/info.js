@@ -1,5 +1,6 @@
 export const state = () => ({
   info: [],
+  me: 'user',
 })
 
 export const mutations = {
@@ -101,14 +102,6 @@ export const actions = {
         dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
       })
   },
-
-
-
-
-
-
-
-
 }
 
 export const getters = {
