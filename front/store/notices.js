@@ -13,12 +13,16 @@ export const mutations = {
     const formedNotices = notices.map((obj) => {
       let title = ''
       let subTitle = ''
+      let sourceLink = ''
       switch (obj.source_type) {
-        case 'HostRequest' || 'UserRequest':
+        case 'UserRequest':
+        case 'HostRequest':
           title = '新しいオファーがあります'
           subTitle = '確認してみましょう'
+          sourceLink = '/issues/offers'
           break
         case 'Room':
+          sourceLink = `/rooms/${obj.source_id}`
           switch (obj.action) {
             case 'created':
               title = '新しいトークルームが作られました'
@@ -33,12 +37,13 @@ export const mutations = {
               subTitle = '確認してみましょう'
               break
             case 'agreed':
-              title = '希望時間が同意されました。'
+              title = '希望時間が同意されました'
               subTitle = 'あなたの同意で契約が確定します'
               break
           }
           break
         case 'Agreement':
+          sourceLink = `/rooms/${obj.source.room.id}`
           switch (obj.action) {
             case 'created':
               title = '新しい契約があります！'
@@ -59,6 +64,7 @@ export const mutations = {
           }
           break
         case 'Rate':
+          sourceLink = `/something`
           title = '評価されました！'
           subTitle = '確認してみましょう'
           break
@@ -87,6 +93,7 @@ export const mutations = {
         subTitle,
         createdAt,
         sourceId: obj.source_id,
+        sourceLink,
         partnerName: obj.source.partner.name,
         partnerMyId: obj.source.partner.myid,
         partnerImage: obj.source.partner.image.url
@@ -98,13 +105,11 @@ export const mutations = {
 }
 
 export const actions = {
-  removeNotice({ commit }, payload) {
-    this.$axios.delete(`/api/${this.$cookies.get('user') === 'user' ? 'user' : 'host'}_notices/${payload.noticeId}`, {
+  async removeNotice({ commit }, payload) {
+    await this.$axios.delete(`/api/${this.$cookies.get('user') === 'user' ? 'user' : 'host'}_notices/${payload.noticeId}`, {
       headers: this.$cookies.get('authInfo'),
     })
-      .then(() => {
-        commit('removeNotice', payload)
-      })
+    commit('removeNotice', payload)
   },
 }
 

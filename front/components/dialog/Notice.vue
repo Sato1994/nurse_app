@@ -24,7 +24,11 @@
         <v-list v-if="value" two-line>
           <v-list-item-group>
             <template v-for="(notice, index) in noticesOnDialog">
-              <v-list-item :key="notice.index" dense>
+              <v-list-item
+                :key="notice.index"
+                @click="$router.push(notice.sourceLink)"
+                dense
+              >
                 <v-list-item-avatar>
                   <img :src="notice.partnerImage" />
                 </v-list-item-avatar>
