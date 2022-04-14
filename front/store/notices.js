@@ -87,8 +87,9 @@ export const mutations = {
         subTitle,
         createdAt,
         sourceId: obj.source_id,
-        partnerName: this.$cookies.get('user') === 'user' ? obj.source.host.name : obj.source.user.name,
-        partnerMyId: this.$cookies.get('user') === 'user' ? obj.source.host.myid : obj.source.user.myid,
+        partnerName: obj.source.partner.name,
+        partnerMyId: obj.source.partner.myid,
+        partnerImage: obj.source.partner.image.url
       }
       return newObject
     })

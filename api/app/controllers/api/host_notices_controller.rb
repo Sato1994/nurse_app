@@ -4,29 +4,33 @@ class Api::HostNoticesController < ApplicationController
   def index
     return unless api_host_signed_in?
 
-    notices = HostNotice.where(host_id: current_api_host.id, checked: false).includes(source: :user)
-    render json: notices.as_json(
+    notices = HostNotice.where(host_id: current_api_host.id, checked: false)
+    .includes(source: [:user, :room])
+    .order(created_at: :desc) 
+
+    render_notices = notices.as_json(
       only: %i[action checked created_at id source_id source_type],
       include: {
         source: {
           only: [],
           include: {
             user: {
-              only: %i[name myid]
+              only: %i[name myid image]
             }
           }
         }
       }
     )
 
-    # 確認用
-    # render json: notices.as_json(
-    #   include: {
-    #     source: {
-    #       include: :user
-    #     }
-    #   }
-    # )
+    render_notices.each do |notice|
+      notice['source']['partner'] = notice['source'].delete('user')
+      if notice['source_type'] === 'Agreement'
+        notice['source']['room'] = {'id': notices.find(notice['id']).source.room.id}
+      end
+    end
+
+    render json: render_notices
+
   end
 
   def destroy
