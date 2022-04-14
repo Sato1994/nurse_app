@@ -16,16 +16,16 @@ export const mutations = {
   },
 
   updateTime(state, payload) {
-    state.startTime = payload.startTime
-    state.finishTime = payload.finishTime
+    state.room.star_time = payload.room.start_time
+    state.room.finish_time = payload.room.finish_time
   },
 
   updateState(state, payload) {
-    state.state = payload.state
+    state.room.state = payload.state
   },
 
   updateClosed(state, payload) {
-    state.closed = payload.closed
+    state.room.closed = payload.closed
   },
 }
 
@@ -53,7 +53,7 @@ export const actions = {
   },
 
   async updateTime({ commit, dispatch }, payload) {
-    await this.$axios
+    const { data } = await this.$axios
       .patch(
         `/api/rooms/${payload.roomId}/update_room_time`,
         {
@@ -62,7 +62,8 @@ export const actions = {
         },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('updateTime', payload)
+    commit('updateTime', data)
+
     dispatch(
       'snackbar/setMessage',
       '希望時間を変更しました。', { root: true }
@@ -70,17 +71,17 @@ export const actions = {
   },
 
   async updateState({ commit, state }) {
-    switch (state.state) {
+    switch (state.room.state) {
       case this.$cookies.get('user') === 'user' ? 'host' : 'user': {
         // agreement create
         await this.$axios
           .post(
             `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-            }/${state.partnerId}`,
+            }/${state.room.partnerId}`,
             {
-              room_id: state.id,
-              start_time: `${state.startTime.year}-${state.startTime.month}-${state.startTime.day}T${state.startTime.hour}:${state.startTime.minute}`,
-              finish_time: `${state.finishTime.year}-${state.finishTime.month}-${state.finishTime.day}T${state.finishTime.hour}:${state.finishTime.minute}`,
+              room_id: state.room.id,
+              start_time: `${state.room.startTime.year}-${state.room.startTime.month}-${state.room.startTime.day}T${state.room.startTime.hour}:${state.room.startTime.minute}`,
+              finish_time: `${state.room.finishTime.year}-${state.room.finishTime.month}-${state.room.finishTime.day}T${state.room.finishTime.hour}:${state.room.finishTime.minute}`,
             },
             {
               headers: this.$cookies.get('authInfo'),
@@ -89,7 +90,7 @@ export const actions = {
         // 成功したらstate変更
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.id}/update_room_state`,
+            `/api/rooms/${state.room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
@@ -101,7 +102,7 @@ export const actions = {
       default: {
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.id}/update_room_state`,
+            `/api/rooms/${state.room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
@@ -116,7 +117,7 @@ export const actions = {
     const { data } = await this.$axios
       .patch(
         '/api/rooms/cancell_room',
-        { id: state.id },
+        { id: state.room.id },
         { headers: this.$cookies.get('authInfo') }
       )
     commit('updateClosed', { closed: data.closed })

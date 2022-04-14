@@ -106,6 +106,13 @@ class Api::RoomsController < ApplicationController
 
       if room.update(room_user_signed_in_params_update)
         room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'changed')
+
+        render_room = {
+          start_time: room.start_time, finish_time: room.finish_time
+        }
+
+        render json: {room: render_room}
+
       else
         render json: room.errors, status: :bad_request
       end
@@ -114,6 +121,13 @@ class Api::RoomsController < ApplicationController
 
       if room.update(room_host_signed_in_params_update)
         room.create_user_notice_with_checked_validate!(user_id: room.user_id, action: 'changed')
+
+        render_room = {
+          start_time: room.start_time, finish_time: room.finish_time
+        }
+
+        render json: {room: render_room}
+
       else
         render json: room.errors, status: :bad_request
       end
