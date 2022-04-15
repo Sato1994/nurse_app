@@ -1,5 +1,22 @@
 export const state = () => ({
-  room: [],
+  room: {
+    id: '',
+    start_time: '',
+    finish_time: '',
+    state: '',
+    closed: '',
+    na: '',
+    user_messages: [],
+    host_messages: [],
+    partner: {
+      id: '',
+      name: '',
+      myid: '',
+      image: {
+        url: '',
+      },
+    }
+  },
 
 })
 export const mutations = {
@@ -18,6 +35,10 @@ export const mutations = {
   updateTime(state, payload) {
     state.room.star_time = payload.room.start_time
     state.room.finish_time = payload.room.finish_time
+  },
+
+  removeRoom(state) {
+    state.room = {}
   },
 
   updateState(state, payload) {
@@ -115,18 +136,18 @@ export const actions = {
   },
 
   async cancellRoom({ dispatch, commit, state, rootState }) {
-    const { data } = await this.$axios
+    await this.$axios
       .patch(
         '/api/rooms/cancell_room',
         { id: state.room.id },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('updateClosed', { closed: data.closed })
-    commit('updateState', { state: data.state })
-    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
     this.$router.push(
       `/${this.$cookies.get('user')}/${rootState.info.info.myid}`
     )
+    commit('rooms/removeRoom', { id: state.room.id }, { root: true })
+    commit('removeRoom')
+    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
   },
 }
 
