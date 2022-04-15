@@ -42,7 +42,7 @@
       </template>
     </TimeCard>
 
-    <v-container fluid>
+    <v-container v-if="inputEnabled" fluid>
       <v-textarea
         v-model="inputMessage"
         append-icon="mdi-email-fast-outline"
@@ -66,17 +66,22 @@
       >
         <v-timeline-item
           v-for="message in room.messages"
-          :key="message.created_at"
-          :color="message.color"
+          :key="message.createdAt"
           small
         >
+          <template v-slot:icon>
+            <v-avatar>
+              <img :src="message.image" />
+            </v-avatar>
+          </template>
+
           <div>
             <div class="font-weight-normal">
               <strong>{{ message.name }}</strong> @{{
-                new Date(message.created_at).getMonth() + 1
-              }}/{{ new Date(message.created_at).getDate() }}&nbsp;{{
-                new Date(message.created_at).getHours()
-              }}:{{ new Date(message.created_at).getMinutes() }}
+                new Date(message.createdAt).getMonth() + 1
+              }}/{{ new Date(message.createdAt).getDate() }}&nbsp;{{
+                new Date(message.createdAt).getHours()
+              }}:{{ new Date(message.createdAt).getMinutes() }}
             </div>
             <div>{{ message.message }}</div>
           </div>
@@ -122,6 +127,14 @@ export default {
       get() {
         return Object.assign({}, this.$store.getters['room/room'])
       },
+    },
+
+    inputEnabled() {
+      if (this.room.closed === 'na') {
+        return true
+      } else {
+        return false
+      }
     },
 
     partnerLink() {

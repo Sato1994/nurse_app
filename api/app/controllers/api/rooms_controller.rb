@@ -2,38 +2,62 @@
 
 class Api::RoomsController < ApplicationController
   def show
-    room = Room.find(params[:id])
+    room = Room.includes(:user, :host, :user_messages, :host_messages, :agreement).find(params[:id])
 
     unless user_login_and_own?(room.user.id) || host_login_and_own?(room.host.id)
       render json: nil, status: :unauthorized
       return
     end
 
-    render_room = if api_user_signed_in?
-                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
-                      partner: {
-                        id: room.host.id, name: room.host.name, myid: room.host.myid
-                      },
-                      user_messages: room.user_messages,
-                      host_messages: room.host_messages }
+    if api_user_signed_in?
+      render_room = room.as_json(
+        only: %i[id start_time finish_time state closed],
+        include: {
+          host: {
+            only: %i[id name myid image]
+          },
+          user_messages: {
+            only: %i[message created_at]
+          },
+          host_messages: {
+            only: %i[message created_at]
+          }
+        }
+      )
 
-                  else
-                    { id: room.id, start_time: room.start_time, finish_time: room.finish_time,
-                      state: room.state, closed: room.closed,
-                      partner: {
-                        id: room.user.id,
-                        name: room.user.name,
-                        myid: room.user.myid
-                      },
-                      user_messages: room.user_messages,
-                      host_messages: room.host_messages }
+      render_room['partner'] = render_room.delete('host')
 
-                  end
-    if room.agreement
-      agreement = { id: room.agreement.id, start_time: room.agreement.start_time, finish_time: room.agreement.finish_time,
-                    state: room.agreement.state }
+      render_agreement = room.agreement.as_json(
+        only: %i[id start_time finish_time state]
+      )
+
+      render json: { room: render_room, agreement: render_agreement }
+
+    elsif api_host_signed_in?
+      render_room = room.as_json(
+        only: %i[id start_time finish_time state closed],
+        include: {
+          user: {
+            only: %i[id name myid image]
+          },
+          user_messages: {
+            only: %i[message created_at]
+          },
+          host_messages: {
+            only: %i[message created_at]
+          }
+        }
+      )
+
+      render_room['partner'] = render_room.delete('user')
+
+      render_agreement = room.agreement.as_json(
+        only: %i[id start_time finish_time state]
+      )
+
+      render json: { room: render_room, agreement: render_agreement }
+
     end
-    render json: { room: render_room, agreement: agreement }
   end
 
   def create
@@ -82,6 +106,13 @@ class Api::RoomsController < ApplicationController
 
       if room.update(room_user_signed_in_params_update)
         room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'changed')
+
+        render_room = {
+          start_time: room.start_time, finish_time: room.finish_time
+        }
+
+        render json: { room: render_room }
+
       else
         render json: room.errors, status: :bad_request
       end
@@ -90,6 +121,13 @@ class Api::RoomsController < ApplicationController
 
       if room.update(room_host_signed_in_params_update)
         room.create_user_notice_with_checked_validate!(user_id: room.user_id, action: 'changed')
+
+        render_room = {
+          start_time: room.start_time, finish_time: room.finish_time
+        }
+
+        render json: { room: render_room }
+
       else
         render json: room.errors, status: :bad_request
       end
@@ -157,36 +195,36 @@ class Api::RoomsController < ApplicationController
 
   def cancell_room
     room = Room.find(params[:id])
+
     if user_login_and_own?(room.user.id)
-      na_to = 'user'
-    elsif host_login_and_own?(room.host.id)
-      na_to = 'host'
-    else
-      render body: nil, status: :forbidden
-      return
-    end
-
-    case room.closed
-
-    when 'na'
-      if room.update(closed: na_to)
-        case na_to
-        when 'user'
-          room.create_host_notice!(host_id: room.host_id, action: 'left')
-
-        when 'host'
-          room.create_user_notice!(user_id: room.user_id, action: 'left')
-        end
-
+      case room.closed
+      when 'na'
+        room.create_host_notice!(host_id: room.host_id, action: 'left') if room.update(closed: 'user')
+      when 'host' || 'user'
+        room.update(closed: 'both')
+      else
+        render body: nil, status: :bad_request
       end
 
-    when 'host' || 'user'
-      room.update(closed: 'both')
+      room.update(state: 'cancelled')
+      render json: { state: room.state, closed: room.closed }
+
+    elsif host_login_and_own?(room.host.id)
+      case room.closed
+      when 'na'
+        room.create_user_notice!(user_id: room.user_id, action: 'left') if room.update(closed: 'host')
+      when 'host' || 'user'
+        room.update(closed: 'both')
+      else
+        render body: nil, status: :bad_request
+      end
+
+      room.update(state: 'cancelled')
+      render json: { state: room.state, closed: room.closed }
+      
     else
-      render body: nil, status: :bad_request
+      render body: nil, status: :forbidden
     end
-    room.update(state: 'cancelled')
-    render json: { state: room.state, closed: room.closed }
   end
 
   private

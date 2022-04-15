@@ -20,6 +20,18 @@ export const actions = {
       .then((response) => {
         commit('hideSignUp')
         this.$cookies.set('myid', response.data.data.myid)
+
+        dispatch('info/saveInfo', response.data.info, { root: true })
+
+        switch (this.$cookies.get('user')) {
+          case 'user':
+            commit('info/iAmUser', null, { root: true })
+            break
+          case 'host':
+            commit('info/iAmHost', null, { root: true })
+            break
+        }
+
         const authInfo = {
           'access-token': response.headers['access-token'],
           client: response.headers.client,

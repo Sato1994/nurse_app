@@ -1,5 +1,18 @@
 export const state = () => ({
   rooms: [],
+  // [
+  //   { "id": ,
+  //     "created_at": "2022-04-14T11:33:22.805+09:00",
+  //     "start_time": "2022-04-22T08:30:00.000+09:00",
+  //     "finish_time": "2022-04-22T18:00:00.000+09:00",
+  //     "state": "conclusion",
+  //     "closed": "na",
+  //     "partner": {
+  //       "id": 46,
+  //       "name": "東京都立孝之協同病院"
+  //     }
+  //   },
+  // ]
 })
 
 export const mutations = {
@@ -9,7 +22,13 @@ export const mutations = {
 
   addRoom(state, payload) {
     state.rooms.push(payload)
-  }
+  },
+
+  removeRoom(state, payload) {
+    const target = state.rooms.find(room => room.id === payload.id)
+    const index = state.rooms.indexOf(target)
+    state.rooms.splice(index, 1)
+  },
 }
 
 export const actions = {

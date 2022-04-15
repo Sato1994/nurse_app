@@ -7,6 +7,16 @@ export const actions = {
           { headers: this.$cookies.get('authInfo') }
         )
         .then((response) => {
+
+          switch (this.$cookies.get('user')) {
+            case 'user':
+              commit('info/iAmUser', null, { root: true })
+              break
+            case 'host':
+              commit('info/iAmHost', null, { root: true })
+              break
+          }
+
           commit('info/saveInfo', response.data.info)
           commit('skills/saveSkills', response.data.skills)
           commit('issues/times/saveTimes', response.data.times)
