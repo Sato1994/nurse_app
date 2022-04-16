@@ -9,8 +9,8 @@ Rails.application.routes.draw do
       registrations: 'api/host/registrations'
     }
 
-    resources :users, except: :destroy
-    resources :hosts, except: :destroy
+    resources :users, only: %i[index show]
+    resources :hosts, only: %i[index show]
     resources :free_times, only: %i[index create destroy]
     resources :recruitment_times, only: %i[index create destroy]
     resources :health_checks, only: :index

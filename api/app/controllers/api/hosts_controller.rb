@@ -5,10 +5,6 @@ class Api::HostsController < ApplicationController
 
   def index
     # skillが被っていないhostのidの配列の作成
-    name = params[:name]
-    address = params[:address]
-    wanted = params[:wanted]
-
     user_skill_ids = []
     user_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
 
@@ -32,15 +28,50 @@ class Api::HostsController < ApplicationController
     end
 
     # host検索
-    hosts = Kaminari.paginate_array(Host.all.name_like(name).address_like(address).wanted_true(wanted).id_include(
-                                      target_hosts_id, params[:skillsId]
-                                    )).page(params[:page]).per(10)
+    if api_user_signed_in? && params[:sortBy]
+      case params[:sortBy]
 
-    pagination = resources_with_pagination(hosts)
-    @object = {
-      users: hosts.as_json, kaminari: pagination
-    }
-    render json: @object
+      # 距離順
+      when 'distance'
+        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+          target_hosts_id, params[:skillsId]
+        )
+        all_hosts = calc_distance(all_hosts)
+        all_hosts.each do |host|
+          host.distance = host.distance.to_f
+        end
+
+        sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
+
+        sorted_hosts = sorted_hosts.as_json(
+          only: %i[id myid image name profile wanted distance address]
+        )
+
+        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
+
+        render json: {
+          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
+        }
+
+      # 評価順
+      when 'rate'
+
+      # 注目順
+      when 'topic'
+      end
+
+    else
+      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+        target_hosts_id, params[:skillsId]
+      ).as_json(
+        only: %i[id myid image name profile wanted address]
+      )
+      render_hosts = Kaminari.paginate_array(all_hosts).page(params[:page]).per(10)
+
+      render json: {
+        partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
+      }
+    end
   end
 
   def show
@@ -117,7 +148,7 @@ class Api::HostsController < ApplicationController
       end
 
       render_host_skills = host.skills.as_json(
-        only: %i[name]
+        only: %i[id name]
       )
 
       render json: {

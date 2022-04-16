@@ -117,7 +117,7 @@ class Api::UsersController < ApplicationController
       end
 
       render_user_skills = user.skills.as_json(
-        only: %i[name]
+        only: %i[id name]
       )
 
       render json: {
