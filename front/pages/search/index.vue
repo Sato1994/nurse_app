@@ -26,7 +26,10 @@
       </v-btn>
       <Search ref="search" @search-button-click="searchUser" />
     </v-row>
-    <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+    <infinite-loading
+      :identifier="infiniteId"
+      @infinite="infiniteHandler"
+    ></infinite-loading>
   </v-container>
 </template>
 
@@ -42,11 +45,13 @@ export default {
 
   data: () => ({
     targets: [],
-    page: 1,
+    nextPage: 1,
     name: '',
     address: '',
     lowerYear: 0,
     wanted: true,
+    infiniteId: 0,
+    sortBy: 'distance',
   }),
 
   computed: {
@@ -64,13 +69,13 @@ export default {
       const config = {
         headers: this.$cookies.get('authInfo'),
         params: {
-          page: this.page,
+          page: this.nextPage,
           name: this.name,
           address: this.address,
           lowerYear: this.lowerYear,
           wanted: this.wanted === true ? true : '',
           skillsId: this.skillsId,
-          sortBy: 'distance',
+          sortBy: this.sortBy,
         },
       }
 
@@ -81,8 +86,8 @@ export default {
         )
         .then((response) => {
           setTimeout(() => {
-            if (this.page <= response.data.kaminari.pagination.pages) {
-              this.page += 1
+            if (this.nextPage <= response.data.kaminari.pagination.pages) {
+              this.nextPage += 1
               this.targets.push(...response.data.partners)
               $state.loaded()
             } else {
@@ -108,24 +113,12 @@ export default {
       this.address = address
       this.lowerYear = lowerYear
       this.wanted = wanted
-      this.$axios
-        .get(
-          `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
-          {
-            params: {
-              page: 1,
-              name: this.name,
-              address: this.address,
-              lowerYear: this.lowerYear,
-              wanted: this.wanted === true ? true : '',
-              skillsId: this.skillsId,
-            },
-          }
-        )
-        .then((response) => {
-          this.targets = []
-          this.targets.push(...response.data.partners)
-        })
+
+      this.nextPage = 1
+      this.targets = []
+      this.infiniteId += 1
+
+      this.infiniteHandler()
     },
   },
 }
