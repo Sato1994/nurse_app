@@ -61,25 +61,29 @@ export default {
 
   methods: {
     infiniteHandler($state) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+        params: {
+          page: this.page,
+          name: this.name,
+          address: this.address,
+          lowerYear: this.lowerYear,
+          wanted: this.wanted === true ? true : '',
+          skillsId: this.skillsId,
+          sortBy: 'distance',
+        },
+      }
+
       this.$axios
         .get(
           `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
-          {
-            params: {
-              page: this.page,
-              name: this.name,
-              address: this.address,
-              lowerYear: this.lowerYear,
-              wanted: this.wanted === true ? true : '',
-              skillsId: this.skillsId,
-            },
-          }
+          config
         )
         .then((response) => {
           setTimeout(() => {
             if (this.page <= response.data.kaminari.pagination.pages) {
               this.page += 1
-              this.targets.push(...response.data.users)
+              this.targets.push(...response.data.partners)
               $state.loaded()
             } else {
               $state.complete()
@@ -120,7 +124,7 @@ export default {
         )
         .then((response) => {
           this.targets = []
-          this.targets.push(...response.data.users)
+          this.targets.push(...response.data.partners)
         })
     },
   },

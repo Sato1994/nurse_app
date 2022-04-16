@@ -80,7 +80,13 @@
 
           <v-menu open-on-hover offset-x right transition="scale-transition">
             <template #activator="{ on, attrs }">
-              <v-tab class="primary--text" nuxt to="/" v-bind="attrs" v-on="on">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/search"
+                v-bind="attrs"
+                v-on="on"
+              >
                 <v-icon>mdi-magnify</v-icon>
               </v-tab>
             </template>
@@ -237,7 +243,7 @@ export default {
       switch (i) {
         case 0:
           this.$cookies.removeAll()
-          this.$router.push('/')
+          this.$router.push('/serach')
           this.$store.dispatch('info/logout')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
@@ -249,7 +255,7 @@ export default {
             })
             .then(() => {
               this.$cookies.removeAll()
-              this.$router.push('/')
+              this.$router.push('/search')
               this.$store.dispatch('info/logout')
               this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })
