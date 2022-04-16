@@ -5,9 +5,6 @@ class Api::UsersController < ApplicationController
 
   def index
     # skillが被っていないuserのidの配列の作成
-    lower_year = params[:lowerYear].to_i
-    address = params[:address]
-    wanted = params[:wanted]
 
     host_skill_ids = []
     host_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
@@ -32,13 +29,13 @@ class Api::UsersController < ApplicationController
     end
 
     # user検索
-    users = Kaminari.paginate_array(User.all.year_gt(lower_year).address_like(address).wanted_true(wanted).id_include(
+    users = Kaminari.paginate_array(User.all.year_gt(params[:lowerYear].to_i).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
                                       target_users_id, params[:skillsId]
                                     )).page(params[:page]).per(10)
 
     pagination = resources_with_pagination(users)
     @object = {
-      users: users.as_json, kaminari: pagination
+     partners: users.as_json, kaminari: pagination
     }
     render json: @object
   end
