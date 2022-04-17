@@ -11,54 +11,109 @@ RSpec.describe 'api::hosts', type: :request do
   let(:json) { JSON.parse(response.body) }
 
   describe 'GET /index' do
-    context 'userとしてログイン' do
-      before do
-        create_list(:host, 10)
-        user = create(:user)
-        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+    context 'params[:sortedBy]がdistance' do
+      context 'userとしてログイン' do
+        before do
+          create_list(:host, 10)
+          user = create(:user)
+          post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        end
+
+        it 'ステータス200を返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(response.status).to eq(200)
+        end
+
+        it 'アクセスした場合2つのjsonを返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(json.count).to eq(2)
+        end
+
+        it 'プロパティpartnersは期待した数のプロパティを返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(json['partners'][0].count).to eq(8)
+        end
+
+        it 'パラメーターにdistanceがない場合期待した数のプロパティを返す' do
+          get '/api/hosts', headers: headers
+          expect(json['partners'][0].count).to eq(7)
+        end
       end
 
-      it 'ステータス200を返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(response.status).to eq(200)
-      end
+      context 'userとしてログインしていない' do
+        before do
+          create_list(:host, 10)
+          host = create(:host)
+          post '/api/host/sign_in', params: { email: host.email, password: host.password }
+        end
 
-      it 'アクセスした場合2つのjsonを返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(json.count).to eq(2)
-      end
+        it 'ステータス200を返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(response.status).to eq(200)
+        end
 
-      it 'プロパティhostsは期待した数のプロパティを返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(json['partners'][0].count).to eq(8)
-      end
+        it 'アクセスした場合2つのjsonを返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(json.count).to eq(2)
+        end
 
-      it 'パラメーターにdistanceがない場合期待した数のプロパティを返す' do
-        get '/api/hosts', headers: headers
-        expect(json['partners'][0].count).to eq(7)
+        it 'プロパティpartnersは期待した数のプロパティを返す' do
+          get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
+          expect(json['partners'][0].count).to eq(7)
+        end
       end
     end
 
-    context 'userとしてログインしていない' do
-      before do
-        create_list(:host, 10)
-        host = create(:host)
-        post '/api/host/sign_in', params: { email: host.email, password: host.password }
+    context 'params[:sortedBy]がrate' do
+      context 'userとしてログイン' do
+        before do
+          create_list(:host, 10)
+          user = create(:user)
+          post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        end
+
+        it 'ステータス200を返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(response.status).to eq(200)
+        end
+
+        it 'アクセスした場合2つのjsonを返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(json.count).to eq(2)
+        end
+
+        it 'プロパティpartnersは期待した数のプロパティを返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(json['partners'][0].count).to eq(9)
+        end
+
+        it 'パラメーターにrateがない場合期待した数のプロパティを返す' do
+          get '/api/hosts', headers: headers
+          expect(json['partners'][0].count).to eq(7)
+        end
       end
 
-      it 'ステータス200を返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(response.status).to eq(200)
-      end
+      context 'userとしてログインしていない' do
+        before do
+          create_list(:host, 10)
+          host = create(:host)
+          post '/api/host/sign_in', params: { email: host.email, password: host.password }
+        end
 
-      it 'アクセスした場合2つのjsonを返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(json.count).to eq(2)
-      end
+        it 'ステータス200を返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(response.status).to eq(200)
+        end
 
-      it 'プロパティpartnersは期待した数のプロパティを返す' do
-        get '/api/hosts', params: { sortBy: 'distance' }, headers: headers
-        expect(json['partners'][0].count).to eq(7)
+        it 'アクセスした場合2つのjsonを返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(json.count).to eq(2)
+        end
+
+        it 'プロパティpartnersは期待した数のプロパティを返す' do
+          get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
+          expect(json['partners'][0].count).to eq(7)
+        end
       end
     end
   end

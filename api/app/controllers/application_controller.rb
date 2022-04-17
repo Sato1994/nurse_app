@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
     x1 = current_api_user.lat.to_f * Math::PI / 180
     y1 = current_api_user.lng.to_f * Math::PI / 180
 
-    hosts.all.each do |host|
+    hosts.each do |host|
       x2 = host[:lat].to_f * Math::PI / 180
       y2 = host[:lng].to_f * Math::PI / 180
 
@@ -36,7 +36,28 @@ class ApplicationController < ActionController::API
 
       distance = degree * redius
 
-      host.distance = distance.round(1).to_s
+      host.distance = distance.round(1)
+    end
+  end
+
+  def rate_average(hosts)
+    hosts.each do |host|
+      stars_sum = 0
+
+      count = host.rates.count
+      host.rate_count = count
+
+      host.rates.each do |rate|
+        stars_sum += rate.star
+      end
+
+      rate_average = if count.zero?
+                       0
+                     else
+                       (stars_sum / count.to_f).round(1)
+                     end
+
+      host.rate_average = rate_average
     end
   end
 end

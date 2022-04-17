@@ -8,7 +8,7 @@ class Api::HostsController < ApplicationController
     user_skill_ids = []
     user_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
 
-    all_hosts = Host.includes(:host_skills)
+    all_hosts = Host.includes(:host_skills, [agreements: :rate])
 
     target_hosts_id = []
 
@@ -37,9 +37,6 @@ class Api::HostsController < ApplicationController
           target_hosts_id, params[:skillsId]
         )
         all_hosts = calc_distance(all_hosts)
-        all_hosts.each do |host|
-          host.distance = host.distance.to_f
-        end
 
         sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
 
@@ -55,6 +52,22 @@ class Api::HostsController < ApplicationController
 
       # 評価順
       when 'rate'
+        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+          target_hosts_id, params[:skillsId]
+        )
+        all_hosts = rate_average(all_hosts)
+
+        sorted_hosts = all_hosts.sort_by { |host| -host[:rate_average] }
+
+        sorted_hosts = sorted_hosts.as_json(
+          only: %i[id myid image name profile wanted address rate_average rate_count]
+        )
+
+        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
+
+        render json: {
+          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
+        }
 
       # 注目順
       when 'topic'
