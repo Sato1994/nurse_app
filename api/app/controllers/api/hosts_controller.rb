@@ -68,13 +68,10 @@ class Api::HostsController < ApplicationController
         render json: {
           partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
         }
-
-      # 注目順
-      when 'topic'
       end
 
     else
-      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+      all_hosts = all_hosts.order("RAND()").name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
         target_hosts_id, params[:skillsId]
       ).as_json(
         only: %i[id myid image name profile wanted address]

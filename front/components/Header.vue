@@ -185,8 +185,6 @@ export default {
       topItems: [
         { title: '距離順', url: '/search/distance' },
         { title: '評価順', url: '/search/rate' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
       ],
       issuesItems: [
         { title: 'すべて', url: '/issues' },
