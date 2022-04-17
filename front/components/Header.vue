@@ -80,7 +80,13 @@
 
           <v-menu open-on-hover offset-x right transition="scale-transition">
             <template #activator="{ on, attrs }">
-              <v-tab class="primary--text" nuxt to="/" v-bind="attrs" v-on="on">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/search"
+                v-bind="attrs"
+                v-on="on"
+              >
                 <v-icon>mdi-magnify</v-icon>
               </v-tab>
             </template>
@@ -177,10 +183,8 @@ export default {
         { title: 'Click Me 2', url: 'someting' },
       ],
       topItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
+        { title: '距離順', url: '/search/distance' },
+        { title: '評価順', url: '/search/rate' },
       ],
       issuesItems: [
         { title: 'すべて', url: '/issues' },
@@ -249,7 +253,7 @@ export default {
             })
             .then(() => {
               this.$cookies.removeAll()
-              this.$router.push('/')
+              this.$router.push('/search')
               this.$store.dispatch('info/logout')
               this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })

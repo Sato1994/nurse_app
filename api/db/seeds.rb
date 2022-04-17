@@ -85,6 +85,12 @@ user_sixth = [
   '以上で自己紹介を終わります。',
   'さあ申請ボタンをクリッククリック～。'
 ]
+
+rate_comment = [
+  '忙しくてナースコール頻回の病棟でしたが、皆がせっせと働くのでチーム医療は充実してました。向上心もありいい職場でした。バイトなので委員会などで忙しそうにしている常勤の看護師をみるとこのサイトを教えてあげたくなります。',
+  'とても素敵な病院です。 皆さん仲良くて、すごくわきあいあいとしています。 患者さんにもとても優しくて働くには最適なところだと思います。急性期病院でなんでも受け入れる方針なので、症例は多くとても勉強になります。 急性期看護が好きな人はICU、救命で働けばとても充実した毎日を送れそうです。暇な時間も多くて将棋ばかりやっています。',
+  '雰囲気が良いところもあれば、全体的にピリピリしている所もあります。どっちかと言うと雰囲気が悪いところの方が多い印象です。子供のいるママさんでも働きやすい印象を受けています。病棟ごとに忙しさや人間関係は異なります。',
+]
 ##################################################################################################################################
 
 # skills #########################################################################################################################
@@ -124,8 +130,8 @@ CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
     phone: row['phone'],
     password: 'llllll',
     address: row['address'],
-    lat: 35.658581,
-    lng: 139.745433,
+    lat: "35.#{rand(100_000..999_999)}".to_f,
+    lng: "139.7#{rand(10_000..99_999)}".to_f,
     wanted: [true, false].sample,
     profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
   )
@@ -198,8 +204,8 @@ guest_host = Host.create(
   name: '東京都立孝之協同病院',
   email: 'takayuki@guest.host',
   address: '東京都新宿区須賀町2-3',
-  lat: 35.658581,
-  lng: 139.745433,
+  lat: 35.658034,
+  lng: 139.701636,
   myid: 'takayuki',
   phone: '029-1234-5678',
   password: 'takayukipass',
@@ -230,8 +236,8 @@ guest_user = User.create(
   myid: 'yamada',
   password: 'yamadapass',
   address: '東京都港区芝公園',
-  lat: 35.658581,
-  lng: 139.745433,
+  lat: 35.689407,
+  lng: 139.700306,
   wanted: true,
   age: 27,
   year: 6,
@@ -552,9 +558,8 @@ UserMessage.create(
   end
 end
 ##################################################################################################################################
-##################################################################################################################################
-# guest host rates とりあえず3つほど #############################################################################################
 
+# guest host rates  ##############################################################################################################
 # 2日前の8:00~17:00
 Room.new(
   user_id: guest_user.id,
@@ -579,8 +584,8 @@ Agreement.new(
 agreement_2_days_ago = Agreement.last
 
 rate_2_days_ago = Rate.create(
-  star: 4,
-  comment: '雰囲気が良いところもあれば、全体的にピリピリしている所もあります。どっちかと言うと雰囲気が悪いところの方が多い印象です。子供のいるママさんでも働きやすい印象を受けています。病棟ごとに忙しさや人間関係は異なります。',
+  star: rand(1..5),
+  comment: rate_comment.sample,
   agreement_id: agreement_2_days_ago.id
 )
 
@@ -608,8 +613,8 @@ Agreement.new(
 agreement_10_days_ago = Agreement.last
 
 rate_10_days_ago = Rate.create(
-  star: 4,
-  comment: 'とても素敵な病院です。 皆さん仲良くて、すごくわきあいあいとしています。 患者さんにもとても優しくて働くには最適なところだと思います。急性期病院でなんでも受け入れる方針なので、症例は多くとても勉強になります。 急性期看護が好きな人はICU、救命で働けばとても充実した毎日を送れそうです。暇な時間も多くて将棋ばかりやっています。',
+  star: rand(1..5),
+  comment: rate_comment.sample,
   agreement_id: agreement_10_days_ago.id
 )
 
@@ -637,8 +642,43 @@ Agreement.new(
 agreement_15_days_ago = Agreement.last
 
 rate_15_days_ago = Rate.create(
-  star: 4,
-  comment: '忙しくてナースコール頻回の病棟でしたが、皆がせっせと働くのでチーム医療は充実してました。向上心もありいい職場でした。バイトなので委員会などで忙しそうにしている常勤の看護師をみるとこのサイトを教えてあげたくなります。',
+  star: rand(1..5),
+  comment: rate_comment.sample,
   agreement_id: agreement_15_days_ago.id
 )
 ##################################################################################################################################
+
+# host seeds の rates ############################################################################################################
+hosts_ids.each do |id|
+  rand(1..5).times do
+    room = Room.new(
+      user_id: users_ids.sample,
+      host_id: id,
+      start_time: a = Time.current.ago(rand(0..100)).beginning_of_day,
+      finish_time: a + 5.hours,
+      state: 'conclusion',
+      closed: 'both'
+    ).save(validate: false)
+
+    room = Room.last
+
+    Agreement.new(
+      user_id: room.user_id,
+      host_id: room.host_id,
+      start_time: room.start_time,
+      finish_time: room.finish_time,
+      state: 'finished',
+      room_id: room.id
+    ).save(validate: false)
+
+    agreement = Agreement.last
+
+    rate = Rate.create(
+      star: rand(1..5),
+      comment: rate_comment.sample,
+      agreement_id: agreement.id
+    )
+  end
+end
+##################################################################################################################################
+

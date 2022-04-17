@@ -27,14 +27,14 @@ RSpec.describe 'user登録', type: :request do
     end
 
     let(:user) { create(:user) }
-    it "addressを入力していればlat, lngも登録される" do
+    xit "addressを入力していればlat, lngも登録される" do
       login
       put '/api/user', params: {address: "東京都港区芝公園" }, headers: headers
       expect(user.reload.lat).not_to be_nil
       expect(user.reload.lng).not_to be_nil
     end
 
-    it 'addressを入力していなければlat,lngは登録されない' do
+    xit 'addressを入力していなければlat,lngは登録されない' do
       login
       put '/api/user', params: { name: "もちむぎ" }, headers: headers
       expect(user.reload.lat).to be_nil

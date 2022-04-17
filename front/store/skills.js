@@ -54,8 +54,13 @@ export const getters = {
   skills(state) {
     return state.skills
   },
+
   skillsId(state) {
-    return state.skills.map(obj => obj.id)
+    const ids = []
+    state.skills.forEach((obj) => {
+      ids.push(obj.id)
+    })
+    return ids
   }
 
 }

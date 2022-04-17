@@ -54,7 +54,7 @@ export default {
 
   computed: {
     targetPageURL() {
-      return `${this.$cookies.get('user') === 'host' ? 'user' : 'host'}/${
+      return `/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}/${
         this.target.myid
       }`
     },

@@ -5,7 +5,7 @@ class Agreement < ApplicationRecord
   belongs_to :host
   belongs_to :room
   has_one :cancell_comment
-  has_one :rates
+  has_one :rate
   has_many :user_notices, as: :source
   has_many :host_notices, as: :source
 

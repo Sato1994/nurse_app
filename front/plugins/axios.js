@@ -14,7 +14,7 @@ export default ({ $axios, redirect, store }) => {
   // 401エラーならホームへ遷移
   $axios.onError((e) => {
     if (e.response.status === 401) {
-      redirect('/')
+      redirect('/search')
     }
   })
 
