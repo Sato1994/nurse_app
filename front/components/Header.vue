@@ -243,7 +243,7 @@ export default {
       switch (i) {
         case 0:
           this.$cookies.removeAll()
-          this.$router.push('/serach')
+          this.$router.push('/')
           this.$store.dispatch('info/logout')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
