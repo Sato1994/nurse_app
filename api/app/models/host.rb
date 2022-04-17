@@ -25,6 +25,8 @@ class Host < ApplicationRecord
   # after_validation :geocode
 
   attribute :distance, type: String
+  attribute :rate_average, type: String
+  attribute :rate_count, type: Integer
 
   def to_param
     myid

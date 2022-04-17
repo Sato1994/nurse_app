@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Search />
+    <Search sortBy="rate" />
   </v-container>
 </template>
 
@@ -12,7 +12,7 @@ export default {
   },
 
   head: {
-    title: '検索',
+    title: '距離順検索',
   },
 }
 </script>

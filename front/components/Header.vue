@@ -183,8 +183,8 @@ export default {
         { title: 'Click Me 2', url: 'someting' },
       ],
       topItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
+        { title: '距離順', url: '/search/distance' },
+        { title: '評価順', url: '/search/rate' },
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me 2', url: 'someting' },
       ],
