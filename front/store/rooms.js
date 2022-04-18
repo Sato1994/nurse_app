@@ -61,13 +61,7 @@ export const actions = {
 }
 
 export const getters = {
-  unclosedRooms: (state) => (value) => {
-    if (value === 'user') {
-      return state.rooms.filter(obj => obj.closed === 'na' || obj.closed === 'host')
-    } else if (value === 'host') {
-      return state.rooms.filter(obj => obj.closed === 'na' || obj.closed === 'user')
-    } else {
-      return null
-    }
-  },
+  rooms(state) {
+    return state.rooms
+  }
 }

@@ -1,12 +1,11 @@
 <template>
   <v-container>
     <Agreements />
-
     <v-list dense subheader two-line>
       <v-subheader inset>交渉中</v-subheader>
 
       <v-list-item
-        v-for="(room, index) in myRooms"
+        v-for="(room, index) in rooms"
         :key="index"
         link
         @click="jumpRoom(room.id)"
@@ -30,7 +29,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Agreements from '@/components/issues/Agreements.vue'
+
 export default {
   components: {
     Agreements,
@@ -42,12 +43,9 @@ export default {
   },
 
   computed: {
-    myRooms() {
-      return this.$store.getters['rooms/unclosedRooms'](
-        this.$cookies.get('user')
-      )
-    },
+    ...mapGetters('rooms', ['rooms']),
   },
+
   methods: {
     jumpRoom(id) {
       this.$router.push(`/rooms/${id}`)

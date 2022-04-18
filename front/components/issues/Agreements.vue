@@ -87,9 +87,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      inProgress: 'issues/agreements/inProgress',
-    }),
+    ...mapGetters('issues/agreements', ['inProgress']),
   },
 
   methods: {
