@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <v-toolbar color="warning" flat dark dense>
-      <v-toolbar-title>メッセージ</v-toolbar-title>
-    </v-toolbar>
+    <Agreements />
 
     <v-list dense subheader two-line>
       <v-subheader inset>交渉中</v-subheader>
@@ -32,7 +30,11 @@
 </template>
 
 <script>
+import Agreements from '@/components/issues/Agreements.vue'
 export default {
+  components: {
+    Agreements,
+  },
   data: () => ({}),
 
   head: {
