@@ -71,7 +71,7 @@ class Api::HostsController < ApplicationController
       end
 
     else
-      all_hosts = all_hosts.order("RAND()").name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+      all_hosts = all_hosts.order('RAND()').name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
         target_hosts_id, params[:skillsId]
       ).as_json(
         only: %i[id myid image name profile wanted address]
@@ -114,14 +114,17 @@ class Api::HostsController < ApplicationController
         agreement['partner'] = agreement.delete('user')
       end
 
-      render_rooms = host.rooms.display_room_for_host.as_json(
-        only: %i[id state closed start_time finish_time created_at],
-        include: {
-          user: {
-            only: %i[id name]
-          }
-        }
-      )
+      render_rooms = host.rooms
+                         .host_have_not_exited
+                         .related_agreement_is_not_in_progress
+                         .as_json(
+                           only: %i[id state closed start_time finish_time created_at],
+                           include: {
+                             user: {
+                               only: %i[id name]
+                             }
+                           }
+                         )
 
       render_rooms.each do |room|
         room['partner'] = room.delete('user')
