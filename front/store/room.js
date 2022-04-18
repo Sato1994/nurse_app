@@ -1,72 +1,52 @@
 export const state = () => ({
-  id: null,
-  partnerId: null,
-  partnerMyid: null,
-  partnerName: null,
-  state: null,
-  closed: null,
-  startTime: {
-    year: null,
-    month: null,
-    day: null,
-    hour: null,
-    minute: null,
+  room: {
+    id: '',
+    start_time: '',
+    finish_time: '',
+    state: '',
+    closed: '',
+    na: '',
+    user_messages: [],
+    host_messages: [],
+    partner: {
+      id: '',
+      name: '',
+      myid: '',
+      image: {
+        url: '',
+      },
+    }
   },
-  finishTime: {
-    year: null,
-    month: null,
-    day: null,
-    hour: null,
-    minute: null,
-  },
-  messages: []
+
 })
 export const mutations = {
   saveRoom(state, payload) {
-    state.id = payload.id
-    state.partnerId = payload.partner.id
-    state.partnerName = payload.partner.name
-    state.partnerMyid = payload.partner.myid
-    state.state = payload.state
-    state.closed = payload.closed
-
-    const startTime = new Date(payload.start_time)
-    state.startTime.year = startTime.getFullYear()
-    state.startTime.month = startTime.getMonth() + 1
-    state.startTime.day = startTime.getDate()
-    state.startTime.hour = startTime.getHours()
-    state.startTime.minute = startTime.getMinutes()
-
-
-    const finishTime = new Date(payload.finish_time)
-    state.finishTime.year = finishTime.getFullYear()
-    state.finishTime.month = finishTime.getMonth() + 1
-    state.finishTime.day = finishTime.getDate()
-    state.finishTime.hour = finishTime.getHours()
-    state.finishTime.minute = finishTime.getMinutes()
-
-    let messages = payload.user_messages
-    messages = messages.concat(payload.host_messages).slice().sort((a, b) => {
-      return new Date(b.created_at) - new Date(a.created_at)
-    })
-    state.messages = messages
+    state.room = payload
   },
 
-  addMessage(state, payload) {
-    state.messages.unshift(payload.message)
+  addUserMessage(state, payload) {
+    state.room.user_messages.push(payload.user_message)
+  },
+
+  addHostMessage(state, payload) {
+    state.room.host_messages.push(payload.host_message)
   },
 
   updateTime(state, payload) {
-    state.startTime = payload.startTime
-    state.finishTime = payload.finishTime
+    state.room.star_time = payload.room.start_time
+    state.room.finish_time = payload.room.finish_time
+  },
+
+  removeRoom(state) {
+    state.room = {}
   },
 
   updateState(state, payload) {
-    state.state = payload.state
+    state.room.state = payload.state
   },
 
   updateClosed(state, payload) {
-    state.closed = payload.closed
+    state.room.closed = payload.closed
   },
 }
 
@@ -78,21 +58,25 @@ export const actions = {
     commit('saveRoom', data.room)
     if (data.agreement !== null) {
       commit('agreement/saveAgreement', data.agreement, { root: true })
+    } else {
+      commit('agreement/resetAgreement', {}, { root: true })
     }
   },
 
-  async sendMessage({ commit }, payload) {
+  async sendMessage({ commit, rootState }, payload) {
     const { data } = await this.$axios
       .post(
         `/api/${this.$cookies.get('user')}_messages/${payload.roomId}`,
         { message: payload.message },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('addMessage', { message: data })
+    rootState.info.me === 'user'
+      ? commit('addUserMessage', { user_message: data.user_message })
+      : commit('addHostMessage', { host_message: data.host_message })
   },
 
   async updateTime({ commit, dispatch }, payload) {
-    await this.$axios
+    const { data } = await this.$axios
       .patch(
         `/api/rooms/${payload.roomId}/update_room_time`,
         {
@@ -101,25 +85,27 @@ export const actions = {
         },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('updateTime', payload)
+    commit('updateTime', data)
+
     dispatch(
       'snackbar/setMessage',
       '希望時間を変更しました。', { root: true }
     )
   },
 
-  async updateState({ commit, state }) {
-    switch (state.state) {
+  async updateState({ commit, getters }) {
+    const room = getters.room
+    switch (room.state) {
       case this.$cookies.get('user') === 'user' ? 'host' : 'user': {
         // agreement create
         await this.$axios
           .post(
             `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-            }/${state.partnerId}`,
+            }/${room.partnerId}`,
             {
-              room_id: state.id,
-              start_time: `${state.startTime.year}-${state.startTime.month}-${state.startTime.day}T${state.startTime.hour}:${state.startTime.minute}`,
-              finish_time: `${state.finishTime.year}-${state.finishTime.month}-${state.finishTime.day}T${state.finishTime.hour}:${state.finishTime.minute}`,
+              room_id: room.id,
+              start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
+              finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
             },
             {
               headers: this.$cookies.get('authInfo'),
@@ -128,7 +114,7 @@ export const actions = {
         // 成功したらstate変更
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.id}/update_room_state`,
+            `/api/rooms/${room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
@@ -140,7 +126,7 @@ export const actions = {
       default: {
         const { data } = await this.$axios
           .patch(
-            `/api/rooms/${state.id}/update_room_state`,
+            `/api/rooms/${room.id}/update_room_state`,
             {},
             {
               headers: this.$cookies.get('authInfo'),
@@ -152,23 +138,102 @@ export const actions = {
   },
 
   async cancellRoom({ dispatch, commit, state, rootState }) {
-    const { data } = await this.$axios
+    await this.$axios
       .patch(
         '/api/rooms/cancell_room',
-        { id: state.id },
+        { id: state.room.id },
         { headers: this.$cookies.get('authInfo') }
       )
-    commit('updateClosed', { closed: data.closed })
-    commit('updateState', { state: data.state })
-    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
     this.$router.push(
       `/${this.$cookies.get('user')}/${rootState.info.info.myid}`
     )
+    commit('rooms/removeRoom', { id: state.room.id }, { root: true })
+    commit('removeRoom')
+    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
   },
 }
 
 export const getters = {
-  room(state) {
-    return state
+  room(state, _, rootState) {
+
+    let startTime = new Date(state.room.start_time)
+    let finishTime = new Date(state.room.finish_time)
+    // UTCを見る場合に差分プラスする
+    if (process.server) {
+      startTime = new Date(startTime.setHours(startTime.getHours() + 9))
+      finishTime = new Date(finishTime.setHours(finishTime.getHours() + 9))
+    }
+
+    const newStartTime = {
+      year: startTime.getFullYear(),
+      month: startTime.getMonth() + 1,
+      day: startTime.getDate(),
+      hour: startTime.getHours(),
+      minute: startTime.getMinutes()
+    }
+
+    const newFinishTime = {
+      year: finishTime.getFullYear(),
+      month: finishTime.getMonth() + 1,
+      day: finishTime.getDate(),
+      hour: finishTime.getHours(),
+      minute: finishTime.getMinutes()
+    }
+
+    let userName = ''
+    let userImage = ''
+    let hostName = ''
+    let hostImage = ''
+
+    if (rootState.info.me === 'user') {
+      userName = rootState.info.info.name
+      userImage = rootState.info.info.image.url
+      hostName = state.room.partner.name
+      hostImage = state.room.partner.image.url
+
+    } else if (rootState.info.me === 'host') {
+      userName = state.room.partner.name
+      userImage = state.room.partner.image.url
+      hostName = rootState.info.info.name
+      hostImage = rootState.info.info.image.url
+    }
+
+    const userMessages = state.room.user_messages.map((obj) => {
+      const newObject = {
+        message: obj.message,
+        createdAt: obj.created_at,
+        name: userName,
+        image: userImage
+      }
+      return newObject
+    })
+
+    const hostMessages = state.room.host_messages.map((obj) => {
+      const newObject = {
+        message: obj.message,
+        createdAt: obj.created_at,
+        name: hostName,
+        image: hostImage
+      }
+      return newObject
+    })
+
+
+    const messages = userMessages.concat(hostMessages).slice().sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt)
+    })
+
+    const returnObject = {
+      id: state.room.id,
+      partnerId: state.room.partner.id,
+      partnerName: state.room.partner.name,
+      partnerMyid: state.room.partner.myid,
+      state: state.room.state,
+      closed: state.room.closed,
+      startTime: newStartTime,
+      finishTime: newFinishTime,
+      messages
+    }
+    return returnObject
   }
 }

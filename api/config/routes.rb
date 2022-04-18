@@ -9,13 +9,13 @@ Rails.application.routes.draw do
       registrations: 'api/host/registrations'
     }
 
-    resources :users, except: :destroy
-    resources :hosts, except: :destroy
-    resources :free_times, only: %i[create destroy]
-    resources :recruitment_times, only: %i[create destroy]
+    resources :users, only: %i[index show]
+    resources :hosts, only: %i[index show]
+    resources :free_times, only: %i[index create destroy]
+    resources :recruitment_times, only: %i[index create destroy]
     resources :health_checks, only: :index
-    resources :user_requests, only: [:destroy]
-    resources :host_requests, only: [:destroy]
+    resources :user_requests, only: %i[index destroy]
+    resources :host_requests, only: %i[index destroy]
     resources :rates, only: [:create, :show]
     resources :user_notices, only: %i[index destroy]
     resources :host_notices, only: %i[index destroy]
@@ -25,7 +25,8 @@ Rails.application.routes.draw do
       resources :host_skills, only: %i[create destroy], shallow: true
     end
 
-    resources :agreements, only: %i[index show update destroy] do
+    resources :agreements, only: %i[update] do
+      get 'in_progress', on: :collection
       patch 'cancell', on: :collection
     end
 

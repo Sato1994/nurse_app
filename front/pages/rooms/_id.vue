@@ -1,39 +1,33 @@
 <template>
   <v-container>
     <v-card class="mx-auto">
-      <v-row>
-        <v-col cols="8">
-          <v-img
-            height="250"
-            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-          ></v-img>
+      <v-img
+        v-if="agreement.state !== 'cancelled'"
+        height="250"
+        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      ></v-img>
 
-          <v-container fluid>
-            <v-textarea
-              v-model="inputComment"
-              append-icon="mdi-send-outline"
-              filled
-              rows="4"
-              label="勤務お疲れさまでした。この病院の評価を投稿しましょう！"
-              auto-grow
-              :counter="300"
-              @click:append="createRate"
-            ></v-textarea>
-
-            <v-row align="center" class="mx-0">
-              <v-rating
-                v-model="inputStar"
-                color="amber"
-                dense
-                size="30"
-              ></v-rating>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col cols="4">
-          <Message />
-        </v-col>
-      </v-row>
+      <v-container fluid v-if="agreement.state === 'finished'">
+        <v-textarea
+          v-model="inputComment"
+          append-icon="mdi-send-outline"
+          filled
+          rows="4"
+          label="勤務お疲れさまでした。この病院の評価を投稿しましょう！"
+          auto-grow
+          :counter="300"
+          @click:append="createRate"
+        ></v-textarea>
+        <v-row align="center" class="mx-0">
+          <v-rating
+            v-model="inputStar"
+            color="amber"
+            dense
+            size="30"
+          ></v-rating>
+        </v-row>
+      </v-container>
+      <Message />
     </v-card>
   </v-container>
 </template>

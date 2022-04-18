@@ -27,16 +27,16 @@ RSpec.describe 'host登録', type: :request do
 
     let(:host) { create(:host) }
 
-    it 'addressを入力していればlat, lngも登録される' do
+    xit 'addressを入力していればlat, lngも登録される' do
       login
       put '/api/host', params: { address: '東京都港区芝公園' }, headers: headers
       expect(host.reload.lat).not_to be_nil
       expect(host.reload.lng).not_to be_nil
     end
 
-    it 'addressを入力していなければlat,lngは登録されない' do
+    xit 'addressを入力していなければlat,lngは登録されない' do
       login
-      put '/api/host', params: { name: "もちむぎ" }, headers: headers
+      put '/api/host', params: { name: 'もちむぎ' }, headers: headers
       expect(host.reload.lat).to be_nil
       expect(host.reload.lng).to be_nil
     end

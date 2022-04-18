@@ -8,6 +8,26 @@ RSpec.describe 'Api::RecruitmentTimes', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  describe 'GET /index' do
+    let(:recruitment_time) { create(:recruitment_time, :skip_validate, start_time: 8.hours.from_now) }
+    let(:recruitment_time_2) do
+      create(:recruitment_time, :skip_validate, host: recruitment_time.host, start_time: 8.hours.from_now + 1.second)
+    end
+    let(:json) { JSON.parse(response.body) }
+
+    before do
+      get '/api/recruitment_times', params: { id: recruitment_time_2.host_id }
+    end
+
+    it '現在時刻からちょうど8時間を超えるのだけ削除される' do
+      expect(RecruitmentTime.count).to eq(1)
+    end
+
+    it '期待した数のプロパティを返す' do
+      expect(json.count).to eq(1)
+    end
+  end
+
   describe 'POST /create' do
     context 'リクエストが成功する場合' do
       let(:host) { create(:host) }

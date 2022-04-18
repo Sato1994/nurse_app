@@ -51,10 +51,33 @@ export const getters = {
     return state.offers
   },
 
-  offersOnCalendar(state) {
-    const offers = state.offers.map((obj) => {
-      const s = new Date(obj.start_time)
-      const f = new Date(obj.finish_time)
+  offersOnCalendar(state, getters) {
+    return getters.formatting(state.offers)
+  },
+
+  checkUnavailableOffers: _ => (payload) => {
+    const laterHours7 = new Date().setHours(new Date().getHours() + 7)
+    return payload.offers.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= laterHours7
+    )
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
+      let s = new Date(obj.start_time)
+      let f = new Date(obj.finish_time)
+      // UTCを見る場合に差分プラスする
+      if (process.server) {
+        s = new Date(s.setHours(s.getHours() + 9))
+        f = new Date(f.setHours(f.getHours() + 9))
+      }
       const newObject = {
         id: obj.id,
         partnerName: obj.partner.name,
@@ -88,6 +111,5 @@ export const getters = {
       }
       return newObject
     })
-    return offers
   }
 }

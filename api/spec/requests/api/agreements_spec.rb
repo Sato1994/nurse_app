@@ -8,93 +8,49 @@ RSpec.describe 'Api::Agreements', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
-  describe 'GET /index' do
-    context 'stateが0のものは勤務時間内であればstate1へ変更される' do
-      it 'userがログインしている場合' do
-        create(:agreement, state: 0)
-        agreement = create(:agreement, state: 0)
-        user = agreement.user
-        create(:agreement, user: user, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
-        post '/api/user/sign_in', params: { email: user.email, password: user.password }
-        travel 24.hours - 1.second
-        get '/api/agreements', headers: headers
-        travel 1.second
-        expect { get '/api/agreements', headers: headers }.to change { Agreement.where(state: 1).count }.from(0).to(1)
-      end
+  let(:json) { JSON.parse(response.body) }
 
-      it 'hostがログインしている場合' do
-        create(:agreement, state: 0)
-        agreement = create(:agreement, state: 0)
-        host = agreement.host
-        create(:agreement, host: host, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
-        post '/api/host/sign_in', params: { email: host.email, password: host.password }
-        travel 24.hours - 1.second
-        get '/api/agreements', headers: headers
-        travel 1.second
-        expect { get '/api/agreements', headers: headers }.to change { Agreement.where(state: 1).count }.from(0).to(1)
-      end
-    end
-
-    context 'atateが0か1のものは勤務終了時間後であればstate2へ変更される' do
+  describe 'GET /in_progress' do
+    context 'userとしてログインしている場合' do
       before do
-        create(:agreement, state: 0)
-        create(:agreement, state: 1)
-      end
-
-      let(:agreement) { create(:agreement, state: 0) }
-
-      it 'userがログインしている場合' do
-        user = agreement.user
-        create(:agreement, state: 1, user: user, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
+        user = create(:user)
+        create(:agreement, user: user)
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
-        travel 41.hours
-        get '/api/agreements', headers: headers
-        travel 1.second
-        expect { get '/api/agreements', headers: headers }.to change { Agreement.where(state: 2).count }.from(1).to(2)
+        get '/api/agreements/in_progress', headers: headers
       end
 
-      it 'hostがログインしている場合' do
-        host = agreement.host
-        create(:agreement, state: 1, host: host, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
-        post '/api/host/sign_in', params: { email: host.email, password: host.password }
-        travel 41.hours
-        get '/api/agreements', headers: headers
-        travel 1.second
-        expect { get '/api/agreements', headers: headers }.to change { Agreement.where(state: 2).count }.from(1).to(2)
+      it 'プロパティagreementsは期待した数のプロパティを返す' do
+        expect(json['agreements'][0].count).to eq(6)
+      end
+
+      it 'プロパティagreements.roomは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['room'].count).to eq(1)
+      end
+
+      it 'プロパティagreements.partnerは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['partner'].count).to eq(3)
       end
     end
 
-    context '関与しているagreementの数だけjsonを返す' do
-      let(:list) { create_list(:agreement, 10) }
-
-      it 'userがログインしている場合' do
-        user = list.first.user
-        create(:agreement, user: user, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
-        post '/api/user/sign_in', params: { email: user.email, password: user.password }
-        get '/api/agreements', headers: headers
-        json = JSON.parse(response.body)
-        expect(json.count).to eq(2)
-      end
-
-      it 'hostがログインしている場合' do
-        host = list.first.host
-        create(:agreement, host: host, start_time: Time.current.change(usec: 0) + 33.hours,
-                           finish_time: Time.current.change(usec: 0) + 41.hours)
+    context 'hostとしてログインしている場合' do
+      before do
+        host = create(:host)
+        create(:agreement, host: host)
         post '/api/host/sign_in', params: { email: host.email, password: host.password }
-        get '/api/agreements', headers: headers
-        json = JSON.parse(response.body)
-        expect(json.count).to eq(2)
+        get '/api/agreements/in_progress', headers: headers
       end
-    end
 
-    it 'ログインしてない場合ステータス401を返す' do
-      get '/api/agreements'
-      expect(response.status).to eq(401)
+      it 'プロパティagreementsは期待した数のプロパティを返す' do
+        expect(json['agreements'][0].count).to eq(6)
+      end
+
+      it 'プロパティagreements.roomは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['room'].count).to eq(1)
+      end
+
+      it 'プロパティagreements.partnerは期待した数のプロパティを返す' do
+        expect(json['agreements'][0]['partner'].count).to eq(2)
+      end
     end
   end
 
@@ -130,7 +86,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -176,7 +131,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '更新成功したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -228,7 +182,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -283,7 +236,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '更新成功したらプロパティの数のjsonを返す' do
           correct_post
-          json = JSON.parse(response.body)
           expect(json.count).to eq(9)
         end
 
@@ -360,7 +312,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '成功したら時のjsonを2つ返す' do
           patch "/api/agreements/#{agreement.id}", headers: headers
-          json = JSON.parse(response.body)
           expect(json.count).to eq(2)
         end
 
@@ -416,7 +367,6 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '成功したら時のjsonを2つ返す' do
           patch "/api/agreements/#{agreement.id}", headers: headers
-          json = JSON.parse(response.body)
           expect(json.count).to eq(2)
         end
 

@@ -24,7 +24,15 @@ class Room < ApplicationRecord
   enum state: { negotiating: 0, user: 1, host: 2, conclusion: 3, cancelled: 4 }, _suffix: true
   enum closed: { na: 0, user: 1, host: 2, both: 3 }, _suffix: true
 
-  # バリデーション
+  scope :user_have_not_exited, -> { where(closed: %i[na host]) }
+  scope :host_have_not_exited, -> { where(closed: %i[na user]) }
+
+  scope :related_agreement_is_not_in_progress,
+        lambda {
+          left_joins(:agreement).merge(Agreement.where(state: %i[finished cancelled])
+          .or(Agreement.where(id: nil)))
+        }
+
   def duplication_of_room_create
     if Room.exists?(['finish_time >= ? && ? >= start_time && user_id = ? && host_id = ?', start_time, finish_time, user_id,
                      host_id])

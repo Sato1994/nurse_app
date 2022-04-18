@@ -8,6 +8,63 @@ RSpec.describe 'Api::UserRequests', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  describe 'GET /index' do
+    let(:json) { JSON.parse(response.body) }
+
+    context 'userがログインしてる場合' do
+      before do
+        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now)
+        user_request_2 = create(:user_request, :skip_validate, user: user_request.user, start_time: 7.hours.from_now + 1.second)
+        post '/api/user/sign_in', params: { email: user_request_2.user.email, password: user_request_2.user.password }
+        get '/api/user_requests', params: { id: user_request_2.user_id }, headers: headers
+      end
+
+      it '現在時刻からちょうど8時間を超えるものだけ削除される' do
+        expect(UserRequest.count).to eq(1)
+      end
+
+      it '期待した数のプロパティを返す' do
+        expect(json.count).to eq(1)
+      end
+    end
+
+    context 'hostがログインしている場合' do
+      let(:recruitment_time) { create(:recruitment_time) }
+
+      it '現在時刻からちょうど8時間を超えたものだけ削除される' do
+        create(:user_request, :skip_validate, start_time: 7.hours.from_now, recruitment_time: recruitment_time)
+        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 1.second,
+                                                             recruitment_time: recruitment_time)
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        get '/api/user_requests', params: { id: recruitment_time.host_id }, headers: headers
+        expect(UserRequest.count).to eq(1)
+      end
+
+      it '関連しないインスタンスは削除しない' do
+        create(:user_request, :skip_validate, start_time: 7.hours.from_now, recruitment_time: recruitment_time)
+        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 1.second,
+                                                             recruitment_time: recruitment_time)
+        create(:user_request, :skip_validate, start_time: 7.hours.from_now, user: user_request.user)
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        get '/api/user_requests', params: { id: recruitment_time.host_id }, headers: headers
+        expect(UserRequest.count).to eq(2)
+      end
+
+      it '期待した数のプロパティを返す' do
+        create(:user_request, :skip_validate, start_time: 7.hours.from_now + 1.second, recruitment_time: recruitment_time)
+        post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
+        get '/api/user_requests', params: { id: recruitment_time.host_id }, headers: headers
+        expect(json.count).to eq(1)
+      end
+    end
+
+    it 'ログインしていない場合ステータス401を返す' do
+      recruitment_time = create(:recruitment_time)
+      get '/api/user_requests', params: { id: recruitment_time.host_id }
+      expect(response.status).to eq(401)
+    end
+  end
+
   describe 'POST /create' do
     let(:user) { create(:user) }
     let(:recruitment_time) { create(:recruitment_time) }

@@ -6,5 +6,9 @@ FactoryBot.define do
     finish_time { 29.hours.from_now }
     association :user
     association :recruitment_time
+
+    trait :skip_validate do
+      to_create { |user_request| user_request.save(validate: false) }
+    end
   end
 end

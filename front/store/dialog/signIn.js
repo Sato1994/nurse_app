@@ -4,7 +4,6 @@ export const state = () => ({
 
 export const mutations = {
   displaySignIn(state) {
-    console.log('fefeefe')
     state.signInIsDisplay = true
   },
 
@@ -21,6 +20,16 @@ export const actions = {
         dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
         commit('hideSignIn')
         this.$cookies.set('myid', response.data.data.myid)
+
+        switch (this.$cookies.get('user')) {
+          case 'user':
+            commit('info/iAmUser', null, { root: true })
+            break
+          case 'host':
+            commit('info/iAmHost', null, { root: true })
+            break
+        }
+
         const authInfo = {
           'access-token': response.headers['access-token'],
           client: response.headers.client,

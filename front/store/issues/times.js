@@ -60,10 +60,34 @@ export const getters = {
     return state.times
   },
 
-  timesOnCalendar(state) {
-    const times = state.times.map((obj) => {
-      const s = new Date(obj.start_time)
-      const f = new Date(obj.finish_time)
+  timesOnCalendar(state, getters) {
+    return getters.formatting(state.times)
+  },
+
+  checkUnavailableTimes: _ => (payload) => {
+    const laterHours8 = new Date().setHours(new Date().getHours() + 8)
+    return payload.times.some(
+      (value) =>
+        new Date(
+          value.startTime.year,
+          value.startTime.month - 1,
+          value.startTime.day,
+          value.startTime.hour,
+          value.startTime.minute
+        ) <= laterHours8
+    )
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
+      let s = new Date(obj.start_time)
+      let f = new Date(obj.finish_time)
+      // UTCを見る場合に差分プラスする
+      if (process.server) {
+        s = new Date(s.setHours(s.getHours() + 9))
+        f = new Date(f.setHours(f.getHours() + 9))
+      }
+
       const newObject = {
         id: obj.id,
         start: `${s.getFullYear()}-${s.getMonth() + 1
@@ -94,6 +118,5 @@ export const getters = {
 
       return newObject
     })
-    return times
-  },
+  }
 }

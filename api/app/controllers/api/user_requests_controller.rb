@@ -1,36 +1,63 @@
 # frozen_string_literal: true
 
 class Api::UserRequestsController < ApplicationController
-  ####################################
-  # def index
-  #   # 1.存在する自分が関与するAgreementsを取得
-  #   # 2.そのうちstateが0の現在時刻より6時間以内ののものは全削除
-  #   # 3.そのうちstateが3～5のものは配列から除外する
-  #   # 4.そのうちstateが1のものは勤務時間であればにstateを2に変更。
-  #   # 5.そのうちstateが1か2のもののうち勤務時間を超えていれば3へ変更
-  #   if api_user_signed_in?
-  #     Agreement.where('user_id = ? && start_time < ? && state = 0', current_api_user.id, Time.current + 6.hour).destroy_all
-  #     Agreement.where('user_id = ? && start_time <= ? && ? <= finish_time && state = 1', current_api_user.id, Time.current, Time.current).update_all(state: 2)
-  #     Agreement.where('user_id = ? && finish_time < ? && (state = 1 || 2)', current_api_user.id, Time.current).update_all(state: 3)
-  #     @agreements =Agreement.where('user_id = ?', current_api_user.id)
+  def index
+    if api_user_signed_in?
+      UserRequest.where('user_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
 
-  #   elsif api_user_signed_in?
-  #     Agreement.where('user_id = ? && start_time < ? && state = ?', current_api_user.id, Time.current + 6.hour, 0).destroy_all
-  #     Agreement.where('user_id = ? && start_time <= ? && ? <= finish_time && state = 1', current_api_user.id, Time.current, Time.current).update_all(state: 2)
-  #     Agreement.where('user_id = ? && finish_time < ? && (state = 1 || 2)', current_api_user.id, Time.current).update_all(state: 3)
-  #     @agreements =Agreement.where('user_id = ?', current_api_user.id)
-  #   else
-  #     render body: nil, status: 401
-  #     return
-  #   end
-  #   render "index", formats: :json, handlers: :jbuilder
-  # end
-  #############################################################
+      render_user_requests = UserRequest.where(user_id: params[:id])
+                                        .includes(:host)
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            host: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
 
-  # user_request作成
+      render_user_requests.each do |request|
+        request['partner'] = request.delete('host')
+      end
+
+      render json: {
+        requests: render_user_requests
+      }
+
+    elsif api_host_signed_in?
+      # Hostのoffersが無効だった場合
+      UserRequest.left_joins(:recruitment_time)
+                 .includes(recruitment_time: :host)
+                 .where('user_requests.start_time <= ?', 7.hours.from_now)
+                 .merge(RecruitmentTime.where(host_id: current_api_host.id))
+                 .destroy_all
+
+      render_user_requests = UserRequest.left_joins(:recruitment_time)
+                                        .includes(recruitment_time: :host)
+                                        .merge(RecruitmentTime.where(host_id: current_api_host.id))
+                                        .as_json(
+                                          only: %i[id start_time finish_time],
+                                          include: {
+                                            user: {
+                                              only: %i[id name image myid]
+                                            }
+                                          }
+                                        )
+      render_user_requests.each do |request|
+        request['partner'] = request.delete('user')
+      end
+
+      render json: {
+        offers: render_user_requests
+      }
+    else
+      render json: nil, status: :unauthorized
+    end
+  end
+
   def create
     user_request = UserRequest.new(user_request_params)
-    
+
     if user_request.save
       recruitment_time = RecruitmentTime.find(params[:recruitment_time_id])
       user_request.create_host_notice!(host_id: recruitment_time.host_id, action: 'created')

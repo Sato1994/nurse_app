@@ -1,128 +1,33 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col
-        v-for="(target, index) in targets"
-        :key="index"
-        cols="12"
-        sm="6"
-        md="6"
-        lg="4"
-      >
-        <TargetCard :target="target" />
-      </v-col>
-
-      <v-btn
-        fixed
-        fab
-        bottom
-        right
-        small
-        color="warning"
-        style="bottom: 50px"
-        @click="openSearchDialog"
-      >
-        <v-icon color="white">mdi-magnify</v-icon>
-      </v-btn>
-      <Search ref="search" @search-button-click="searchUser" />
-    </v-row>
-    <infinite-loading @infinite="infiniteHandler"></infinite-loading>
-  </v-container>
+  <v-carousel cycle height="400" hide-delimiter-background show-arrows-on-hover>
+    <v-carousel-item v-for="(slide, i) in slides" :key="i">
+      <v-sheet :color="colors[i]" height="100%">
+        <v-row class="fill-height" align="center" justify="center">
+          <div class="text-h2">{{ slide }} Slide</div>
+        </v-row>
+      </v-sheet>
+    </v-carousel-item>
+  </v-carousel>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import TargetCard from '@/components/organisms/TargetCard.vue'
-import Search from '@/components/dialog/Search.vue'
 export default {
-  components: {
-    TargetCard,
-    Search,
-  },
+  middleware: 'auth',
 
-  data: () => ({
-    targets: [],
-    page: 1,
-    name: '',
-    address: '',
-    lowerYear: 0,
-    wanted: true,
-  }),
-
-  computed: {
-    ...mapGetters({
-      skillsId: 'skills/skillsId',
-    }),
-
-    mypageURL() {
-      return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-    },
-  },
-
-  methods: {
-    infiniteHandler($state) {
-      this.$axios
-        .get(
-          `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
-          {
-            params: {
-              page: this.page,
-              name: this.name,
-              address: this.address,
-              lowerYear: this.lowerYear,
-              wanted: this.wanted === true ? true : '',
-              skillsId: this.skillsId,
-            },
-          }
-        )
-        .then((response) => {
-          setTimeout(() => {
-            if (this.page <= response.data.kaminari.pagination.pages) {
-              this.page += 1
-              this.targets.push(...response.data.users)
-              $state.loaded()
-            } else {
-              $state.complete()
-            }
-          }, 5)
-        })
-        .catch(() => {
-          $state.complete()
-        })
-    },
-
-    openSearchDialog() {
-      this.$refs.search.name = this.name
-      this.$refs.search.address = this.address
-      this.$refs.search.lowerYear = this.lowerYear
-      this.$refs.search.wanted = this.wanted
-      this.$refs.search.isDisplay = true
-    },
-
-    searchUser(name, address, lowerYear, wanted) {
-      this.name = name
-      this.address = address
-      this.lowerYear = lowerYear
-      this.wanted = wanted
-      this.$axios
-        .get(
-          `/api/${this.$cookies.get('user') === 'host' ? 'user' : 'host'}s`,
-          {
-            params: {
-              page: 1,
-              name: this.name,
-              address: this.address,
-              lowerYear: this.lowerYear,
-              wanted: this.wanted === true ? true : '',
-              skillsId: this.skillsId,
-            },
-          }
-        )
-        .then((response) => {
-          this.targets = []
-          this.targets.push(...response.data.users)
-        })
-    },
+  data() {
+    return {
+      colors: [
+        'indigo',
+        'warning',
+        'pink darken-2',
+        'red lighten-1',
+        'deep-purple accent-4',
+      ],
+      slides: ['First', 'Second', 'Third', 'Fourth', 'Fifth'],
+    }
   },
 }
 </script>
+
+<style>
+</style>

@@ -46,21 +46,7 @@
       </v-tooltip>
 
       <v-spacer> </v-spacer>
-
-      <v-badge
-        :value="value"
-        bordered
-        bottom
-        color="warning"
-        dot
-        offset-x="20"
-        offset-y="20"
-      >
-        <v-btn @click="displayNotice" icon>
-          <v-icon>mdi-bell-outline</v-icon>
-        </v-btn>
-      </v-badge>
-
+      <Notice />
       <template #extension>
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
@@ -94,7 +80,13 @@
 
           <v-menu open-on-hover offset-x right transition="scale-transition">
             <template #activator="{ on, attrs }">
-              <v-tab class="primary--text" nuxt to="/" v-bind="attrs" v-on="on">
+              <v-tab
+                class="primary--text"
+                nuxt
+                to="/search"
+                v-bind="attrs"
+                v-on="on"
+              >
                 <v-icon>mdi-magnify</v-icon>
               </v-tab>
             </template>
@@ -161,13 +153,12 @@
       <SignUp />
       <SignIn />
       <SelectUserType />
-      <Notice />
     </v-app-bar>
   </v-card>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
@@ -192,14 +183,11 @@ export default {
         { title: 'Click Me 2', url: 'someting' },
       ],
       topItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
+        { title: '距離順', url: '/search/distance' },
+        { title: '評価順', url: '/search/rate' },
       ],
       issuesItems: [
         { title: 'すべて', url: '/issues' },
-        { title: '契約', url: '/issues/agreements' },
         { title: '募集時間', url: '/issues/times' },
         { title: '届いたリクエスト', url: '/issues/offers' },
         { title: '送ったリクエスト', url: '/issues/requests' },
@@ -216,16 +204,23 @@ export default {
     myPageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
     },
+  },
 
-    value() {
-      return this.$store.state.notices.notices.length
-    },
+  async mounted() {
+    if (this.$store.state.info.info.myid) {
+      await this.$axios
+        .get(`/api/${this.$cookies.get('user')}_notices`, {
+          headers: this.$cookies.get('authInfo'),
+        })
+        .then((response) => {
+          this.$store.commit('notices/saveFormedNotices', response.data)
+        })
+    }
   },
 
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),
-    ...mapMutations('notices', ['displayNotice']),
 
     clickUnAuthMenu(i) {
       switch (i) {
@@ -257,24 +252,13 @@ export default {
             })
             .then(() => {
               this.$cookies.removeAll()
-              this.$router.push('/')
+              this.$router.push('/search')
               this.$store.dispatch('info/logout')
               this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })
           break
       }
     },
-  },
-  async mounted() {
-    if (this.$store.state.info.info.myid) {
-      await this.$axios
-        .get(`/api/${this.$cookies.get('user')}_notices`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$store.commit('notices/saveFormedNotices', response.data)
-        })
-    }
   },
 }
 </script>

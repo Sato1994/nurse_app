@@ -154,7 +154,7 @@
 
 
 <script>
-import { mapMutations, mapActions } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
@@ -176,8 +176,32 @@ export default {
       type: Array,
       default: null,
     },
-    events: {
+    requests: {
       type: Array,
+      default: null,
+    },
+    offers: {
+      type: Array,
+      default: null,
+    },
+    agreements: {
+      type: Array,
+      default: null,
+    },
+    times: {
+      type: Array,
+      default: null,
+    },
+    reloadTimesPath: {
+      type: String,
+      default: null,
+    },
+    reloadRequestsPath: {
+      type: String,
+      default: null,
+    },
+    reloadOffersPath: {
+      type: String,
       default: null,
     },
   },
@@ -207,12 +231,127 @@ export default {
       return this.target.wanted === true ? 'green' : 'red'
     },
 
+    ...mapGetters('issues/times', ['timesOnCalendar']),
+    ...mapGetters('issues/requests', ['requestsOnCalendar']),
+    ...mapGetters('issues/offers', ['offersOnCalendar']),
+    ...mapGetters('issues/agreements', ['inProgress']),
+
     maplocation() {
       return {
         lng: this.target.lng,
         lat: this.target.lat,
       }
     },
+
+    events() {
+      let newArray = []
+      newArray = newArray.concat(this.times)
+      if (
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        newArray = newArray.concat(this.requests)
+        newArray = newArray.concat(this.offers)
+        newArray = newArray.concat(this.agreements)
+      }
+      return newArray
+    },
+  },
+
+  // 自分のページならstoreの更新を監視
+  watch: {
+    timesOnCalendar(newValue) {
+      this.updateTimes(newValue)
+    },
+
+    requestsOnCalendar(newValue) {
+      this.updateRequests(newValue)
+    },
+
+    offersOnCalendar(newValue) {
+      this.updateOffers(newValue)
+    },
+
+    inProgress(newValue) {
+      this.updateAgreements(newValue)
+    },
+  },
+
+  async mounted() {
+    // 時間切れにより無効なものがあれば削除して更新
+
+    // timesのチェック
+    const checkUnavailableTimes = this.$store.getters[
+      'issues/times/checkUnavailableTimes'
+    ]({ times: this.times })
+
+    if (checkUnavailableTimes) {
+      const { data } = await this.$axios.get(this.reloadTimesPath, {
+        params: {
+          id: this.target.id,
+        },
+      })
+      if (
+        // 自分のページならstoreを更新
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        this.$store.commit('issues/times/saveTimes', data.times)
+      } else {
+        // 他人のページなら親data更新
+        const newTimes = this.$store.getters['issues/times/formatting'](
+          data.times
+        )
+        this.updateTimes(newTimes)
+      }
+    }
+
+    // requestsのチェック
+    const checkUnavailableRequests = this.$store.getters[
+      'issues/requests/checkUnavailableRequests'
+    ]({ requests: this.requests })
+
+    if (checkUnavailableRequests) {
+      const { data } = await this.$axios.get(this.reloadRequestsPath, {
+        params: {
+          id: this.target.id,
+        },
+      })
+      this.$store.commit('issues/requests/saveRequests', data.requests)
+    }
+
+    // offersのチェック
+    const checkUnavailableOffers = this.$store.getters[
+      'issues/offers/checkUnavailableOffers'
+    ]({ offers: this.offers })
+
+    if (checkUnavailableOffers) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+        params: {
+          id: this.target.id,
+        },
+      }
+      const { data } = await this.$axios.get(this.reloadOffersPath, config)
+      this.$store.commit('issues/offers/saveOffers', data.offers)
+    }
+
+    // agreementsのチェック
+    const checkAgreementsState = this.$store.getters[
+      'issues/agreements/checkAgreementsState'
+    ]({ agreements: this.agreements })
+
+    if (checkAgreementsState) {
+      const config = {
+        headers: this.$cookies.get('authInfo'),
+      }
+
+      const { data } = await this.$axios.get(
+        '/api/agreements/in_progress',
+        config
+      )
+      this.$store.commit('issues/agreements/saveAgreements', data.agreements)
+    }
   },
 
   methods: {
@@ -220,6 +359,19 @@ export default {
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
     ...mapMutations('dialog/edit', ['displayEdit']),
     ...mapActions('issues/times', ['createTime']),
+
+    updateTimes(newValue) {
+      this.$emit('update-times', newValue)
+    },
+    updateRequests(newValue) {
+      this.$emit('update-requests', newValue)
+    },
+    updateOffers(newValue) {
+      this.$emit('update-offers', newValue)
+    },
+    updateAgreements(newValue) {
+      this.$emit('update-agreements', newValue)
+    },
   },
 }
 </script>
