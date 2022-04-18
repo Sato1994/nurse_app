@@ -70,14 +70,17 @@ class Api::UsersController < ApplicationController
         agreement['partner'] = agreement.delete('host')
       end
 
-      render_rooms = user.rooms.display_room_for_user.as_json(
-        only: %i[id state closed start_time finish_time created_at],
-        include: {
-          host: {
-            only: %i[id name]
-          }
-        }
-      )
+      render_rooms = user.rooms
+                         .user_have_not_exited
+                         .related_agreement_is_not_in_progress
+                         .as_json(
+                           only: %i[id state closed start_time finish_time created_at],
+                           include: {
+                             host: {
+                               only: %i[id name]
+                             }
+                           }
+                         )
 
       render_rooms.each do |room|
         room['partner'] = room.delete('host')

@@ -73,27 +73,47 @@ RSpec.describe Room, type: :model do
   end
 
   describe 'methods' do
-    let(:room_1) { create(:room, closed: 'na') }
-    let(:room_2) { create(:room, closed: 'user') }
-    let(:room_3) { create(:room, closed: 'host') }
+   
 
-    context 'display_room_for_user' do
+    context 'user_have_not_exited' do
+      let(:room_1) { create(:room, closed: 'na') }
+      let(:room_2) { create(:room, closed: 'user') }
+      let(:room_3) { create(:room, closed: 'host') }
       it 'closedがnaまたはhostのものが検索される' do
-        expect(described_class.display_room_for_user).to include(room_1, room_3)
+        expect(described_class.user_have_not_exited).to include(room_1, room_3)
       end
 
       it 'その他は検索されない' do
-        expect(described_class.display_room_for_user).not_to include(room_2)
+        expect(described_class.user_have_not_exited).not_to include(room_2)
       end
     end
 
-    context 'display_room_for_host' do
+    context 'host_have_not_exited' do
+      let(:room_1) { create(:room, closed: 'na') }
+      let(:room_2) { create(:room, closed: 'user') }
+      let(:room_3) { create(:room, closed: 'host') }
       it 'closedがnaまたはuserのものが検索される' do
-        expect(described_class.display_room_for_host).to include(room_1, room_2)
+        expect(described_class.host_have_not_exited).to include(room_1, room_2)
       end
 
       it 'その他は検索されない' do
-        expect(described_class.display_room_for_host).not_to include(room_3)
+        expect(described_class.host_have_not_exited).not_to include(room_3)
+      end
+    end
+
+    context 'related_agreement_is_not_in_progress' do
+      let(:agreement_1) {create(:agreement, state: 'before')}
+      let(:agreement_2) {create(:agreement, state: 'during')}
+      let(:agreement_3) {create(:agreement, state: 'finished')}
+      let(:agreement_4) {create(:agreement, state: 'requesting')}
+      let(:agreement_5) {create(:agreement, state: 'cancelled')}
+      let(:room) {create(:room)}
+      it '関連するagreementが存在しないもの、またはstateがfinished, cancelledのものが検索される' do
+        expect(Room.related_agreement_is_not_in_progress).to include(agreement_3.room, agreement_5.room, room)
+      end
+
+      it 'その他は検索されない' do
+        expect(Room.related_agreement_is_not_in_progress).not_to include(agreement_1.room, agreement_2.room, agreement_4.room)
       end
     end
   end

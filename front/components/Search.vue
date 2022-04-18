@@ -61,9 +61,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters({
-      skillsId: 'skills/skillsId',
-    }),
+    ...mapGetters('skills', ['skillsId']),
 
     mypageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`

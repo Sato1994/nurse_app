@@ -231,12 +231,10 @@ export default {
       return this.target.wanted === true ? 'green' : 'red'
     },
 
-    ...mapGetters({ timesOnCalendar: 'issues/times/timesOnCalendar' }),
-    ...mapGetters({ requestsOnCalendar: 'issues/requests/requestsOnCalendar' }),
-    ...mapGetters({ offersOnCalendar: 'issues/offers/offersOnCalendar' }),
-    ...mapGetters({
-      inProgress: 'issues/agreements/inProgress',
-    }),
+    ...mapGetters('issues/times', ['timesOnCalendar']),
+    ...mapGetters('issues/requests', ['requestsOnCalendar']),
+    ...mapGetters('issues/offers', ['offersOnCalendar']),
+    ...mapGetters('issues/agreements', ['inProgress']),
 
     maplocation() {
       return {

@@ -188,7 +188,6 @@ export default {
       ],
       issuesItems: [
         { title: 'すべて', url: '/issues' },
-        { title: '契約', url: '/issues/agreements' },
         { title: '募集時間', url: '/issues/times' },
         { title: '届いたリクエスト', url: '/issues/offers' },
         { title: '送ったリクエスト', url: '/issues/requests' },

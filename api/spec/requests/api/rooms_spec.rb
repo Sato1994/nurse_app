@@ -8,6 +8,8 @@ RSpec.describe 'Api::Rooms', type: :request do
       'access-token': response.headers['access-token'] }
   end
 
+  let(:json) { JSON.parse(response.body) }
+
   describe 'GET /show' do
     let(:room) { create(:room) }
 
@@ -19,7 +21,6 @@ RSpec.describe 'Api::Rooms', type: :request do
       end
 
       it 'jsonを返さない' do
-        json = JSON.parse(response.body)
         expect(json).to be_nil
       end
 
@@ -35,7 +36,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it 'プロパティroomは期待した数のjsonを返す' do
         get "/api/rooms/#{room.id}", headers: headers
-        json = JSON.parse(response.body)
+
         expect(json['room'].count).to eq(8)
       end
 
@@ -44,13 +45,13 @@ RSpec.describe 'Api::Rooms', type: :request do
           create(:agreement, user: room.user, host: room.host, room: room, start_time: room.start_time,
                              finish_time: room.finish_time)
           get "/api/rooms/#{room.id}", headers: headers
-          json = JSON.parse(response.body)
+
           expect(json['agreement'].count).to eq(4)
         end
 
         it '紐づいたroomがないときnullを返す' do
           get "/api/rooms/#{room.id}", headers: headers
-          json = JSON.parse(response.body)
+
           expect(json['agreement']).to be_nil
         end
       end
@@ -63,7 +64,7 @@ RSpec.describe 'Api::Rooms', type: :request do
 
       it 'プロパティroomは期待した数のjsonを返す' do
         get "/api/rooms/#{room.id}", headers: headers
-        json = JSON.parse(response.body)
+
         expect(json['room'].count).to eq(8)
       end
 
@@ -72,13 +73,13 @@ RSpec.describe 'Api::Rooms', type: :request do
           create(:agreement, user: room.user, host: room.host, room: room, start_time: room.start_time,
                              finish_time: room.finish_time)
           get "/api/rooms/#{room.id}", headers: headers
-          json = JSON.parse(response.body)
+
           expect(json['agreement'].count).to eq(4)
         end
 
         it '紐づいたroomがないときnullを返す' do
           get "/api/rooms/#{room.id}", headers: headers
-          json = JSON.parse(response.body)
+
           expect(json['agreement']).to be_nil
         end
       end
@@ -113,9 +114,8 @@ RSpec.describe 'Api::Rooms', type: :request do
           expect(HostNotice.count).to eq(1)
         end
 
-        it '必要カラムだけのjsonを返す' do
-          json = JSON.parse(response.body)
-          expect(json.count).to eq(6)
+        it 'プロパティroomは期待した数のプロパティを返す' do
+          expect(json['room'].count).to eq(7)
         end
 
         it 'ステータス201を返す' do
@@ -154,8 +154,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         end
 
         it '必要カラムだけのjsonを返す' do
-          json = JSON.parse(response.body)
-          expect(json.count).to eq(6)
+          expect(json['room'].count).to eq(7)
         end
 
         it 'ステータス201を返す' do
@@ -465,7 +464,6 @@ RSpec.describe 'Api::Rooms', type: :request do
       end
 
       it '成功したら適切な数のjsonを返す' do
-        json = JSON.parse(response.body)
         expect(json.count).to eq(1)
       end
 
@@ -501,7 +499,6 @@ RSpec.describe 'Api::Rooms', type: :request do
       end
 
       it '成功したら適切なjsonを返す' do
-        json = JSON.parse(response.body)
         expect(json.count).to eq(1)
       end
 
