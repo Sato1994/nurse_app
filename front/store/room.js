@@ -58,6 +58,8 @@ export const actions = {
     commit('saveRoom', data.room)
     if (data.agreement !== null) {
       commit('agreement/saveAgreement', data.agreement, { root: true })
+    } else {
+      commit('agreement/resetAgreement', {}, { root: true })
     }
   },
 

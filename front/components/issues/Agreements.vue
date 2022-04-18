@@ -14,7 +14,6 @@
         lg="4"
       >
         <TimeCard
-          color="red darken-3"
           firstButtonText="時間を変更"
           secondButtonText="キャンセル"
           dotsButtonText="やあ"
@@ -28,6 +27,7 @@
           :firstButton="true"
           :secondButton="true"
           :dotsButton="true"
+          :color="timeCardColor(agreement)"
           @first-button-click="editAgreement(agreement.id, agreement.roomId)"
           @second-button-click="
             displayAsCancellAgreement(
@@ -36,7 +36,22 @@
               agreement.partnerPhone
             )
           "
-        />
+        >
+          <template #description>
+            <v-card-subtitle v-if="agreement.state === 'requesting'">
+              契約変更中。{{
+                $store.getters['agreement/formattingTo6HoursLater'](agreement)
+              }}までに再確定してください
+            </v-card-subtitle>
+            <v-card-subtitle
+              v-if="
+                agreement.state === 'before' || agreement.state === 'during'
+              "
+            >
+              契約中
+            </v-card-subtitle>
+          </template>
+        </TimeCard>
       </v-col>
     </v-row>
     <v-toolbar class="my-2" flat rounded dense color="red" dark>
@@ -95,6 +110,16 @@ export default {
             this.$store.commit('dialog/confirm/displayWithComment')
           }
         })
+    },
+
+    timeCardColor(agreement) {
+      if (agreement.state === 'requesting') {
+        return 'teal'
+      } else if (agreement.state === 'before' || agreement.state === 'during') {
+        return 'red'
+      } else {
+        return 'warning'
+      }
     },
 
     hideConfirm() {

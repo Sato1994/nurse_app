@@ -2,11 +2,12 @@
   <v-container>
     <v-card class="mx-auto">
       <v-img
+        v-if="agreement.state !== 'cancelled'"
         height="250"
         src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
       ></v-img>
 
-      <v-container fluid>
+      <v-container fluid v-if="agreement.state === 'finished'">
         <v-textarea
           v-model="inputComment"
           append-icon="mdi-send-outline"
