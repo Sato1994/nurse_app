@@ -86,14 +86,30 @@ class Api::RoomsController < ApplicationController
 
       if api_user_signed_in?
         room.create_host_notice!(host_id: room.host_id, action: 'created')
+
+        render json: {
+          room: {
+            id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed, partner: {
+              id: room.host.id, name: room.host.name
+            }
+          }
+        }, status: :created
+
       elsif api_host_signed_in?
         room.create_user_notice!(user_id: room.user_id, action: 'created')
+
+        render json: {
+          room: {
+            id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed, partner: {
+              id: room.user.id, name: room.user.name
+            }
+          }
+        }, status: :created
+
       end
 
       eval("#{request}Request").find(params[:request_id]).destroy
-      render json: { id: room.id, state: room.state, closed: room.closed, user: room.user,
-                     host: room.host, created_at: room.created_at },
-             status: :created
+
     else
       render json: room.errors, status: :bad_request
     end
@@ -221,7 +237,7 @@ class Api::RoomsController < ApplicationController
 
       room.update(state: 'cancelled')
       render json: { state: room.state, closed: room.closed }
-      
+
     else
       render body: nil, status: :forbidden
     end
