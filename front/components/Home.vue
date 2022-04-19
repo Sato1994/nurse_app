@@ -72,23 +72,6 @@
       </div>
     </v-card-text>
 
-    <v-card-actions
-      v-if="
-        $route.path ===
-        `/${$cookies.get('user')}/${$store.state.info.info.myid}`
-      "
-    >
-      <v-btn
-        class="ma-2"
-        color="green lighten-4"
-        small
-        depressed
-        @click="displayDatePicker"
-      >
-        <v-icon>mdi-clock-plus-outline</v-icon>
-      </v-btn>
-    </v-card-actions>
-
     <v-card-actions v-if="$route.path === `/host/${target.myid}`">
       <v-btn
         class="ma-2"
@@ -104,7 +87,6 @@
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" />
-    <DatePicker title="募集時間を登録" @register-button-click="createTime" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -143,13 +125,11 @@
 
 
 <script>
-import { mapMutations, mapActions, mapGetters } from 'vuex'
-import DatePicker from '@/components/dialog/DatePicker.vue'
+import { mapMutations, mapGetters } from 'vuex'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
 export default {
   components: {
-    DatePicker,
     SkillList,
     Calendar,
   },
@@ -344,7 +324,6 @@ export default {
   methods: {
     ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
-    ...mapActions('issues/times', ['createTime']),
 
     updateTimes(newValue) {
       this.$emit('update-times', newValue)
