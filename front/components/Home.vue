@@ -25,7 +25,7 @@
     </template>
 
     <v-card-title
-      >{{ target.name }}{{ $store.state.info.info.name }}
+      >{{ target.name }}
       <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
         target.wanted === true ? '募集中' : '募集していません'
       }}</v-chip>

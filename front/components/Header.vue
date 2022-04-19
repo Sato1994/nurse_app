@@ -178,11 +178,7 @@ export default {
     return {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
-      authItems: [
-        { title: 'ログアウト' },
-        { title: 'アカウント削除' },
-        { title: 'アカウント設定' },
-      ],
+      authItems: [{ title: 'アカウント設定' }, { title: 'ログアウト' }],
       homeItems: [
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
@@ -247,29 +243,18 @@ export default {
     clickAuthMenu(i) {
       switch (i) {
         case 0:
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+          )
+          this.displayEdit()
+          break
+
+        case 1:
           this.$cookies.removeAll()
           this.$router.push('/')
           this.$store.dispatch('info/logout')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
-
-        case 1:
-          this.$axios
-            .delete(`/api/${this.$cookies.get('user')}`, {
-              headers: this.$cookies.get('authInfo'),
-            })
-            .then(() => {
-              this.$cookies.removeAll()
-              this.$router.push('/search')
-              this.$store.dispatch('info/logout')
-              this.$store.dispatch('snackbar/setMessage', 'さよなら')
-            })
-          break
-        case 2:
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-          )
-          this.displayEdit()
       }
     },
   },

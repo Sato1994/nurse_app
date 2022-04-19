@@ -141,9 +141,25 @@
                 </v-col>
               </v-row>
             </v-container>
-            <small>全て入力必須です</small>
           </v-card-text>
           <v-card-actions>
+            <v-row>
+              <v-col class="d-flex justify-space-around py-3">
+                <v-btn color="warning darken-1" text @click="switchDeletable">
+                  <v-icon>{{ lockIcon }}</v-icon>
+                </v-btn>
+              </v-col>
+              <v-col class="d-flex justify-space-around py-3">
+                <v-btn
+                  color="red"
+                  :disabled="!deletable"
+                  text
+                  @click="deleteAccount"
+                >
+                  アカウント削除
+                </v-btn>
+              </v-col>
+            </v-row>
             <v-spacer></v-spacer>
             <v-btn color="warning darken-1" text @click="hideEdit">
               閉じる
@@ -173,6 +189,7 @@ export default {
       { text: '男性', value: false },
     ],
     setImageUrl: null,
+    deletable: false,
   }),
 
   computed: {
@@ -202,10 +219,36 @@ export default {
         ? 'required|max:20'
         : 'required|max:40'
     },
+
+    lockIcon() {
+      if (this.deletable === true) {
+        return 'mdi-lock-open-outline'
+      } else {
+        return 'mdi-lock-outline'
+      }
+    },
   },
 
   methods: {
     ...mapMutations('dialog/edit', ['hideEdit']),
+
+    switchDeletable() {
+      this.deletable = !this.deletable
+    },
+
+    deleteAccount() {
+      this.$axios
+        .delete(`/api/${this.$cookies.get('user')}`, {
+          headers: this.$cookies.get('authInfo'),
+        })
+        .then(() => {
+          this.hideEdit()
+          this.$cookies.removeAll()
+          this.$router.push('/')
+          this.$store.dispatch('info/logout')
+          this.$store.dispatch('snackbar/setMessage', 'さよなら')
+        })
+    },
 
     getAddress() {
       this.$axios
@@ -232,7 +275,7 @@ export default {
     },
 
     editUser() {
-      this.$store.commit('dialog/edit/hideEdit')
+      this.hideEdit()
       const formData = new FormData()
       const headers = {
         'content-type': 'multipart/form-data',
