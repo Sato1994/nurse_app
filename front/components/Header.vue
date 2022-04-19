@@ -153,29 +153,36 @@
       <SignUp />
       <SignIn />
       <SelectUserType />
+      <Edit />
     </v-app-bar>
   </v-card>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
 import Notice from '@/components/dialog/Notice.vue'
+import Edit from '@/components/dialog/Edit.vue'
 export default {
   components: {
     SignUp,
     SignIn,
     SelectUserType,
     Notice,
+    Edit,
   },
 
   data() {
     return {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
-      authItems: [{ title: 'ログアウト' }, { title: 'アカウント削除' }],
+      authItems: [
+        { title: 'ログアウト' },
+        { title: 'アカウント削除' },
+        { title: 'アカウント設定' },
+      ],
       homeItems: [
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
@@ -221,6 +228,7 @@ export default {
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),
+    ...mapMutations('dialog/edit', ['displayEdit']),
 
     clickUnAuthMenu(i) {
       switch (i) {
@@ -257,6 +265,11 @@ export default {
               this.$store.dispatch('snackbar/setMessage', 'さよなら')
             })
           break
+        case 2:
+          this.$router.push(
+            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+          )
+          this.displayEdit()
       }
     },
   },

@@ -39,7 +39,7 @@
                 </v-col>
                 <v-col cols="6">
                   <div class="ml-4">
-                    <v-avatar color="brown" size="80">
+                    <v-avatar size="80">
                       <v-img :src="imgUrl"></v-img>
                     </v-avatar>
                   </div>

@@ -80,16 +80,6 @@
     >
       <v-btn
         class="ma-2"
-        color="amber lighten-4"
-        small
-        depressed
-        @click="displayEdit"
-      >
-        <v-icon>mdi-cog-outline</v-icon>
-      </v-btn>
-
-      <v-btn
-        class="ma-2"
         color="green lighten-4"
         small
         depressed
@@ -147,7 +137,6 @@
         <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-    <Edit />
     <SkillList />
   </v-card>
 </template>
@@ -156,13 +145,11 @@
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
-import Edit from '@/components/dialog/Edit.vue'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
 export default {
   components: {
     DatePicker,
-    Edit,
     SkillList,
     Calendar,
   },
@@ -357,7 +344,6 @@ export default {
   methods: {
     ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
-    ...mapMutations('dialog/edit', ['displayEdit']),
     ...mapActions('issues/times', ['createTime']),
 
     updateTimes(newValue) {
