@@ -22,13 +22,13 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
-    <v-card-title class="text-h5">
-      {{ startTime.month }}/{{ startTime.day }}&nbsp;{{ startTime.hour }}:{{
-        startTime.minute
-      }}0&nbsp;-&nbsp;{{ finishTime.month }}/{{ finishTime.day }}&nbsp;{{
+    <v-card-title class="body-1">
+      {{ displayDay }}
+    </v-card-title>
+    <v-card-text class="text-h3">
+      {{ startTime.hour }}:{{ startTime.minute.toString().padStart(2, 0) }}-{{
         finishTime.hour
-      }}:{{ finishTime.minute }}0</v-card-title
+      }}:{{ finishTime.minute.toString().padStart(2, 0) }}</v-card-text
     >
 
     <slot name="description"></slot>
@@ -104,6 +104,19 @@ export default {
     roomId: {
       type: Number,
       default: null,
+    },
+  },
+
+  computed: {
+    displayDay() {
+      if (
+        this.startTime.month === this.finishTime.month &&
+        this.startTime.day === this.finishTime.day
+      ) {
+        return `${this.startTime.month}/${this.startTime.day}`
+      } else {
+        return `${this.startTime.month}/${this.startTime.day}  -  ${this.finishTime.month}/${this.finishTime.day}`
+      }
     },
   },
 
