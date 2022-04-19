@@ -11,22 +11,19 @@
         cols="12"
         sm="6"
         md="6"
-        lg="4"
+        lg="6"
       >
         <TimeCard
+          v-on:click.native="$router.push(`/rooms/${agreement.roomId}`)"
           firstButtonText="時間を変更"
           secondButtonText="キャンセル"
-          dotsButtonText="やあ"
-          :partnerLink="`/${
-            $cookies.get('user') === 'user' ? 'host' : 'user'
-          }/${agreement.partnerMyid}`"
+          :partnerLink="`/rooms/${agreement.roomId}`"
+          :cardIsHover="true"
           :partnerName="agreement.partner.name"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
-          :roomId="agreement.roomId"
           :firstButton="true"
           :secondButton="true"
-          :dotsButton="true"
           :color="timeCardColor(agreement)"
           @first-button-click="editAgreement(agreement.id, agreement.roomId)"
           @second-button-click="

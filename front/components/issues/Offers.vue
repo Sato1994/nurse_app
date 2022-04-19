@@ -11,7 +11,7 @@
         cols="12"
         sm="6"
         md="6"
-        lg="4"
+        lg="6"
       >
         <TimeCard
           color="blue darken-3"

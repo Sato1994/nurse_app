@@ -1,5 +1,5 @@
 <template>
-  <v-card :color="color" flat dark>
+  <v-card :class="{ pointer: cardIsHover }" :color="color" flat dark>
     <v-app-bar flat color="rgba(0, 0, 0, 0)">
       <v-btn v-if="partnerName" :to="partnerLink" nuxt text class="text-h6 pl-0"
         >{{ partnerName }}
@@ -40,16 +40,6 @@
       <v-btn v-if="secondButton" text @click="clickSecondButton">
         {{ secondButtonText }}
       </v-btn>
-
-      <v-spacer></v-spacer>
-      <v-btn
-        v-if="roomId"
-        text
-        depressed
-        @click="$router.push(`/rooms/${roomId}`)"
-      >
-        <v-icon>mdi-email-outline</v-icon>
-      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -83,7 +73,7 @@ export default {
     },
     dotsButton: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     firstButtonText: {
       type: String,
@@ -95,15 +85,15 @@ export default {
     },
     dotsButtonText: {
       type: String,
-      required: true,
+      default: '',
     },
     color: {
       type: String,
       required: true,
     },
-    roomId: {
-      type: Number,
-      default: null,
+    cardIsHover: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -133,3 +123,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.pointer:hover {
+  cursor: pointer;
+}
+</style>
