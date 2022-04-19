@@ -31,10 +31,6 @@
       }}</v-chip>
     </v-card-title>
 
-    <v-card-subtitle>
-      {{ target.age ? `年齢${target.age}歳` : '年齢を登録していません。' }}
-    </v-card-subtitle>
-
     <v-card-text>
       <v-row align="center" class="mx-0">
         <v-rating
@@ -48,28 +44,7 @@
 
         <div class="grey--text ms-4">4.5 (413)</div>
       </v-row>
-
-      <div class="my-4 text-subtitle-2">
-        {{ target.sex === true ? '女性' : '男性' }}
-      </div>
-
-      <div class="my-4 text-subtitle-2">
-        {{
-          target.year ? `経験${target.year}年` : '経験年数を登録していません。'
-        }}
-      </div>
-
-      <div class="my-4 text-subtitle-2">
-        {{ target.address ? `${target.address}` : '住所を登録していません。' }}
-      </div>
-
-      <div>
-        {{
-          target.profile
-            ? `${target.profile}`
-            : 'プロフィールを登録していません。'
-        }}
-      </div>
+      <slot name="profile"></slot>
     </v-card-text>
 
     <v-card-actions v-if="$route.path === `/host/${target.myid}`">
