@@ -32,32 +32,27 @@
     </v-card-title>
 
     <v-card-text>
-      <v-row align="center" class="mx-0">
-        <v-rating
-          :value="4.5"
-          color="amber"
-          dense
-          half-increments
-          readonly
-          size="14"
-        ></v-rating>
-
-        <div class="grey--text ms-4">4.5 (413)</div>
-      </v-row>
-      <slot name="profile"></slot>
-    </v-card-text>
-
-    <v-card-actions v-if="$route.path === `/host/${target.myid}`">
       <v-btn
-        class="ma-2"
-        color="amber lighten-4"
-        small
-        depressed
+        v-if="$route.path === `/host/${target.myid}`"
+        text
+        class="pa-0"
         @click="$router.push(`/host/${target.myid}/rates`)"
       >
-        <v-icon>mdi-star-outline</v-icon>
+        <v-row align="center" class="mx-0">
+          <v-rating
+            :value="4.5"
+            color="amber"
+            dense
+            half-increments
+            readonly
+            size="14"
+          ></v-rating>
+
+          <div class="grey--text ms-4">4.5 (413)</div>
+        </v-row>
       </v-btn>
-    </v-card-actions>
+      <slot name="profile"></slot>
+    </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
 
