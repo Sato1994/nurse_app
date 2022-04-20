@@ -11,12 +11,10 @@
         cols="12"
         sm="6"
         md="6"
-        lg="4"
+        lg="6"
       >
         <TimeCard
           color="blue darken-3"
-          firstButtonText="受け取る"
-          secondButtonText="拒否する"
           dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
@@ -24,11 +22,11 @@
           :partnerName="offer.partner.name"
           :startTime="offer.startTime"
           :finishTime="offer.finishTime"
-          :firstButton="true"
-          :secondButton="true"
+          :createRoomButton="true"
+          :removeOfferButton="true"
           :dotsButton="true"
-          @first-button-click="createRoom(offer.id)"
-          @second-button-click="displayAsRemoveOffer(offer.id)"
+          @create-room-button-click="createRoom(offer.id)"
+          @remove-offer-button-click="displayAsRemoveOffer(offer.id)"
         />
       </v-col>
     </v-row>

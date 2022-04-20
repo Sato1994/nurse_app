@@ -11,11 +11,10 @@
         cols="12"
         sm="6"
         md="6"
-        lg="4"
+        lg="6"
       >
         <TimeCard
           color="lime darken-3"
-          firstButtonText="取り消し"
           dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
@@ -23,10 +22,9 @@
           :partnerName="request.partner.name"
           :startTime="request.startTime"
           :finishTime="request.finishTime"
-          :firstButton="true"
-          :secondButton="false"
+          :removeRequestButton="true"
           :dotsButton="true"
-          @first-button-click="displayAsRemoveRequest(request.id)"
+          @remove-request-button-click="displayAsRemoveRequest(request.id)"
         />
       </v-col>
     </v-row>

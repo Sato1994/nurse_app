@@ -25,15 +25,11 @@
     </template>
 
     <v-card-title
-      >{{ target.name }}{{ $store.state.info.info.name }}
+      >{{ target.name }}
       <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
         target.wanted === true ? '募集中' : '募集していません'
       }}</v-chip>
     </v-card-title>
-
-    <v-card-subtitle>
-      {{ target.age ? `年齢${target.age}歳` : '年齢を登録していません。' }}
-    </v-card-subtitle>
 
     <v-card-text>
       <v-row align="center" class="mx-0">
@@ -48,56 +44,8 @@
 
         <div class="grey--text ms-4">4.5 (413)</div>
       </v-row>
-
-      <div class="my-4 text-subtitle-2">
-        {{ target.sex === true ? '女性' : '男性' }}
-      </div>
-
-      <div class="my-4 text-subtitle-2">
-        {{
-          target.year ? `経験${target.year}年` : '経験年数を登録していません。'
-        }}
-      </div>
-
-      <div class="my-4 text-subtitle-2">
-        {{ target.address ? `${target.address}` : '住所を登録していません。' }}
-      </div>
-
-      <div>
-        {{
-          target.profile
-            ? `${target.profile}`
-            : 'プロフィールを登録していません。'
-        }}
-      </div>
+      <slot name="profile"></slot>
     </v-card-text>
-
-    <v-card-actions
-      v-if="
-        $route.path ===
-        `/${$cookies.get('user')}/${$store.state.info.info.myid}`
-      "
-    >
-      <v-btn
-        class="ma-2"
-        color="amber lighten-4"
-        small
-        depressed
-        @click="displayEdit"
-      >
-        <v-icon>mdi-cog-outline</v-icon>
-      </v-btn>
-
-      <v-btn
-        class="ma-2"
-        color="green lighten-4"
-        small
-        depressed
-        @click="displayDatePicker"
-      >
-        <v-icon>mdi-clock-plus-outline</v-icon>
-      </v-btn>
-    </v-card-actions>
 
     <v-card-actions v-if="$route.path === `/host/${target.myid}`">
       <v-btn
@@ -114,7 +62,6 @@
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" />
-    <DatePicker title="募集時間を登録" @register-button-click="createTime" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -147,22 +94,17 @@
         <v-icon>mdi-plus-box-multiple-outline</v-icon>
       </v-btn>
     </v-card-actions>
-    <Edit />
     <SkillList />
   </v-card>
 </template>
 
 
 <script>
-import { mapMutations, mapActions, mapGetters } from 'vuex'
-import DatePicker from '@/components/dialog/DatePicker.vue'
-import Edit from '@/components/dialog/Edit.vue'
+import { mapMutations, mapGetters } from 'vuex'
 import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/molecules/Calendar.vue'
 export default {
   components: {
-    DatePicker,
-    Edit,
     SkillList,
     Calendar,
   },
@@ -357,8 +299,6 @@ export default {
   methods: {
     ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
-    ...mapMutations('dialog/edit', ['displayEdit']),
-    ...mapActions('issues/times', ['createTime']),
 
     updateTimes(newValue) {
       this.$emit('update-times', newValue)

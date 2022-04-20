@@ -14,7 +14,40 @@
       @update-requests="updateRequests"
       @update-offers="updateOffers"
       @update-agreements="updateAgreements"
-    />
+    >
+      <template #profile>
+        <div class="my-4 text-subtitle-2">
+          <v-icon color="black">{{ sexIcon }}</v-icon>
+          {{ target.sex === true ? '女性' : '男性' }}
+        </div>
+
+        <div class="my-4 text-subtitle-2">
+          {{ target.age ? `年齢${target.age}歳` : '年齢を登録していません。' }}
+        </div>
+
+        <div class="my-4 text-subtitle-2">
+          {{
+            target.year
+              ? `経験${target.year}年`
+              : '経験年数を登録していません。'
+          }}
+        </div>
+
+        <div class="my-4 text-subtitle-2">
+          {{
+            target.address ? `${target.address}` : '住所を登録していません。'
+          }}
+        </div>
+
+        <div>
+          {{
+            target.profile
+              ? `${target.profile}`
+              : 'プロフィールを登録していません。'
+          }}
+        </div>
+      </template>
+    </Home>
   </v-container>
 </template>
 
@@ -65,6 +98,13 @@ export default {
     },
     reloadOffersPath() {
       return '/api/host_requests'
+    },
+    sexIcon() {
+      if (this.target.sex === true) {
+        return 'mdi-face-woman'
+      } else {
+        return 'mdi-face-man'
+      }
     },
   },
 

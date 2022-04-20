@@ -5,19 +5,15 @@
     </v-toolbar>
 
     <v-row>
-      <v-col v-for="(time, i) in times" :key="i" cols="12" sm="6" md="6" lg="4">
+      <v-col v-for="(time, i) in times" :key="i" cols="12" sm="6" md="6" lg="6">
         <TimeCard
           color="green darken-3"
-          firstButtonText="時間を変更"
-          secondButtonText="取り消し"
           dotsButtonText="やあ"
           :startTime="time.startTime"
           :finishTime="time.finishTime"
-          :firstButton="true"
-          :secondButton="true"
+          :removeTimeButton="true"
           :dotsButton="true"
-          @first-button-click="editTime(time.id)"
-          @second-button-click="displayAsRemoveTime(time.id)"
+          @remove-time-button-click="displayAsRemoveTime(time.id)"
         />
       </v-col>
     </v-row>
@@ -42,7 +38,6 @@ export default {
 
   data() {
     return {
-      // 表示の切り替えだけはstoreの一か所を見るわけにはいかない
       confirmDisplay: false,
       timeId: null,
     }
@@ -63,10 +58,6 @@ export default {
     hideConfirm() {
       this.$store.commit('dialog/confirm/hideConfirm')
       this.confirmDisplay = false
-    },
-
-    editTime(timeId) {
-      console.log('timeの編集機能を作成予定だよ', timeId)
     },
 
     displayAsRemoveTime(timeId) {

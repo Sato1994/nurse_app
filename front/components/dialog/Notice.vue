@@ -20,61 +20,65 @@
           </v-badge>
         </v-btn>
       </template>
-      <v-timeline style="max-height: 400px" dense>
-        <v-list v-if="value" two-line>
-          <v-list-item-group>
-            <template v-for="(notice, index) in noticesOnDialog">
-              <v-list-item
-                :key="notice.index"
-                @click="$router.push(notice.sourceLink)"
-                dense
-              >
-                <v-list-item-avatar>
-                  <img :src="notice.partnerImage" />
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title v-text="notice.title"></v-list-item-title>
 
-                  <v-list-item-subtitle
-                    class="text--primary"
-                    v-text="notice.subTitle"
-                  ></v-list-item-subtitle>
+      <v-list
+        v-if="value"
+        two-line
+        style="max-height: 400px"
+        class="overflow-auto"
+      >
+        <v-list-item-group>
+          <template v-for="(notice, index) in noticesOnDialog">
+            <v-list-item
+              :key="notice.index"
+              dense
+              @click="$router.push(notice.sourceLink)"
+            >
+              <v-list-item-avatar>
+                <img :src="notice.partnerImage" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-text="notice.title"></v-list-item-title>
 
-                  <v-list-item-subtitle
-                    v-text="notice.partnerName"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-subtitle
+                  class="text--primary"
+                  v-text="notice.subTitle"
+                ></v-list-item-subtitle>
 
-                <v-list-item-action>
-                  <v-list-item-action-text
-                    v-text="notice.createdAt"
-                  ></v-list-item-action-text>
+                <v-list-item-subtitle
+                  v-text="notice.partnerName"
+                ></v-list-item-subtitle>
+              </v-list-item-content>
 
-                  <v-icon
-                    btn
-                    color="grey lighten-1"
-                    @click="removeNotice({ noticeId: notice.id })"
-                  >
-                    mdi-trash-can-outline
-                  </v-icon>
-                </v-list-item-action>
-              </v-list-item>
+              <v-list-item-action>
+                <v-list-item-action-text
+                  v-text="notice.createdAt"
+                ></v-list-item-action-text>
 
-              <v-divider
-                v-if="index < noticesOnDialog.length - 1"
-                :key="index"
-              ></v-divider>
-            </template>
-          </v-list-item-group>
-        </v-list>
-        <v-list v-else>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title v-text="noNoticeTitle"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-timeline>
+                <v-icon
+                  btn
+                  color="grey lighten-1"
+                  @click="removeNotice({ noticeId: notice.id })"
+                >
+                  mdi-trash-can-outline
+                </v-icon>
+              </v-list-item-action>
+            </v-list-item>
+
+            <v-divider
+              v-if="index < noticesOnDialog.length - 1"
+              :key="index"
+            ></v-divider>
+          </template>
+        </v-list-item-group>
+      </v-list>
+      <v-list v-else>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title v-text="noNoticeTitle"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-menu>
   </v-row>
 </template>
