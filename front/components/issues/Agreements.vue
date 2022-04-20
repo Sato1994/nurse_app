@@ -14,25 +14,13 @@
         lg="6"
       >
         <TimeCard
-          v-on:click.native="$router.push(`/rooms/${agreement.roomId}`)"
-          firstButtonText="時間を変更"
-          secondButtonText="キャンセル"
           :partnerLink="`/rooms/${agreement.roomId}`"
           :cardIsHover="true"
           :partnerName="agreement.partner.name"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
-          :firstButton="true"
-          :secondButton="true"
           :color="timeCardColor(agreement)"
-          @first-button-click="editAgreement(agreement.id, agreement.roomId)"
-          @second-button-click="
-            displayAsCancellAgreement(
-              agreement.id,
-              agreement.roomId,
-              agreement.partnerPhone
-            )
-          "
+          @click.native="$router.push(`/rooms/${agreement.roomId}`)"
         >
           <template #description>
             <v-card-subtitle v-if="agreement.state === 'requesting'">
@@ -54,33 +42,15 @@
     <v-toolbar class="my-2" flat rounded dense color="red" dark>
       <v-toolbar-title>勤務済</v-toolbar-title>
     </v-toolbar>
-
-    <Confirm
-      :confirmDisplay="confirmDisplay"
-      :phone="phone"
-      @agree-button-click="cancellAgreement"
-      @disagree-button-click="hideConfirm"
-    />
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import Confirm from '@/components/dialog/Confirm.vue'
 import TimeCard from '@/components/TimeCard.vue'
 export default {
   components: {
-    Confirm,
     TimeCard,
-  },
-
-  data() {
-    return {
-      confirmDisplay: false,
-      agreementId: null,
-      roomId: null,
-      phone: null,
-    }
   },
 
   computed: {
@@ -88,25 +58,6 @@ export default {
   },
 
   methods: {
-    cancellAgreement(comment) {
-      this.$store
-        .dispatch('issues/agreements/cancellAgreement', {
-          agreementId: this.agreementId,
-          roomId: this.roomId,
-          comment,
-        })
-        .then(() => {
-          this.confirmDisplay = false
-        })
-        // 48時間以内だった場合
-        .catch((error) => {
-          if (error.response.status === 400) {
-            this.confirmDisplay = true
-            this.$store.commit('dialog/confirm/displayWithComment')
-          }
-        })
-    },
-
     timeCardColor(agreement) {
       if (agreement.state === 'requesting') {
         return 'teal'
@@ -115,33 +66,6 @@ export default {
       } else {
         return 'warning'
       }
-    },
-
-    hideConfirm() {
-      this.confirmDisplay = false
-      this.$store.commit('dialog/confirm/hideConfirm')
-    },
-
-    editAgreement(agreementId, roomId) {
-      this.$axios
-        .patch(
-          `/api/agreements/${agreementId}`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then(() => {
-          this.$router.push(`/rooms/${roomId}`)
-        })
-    },
-
-    displayAsCancellAgreement(agreementId, roomId, phone) {
-      this.confirmDisplay = true
-      this.$store.commit('dialog/confirm/displayAsCancellAgreement')
-      this.agreementId = agreementId
-      this.roomId = roomId
-      this.phone = phone
     },
   },
 }

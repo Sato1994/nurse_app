@@ -133,7 +133,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon>mdi-email-outline</v-icon>
+                <v-icon>mdi-handshake-outline</v-icon>
               </v-tab>
             </template>
             <v-list>

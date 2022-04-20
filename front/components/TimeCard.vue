@@ -34,11 +34,44 @@
     <slot name="description"></slot>
 
     <v-card-actions>
-      <v-btn v-if="firstButton" text @click="clickFirstButton">
-        {{ firstButtonText }}</v-btn
+      <v-btn v-if="updateStateButton" text @click="clickUpdateStateButton">
+        {{ updateStateButtonText }}
+      </v-btn>
+
+      <v-btn v-if="updateTimeButton" text @click="clickUpdateTimeButton">
+        時間を変更
+      </v-btn>
+
+      <v-btn v-if="editAgreementButton" text @click="clickEditAgreementButton">
+        契約時間を変更
+      </v-btn>
+
+      <v-btn
+        v-if="cancellAgreementButton"
+        text
+        @click="clickCancellAgreementButton"
       >
-      <v-btn v-if="secondButton" text @click="clickSecondButton">
-        {{ secondButtonText }}
+        契約をキャンセル
+      </v-btn>
+
+      <v-btn v-if="createRoomButton" text @click="clickCreateRoomButton">
+        受け取る
+      </v-btn>
+
+      <v-btn v-if="removeOfferButton" text @click="clickRemoveOfferButton">
+        拒否する
+      </v-btn>
+
+      <v-btn v-if="removeRequestButton" text @click="clickRemoveRequestButton">
+        取り消し
+      </v-btn>
+
+      <v-btn v-if="removeTimeButton" text @click="clickRemoveTimeButton">
+        取り消し
+      </v-btn>
+
+      <v-btn v-if="createRequestButton" text @click="clickCreateRequestButton">
+        リクエストを送る
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -63,25 +96,49 @@ export default {
       type: Object,
       required: true,
     },
-    firstButton: {
-      type: Boolean,
-      required: true,
-    },
-    secondButton: {
-      type: Boolean,
-      required: true,
-    },
     dotsButton: {
       type: Boolean,
       default: false,
     },
-    firstButtonText: {
-      type: String,
-      required: true,
+    updateStateButton: {
+      type: Boolean,
+      default: false,
     },
-    secondButtonText: {
+    updateStateButtonText: {
       type: String,
       default: null,
+    },
+    updateTimeButton: {
+      type: Boolean,
+      default: false,
+    },
+    editAgreementButton: {
+      type: Boolean,
+      default: false,
+    },
+    createRoomButton: {
+      type: Boolean,
+      default: false,
+    },
+    removeOfferButton: {
+      type: Boolean,
+      default: false,
+    },
+    removeRequestButton: {
+      type: Boolean,
+      default: false,
+    },
+    removeTimeButton: {
+      type: Boolean,
+      default: false,
+    },
+    createRequestButton: {
+      type: Boolean,
+      default: false,
+    },
+    cancellAgreementButton: {
+      type: Boolean,
+      default: false,
     },
     dotsButtonText: {
       type: String,
@@ -111,14 +168,39 @@ export default {
   },
 
   methods: {
-    clickFirstButton() {
-      this.$emit('first-button-click')
-    },
-    clickSecondButton() {
-      this.$emit('second-button-click')
-    },
     clickDotsButton() {
       this.$emit('dots-button-click')
+    },
+
+    clickCreateRoomButton() {
+      this.$emit('create-room-button-click')
+    },
+    clickCreateRequestButton() {
+      this.$emit('create-request-button-click')
+    },
+
+    clickUpdateStateButton() {
+      this.$emit('update-state-button-click')
+    },
+    clickUpdateTimeButton() {
+      this.$emit('update-time-button-click')
+    },
+    clickEditAgreementButton() {
+      this.$emit('edit-agreement-button-click')
+    },
+
+    clickCancellAgreementButton() {
+      this.$emit('cancell-agreement-button-click')
+    },
+
+    clickRemoveOfferButton() {
+      this.$emit('remove-offer-button-click')
+    },
+    clickRemoveRequestButton() {
+      this.$emit('remove-request-button-click')
+    },
+    clickRemoveTimeButton() {
+      this.$emit('remove-time-button-click')
     },
   },
 }

@@ -31,8 +31,8 @@
           <template v-for="(notice, index) in noticesOnDialog">
             <v-list-item
               :key="notice.index"
-              @click="$router.push(notice.sourceLink)"
               dense
+              @click="$router.push(notice.sourceLink)"
             >
               <v-list-item-avatar>
                 <img :src="notice.partnerImage" />
