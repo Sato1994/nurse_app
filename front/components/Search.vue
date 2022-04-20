@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-row>
+    <RefineSearch
+      :targets="true"
+      :text="text"
+      @refine-button-click="refineSearch"
+    />
+    <v-row class="pt-5">
       <v-col
         v-for="(target, index) in targets"
         :key="index"
@@ -35,10 +40,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import RefineSearch from '@/components/RefineSearch.vue'
 import TargetCard from '@/components/organisms/TargetCard.vue'
 import SearchDialog from '@/components/dialog/Search.vue'
 export default {
   components: {
+    RefineSearch,
     TargetCard,
     SearchDialog,
   },
@@ -65,6 +72,18 @@ export default {
 
     mypageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+    },
+
+    text() {
+      if (this.$route.path === '/search') {
+        return 'all'
+      } else if (this.$route.path === '/search/distance') {
+        return 'distance'
+      } else if (this.$route.path === '/search/rate') {
+        return 'rate'
+      } else {
+        return null
+      }
     },
   },
 
@@ -123,6 +142,20 @@ export default {
       this.infiniteId += 1
 
       this.infiniteHandler()
+    },
+
+    refineSearch(value) {
+      switch (value) {
+        case 'all':
+          this.$router.push('/search')
+          break
+        case 'distance':
+          this.$router.push('/search/distance')
+          break
+        case 'rate':
+          this.$router.push('/search/rate')
+          break
+      }
     },
   },
 }

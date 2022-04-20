@@ -78,26 +78,9 @@
             </v-list>
           </v-menu>
 
-          <v-menu open-on-hover offset-x right transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/search"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-magnify</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in topItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab class="primary--text" nuxt to="/search">
+            <v-icon>mdi-magnify</v-icon>
+          </v-tab>
 
           <v-menu open-on-hover offset-x left transition="scale-transition">
             <template #activator="{ on, attrs }">
@@ -184,10 +167,6 @@ export default {
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me', url: 'someting' },
         { title: 'Click Me 2', url: 'someting' },
-      ],
-      topItems: [
-        { title: '距離順', url: '/search/distance' },
-        { title: '評価順', url: '/search/rate' },
       ],
       issuesItems: [
         { title: 'すべて', url: '/issues' },
