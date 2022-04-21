@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <RefineSearch
+      :issues="true"
+      text="offers"
+      @refine-button-click="refineSearch"
+    />
     <Offers />
   </v-container>
 </template>
@@ -7,13 +12,34 @@
 
 <script>
 import Offers from '@/components/issues/Offers.vue'
+import RefineSearch from '@/components/RefineSearch.vue'
 export default {
   components: {
     Offers,
+    RefineSearch,
   },
 
   head: {
     title: '届いたリクエスト',
+  },
+
+  methods: {
+    refineSearch(value) {
+      switch (value) {
+        case 'all':
+          this.$router.push('/issues')
+          break
+        case 'times':
+          this.$router.push('/issues/times')
+          break
+        case 'offers':
+          this.$router.push('/issues/offers')
+          break
+        case 'requests':
+          this.$router.push('/issues/requests')
+          break
+      }
+    },
   },
 }
 </script>

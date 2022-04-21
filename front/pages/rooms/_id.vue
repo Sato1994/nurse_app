@@ -37,14 +37,15 @@
         :updateStateButtonText="updateStateButtonText"
         :editAgreementButton="editAgreementButton"
         :cancellAgreementButton="cancellAgreementButton"
-        :dotsButton="dotsButton"
+        :cancellRoomButton="cancellRoomButton"
         :color="timeCardColor"
-        dotsButtonText="トークルームを削除する"
+        :shaped="false"
+        :tile="true"
         @update-state-button-click="updateState"
         @update-time-button-click="openDatePicker"
         @edit-agreement-button-click="editAgreement"
         @cancell-agreement-button-click="displayAsCancellAgreement"
-        @dots-button-click="displayConfirm"
+        @cancell-room-button-click="displayConfirm"
       >
         <template #description>
           <v-card-subtitle
@@ -190,7 +191,7 @@ export default {
     cancellAgreementButton() {
       return this.agreement.state === 'before'
     },
-    dotsButton() {
+    cancellRoomButton() {
       return this.room.state !== 'conclusion'
     },
 
@@ -277,7 +278,7 @@ export default {
         })
     },
     displayAsCancellAgreement() {
-      this.confirmDisplay = true
+      this.confirmDialog = true
       this.$store.commit('dialog/confirm/displayAsCancellAgreement')
     },
 

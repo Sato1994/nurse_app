@@ -1,16 +1,12 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="red" dark>
-      <v-toolbar-title>契約中</v-toolbar-title>
-    </v-toolbar>
-
     <v-row>
       <v-col
         v-for="(agreement, i) in inProgress"
         :key="i"
         cols="12"
-        sm="6"
-        md="6"
+        sm="12"
+        md="12"
         lg="6"
       >
         <TimeCard
@@ -20,6 +16,7 @@
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
           :color="timeCardColor(agreement)"
+          :lockButton="false"
           @click.native="$router.push(`/rooms/${agreement.roomId}`)"
         >
           <template #description>
@@ -39,9 +36,6 @@
         </TimeCard>
       </v-col>
     </v-row>
-    <v-toolbar class="my-2" flat rounded dense color="red" dark>
-      <v-toolbar-title>勤務済</v-toolbar-title>
-    </v-toolbar>
   </v-container>
 </template>
 
