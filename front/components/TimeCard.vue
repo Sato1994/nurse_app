@@ -7,7 +7,7 @@
     :color="color"
     dark
   >
-    <v-btn v-if="lockButton" @click="switchClickable" class="lockButton" icon>
+    <v-btn v-if="lockButton" class="lockButton" icon @click="switchClickable">
       <v-icon>{{ lockIcon }}</v-icon>
     </v-btn>
 
@@ -133,7 +133,7 @@ export default {
       default: true,
     },
     tile: {
-      typ: Boolean,
+      type: Boolean,
       default: false,
     },
     partnerLink: {
