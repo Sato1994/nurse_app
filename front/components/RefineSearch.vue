@@ -7,7 +7,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="rates" v-bind="attrs" v-on="on" plain value="female">
+          <v-btn v-if="rates" plain value="female" v-bind="attrs" v-on="on">
             <v-icon>mdi-face-woman</v-icon>
           </v-btn>
         </template>
@@ -16,7 +16,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="rates" v-bind="attrs" v-on="on" plain value="male">
+          <v-btn v-if="rates" plain value="male" v-bind="attrs" v-on="on">
             <v-icon>mdi-face-man</v-icon>
           </v-btn>
         </template>
@@ -25,7 +25,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="targets" v-bind="attrs" v-on="on" plain value="distance">
+          <v-btn v-if="targets" plain value="distance" v-bind="attrs" v-on="on">
             <v-icon>mdi-map-marker-distance</v-icon>
           </v-btn>
         </template>
@@ -34,7 +34,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="targets" v-bind="attrs" v-on="on" plain value="rate">
+          <v-btn v-if="targets" plain value="rate" v-bind="attrs" v-on="on">
             <v-icon>mdi-star</v-icon>
           </v-btn>
         </template>
@@ -43,7 +43,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="times">
+          <v-btn v-if="issues" plain value="times" v-bind="attrs" v-on="on">
             <v-icon>mdi-coffee</v-icon>
           </v-btn>
         </template>
@@ -51,7 +51,7 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="offers">
+          <v-btn v-if="issues" plain value="offers" v-bind="attrs" v-on="on">
             <v-icon>mdi-arrow-down-bold</v-icon>
           </v-btn>
         </template>
@@ -60,7 +60,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="requests">
+          <v-btn v-if="issues" plain value="requests" v-bind="attrs" v-on="on">
             <v-icon>mdi-arrow-up-bold</v-icon>
           </v-btn>
         </template>

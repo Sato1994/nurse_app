@@ -57,7 +57,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('rooms', ['createRoom']),
+    ...mapActions('issues/rooms', ['createRoom']),
 
     removeOffer() {
       this.$store.dispatch('issues/offers/removeOffer', this.offerId)

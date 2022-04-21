@@ -214,7 +214,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('rooms', ['createRoom']),
+    ...mapActions('issues/rooms', ['createRoom']),
     ...mapActions('issues/times', ['createTime']),
 
     // それぞれのConfirmでagreeButtonを押したときの挙動

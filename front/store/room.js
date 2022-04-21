@@ -147,7 +147,7 @@ export const actions = {
     this.$router.push(
       `/${this.$cookies.get('user')}/${rootState.info.info.myid}`
     )
-    commit('rooms/removeRoom', { id: state.room.id }, { root: true })
+    commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
     commit('removeRoom')
     dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
   },

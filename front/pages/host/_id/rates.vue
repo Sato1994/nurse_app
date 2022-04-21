@@ -7,11 +7,11 @@
 
       <v-row>
         <v-col
+          v-for="(rate, index) in refinedRates"
+          :key="index"
           cols="12"
           sm="12"
           md="12"
-          v-for="(rate, index) in refinedRates"
-          :key="index"
         >
           <div class="pl-5">
             <v-avatar size="50">
@@ -59,19 +59,18 @@ export default {
   components: {
     RefineSearch,
   },
-
-  data() {
-    return {
-      refine: 'all',
-    }
-  },
-
   async asyncData({ $axios, route }) {
     const { data } = await $axios.get(`/api/rates/${route.params.id}`)
     return {
       rates: data.rates,
       hostName: data.host_name,
       refinedRates: [],
+    }
+  },
+
+  data() {
+    return {
+      refine: 'all',
     }
   },
 
