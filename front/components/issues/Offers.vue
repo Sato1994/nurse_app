@@ -1,10 +1,6 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="blue" dark>
-      <v-toolbar-title>届いたリクエスト</v-toolbar-title>
-    </v-toolbar>
-
-    <v-row>
+    <v-row class="pt-5">
       <v-col
         v-for="(offer, i) in offers"
         :key="i"

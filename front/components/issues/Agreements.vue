@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="red" dark>
-      <v-toolbar-title>契約中</v-toolbar-title>
-    </v-toolbar>
-
     <v-row>
       <v-col
         v-for="(agreement, i) in inProgress"
@@ -40,9 +36,6 @@
         </TimeCard>
       </v-col>
     </v-row>
-    <v-toolbar class="my-2" flat rounded dense color="red" dark>
-      <v-toolbar-title>勤務済</v-toolbar-title>
-    </v-toolbar>
   </v-container>
 </template>
 

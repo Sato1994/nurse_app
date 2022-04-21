@@ -1,10 +1,6 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="lime" dark>
-      <v-toolbar-title>送ったリクエスト</v-toolbar-title>
-    </v-toolbar>
-
-    <v-row>
+    <v-row class="pt-5">
       <v-col
         v-for="(request, i) in requests"
         :key="i"

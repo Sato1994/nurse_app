@@ -1,10 +1,6 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="green" dark>
-      <v-toolbar-title>募集中の時間</v-toolbar-title>
-    </v-toolbar>
-
-    <v-row>
+    <v-row class="pt-5">
       <v-col
         v-for="(time, i) in times"
         :key="i"

@@ -51,86 +51,26 @@
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
 
-          <v-menu
+          <v-tab
             v-if="$store.state.info.info.myid"
-            open-on-hover
-            offset-x
-            right
-            transition="scale-transition"
+            class="primary--text"
+            nuxt
+            :to="myPageURL"
           >
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                :to="myPageURL"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-home-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item v-for="(item, index) in homeItems" :key="index" link>
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+            <v-icon>mdi-home-outline</v-icon>
+          </v-tab>
 
           <v-tab class="primary--text" nuxt to="/search">
             <v-icon>mdi-magnify</v-icon>
           </v-tab>
 
-          <v-menu open-on-hover offset-x left transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/issues"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-text-box-check-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="(item, index) in issuesItems"
-                :key="index"
-                link
-              >
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab class="primary--text" nuxt to="/issues">
+            <v-icon>mdi-text-box-check-outline</v-icon>
+          </v-tab>
 
-          <v-menu open-on-hover offset-x left transition="scale-transition">
-            <template #activator="{ on, attrs }">
-              <v-tab
-                class="primary--text"
-                nuxt
-                to="/rooms"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-handshake-outline</v-icon>
-              </v-tab>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="(item, index) in roomsItems"
-                :key="index"
-                link
-              >
-                <v-list-item-title @click="$router.push(item.url)">{{
-                  item.title
-                }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-tab class="primary--text" nuxt to="/rooms">
+            <v-icon>mdi-handshake-outline</v-icon>
+          </v-tab>
         </v-tabs>
       </template>
       <SignUp />
@@ -162,24 +102,6 @@ export default {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
       authItems: [{ title: 'アカウント設定' }, { title: 'ログアウト' }],
-      homeItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
-      issuesItems: [
-        { title: 'すべて', url: '/issues' },
-        { title: '募集時間', url: '/issues/times' },
-        { title: '届いたリクエスト', url: '/issues/offers' },
-        { title: '送ったリクエスト', url: '/issues/requests' },
-      ],
-      roomsItems: [
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me', url: 'someting' },
-        { title: 'Click Me 2', url: 'someting' },
-      ],
     }
   },
   computed: {
