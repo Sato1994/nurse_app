@@ -9,13 +9,12 @@
         v-for="(offer, i) in offers"
         :key="i"
         cols="12"
-        sm="6"
-        md="6"
+        sm="12"
+        md="12"
         lg="6"
       >
         <TimeCard
           color="blue darken-3"
-          dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
           }/${offer.partnerMyid}`"
@@ -24,7 +23,6 @@
           :finishTime="offer.finishTime"
           :createRoomButton="true"
           :removeOfferButton="true"
-          :dotsButton="true"
           @create-room-button-click="createRoom(offer.id)"
           @remove-offer-button-click="displayAsRemoveOffer(offer.id)"
         />

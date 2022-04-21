@@ -1,31 +1,21 @@
 <template>
-  <v-card :class="{ pointer: cardIsHover }" :color="color" flat dark>
-    <v-app-bar flat color="rgba(0, 0, 0, 0)">
-      <v-btn v-if="partnerName" :to="partnerLink" nuxt text class="text-h6 pl-0"
-        >{{ partnerName }}
-      </v-btn>
-      <v-spacer></v-spacer>
+  <v-card
+    elevation="10"
+    :shaped="shaped"
+    :tile="tile"
+    :class="{ pointer: cardIsHover }"
+    :color="color"
+    dark
+  >
+    <v-btn v-if="lockButton" @click="switchClickable" class="lockButton" icon>
+      <v-icon>{{ lockIcon }}</v-icon>
+    </v-btn>
 
-      <v-menu v-if="dotsButton" bottom left>
-        <template #activator="{ on, attrs }">
-          <v-btn icon color="white" v-bind="attrs" v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list btn dense>
-          <v-list-item link>
-            <v-list-item-title @click="clickDotsButton">{{
-              dotsButtonText
-            }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-    <v-card-title class="body-1">
+    <v-card-text class="body-1 pb-0">
       {{ displayDay }}
-    </v-card-title>
-    <v-card-text class="text-h3">
+    </v-card-text>
+
+    <v-card-text class="text-h3 pt-0">
       {{ startTime.hour }}:{{ startTime.minute.toString().padStart(2, 0) }}-{{
         finishTime.hour
       }}:{{ finishTime.minute.toString().padStart(2, 0) }}</v-card-text
@@ -33,45 +23,103 @@
 
     <slot name="description"></slot>
 
-    <v-card-actions>
-      <v-btn v-if="updateStateButton" text @click="clickUpdateStateButton">
+    <v-card-actions class="py-0">
+      <v-btn
+        v-if="updateStateButton"
+        :disabled="!clickable"
+        text
+        @click="clickUpdateStateButton"
+      >
         {{ updateStateButtonText }}
       </v-btn>
 
-      <v-btn v-if="updateTimeButton" text @click="clickUpdateTimeButton">
+      <v-btn
+        v-if="updateTimeButton"
+        :disabled="!clickable"
+        text
+        @click="clickUpdateTimeButton"
+      >
         時間を変更
       </v-btn>
 
-      <v-btn v-if="editAgreementButton" text @click="clickEditAgreementButton">
+      <v-btn
+        v-if="editAgreementButton"
+        :disabled="!clickable"
+        text
+        @click="clickEditAgreementButton"
+      >
         契約時間を変更
       </v-btn>
 
       <v-btn
         v-if="cancellAgreementButton"
+        :disabled="!clickable"
         text
         @click="clickCancellAgreementButton"
       >
         契約をキャンセル
       </v-btn>
 
-      <v-btn v-if="createRoomButton" text @click="clickCreateRoomButton">
+      <v-btn
+        v-if="createRoomButton"
+        :disabled="!clickable"
+        text
+        @click="clickCreateRoomButton"
+      >
         受け取る
       </v-btn>
 
-      <v-btn v-if="removeOfferButton" text @click="clickRemoveOfferButton">
+      <v-btn
+        v-if="removeOfferButton"
+        :disabled="!clickable"
+        text
+        @click="clickRemoveOfferButton"
+      >
         拒否する
       </v-btn>
 
-      <v-btn v-if="removeRequestButton" text @click="clickRemoveRequestButton">
+      <v-btn
+        v-if="removeRequestButton"
+        :disabled="!clickable"
+        text
+        @click="clickRemoveRequestButton"
+      >
         取り消し
       </v-btn>
 
-      <v-btn v-if="removeTimeButton" text @click="clickRemoveTimeButton">
+      <v-btn
+        v-if="removeTimeButton"
+        :disabled="!clickable"
+        text
+        @click="clickRemoveTimeButton"
+      >
         取り消し
       </v-btn>
 
-      <v-btn v-if="createRequestButton" text @click="clickCreateRequestButton">
+      <v-btn
+        v-if="createRequestButton"
+        :disabled="!clickable"
+        text
+        @click="clickCreateRequestButton"
+      >
         リクエストを送る
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        v-if="cancellRoomButton"
+        :disabled="!clickable"
+        text
+        @click="clickCancellRoomButton"
+      >
+        トークルームを退出する
+      </v-btn>
+    </v-card-actions>
+    <v-card-actions class="pt-0">
+      <v-spacer> </v-spacer>
+      <v-btn v-if="partnerName" :to="partnerLink" nuxt text class="text-h6"
+        >{{ partnerName }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -80,6 +128,14 @@
 <script>
 export default {
   props: {
+    shaped: {
+      type: Boolean,
+      default: true,
+    },
+    tile: {
+      typ: Boolean,
+      default: false,
+    },
     partnerLink: {
       type: String,
       default: null,
@@ -95,10 +151,6 @@ export default {
     finishTime: {
       type: Object,
       required: true,
-    },
-    dotsButton: {
-      type: Boolean,
-      default: false,
     },
     updateStateButton: {
       type: Boolean,
@@ -140,9 +192,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    dotsButtonText: {
-      type: String,
-      default: '',
+    cancellRoomButton: {
+      type: Boolean,
+      default: false,
     },
     color: {
       type: String,
@@ -152,6 +204,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    lockButton: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
+  data() {
+    return {
+      clickable: false,
+    }
   },
 
   computed: {
@@ -165,11 +227,19 @@ export default {
         return `${this.startTime.month}/${this.startTime.day}  -  ${this.finishTime.month}/${this.finishTime.day}`
       }
     },
+
+    lockIcon() {
+      if (this.clickable === true) {
+        return 'mdi-lock-open-outline'
+      } else {
+        return 'mdi-lock-outline'
+      }
+    },
   },
 
   methods: {
-    clickDotsButton() {
-      this.$emit('dots-button-click')
+    switchClickable() {
+      this.clickable = !this.clickable
     },
 
     clickCreateRoomButton() {
@@ -178,7 +248,6 @@ export default {
     clickCreateRequestButton() {
       this.$emit('create-request-button-click')
     },
-
     clickUpdateStateButton() {
       this.$emit('update-state-button-click')
     },
@@ -192,7 +261,9 @@ export default {
     clickCancellAgreementButton() {
       this.$emit('cancell-agreement-button-click')
     },
-
+    clickCancellRoomButton() {
+      this.$emit('cancell-room-button-click')
+    },
     clickRemoveOfferButton() {
       this.$emit('remove-offer-button-click')
     },
@@ -209,5 +280,10 @@ export default {
 <style scoped>
 .pointer:hover {
   cursor: pointer;
+}
+.lockButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 </style>

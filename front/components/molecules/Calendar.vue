@@ -47,81 +47,70 @@
           :activator="selectedElement"
           offset-x
         >
-          <v-card class="mx-auto" max-width="">
-            <TimeCard
-              v-if="selectedEvent.name === '募集中'"
-              :startTime="selectedEvent.startTime"
-              :finishTime="selectedEvent.finishTime"
-              :removeTimeButton="freeTimeCardConfig.removeTimeButton"
-              :createRequestButton="freeTimeCardConfig.createRequestButton"
-              :dotsButton="true"
-              color="green darken-3"
-              dotsButtonText="やあ"
-              @remove-time-button-click="
-                displayAsRemoveTime({
-                  startTime: selectedEvent.startTime,
-                  finishTime: selectedEvent.finishTime,
-                  timeId: selectedEvent.id,
-                })
-              "
-              @create-request-button-click="
-                openDatePickerAsCreateRequest({
-                  startTime: selectedEvent.startTime,
-                  finishTime: selectedEvent.finishTime,
-                  timeId: selectedEvent.id,
-                })
-              "
-            />
+          <TimeCard
+            v-if="selectedEvent.name === '募集中'"
+            :startTime="selectedEvent.startTime"
+            :finishTime="selectedEvent.finishTime"
+            :removeTimeButton="freeTimeCardConfig.removeTimeButton"
+            :createRequestButton="freeTimeCardConfig.createRequestButton"
+            color="green darken-3"
+            @remove-time-button-click="
+              displayAsRemoveTime({
+                startTime: selectedEvent.startTime,
+                finishTime: selectedEvent.finishTime,
+                timeId: selectedEvent.id,
+              })
+            "
+            @create-request-button-click="
+              openDatePickerAsCreateRequest({
+                startTime: selectedEvent.startTime,
+                finishTime: selectedEvent.finishTime,
+                timeId: selectedEvent.id,
+              })
+            "
+          />
 
-            <TimeCard
-              v-if="selectedEvent.name == '契約済み'"
-              color="red darken-3"
-              dotsButtonText="やあ"
-              :partnerLink="`/rooms/${selectedEvent.roomId}`"
-              :partnerName="selectedEvent.partner.name"
-              :startTime="selectedEvent.startTime"
-              :finishTime="selectedEvent.finishTime"
-              :roomId="selectedEvent.roomId"
-              :dotsButton="true"
-              :cardIsHover="true"
-              @click.native="$router.push(`/rooms/${selectedEvent.roomId}`)"
-            />
+          <TimeCard
+            v-if="selectedEvent.name == '契約済み'"
+            color="red darken-3"
+            :partnerLink="`/rooms/${selectedEvent.roomId}`"
+            :partnerName="selectedEvent.partner.name"
+            :startTime="selectedEvent.startTime"
+            :finishTime="selectedEvent.finishTime"
+            :roomId="selectedEvent.roomId"
+            :cardIsHover="true"
+            :lockButton="false"
+            @click.native="$router.push(`/rooms/${selectedEvent.roomId}`)"
+          />
 
-            <TimeCard
-              v-if="selectedEvent.name == 'オファーがあります'"
-              color="blue darken-3"
-              dotsButtonText="やあ"
-              :partnerLink="`/${
-                $cookies.get('user') === 'user' ? 'host' : 'user'
-              }/${selectedEvent.partnerMyid}`"
-              :partnerName="selectedEvent.partner.name"
-              :startTime="selectedEvent.startTime"
-              :finishTime="selectedEvent.finishTime"
-              :createRoomButton="true"
-              :removeOfferButton="true"
-              :dotsButton="true"
-              @create-room-button-click="createRoom(selectedEvent.id)"
-              @remove-offer-button-click="
-                displayAsRemoveOffer(selectedEvent.id)
-              "
-            />
-            <TimeCard
-              v-if="selectedEvent.name == 'リクエスト中'"
-              color="lime darken-3"
-              dotsButtonText="やあ"
-              :partnerLink="`/${
-                $cookies.get('user') === 'user' ? 'host' : 'user'
-              }/${selectedEvent.partnerMyid}`"
-              :partnerName="selectedEvent.partner.name"
-              :startTime="selectedEvent.startTime"
-              :finishTime="selectedEvent.finishTime"
-              :removeRequestButton="true"
-              :dotsButton="true"
-              @remove-request-button-click="
-                displayAsRemoveRequest(selectedEvent.id)
-              "
-            />
-          </v-card>
+          <TimeCard
+            v-if="selectedEvent.name == 'オファーがあります'"
+            color="blue darken-3"
+            :partnerLink="`/${
+              $cookies.get('user') === 'user' ? 'host' : 'user'
+            }/${selectedEvent.partnerMyid}`"
+            :partnerName="selectedEvent.partner.name"
+            :startTime="selectedEvent.startTime"
+            :finishTime="selectedEvent.finishTime"
+            :createRoomButton="true"
+            :removeOfferButton="true"
+            @create-room-button-click="createRoom(selectedEvent.id)"
+            @remove-offer-button-click="displayAsRemoveOffer(selectedEvent.id)"
+          />
+          <TimeCard
+            v-if="selectedEvent.name == 'リクエスト中'"
+            color="lime darken-3"
+            :partnerLink="`/${
+              $cookies.get('user') === 'user' ? 'host' : 'user'
+            }/${selectedEvent.partnerMyid}`"
+            :partnerName="selectedEvent.partner.name"
+            :startTime="selectedEvent.startTime"
+            :finishTime="selectedEvent.finishTime"
+            :removeRequestButton="true"
+            @remove-request-button-click="
+              displayAsRemoveRequest(selectedEvent.id)
+            "
+          />
         </v-menu>
         <DatePicker
           :title="datePickerTitle"

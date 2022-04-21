@@ -5,14 +5,19 @@
     </v-toolbar>
 
     <v-row>
-      <v-col v-for="(time, i) in times" :key="i" cols="12" sm="6" md="6" lg="6">
+      <v-col
+        v-for="(time, i) in times"
+        :key="i"
+        cols="12"
+        sm="12"
+        md="12"
+        lg="6"
+      >
         <TimeCard
           color="green darken-3"
-          dotsButtonText="やあ"
           :startTime="time.startTime"
           :finishTime="time.finishTime"
           :removeTimeButton="true"
-          :dotsButton="true"
           @remove-time-button-click="displayAsRemoveTime(time.id)"
         />
       </v-col>
