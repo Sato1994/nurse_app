@@ -4,25 +4,55 @@
       <v-btn v-if="rates || targets || issues" plain value="all">
         すべて
       </v-btn>
-      <v-btn v-if="rates" plain value="female"> 女性の評価 </v-btn>
-      <v-btn v-if="rates" plain value="male"> 男性の評価 </v-btn>
-
-      <v-btn v-if="targets" plain value="distance"> 距離順 </v-btn>
-      <v-btn v-if="targets" plain value="rate"> 評価順 </v-btn>
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="times">
-            <v-icon>mdi-coffee-outline</v-icon>
+          <v-btn v-if="rates" v-bind="attrs" v-on="on" plain value="female">
+            <v-icon>mdi-face-woman</v-icon>
           </v-btn>
         </template>
-        <span>募集時間</span>
+        <span>女性からの評価</span>
       </v-tooltip>
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
+          <v-btn v-if="rates" v-bind="attrs" v-on="on" plain value="male">
+            <v-icon>mdi-face-man</v-icon>
+          </v-btn>
+        </template>
+        <span>男性からの評価</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn v-if="targets" v-bind="attrs" v-on="on" plain value="distance">
+            <v-icon>mdi-map-marker-distance</v-icon>
+          </v-btn>
+        </template>
+        <span>距離順</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn v-if="targets" v-bind="attrs" v-on="on" plain value="rate">
+            <v-icon>mdi-star</v-icon>
+          </v-btn>
+        </template>
+        <span>評価順</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="times">
+            <v-icon>mdi-coffee</v-icon>
+          </v-btn>
+        </template>
+        <span>募集時間</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
           <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="offers">
-            <v-icon>mdi-arrow-down-bold-outline</v-icon>
+            <v-icon>mdi-arrow-down-bold</v-icon>
           </v-btn>
         </template>
         <span>オファー</span>
@@ -31,7 +61,7 @@
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn v-if="issues" v-bind="attrs" v-on="on" plain value="requests">
-            <v-icon>mdi-arrow-up-bold-outline</v-icon>
+            <v-icon>mdi-arrow-up-bold</v-icon>
           </v-btn>
         </template>
         <span>リクエスト</span>
