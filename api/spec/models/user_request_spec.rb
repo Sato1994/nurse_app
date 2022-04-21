@@ -48,6 +48,17 @@ RSpec.describe UserRequest, type: :model do
         user_request.valid?
         expect(user_request.errors[:message]).to include('同じ時間帯でお相手と交渉中です。')
       end
+
+      it 'hostのwantedがfalseならば期待するエラーメッセージを返す' do
+        host = create(:host, wanted: false)
+        recruitment_time =  create(:recruitment_time, host: host)
+        user_request = build(:user_request, recruitment_time: recruitment_time)
+        user_request.valid?
+        expect(user_request.errors[:message]).to include ('お相手は現在リクエストを募集していません。')
+      end
+
+
+
     end
 
     context '期間制限チェック' do

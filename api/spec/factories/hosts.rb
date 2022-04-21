@@ -9,5 +9,6 @@ FactoryBot.define do
     password { 'password' }
     lat { "35.#{rand(100000..999999)}".to_f }
     lng { "139.7#{rand(10000..99999)}".to_f }
+    wanted { true }
   end
 end

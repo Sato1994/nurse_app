@@ -15,6 +15,7 @@ class HostRequest < ApplicationRecord
   validate :duplication_of_room
   validate :host_request_has_some_hours_grace
   validate :limitation_of_host_request_hours
+  validate :user_wanted
 
   def included_in_the_free_time
     unless FreeTime.exists?(['start_time <= ? && finish_time >= ? && id = ?', start_time, finish_time, free_time_id])
@@ -48,6 +49,12 @@ class HostRequest < ApplicationRecord
                      finish_time])
       errors.add(:message, '同じ時間帯でお相手と交渉中です。')
     end
+  end
+
+  def user_wanted
+    user = FreeTime.find(free_time_id).user
+    errors.add(:message, 'お相手は現在リクエストを募集していません。') unless user.wanted == true
+
   end
 
   def host_request_has_some_hours_grace
