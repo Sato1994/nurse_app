@@ -1,32 +1,24 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="lime" dark>
-      <v-toolbar-title>送ったリクエスト</v-toolbar-title>
-    </v-toolbar>
-
-    <v-row>
+    <v-row class="pt-5">
       <v-col
         v-for="(request, i) in requests"
         :key="i"
         cols="12"
-        sm="6"
-        md="6"
-        lg="4"
+        sm="12"
+        md="12"
+        lg="6"
       >
         <TimeCard
           color="lime darken-3"
-          firstButtonText="取り消し"
-          dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
           }/${request.partnerMyid}`"
           :partnerName="request.partner.name"
           :startTime="request.startTime"
           :finishTime="request.finishTime"
-          :firstButton="true"
-          :secondButton="false"
-          :dotsButton="true"
-          @first-button-click="displayAsRemoveRequest(request.id)"
+          :removeRequestButton="true"
+          @remove-request-button-click="displayAsRemoveRequest(request.id)"
         />
       </v-col>
     </v-row>

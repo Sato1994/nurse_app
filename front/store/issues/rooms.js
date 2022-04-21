@@ -61,7 +61,41 @@ export const actions = {
 }
 
 export const getters = {
-  rooms(state) {
-    return state.rooms
+  rooms(state, getters) {
+    return getters.formatting(state.rooms)
+  },
+
+  formatting: _ => (payload) => {
+    return payload.map((obj) => {
+      let s = new Date(obj.start_time)
+      let f = new Date(obj.finish_time)
+      // UTCを見る場合に差分プラスする
+      if (process.server) {
+        s = new Date(s.setHours(s.getHours() + 9))
+        f = new Date(f.setHours(f.getHours() + 9))
+      }
+      const newObject = {
+        id: obj.id,
+        partnerName: obj.partner.name,
+        partner: obj.partner,
+        partnerMyid: obj.partner.myid,
+        state: obj.state,
+        startTime: {
+          year: s.getFullYear(),
+          month: s.getMonth() + 1,
+          day: s.getDate(),
+          hour: s.getHours(),
+          minute: s.getMinutes(),
+        },
+        finishTime: {
+          year: f.getFullYear(),
+          month: f.getMonth() + 1,
+          day: f.getDate(),
+          hour: f.getHours(),
+          minute: f.getMinutes(),
+        }
+      }
+      return newObject
+    })
   }
 }

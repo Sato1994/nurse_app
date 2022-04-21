@@ -1,22 +1,23 @@
 <template>
   <v-container>
-    <v-card class="mx-auto">
-      <v-card-title>{{ hostName }} レビュー{{ ratesCount }}件 </v-card-title>
+    <RefineSearch :rates="true" @refine-button-click="refineSearch" />
+    <v-card class="mx-auto pt-5" :min-height="350">
+      <v-card-title>{{ hostName }} </v-card-title>
+      <v-card-subtitle> レビュー{{ refinedRates.length }}件 </v-card-subtitle>
+
       <v-row>
         <v-col
-          cols="12"
-          sm="6"
-          md="6"
-          v-for="(rate, index) in rates"
+          v-for="(rate, index) in refinedRates"
           :key="index"
+          cols="12"
+          sm="12"
+          md="12"
         >
-          <v-avatar color="brown" size="50">
-            <v-img
-              class="elevation-6"
-              alt=""
-              src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-            ></v-img>
-          </v-avatar>
+          <div class="pl-5">
+            <v-avatar size="50">
+              <v-img :src="imageUrl(rate)"></v-img>
+            </v-avatar>
+          </div>
 
           <v-card-subtitle
             >{{ rate.agreement.user.age }}歳
@@ -42,7 +43,8 @@
               {{ rate.comment }}
             </div>
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider v-if="index < refinedRates.length - 1" :key="index">
+          </v-divider>
         </v-col>
       </v-row>
     </v-card>
@@ -52,21 +54,28 @@
 
 
 <script>
+import RefineSearch from '@/components/RefineSearch.vue'
 export default {
-  components: {},
-
+  components: {
+    RefineSearch,
+  },
   async asyncData({ $axios, route }) {
     const { data } = await $axios.get(`/api/rates/${route.params.id}`)
     return {
       rates: data.rates,
       hostName: data.host_name,
+      refinedRates: [],
     }
   },
 
-  computed: {
-    ratesCount() {
-      return this.rates.length
-    },
+  data() {
+    return {
+      refine: 'all',
+    }
+  },
+
+  mounted() {
+    this.refinedRates = this.rates
   },
 
   methods: {
@@ -75,6 +84,39 @@ export default {
       const year = date.getFullYear()
       const month = date.getMonth() + 1
       return `${year}年${month}月頃`
+    },
+
+    refineSearch(value) {
+      const newArray = []
+      switch (value) {
+        case 'all':
+          this.refinedRates = this.rates
+          break
+
+        case 'female':
+          this.rates.forEach((obj) => {
+            if (obj.agreement.user.sex === false) {
+              newArray.push(obj)
+            }
+          })
+          this.refinedRates = newArray
+          break
+        case 'male':
+          this.rates.forEach((obj) => {
+            if (obj.agreement.user.sex === true) {
+              newArray.push(obj)
+            }
+          })
+          this.refinedRates = newArray
+          break
+      }
+    },
+    imageUrl(rate) {
+      if (rate.agreement.user.sex === true) {
+        return '/image/anonymous_male.jpg'
+      } else {
+        return '/image/anonymous_female.jpg'
+      }
     },
   },
 }

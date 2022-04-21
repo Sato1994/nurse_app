@@ -14,7 +14,23 @@
       @update-requests="updateRequests"
       @update-offers="updateOffers"
       @update-agreements="updateAgreements"
-    />
+    >
+      <template #profile>
+        <div class="my-4 text-subtitle-2">
+          {{
+            target.address ? `${target.address}` : '住所を登録していません。'
+          }}
+        </div>
+
+        <div>
+          {{
+            target.profile
+              ? `${target.profile}`
+              : 'プロフィールを登録していません。'
+          }}
+        </div>
+      </template>
+    </Home>
   </v-container>
 </template>
 

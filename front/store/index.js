@@ -26,7 +26,7 @@ export const actions = {
             response.data.agreements
           )
           commit('issues/offers/saveOffers', response.data.offers)
-          commit('rooms/saveRooms', response.data.rooms)
+          commit('issues/rooms/saveRooms', response.data.rooms)
         })
         .catch(() => {
           this.$cookies.removeAll()

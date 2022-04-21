@@ -1,14 +1,12 @@
 <template>
   <v-app id="inspire">
     <Header />
-    <v-main class="grey lighten-3">
+    <v-main class="warning lighten-2">
       <v-container>
         <v-row>
           <v-col>
-            <v-sheet color="orange lighten-5" min-height="70vh" rounded="lg">
-              <Nuxt />
-              <Snackbar />
-            </v-sheet>
+            <Nuxt />
+            <Snackbar />
           </v-col>
         </v-row>
       </v-container>

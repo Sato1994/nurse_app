@@ -62,7 +62,7 @@ export const actions = {
             dispatch('issues/requests/saveRequests', response.data.requests, { root: true })
             dispatch('issues/agreements/saveAgreements', response.data.agreements, { root: true })
             dispatch('issues/offers/saveOffers', response.data.offers, { root: true })
-            dispatch('rooms/saveRooms', response.data.rooms, { root: true })
+            dispatch('issues/rooms/saveRooms', response.data.rooms, { root: true })
             this.$router.push(`/${this.$cookies.get('user')}/${response.data.info.myid}`)
           })
           .catch(() => {
@@ -106,7 +106,7 @@ export const actions = {
             dispatch('issues/requests/saveRequests', response.data.requests, { root: true })
             dispatch('issues/agreements/saveAgreements', response.data.agreements, { root: true })
             dispatch('issues/offers/saveOffers', response.data.offers, { root: true })
-            dispatch('rooms/saveRooms', response.data.rooms, { root: true })
+            dispatch('issues/rooms/saveRooms', response.data.rooms, { root: true })
             this.$router.push(`/${this.$cookies.get('user')}/${response.data.info.myid}`)
           })
           .catch(() => {

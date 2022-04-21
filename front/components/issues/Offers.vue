@@ -1,34 +1,26 @@
 <template>
   <v-container>
-    <v-toolbar class="mb-2" flat rounded dense color="blue" dark>
-      <v-toolbar-title>届いたリクエスト</v-toolbar-title>
-    </v-toolbar>
-
-    <v-row>
+    <v-row class="pt-5">
       <v-col
         v-for="(offer, i) in offers"
         :key="i"
         cols="12"
-        sm="6"
-        md="6"
-        lg="4"
+        sm="12"
+        md="12"
+        lg="6"
       >
         <TimeCard
           color="blue darken-3"
-          firstButtonText="受け取る"
-          secondButtonText="拒否する"
-          dotsButtonText="やあ"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
           }/${offer.partnerMyid}`"
           :partnerName="offer.partner.name"
           :startTime="offer.startTime"
           :finishTime="offer.finishTime"
-          :firstButton="true"
-          :secondButton="true"
-          :dotsButton="true"
-          @first-button-click="createRoom(offer.id)"
-          @second-button-click="displayAsRemoveOffer(offer.id)"
+          :createRoomButton="true"
+          :removeOfferButton="true"
+          @create-room-button-click="createRoom(offer.id)"
+          @remove-offer-button-click="displayAsRemoveOffer(offer.id)"
         />
       </v-col>
     </v-row>
@@ -65,7 +57,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('rooms', ['createRoom']),
+    ...mapActions('issues/rooms', ['createRoom']),
 
     removeOffer() {
       this.$store.dispatch('issues/offers/removeOffer', this.offerId)
