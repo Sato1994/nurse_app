@@ -40,8 +40,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import RefineSearch from '@/components/RefineSearch.vue'
-import TargetCard from '@/components/organisms/TargetCard.vue'
+import RefineSearch from '@/components/props/RefineSearch.vue'
+import TargetCard from '@/components/aggregations/TargetCard.vue'
 import SearchDialog from '@/components/dialog/Search.vue'
 export default {
   components: {

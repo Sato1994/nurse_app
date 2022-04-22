@@ -104,8 +104,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-import Message from '@/components/Message.vue'
-import TimeCard from '@/components/TimeCard.vue'
+import Message from '@/components/props/Message.vue'
+import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 export default {

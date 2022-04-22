@@ -29,7 +29,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Confirm from '@/components/dialog/Confirm.vue'
-import TimeCard from '@/components/TimeCard.vue'
+import TimeCard from '@/components/props/TimeCard.vue'
 
 export default {
   components: {

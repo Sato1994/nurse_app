@@ -12,7 +12,7 @@
 
 <script>
 import Times from '@/components/issues/Times.vue'
-import RefineSearch from '@/components/RefineSearch.vue'
+import RefineSearch from '@/components/props/RefineSearch.vue'
 export default {
   components: {
     Times,
