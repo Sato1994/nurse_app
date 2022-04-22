@@ -116,10 +116,10 @@
         トークルームを退出する
       </v-btn>
     </v-card-actions>
-    <v-card-actions class="pt-0">
+    <v-card-actions class="pt-0 text-truncate">
       <v-spacer> </v-spacer>
-      <v-btn v-if="partnerName" :to="partnerLink" nuxt text class="text-h6"
-        >{{ partnerName }}
+      <v-btn v-if="partnerName" :to="partnerLink" text class="text-h6">
+        {{ partnerName }}
       </v-btn>
     </v-card-actions>
   </v-card>
