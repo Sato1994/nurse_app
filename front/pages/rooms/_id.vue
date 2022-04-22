@@ -53,28 +53,32 @@
               room.closed ===
               ($cookies.get('user') === 'user' ? 'host' : 'user')
             "
+            class="pb-0"
             >お相手がトークルームから退出しました</v-card-subtitle
           >
-          <v-card-subtitle v-if="room.state === $cookies.get('user')"
-            >上記の時間で同意しています。お相手の同意をお待ちください。</v-card-subtitle
+          <v-card-subtitle
+            v-if="room.state === $cookies.get('user')"
+            class="pb-0"
+            >お相手の同意をお待ちください。</v-card-subtitle
           >
           <v-card-subtitle
             v-if="
               room.state === ($cookies.get('user') === 'user' ? 'host' : 'user')
             "
+            class="pb-0"
           >
-            お相手が上記の時間で同意しました。双方の同意で契約完了します。</v-card-subtitle
+            あなたの同意で契約完了します。</v-card-subtitle
           >
-          <v-card-subtitle v-if="room.state === 'conclusion'">
-            契約済みです。契約の途中変更は推奨されていません。</v-card-subtitle
+          <v-card-subtitle v-if="room.state === 'conclusion'" class="pb-0">
+            契約の途中変更は推奨されていません。</v-card-subtitle
           >
-          <v-card-subtitle v-if="room.state === 'cancelled'">
+          <v-card-subtitle v-if="room.state === 'cancelled'" class="pb-0">
             やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
           >
 
           <!--これがリアクティブじゃない-->
-          <v-card-subtitle v-if="timeCardColor === 'teal'">
-            契約変更中。{{
+          <v-card-subtitle v-if="timeCardColor === 'teal'" class="pb-0">
+            {{
               agreement6HoursLater
             }}までに確定されない場合、契約は破棄されます。
           </v-card-subtitle>
@@ -111,8 +115,6 @@ export default {
     Confirm,
     DatePicker,
   },
-
-  // confirmを使う処理 room退出、agreementキャンセル、room48時間以内の注意
 
   data: () => ({
     inputStar: 0,
@@ -176,8 +178,8 @@ export default {
 
     updateStateButtonText() {
       return this.room.state === this.$cookies.get('user')
-        ? '同意を解除する'
-        : 'この時間で同意する'
+        ? '同意を解除'
+        : 'この時間で同意'
     },
 
     updateTimeButton() {
