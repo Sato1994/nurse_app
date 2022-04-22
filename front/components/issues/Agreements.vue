@@ -21,7 +21,7 @@
         >
           <template #description>
             <v-card-subtitle v-if="agreement.state === 'requesting'">
-              契約変更中。{{
+              {{
                 $store.getters['agreement/formattingTo6HoursLater'](agreement)
               }}までに再確定してください
             </v-card-subtitle>

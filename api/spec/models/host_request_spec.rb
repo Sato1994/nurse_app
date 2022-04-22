@@ -41,6 +41,14 @@ RSpec.describe HostRequest, type: :model do
         host_request.valid?
         expect(host_request.errors[:message]).to include('同じ時間帯でお相手と交渉中です。')
       end
+
+      it 'userのwantedがfalseならば期待するエラーメッセージを返す' do
+        user = create(:user, wanted: false)
+        free_time =  create(:free_time, user: user)
+        host_request = build(:host_request, free_time: free_time)
+        host_request.valid?
+        expect(host_request.errors[:message]).to include ('お相手は現在リクエストを募集していません。')
+      end
     end
 
     context '期間制限チェック' do

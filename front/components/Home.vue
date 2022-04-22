@@ -56,7 +56,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar :events="events" />
+    <Calendar :events="events" :wanted="target.wanted" />
 
     <v-divider class="mx-4"></v-divider>
 

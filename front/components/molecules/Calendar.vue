@@ -150,6 +150,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    wanted: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data: () => ({
@@ -337,11 +341,22 @@ export default {
 
     showEvent({ nativeEvent, event }) {
       const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => (this.selectedOpen = true))
-        )
+        if (
+          this.$route.path !==
+            `/${this.$store.state.info.me}/${this.$store.state.info.info.myid}` &&
+          this.wanted === false
+        ) {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'お相手は現在リクエストを募集していません。'
+          )
+        } else {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => (this.selectedOpen = true))
+          )
+        }
       }
       if (this.selectedOpen) {
         this.selectedOpen = false

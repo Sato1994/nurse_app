@@ -18,6 +18,7 @@ class UserRequest < ApplicationRecord
   validate :duplication_of_room
   validate :user_request_has_some_hours_grace
   validate :limitation_of_user_request_hours
+  validate :host_wanted
 
   def included_in_the_recruitment_time
     unless RecruitmentTime.exists?(['start_time <= ? && finish_time >= ? && id = ?', start_time, finish_time,
@@ -55,6 +56,11 @@ class UserRequest < ApplicationRecord
                      finish_time])
       errors.add(:message, '同じ時間帯でお相手と交渉中です。')
     end
+  end
+
+  def host_wanted
+    host = RecruitmentTime.find(recruitment_time_id).host
+    errors.add(:message, 'お相手は現在リクエストを募集していません。') unless host.wanted == true
   end
 
   def user_request_has_some_hours_grace

@@ -4,7 +4,7 @@
       <v-menu bottom left>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
-            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+            <v-icon size="30">{{ authIcon }}</v-icon>
           </v-btn>
         </template>
 
@@ -107,6 +107,12 @@ export default {
   computed: {
     myPageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+    },
+
+    authIcon() {
+      return this.$store.state.info.info.myid
+        ? 'mdi-account-cog-outline'
+        : 'mdi-login'
     },
   },
 
