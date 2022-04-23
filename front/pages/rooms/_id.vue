@@ -5,9 +5,10 @@
         v-if="agreement.state !== 'cancelled'"
         height="250"
         src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+        class="map"
       ></v-img>
 
-      <v-container v-if="agreement.state === 'finished'" fluid>
+      <v-container v-if="agreement.state === 'finished'" fluid class="rateArea">
         <v-textarea
           v-model="inputComment"
           append-icon="mdi-send-outline"
@@ -131,15 +132,11 @@ export default {
   },
 
   computed: {
-    agreement: {
-      get() {
-        return Object.assign({}, this.$store.getters['agreement/agreement'])
-      },
+    agreement() {
+      return this.$store.getters['agreement/agreement']
     },
-    room: {
-      get() {
-        return Object.assign({}, this.$store.getters['room/room'])
-      },
+    room() {
+      return this.$store.getters['room/room']
     },
 
     agreement6HoursLater() {
@@ -240,8 +237,6 @@ export default {
       })
       this.datePickerDisplay = false
     },
-
-    // ///////// agreement一覧でやってた処理
 
     editAgreement() {
       this.$axios
