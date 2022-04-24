@@ -30,6 +30,12 @@ export const mutations = {
     const index = state.rooms.indexOf(target)
     state.rooms.splice(index, 1)
   },
+
+  updateTime(state, payload) {
+    const target = state.rooms.find(room => room.id === payload.room.id)
+    target.start_time = payload.room.start_time
+    target.finish_time = payload.room.finish_time
+  }
 }
 
 export const actions = {
