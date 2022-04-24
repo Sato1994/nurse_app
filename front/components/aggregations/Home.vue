@@ -97,7 +97,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 import SkillList from '@/components/dialog/SkillList.vue'
-import Calendar from '@/components/molecules/Calendar.vue'
+import Calendar from '@/components/aggregations/Calendar.vue'
 export default {
   components: {
     SkillList,

@@ -124,7 +124,7 @@ class Api::RoomsController < ApplicationController
         room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'changed')
 
         render_room = {
-          start_time: room.start_time, finish_time: room.finish_time
+          id: room.id, start_time: room.start_time, finish_time: room.finish_time
         }
 
         render json: { room: render_room }
@@ -139,7 +139,7 @@ class Api::RoomsController < ApplicationController
         room.create_user_notice_with_checked_validate!(user_id: room.user_id, action: 'changed')
 
         render_room = {
-          start_time: room.start_time, finish_time: room.finish_time
+          id: room.id, start_time: room.start_time, finish_time: room.finish_time
         }
 
         render json: { room: render_room }

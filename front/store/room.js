@@ -1,19 +1,19 @@
 export const state = () => ({
   room: {
-    id: '',
-    start_time: '',
-    finish_time: '',
-    state: '',
-    closed: '',
-    na: '',
+    id: null,
+    start_time: null,
+    finish_time: null,
+    state: null,
+    closed: null,
+    na: null,
     user_messages: [],
     host_messages: [],
     partner: {
-      id: '',
-      name: '',
-      myid: '',
+      id: null,
+      name: null,
+      myid: null,
       image: {
-        url: '',
+        url: null,
       },
     }
   },
@@ -33,12 +33,23 @@ export const mutations = {
   },
 
   updateTime(state, payload) {
-    state.room.star_time = payload.room.start_time
+    state.room.start_time = payload.room.start_time
     state.room.finish_time = payload.room.finish_time
   },
 
   removeRoom(state) {
-    state.room = {}
+    state.room.id = null
+    state.room.start_time = null
+    state.room.finish_time = null
+    state.room.state = null
+    state.room.closed = null
+    state.room.na = null
+    state.room.user_message = []
+    state.room.host_message = []
+    state.room.partner.id = null
+    state.room.partner.name = null
+    state.room.partner.myid = null
+    state.room.partner.image.url = null
   },
 
   updateState(state, payload) {
@@ -86,6 +97,7 @@ export const actions = {
         { headers: this.$cookies.get('authInfo') }
       )
     commit('updateTime', data)
+    commit('issues/rooms/updateTime', data, { root: true })
 
     dispatch(
       'snackbar/setMessage',

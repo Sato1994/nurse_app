@@ -25,7 +25,7 @@
 
     <slot name="description"></slot>
 
-    <v-card-actions class="">
+    <v-card-actions>
       <v-btn
         v-if="updateStateButton"
         :disabled="!clickable"

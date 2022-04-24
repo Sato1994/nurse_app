@@ -134,7 +134,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
-import TimeCard from '@/components/TimeCard.vue'
+import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 const today = new Date()
 

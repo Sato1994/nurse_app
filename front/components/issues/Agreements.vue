@@ -41,7 +41,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TimeCard from '@/components/TimeCard.vue'
+import TimeCard from '@/components/props/TimeCard.vue'
 export default {
   components: {
     TimeCard,
