@@ -92,7 +92,7 @@
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
-        @agree-button-click="cancellRoom"
+        @agree-button-click="actionConfirmAgree"
         @disagree-button-click="hideConfirm"
       />
       <DatePicker
@@ -192,7 +192,10 @@ export default {
       return this.agreement.state === 'before'
     },
     cancellAgreementButton() {
-      return this.agreement.state === 'before'
+      return (
+        this.agreement.state === 'before' &&
+        this.$cookies.get('user') === 'user'
+      )
     },
     cancellRoomButton() {
       return this.room.state !== 'conclusion'
@@ -205,6 +208,10 @@ export default {
     ...mapActions('room', ['updateState', 'cancellRoom']),
 
     ...mapActions('agreement', ['editAgreement']),
+
+    actionConfirmAgree() {
+      this.agreement.id === null ? this.cancellRoom() : this.cancellAgreement()
+    },
 
     createRate() {
       this.$axios.post(
@@ -250,23 +257,32 @@ export default {
       this.$store.commit('dialog/confirm/displayAsCancellAgreement')
     },
 
-    cancellAgreement(comment) {
-      this.$store
-        .dispatch('issues/agreements/cancellAgreement', {
-          agreementId: this.agreement.id,
-          roomId: this.room.id,
-          comment,
-        })
-        .then(() => {
-          this.confirmDisplay = false
-        })
+    async cancellAgreement(comment) {
+      try {
+        const { data } = await this.$axios.patch(
+          '/api/agreements/cancell',
+          { id: this.agreement.id, comment },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        this.confirmDialog = false
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          '契約をキャンセルしました。'
+        )
+
+        // agreement status変更
+        this.$store.commit('agreement/updateState', { state: 'cancelled' })
+        // room status変更
+        this.$store.commit('room/updateState', { state: 'cancelled' })
+        // agreements status変更
+        this.$store.commit('issues/updateState', data.agreement)
+      } catch (error) {
         // 48時間以内だった場合
-        .catch((error) => {
-          if (error.response.status === 400) {
-            this.confirmDisplay = true
-            this.$store.commit('dialog/confirm/displayWithComment')
-          }
-        })
+        if (error.response.status === 702) {
+          this.confirmDisplay = true
+          this.$store.commit('dialog/confirm/displayWithComment')
+        }
+      }
     },
   },
 }

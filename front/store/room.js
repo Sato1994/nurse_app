@@ -110,6 +110,7 @@ export const actions = {
     switch (room.state) {
       case this.$cookies.get('user') === 'user' ? 'host' : 'user':
         // agreement create
+        // または agreement再確定
 
         try {
           const agreementRes = await this.$axios
@@ -126,6 +127,8 @@ export const actions = {
               }
             )
           commit('agreement/saveAgreement', agreementRes.data.agreement, { root: true })
+          commit('issues/agreements/updateState', agreementRes.data.agreement, { root: true })
+          commit('issues/agreements/updateTime', agreementRes.data.agreement, { root: true })
           // 成功したらstate変更, agreementに値を挿入!!!!!!!!!!!!!
           const { data } = await this.$axios
             .patch(

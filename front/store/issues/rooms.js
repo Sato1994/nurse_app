@@ -33,8 +33,10 @@ export const mutations = {
 
   updateTime(state, payload) {
     const target = state.rooms.find(room => room.id === payload.room.id)
-    target.start_time = payload.room.start_time
-    target.finish_time = payload.room.finish_time
+    if (target) {
+      target.start_time = payload.room.start_time
+      target.finish_time = payload.room.finish_time
+    }
   }
 }
 
@@ -47,21 +49,23 @@ export const actions = {
     commit('addRoom', room)
   },
 
-  createRoom({ dispatch, commit }, requestId) {
-    this.$axios
-      .post(
-        '/api/rooms',
-        {
-          request_id: requestId,
-        },
-        { headers: this.$cookies.get('authInfo') }
-      )
-      .then((response) => {
-        dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
-        commit('issues/offers/removeOffer', requestId, { root: true })
-        dispatch('addRoom', response.data.room)
-        this.$router.push(`/rooms/${response.data.room.id}`)
-      })
+  async createRoom({ dispatch, commit }, requestId) {
+    try {
+      const { data } = await this.$axios
+        .post(
+          '/api/rooms',
+          {
+            request_id: requestId,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
+      commit('issues/offers/removeOffer', requestId, { root: true })
+      dispatch('addRoom', data.room)
+      this.$router.push(`/rooms/${data.room.id}`)
+    } catch (error) {
+      console.log('room作成失敗時の挙動', error)
+    }
   },
 
 }

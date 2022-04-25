@@ -101,8 +101,11 @@ class Api::AgreementsController < ApplicationController
 
       FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                   Time.zone.parse(params[:finish_time]))
-      render json: room.agreement, status: :ok
-
+      
+      render_agreement = room.agreement.as_json(
+        only: %i[id state start_time finish_time]
+      )
+      render json: {agreement: render_agreement}, status: :ok
     else
       render json: room.agreement.errors, status: :bad_request
 
