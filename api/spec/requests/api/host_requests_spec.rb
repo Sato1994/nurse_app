@@ -14,7 +14,7 @@ RSpec.describe 'Api::HostRequests', type: :request do
     context 'hostがログインしてる場合' do
       before do
         host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now)
-        host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 1.second)
+        host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 2.second)
         post '/api/host/sign_in', params: { email: host_request_2.host.email, password: host_request_2.host.password }
         get '/api/host_requests', params: { id: host_request_2.host_id }, headers: headers
       end

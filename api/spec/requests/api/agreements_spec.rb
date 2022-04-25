@@ -129,9 +129,9 @@ RSpec.describe 'Api::Agreements', type: :request do
           end.to change(FreeTime, :count).from(1).to(0)
         end
 
-        it '更新成功したらプロパティの数のjsonを返す' do
+        it '更新成功したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json.count).to eq(9)
+          expect(json['agreement'].count).to eq(4)
         end
 
         it '更新成功したらステータス201を返す' do
@@ -234,9 +234,9 @@ RSpec.describe 'Api::Agreements', type: :request do
           end.to change(FreeTime, :count).from(1).to(0)
         end
 
-        it '更新成功したらプロパティの数のjsonを返す' do
+        it '更新成功したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json.count).to eq(9)
+          expect(json['agreement'].count).to eq(4)
         end
 
         it '更新成功したらステータス201を返す' do
