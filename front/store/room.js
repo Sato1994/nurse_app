@@ -108,44 +108,55 @@ export const actions = {
   async updateState({ commit, getters }) {
     const room = getters.room
     switch (room.state) {
-      case this.$cookies.get('user') === 'user' ? 'host' : 'user': {
+      case this.$cookies.get('user') === 'user' ? 'host' : 'user':
         // agreement create
-        await this.$axios
-          .post(
-            `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-            }/${room.partnerId}`,
-            {
-              room_id: room.id,
-              start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
-              finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
-            },
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        // 成功したらstate変更
-        const { data } = await this.$axios
-          .patch(
-            `/api/rooms/${room.id}/update_room_state`,
-            {},
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        commit('updateState', { state: data.state })
-      }
+
+        try {
+          const agreementRes = await this.$axios
+            .post(
+              `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${room.partnerId}`,
+              {
+                room_id: room.id,
+                start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
+                finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
+              },
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+          commit('agreement/saveAgreement', agreementRes.data.agreement, { root: true })
+          // 成功したらstate変更, agreementに値を挿入!!!!!!!!!!!!!
+          const { data } = await this.$axios
+            .patch(
+              `/api/rooms/${room.id}/update_room_state`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+
+          commit('updateState', { state: data.state })
+          commit('issues/rooms/removeRoom', { id: room.id }, { root: true })
+        } catch (error) {
+          console.log('agreement作成がしっぱいしたときの処理', error)
+        }
         break
-      default: {
-        const { data } = await this.$axios
-          .patch(
-            `/api/rooms/${room.id}/update_room_state`,
-            {},
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        commit('updateState', { state: data.state })
-      }
+      default:
+        try {
+          const { data } = await this.$axios
+            .patch(
+              `/api/rooms/${room.id}/update_room_state`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+          commit('updateState', { state: data.state })
+        } catch (error) {
+          console.log('一人目の同意ができなかったときの処理', error)
+        }
+
     }
   },
 

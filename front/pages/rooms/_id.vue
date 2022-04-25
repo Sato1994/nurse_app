@@ -8,6 +8,8 @@
         class="map"
       ></v-img>
 
+      {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
+
       <v-container v-if="agreement.state === 'finished'" fluid class="rateArea">
         <v-textarea
           v-model="inputComment"
