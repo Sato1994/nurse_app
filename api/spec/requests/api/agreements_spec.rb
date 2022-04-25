@@ -84,9 +84,9 @@ RSpec.describe 'Api::Agreements', type: :request do
           expect { correct_post }.to change(FreeTime, :count).from(1).to(0)
         end
 
-        it '登録したらプロパティの数のjsonを返す' do
+        it '登録したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json.count).to eq(9)
+          expect(json['agreement'].count).to eq(4)
         end
 
         it '登録したらステータス201を返す' do
@@ -180,9 +180,9 @@ RSpec.describe 'Api::Agreements', type: :request do
           expect { correct_post }.to change(FreeTime, :count).from(1).to(0)
         end
 
-        it '登録したらjsonを返す' do
+        it '登録したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json.count).to eq(9)
+          expect(json['agreement'].count).to eq(4)
         end
 
         it '登録したらステータス201を返す' do

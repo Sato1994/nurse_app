@@ -53,10 +53,30 @@ export const mutations = {
     state.finishTime.hour = null
     state.finishTime.minute = null
   },
+
+  updateState(state, payload) {
+    state.state = payload.state
+  },
 }
 
 export const actions = {
-
+  async editAgreement({ commit }, payload) {
+    try {
+      const { data } = await this.$axios
+        .patch(
+          `/api/agreements/${payload.agreementId}`,
+          {},
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+      commit('room/updateState', data.room, { root: true })
+      commit('updateState', data.agreement)
+      commit('issues/agreements/updateState', data.agreement, { root: true })
+    } catch (error) {
+      console.log('editAgreementが失敗した時のしょり', error)
+    }
+  },
 }
 
 export const getters = {

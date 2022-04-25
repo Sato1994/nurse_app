@@ -24,7 +24,8 @@ export const mutations = {
   },
 
   updateState(state, payload) {
-    state.agreements.find(obj => obj.id === payload.id).state = payload.state
+    const target = state.agreements.find(agreement => agreement.id === payload.id)
+    target.state = payload.state
   },
 }
 

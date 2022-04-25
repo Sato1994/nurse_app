@@ -46,7 +46,9 @@
         :tile="true"
         @update-state-button-click="updateState"
         @update-time-button-click="openDatePicker"
-        @edit-agreement-button-click="editAgreement"
+        @edit-agreement-button-click="
+          editAgreement({ agreementId: agreement.id })
+        "
         @cancell-agreement-button-click="displayAsCancellAgreement"
         @cancell-room-button-click="displayConfirm"
       >
@@ -201,6 +203,9 @@ export default {
 
   methods: {
     ...mapActions('room', ['updateState', 'cancellRoom']),
+
+    ...mapActions('agreement', ['editAgreement']),
+
     createRate() {
       this.$axios.post(
         '/api/rates',
@@ -240,42 +245,6 @@ export default {
       this.datePickerDisplay = false
     },
 
-    editAgreement() {
-      this.$axios
-        .patch(
-          `/api/agreements/${this.agreement.id}`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then((response) => {
-          console.log('レスポンす', response)
-          // リアクティブに反映させてね！！！！！！！2
-          // agreement 変更した後の更新
-          // {"agreement":{
-          //   "user_id":49,
-          //   "start_time":"2022-04-27T12:00:00.000+09:00",
-          //   "id":1,
-          //   "state":"requesting",
-          //   "host_id":46,
-          //   "room_id":1,
-          //   "finish_time":"2022-04-27T17:00:00.000+09:00",
-          //   "created_at":"2022-04-20T00:38:27.216+09:00",
-          //   "updated_at":"2022-04-20T00:45:47.696+09:00"},
-          //   "room":{
-          //     "id":1,
-          //     "state":"negotiating",
-          //     "user_id":49,
-          //     "host_id":46,
-          //     "start_time":"2022-04-27T12:00:00.000+09:00",
-          //     "finish_time":"2022-04-27T17:00:00.000+09:00",
-          //     "closed":"na",
-          //     "created_at":"2022-04-20T00:38:27.190+09:00",
-          //     "updated_at":"2022-04-20T00:45:47.714+09:00"}
-          //     }
-        })
-    },
     displayAsCancellAgreement() {
       this.confirmDialog = true
       this.$store.commit('dialog/confirm/displayAsCancellAgreement')
