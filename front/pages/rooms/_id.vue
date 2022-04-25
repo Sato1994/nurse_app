@@ -172,7 +172,6 @@ export default {
       }`
     },
 
-    // button 関係
     updateStateButton() {
       return this.room.state !== 'conclusion' && this.room.state !== 'cancelled'
     },
@@ -198,10 +197,12 @@ export default {
       )
     },
     cancellRoomButton() {
-      return this.room.state !== 'conclusion'
+      return (
+        (this.$cookies.get('user') === 'user' &&
+          this.room.state !== 'conclusion') ||
+        (this.$cookies.get('user') === 'host' && this.agreement.id === null)
+      )
     },
-
-    // ///////////
   },
 
   methods: {

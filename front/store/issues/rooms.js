@@ -63,8 +63,7 @@ export const actions = {
       commit('issues/offers/removeOffer', requestId, { root: true })
       dispatch('addRoom', data.room)
       this.$router.push(`/rooms/${data.room.id}`)
-    } catch (error) {
-      console.log('room作成失敗時の挙動', error)
+    } catch {
     }
   },
 

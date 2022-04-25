@@ -73,8 +73,7 @@ export const actions = {
       commit('room/updateState', data.room, { root: true })
       commit('updateState', data.agreement)
       commit('issues/agreements/updateState', data.agreement, { root: true })
-    } catch (error) {
-      console.log('editAgreementが失敗した時のしょり', error)
+    } catch {
     }
   },
 }

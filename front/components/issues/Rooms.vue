@@ -15,15 +15,16 @@
           :partnerName="room.partner.name"
           :startTime="room.startTime"
           :finishTime="room.finishTime"
-          color="warning"
+          :color="color(room)"
           :lockButton="false"
           @click.native="$router.push(`/rooms/${room.id}`)"
         >
           <template #description>
-            <v-card-subtitle
-              v-if="room.state !== 'conclusion' || room.state !== 'cancelled'"
-            >
+            <v-card-subtitle v-if="room.state === 'before'">
               契約前
+            </v-card-subtitle>
+            <v-card-subtitle v-if="room.state === 'cancelled'">
+              キャンセル
             </v-card-subtitle>
           </template>
 
@@ -44,6 +45,15 @@ export default {
 
   computed: {
     ...mapGetters('issues/rooms', ['rooms']),
+  },
+  methods: {
+    color(room) {
+      if (room.state === 'before') {
+        return 'warning'
+      } else if (room.state === 'cancelled') {
+        return 'grey'
+      }
+    },
   },
 }
 </script>

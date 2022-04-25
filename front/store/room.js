@@ -141,8 +141,7 @@ export const actions = {
 
           commit('updateState', { state: data.state })
           commit('issues/rooms/removeRoom', { id: room.id }, { root: true })
-        } catch (error) {
-          console.log('agreement作成がしっぱいしたときの処理', error)
+        } catch {
         }
         break
       default:
@@ -156,8 +155,7 @@ export const actions = {
               }
             )
           commit('updateState', { state: data.state })
-        } catch (error) {
-          console.log('一人目の同意ができなかったときの処理', error)
+        } catch {
         }
 
     }
