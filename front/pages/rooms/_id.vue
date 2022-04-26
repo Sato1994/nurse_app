@@ -195,7 +195,8 @@ export default {
 
     cancellAgreementButton() {
       return (
-        this.agreement.state === 'before' &&
+        (this.agreement.state === 'before' ||
+          this.agreement.state === 'requesting') &&
         this.$cookies.get('user') === 'user'
       )
     },
