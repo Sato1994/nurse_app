@@ -243,6 +243,38 @@ class Api::RoomsController < ApplicationController
     end
   end
 
+  def leave
+    room = Room.find(params[:id])
+
+    if user_login_and_own?(room.user.id)
+      case room.closed
+      when 'na'
+        room.update(closed: 'user')
+      when 'host'
+        room.update(closed: 'both')
+      else
+        render body: nil, status: :bad_request
+        return
+      end
+      render json: { closed: room.closed }
+
+    elsif host_login_and_own?(room.host.id)
+      case room.closed
+      when 'na'
+        room.update(closed: 'host')
+      when 'user'
+        room.update(closed: 'both')
+      else
+        render body: nil, status: :bad_request
+        return
+      end
+      render json: { closed: room.closed }
+
+    else
+      render body: nil, status: :forbidden
+    end
+  end
+
   private
 
   def room_user_signed_in_params_update

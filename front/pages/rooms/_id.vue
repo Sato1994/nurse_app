@@ -40,6 +40,7 @@
         :updateStateButtonText="updateStateButtonText"
         :editAgreementButton="editAgreementButton"
         :cancellAgreementButton="cancellAgreementButton"
+        :leaveButton="leaveButton"
         :cancellRoomButton="cancellRoomButton"
         :color="timeCardColor"
         :shaped="false"
@@ -51,6 +52,7 @@
         "
         @cancell-agreement-button-click="displayAsCancellAgreement"
         @cancell-room-button-click="displayConfirm"
+        @leave-button-click="leaveRoom"
       >
         <template #description>
           <v-card-subtitle
@@ -81,7 +83,6 @@
             やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
           >
 
-          <!--これがリアクティブじゃない-->
           <v-card-subtitle v-if="timeCardColor === 'teal'" class="pb-0">
             {{
               agreement6HoursLater
@@ -187,26 +188,29 @@ export default {
         this.room.state === 'negotiating' && this.room.state !== 'cancelled'
       )
     },
+
     editAgreementButton() {
       return this.agreement.state === 'before'
     },
+
     cancellAgreementButton() {
       return (
         this.agreement.state === 'before' &&
         this.$cookies.get('user') === 'user'
       )
     },
+
     cancellRoomButton() {
-      return (
-        (this.$cookies.get('user') === 'user' &&
-          this.room.state !== 'conclusion') ||
-        (this.$cookies.get('user') === 'host' && this.agreement.id === null)
-      )
+      return this.agreement.id === null && this.room.state !== 'cancelled'
+    },
+
+    leaveButton() {
+      return this.room.state === 'cancelled'
     },
   },
 
   methods: {
-    ...mapActions('room', ['updateState', 'cancellRoom']),
+    ...mapActions('room', ['updateState', 'cancellRoom', 'leaveRoom']),
 
     ...mapActions('agreement', ['editAgreement']),
 

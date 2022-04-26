@@ -443,7 +443,7 @@ RSpec.describe 'Api::Rooms', type: :request do
     end
   end
 
-  describe 'PATCh /cancell_room' do
+  describe 'PATCH /cancell_room' do
     let!(:room) { create(:room) }
 
     context 'userとしてログインしている場合' do
@@ -523,6 +523,44 @@ RSpec.describe 'Api::Rooms', type: :request do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.not_to change { room.reload.closed }
+      end
+    end
+  end
+
+  describe 'PATCH /leave' do
+    let!(:room) { create(:room) }
+
+    context 'userとしてログイン' do
+      before do
+        post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
+      end
+
+      it 'closedが変更される' do
+        expect  do
+          patch '/api/rooms/leave', params: { id: room.id }, headers: headers
+        end.to change { room.reload.closed }
+      end
+
+      it '成功したら適切な数のjsonを返す' do
+        patch '/api/rooms/leave', params: { id: room.id }, headers: headers
+        expect(json.count).to eq(1)
+      end
+    end
+
+    context 'hostとしてログイン' do
+      before do
+        post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
+      end
+
+      it 'closedが変更される' do
+        expect  do
+          patch '/api/rooms/leave', params: { id: room.id }, headers: headers
+        end.to change { room.reload.closed }
+      end
+
+      it '成功したら適切な数のjsonを返す' do
+        patch '/api/rooms/leave', params: { id: room.id }, headers: headers
+        expect(json.count).to eq(1)
       end
     end
   end

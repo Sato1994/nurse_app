@@ -129,7 +129,7 @@ export const actions = {
           commit('agreement/saveAgreement', agreementRes.data.agreement, { root: true })
           commit('issues/agreements/updateState', agreementRes.data.agreement, { root: true })
           commit('issues/agreements/updateTime', agreementRes.data.agreement, { root: true })
-          // 成功したらstate変更, agreementに値を挿入!!!!!!!!!!!!!
+
           const { data } = await this.$axios
             .patch(
               `/api/rooms/${room.id}/update_room_state`,
@@ -157,7 +157,6 @@ export const actions = {
           commit('updateState', { state: data.state })
         } catch {
         }
-
     }
   },
 
@@ -174,6 +173,20 @@ export const actions = {
     commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
     commit('removeRoom')
     dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
+  },
+
+  async leaveRoom({ commit, state, rootState }) {
+    try {
+      await this.$axios
+        .patch(
+          '/api/rooms/leave',
+          { id: state.room.id },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
+      this.$router.push(`/${this.$cookies.get('user')}/${rootState.info.info.myid}`)
+    } catch {
+    }
   },
 }
 

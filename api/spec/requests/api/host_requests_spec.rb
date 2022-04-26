@@ -33,7 +33,7 @@ RSpec.describe 'Api::HostRequests', type: :request do
 
       it '現在時刻からちょうど8時間を超えたものだけ削除される' do
         create(:host_request, :skip_validate, start_time: 7.hours.from_now, free_time: free_time)
-        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 1.second, free_time: free_time)
+        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 2.second, free_time: free_time)
         post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
         get '/api/host_requests', params: { id: free_time.user_id }, headers: headers
         expect(HostRequest.count).to eq(1)
