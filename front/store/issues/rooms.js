@@ -1,20 +1,22 @@
 export const state = () => ({
   rooms: [],
-  // rooms: [
-  //   {
-  //     "id": 133,
-  //     "created_at": "2022-04-18T17:02:37.858+09:00",
-  //     "start_time": "2022-04-20T22:00:00.000+09:00",
-  //     "finish_time": "2022-04-21T08:00:00.000+09:00",
-  //     "state": "negotiating",
-  //     "closed": "na",
-  //     "partner": {
-  //       "id": 46,
-  //       "name": "東京都立孝之協同病院"
-  //     }
-  //   }
-  // ]
 })
+
+// rooms: [
+//   {
+//     "id": 133,
+//     "created_at": "2022-04-18T17:02:37.858+09:00",
+//     "start_time": "2022-04-20T22:00:00.000+09:00",
+//     "finish_time": "2022-04-21T08:00:00.000+09:00",
+//     "state": "negotiating",
+//     "closed": "na",
+//     "partner": {
+//       "id": 46,
+//       "name": "東京都立孝之協同病院"
+//     }
+//   }
+// ]
+
 
 export const mutations = {
   saveRooms(state, rooms) {
@@ -45,10 +47,6 @@ export const actions = {
     commit('saveRooms', rooms)
   },
 
-  addRoom({ commit }, room) {
-    commit('addRoom', room)
-  },
-
   async createRoom({ dispatch, commit }, requestId) {
     try {
       const { data } = await this.$axios
@@ -61,7 +59,7 @@ export const actions = {
         )
       dispatch('snackbar/setMessage', 'トークルームが作成されました。', { root: true })
       commit('issues/offers/removeOffer', requestId, { root: true })
-      dispatch('addRoom', data.room)
+      commit('addRoom', data.room)
       this.$router.push(`/rooms/${data.room.id}`)
     } catch {
     }
