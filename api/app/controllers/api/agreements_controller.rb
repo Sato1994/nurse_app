@@ -78,11 +78,11 @@ class Api::AgreementsController < ApplicationController
 
         FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                     Time.zone.parse(params[:finish_time]))
-                                    
+
         render_agreement = agreement.as_json(
           only: %i[id state start_time finish_time]
         )
-        render json: {agreement: render_agreement}, status: :created
+        render json: { agreement: render_agreement }, status: :created
       else
         render json: agreement.errors, status: :bad_request
 
@@ -101,11 +101,11 @@ class Api::AgreementsController < ApplicationController
 
       FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                   Time.zone.parse(params[:finish_time]))
-      
+
       render_agreement = room.agreement.as_json(
         only: %i[id state start_time finish_time]
       )
-      render json: {agreement: render_agreement}, status: :ok
+      render json: { agreement: render_agreement }, status: :ok
     else
       render json: room.agreement.errors, status: :bad_request
 
@@ -117,21 +117,17 @@ class Api::AgreementsController < ApplicationController
     agreement = Agreement.find(params[:id])
 
     if user_login_and_own?(agreement.user.id) || host_login_and_own?(agreement.host.id)
-
       if agreement.start_time > 24.hours.since
+        state = agreement.update_state
 
-        if state = agreement.update_state
+        if api_user_signed_in?
+          agreement.create_host_notice!(host_id: agreement.host_id, action: 'changed')
 
-          if api_user_signed_in?
-            agreement.create_host_notice!(host_id: agreement.host_id, action: 'changed')
-
-          elsif api_host_signed_in?
-            agreement.create_user_notice!(user_id: agreement.user_id, action: 'changed')
-
-          end
-          render json: state
+        elsif api_host_signed_in?
+          agreement.create_user_notice!(user_id: agreement.user_id, action: 'changed')
 
         end
+        render json: state
 
       else
         render body: nil, status: :bad_request

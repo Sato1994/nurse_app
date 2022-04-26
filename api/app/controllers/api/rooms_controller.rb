@@ -212,35 +212,21 @@ class Api::RoomsController < ApplicationController
   def cancell_room
     room = Room.find(params[:id])
 
-    if user_login_and_own?(room.user.id)
-      case room.closed
-      when 'na'
-        room.create_host_notice!(host_id: room.host_id, action: 'left') if room.update(closed: 'user')
-      when 'host' || 'user'
-        room.update(closed: 'both')
-      else
-        render body: nil, status: :bad_request
-      end
+    unless room.state == 'negotiating' || room.state == 'user' || room.state == 'host'
+      render body: nil, status: :bad_request
+      return
+    end
 
-      room.update(state: 'cancelled')
-      render json: { state: room.state, closed: room.closed }
+    if user_login_and_own?(room.user.id)
+      room.create_host_notice!(host_id: room.host_id, action: 'left') if  room.update(state: 'cancelled')
 
     elsif host_login_and_own?(room.host.id)
-      case room.closed
-      when 'na'
-        room.create_user_notice!(user_id: room.user_id, action: 'left') if room.update(closed: 'host')
-      when 'host' || 'user'
-        room.update(closed: 'both')
-      else
-        render body: nil, status: :bad_request
-      end
-
-      room.update(state: 'cancelled')
-      render json: { state: room.state, closed: room.closed }
-
+      room.create_user_notice!(user_id: room.user_id, action: 'left') if  room.update(state: 'cancelled')
     else
       render body: nil, status: :forbidden
+      return
     end
+    render json: { state: room.state, closed: room.closed }
   end
 
   def leave

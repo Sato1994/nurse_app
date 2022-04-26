@@ -451,33 +451,21 @@ RSpec.describe 'Api::Rooms', type: :request do
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
       end
 
-      it 'closedが変更される' do
-        expect  do
-          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
-        end.to change { room.reload.closed }
-      end
-
       it 'stateが変更される' do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.to change { room.reload.state }
       end
 
-      it '成功したら適切な数のjsonを返す' do
-        expect(json.count).to eq(1)
-      end
-
-      it 'closedがuserへ変更された場合host_noticeが作成される' do
+      it 'stateが変更された場合host_noticeが作成される' do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.to change(HostNotice, :count).to(1).from(0)
       end
 
-      it 'closedがbothへ変更された場合host_noticeは作成されない' do
-        room = create(:room, closed: 'host')
-        expect  do
-          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
-        end.not_to change(HostNotice, :count)
+      it '成功したら適切な数のjsonを返す' do
+        patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        expect(json.count).to eq(2)
       end
     end
 
@@ -486,43 +474,76 @@ RSpec.describe 'Api::Rooms', type: :request do
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
       end
 
-      it 'closedが変更される' do
-        expect  do
-          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
-        end.to change { room.reload.closed }
-      end
-
       it 'stateが変更される' do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.to change { room.reload.state }
       end
 
-      it '成功したら適切なjsonを返す' do
-        expect(json.count).to eq(1)
-      end
-
-      it 'closedがhostへ変更された場合user_noticeが作成される' do
+      it 'stateが変更された場合user_noticeが作成される' do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.to change(UserNotice, :count).to(1).from(0)
       end
 
-      it 'closedがbothへ変更された場合user_noticeは作成されない' do
-        room = create(:room, closed: 'user')
-        expect  do
-          patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
-        end.not_to change(UserNotice, :count)
+      it '成功したら適切なjsonを返す' do
+        patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        expect(json.count).to eq(2)
+      end
+    end
+
+    context 'roomの初期state' do
+      it 'negotiatingの場合status200を返す' do
+        room_negotiating = create(:room, state: 'negotiating')
+        post '/api/user/sign_in', params: { email: room_negotiating.user.email, password: room_negotiating.user.password }
+        patch '/api/rooms/cancell_room', params: { id: room_negotiating.id }, headers: headers
+        expect(response.status).to eq(200)
+      end
+
+      it 'userの場合status200を返す' do
+        room_user = create(:room, state: 'user')
+        post '/api/user/sign_in', params: { email: room_user.user.email, password: room_user.user.password }
+        patch '/api/rooms/cancell_room', params: { id: room_user.id }, headers: headers
+        expect(response.status).to eq(200)
+      end
+
+      it 'hostの場合status200を返す' do
+        room_host = create(:room, state: 'host')
+        post '/api/user/sign_in', params: { email: room_host.user.email, password: room_host.user.password }
+        patch '/api/rooms/cancell_room', params: { id: room_host.id }, headers: headers
+        expect(response.status).to eq(200)
+      end
+
+      it 'conclusionの場合status400を返す' do
+        room_conclusion = create(:room, state: 'conclusion')
+        post '/api/user/sign_in', params: { email: room_conclusion.user.email, password: room_conclusion.user.password }
+        patch '/api/rooms/cancell_room', params: { id: room_conclusion.id }, headers: headers
+        expect(response.status).to eq(400)
+      end
+
+      it 'cancelledの場合status400を返す' do
+        room_cancelled = create(:room, state: 'cancelled')
+        post '/api/user/sign_in', params: { email: room_cancelled.user.email, password: room_cancelled.user.password }
+        patch '/api/rooms/cancell_room', params: { id: room_cancelled.id }, headers: headers
+        expect(response.status).to eq(400)
       end
     end
 
     context '他人がログインしている場合' do
-      it 'closedは変更されない' do
+      before do
         user = create(:user)
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
+      end
+
+      it 'stateは変更されない' do
         expect  do
           patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
         end.not_to change { room.reload.closed }
+      end
+
+      it 'ステータス403を返す' do
+        patch '/api/rooms/cancell_room', params: { id: room.id }, headers: headers
+        expect(response.status).to eq(403)
       end
     end
   end
