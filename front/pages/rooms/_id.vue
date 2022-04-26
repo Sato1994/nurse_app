@@ -93,6 +93,7 @@
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
+        :phone="room.partnerPhone"
         @agree-button-click="actionConfirmAgree"
         @disagree-button-click="hideConfirm"
       />
@@ -214,8 +215,10 @@ export default {
     ...mapActions('room', ['updateState', 'leaveRoom']),
     ...mapActions('agreement', ['editAgreement']),
 
-    actionConfirmAgree() {
-      this.agreement.id === null ? this.cancellRoom() : this.cancellAgreement()
+    actionConfirmAgree(comment) {
+      this.agreement.id === null
+        ? this.cancellRoom()
+        : this.cancellAgreement(comment)
     },
 
     cancellRoom() {
@@ -292,7 +295,7 @@ export default {
         this.$store.commit('issues/rooms/addRoom', data.room)
       } catch (error) {
         // 48時間以内だった場合
-        if (error.response.status === 702) {
+        if (error.response.status === 400) {
           this.confirmDisplay = true
           this.$store.commit('dialog/confirm/displayWithComment')
         }

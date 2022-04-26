@@ -15,6 +15,7 @@ export const state = () => ({
       image: {
         url: null,
       },
+      phone: null,
     }
   },
 
@@ -262,6 +263,7 @@ export const getters = {
       partnerId: state.room.partner.id,
       partnerName: state.room.partner.name,
       partnerMyid: state.room.partner.myid,
+      partnerPhone: state.room.partner.phone,
       state: state.room.state,
       closed: state.room.closed,
       startTime: newStartTime,
