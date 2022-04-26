@@ -4,7 +4,7 @@
       <v-menu bottom left>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
-            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+            <v-icon size="30">{{ authIcon }}</v-icon>
           </v-btn>
         </template>
 
@@ -86,7 +86,7 @@ import { mapActions, mapMutations } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectUserType from '@/components/dialog/SelectUserType.vue'
-import Notice from '@/components/dialog/Notice.vue'
+import Notice from '@/components/props/Notice.vue'
 import Edit from '@/components/dialog/Edit.vue'
 export default {
   components: {
@@ -107,6 +107,12 @@ export default {
   computed: {
     myPageURL() {
       return `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+    },
+
+    authIcon() {
+      return this.$store.state.info.info.myid
+        ? 'mdi-account-cog-outline'
+        : 'mdi-login'
     },
   },
 

@@ -80,7 +80,7 @@ user_fifth = [
 ]
 
 user_sixth = [
-  '気温が変わりやすい季節となってきました。風邪などひかぬようご自愛くださいませ。',
+  '気温が変わりやすい季節となってきました。風邪などひかぬようお気を付けください。',
   'では、良いご縁がありますように。',
   '以上で自己紹介を終わります。',
   'さあ申請ボタンをクリッククリック～。'
@@ -651,7 +651,7 @@ rate_15_days_ago = Rate.create(
 # host seeds の rates ############################################################################################################
 hosts_ids.each do |id|
   rand(1..5).times do
-    room = Room.new(
+   Room.new(
       user_id: users_ids.sample,
       host_id: id,
       start_time: a = Time.current.ago(rand(0..100)).beginning_of_day,
@@ -682,3 +682,46 @@ hosts_ids.each do |id|
 end
 ##################################################################################################################################
 
+# during のagreement #############################################################################################################
+# guest_user - guest_host
+Room.new(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: Time.current - 3.hours,
+  finish_time: Time.current + 5.hours,
+  state: 'conclusion',
+  closed: 'na'
+).save(validate: false)
+
+room = Room.last
+
+Agreement.new(
+  user_id: guest_user.id,
+  host_id: guest_host.id,
+  start_time: room.start_time,
+  finish_time: room.finish_time,
+  state: 'during',
+  room_id: room.id
+).save(validate: false)
+
+# guest_host - seed_user
+Room.new(
+  user_id: users_ids.sample,
+  host_id: guest_host.id,
+  start_time: Time.current - 4.hours,
+  finish_time: Time.current + 7.hours,
+  state: 'conclusion',
+  closed: 'na'
+).save(validate: false)
+
+room = Room.last
+
+Agreement.new(
+  user_id: room.user_id,
+  host_id: guest_host.id,
+  start_time: room.start_time,
+  finish_time: room.finish_time,
+  state: 'during',
+  room_id: room.id
+).save(validate: false)
+##################################################################################################################################

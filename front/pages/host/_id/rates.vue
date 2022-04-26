@@ -54,7 +54,7 @@
 
 
 <script>
-import RefineSearch from '@/components/RefineSearch.vue'
+import RefineSearch from '@/components/props/RefineSearch.vue'
 export default {
   components: {
     RefineSearch,

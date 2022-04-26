@@ -134,7 +134,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import DatePicker from '@/components/dialog/DatePicker.vue'
-import TimeCard from '@/components/TimeCard.vue'
+import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 const today = new Date()
 
@@ -149,6 +149,10 @@ export default {
     events: {
       type: Array,
       default: () => [],
+    },
+    wanted: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -317,18 +321,22 @@ export default {
 
     viewWeek({ date }) {
       this.focus = date
-      const selectedDate = new Date(date)
+      if (
+        this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
+      ) {
+        const selectedDate = new Date(date)
 
-      const newValue = {
-        year: selectedDate.getFullYear(),
-        month: selectedDate.getMonth() + 1,
-        day: selectedDate.getDate(),
-        hour: selectedDate.getHours(),
-        minute: 0,
+        const newValue = {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+          hour: selectedDate.getHours(),
+          minute: 0,
+        }
+
+        this.datePickerStartTime = this.datePickerFinishTime = newValue
+        this.datePickerDisplay = true
       }
-
-      this.datePickerStartTime = this.datePickerFinishTime = newValue
-      this.datePickerDisplay = true
     },
 
     setToday() {
@@ -337,11 +345,22 @@ export default {
 
     showEvent({ nativeEvent, event }) {
       const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => (this.selectedOpen = true))
-        )
+        if (
+          this.$route.path !==
+            `/${this.$store.state.info.me}/${this.$store.state.info.info.myid}` &&
+          this.wanted === false
+        ) {
+          this.$store.dispatch(
+            'snackbar/setMessage',
+            'お相手は現在リクエストを募集していません。'
+          )
+        } else {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => (this.selectedOpen = true))
+          )
+        }
       }
       if (this.selectedOpen) {
         this.selectedOpen = false

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 
     resources :rooms, only: %i[show update] do
       patch 'cancell_room', on: :collection
+      patch 'leave', on: :collection
     end
   end
   post 'api/agreements/user/:user_id', to: 'api/agreements#create'

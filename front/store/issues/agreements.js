@@ -24,8 +24,29 @@ export const mutations = {
   },
 
   updateState(state, payload) {
-    state.agreements.find(obj => obj.id === payload.id).state = payload.state
+    const target = state.agreements.find(agreement => agreement.id === payload.id)
+    if (target) {
+      target.state = payload.state
+    } else {
+      state.agreements.push(payload)
+    }
   },
+
+  updateTime(state, payload) {
+    const target = state.agreements.find(agreement => agreement.id === payload.id)
+    if (target) {
+      target.start_time = payload.start_time
+      target.finish_time = payload.finish_time
+    } else {
+      state.agreements.push(payload)
+    }
+  },
+
+  removeAgreement(state, payload) {
+    const target = state.agreements.find(agreement => agreement.id === payload.id)
+    const index = state.agreements.indexOf(target)
+    state.agreements.splice(index, 1)
+  }
 }
 
 export const actions = {

@@ -208,7 +208,7 @@ export default {
     this.f_year = this.finishTime.year
     this.f_month = this.finishTime.month
     this.f_day = this.finishTime.day
-    this.f_hour = this.finishTime.day
+    this.f_hour = this.finishTime.hour
     this.f_minute = this.finishTime.minute
   },
 

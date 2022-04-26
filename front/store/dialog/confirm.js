@@ -49,6 +49,12 @@ export const mutations = {
     state.agreeButtonText = ''
   },
 
+  reset(state) {
+    state.commentIsDisplay = false
+    state.title = ''
+    state.description = ''
+    state.agreeButtonText = ''
+  },
 }
 
 export const actions = {

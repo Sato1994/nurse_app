@@ -56,7 +56,7 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <Calendar :events="events" />
+    <Calendar :events="events" :wanted="target.wanted" />
 
     <v-divider class="mx-4"></v-divider>
 
@@ -97,7 +97,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 import SkillList from '@/components/dialog/SkillList.vue'
-import Calendar from '@/components/molecules/Calendar.vue'
+import Calendar from '@/components/aggregations/Calendar.vue'
 export default {
   components: {
     SkillList,

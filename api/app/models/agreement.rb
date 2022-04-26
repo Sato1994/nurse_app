@@ -20,7 +20,7 @@ class Agreement < ApplicationRecord
 
   enum state: { before: 0, during: 1, finished: 2, requesting: 3, cancelled: 4 }
 
-  scope :in_progress, -> { where(state: %i[before during requesting])}
+  scope :in_progress, -> { where(state: %i[before during requesting]) }
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
@@ -55,7 +55,17 @@ class Agreement < ApplicationRecord
       update(state: 'requesting')
       room.update(state: 'negotiating')
     end
-    { agreement: self, room: room }
+
+    {
+      agreement: {
+        state: self.state,
+        id: self.id
+      },
+      room: {
+        state: room.state,
+        id: room.id
+      }
+    }
   rescue StandardError
     nil
   end

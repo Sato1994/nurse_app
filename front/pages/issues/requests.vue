@@ -12,7 +12,7 @@
 
 <script>
 import Requests from '@/components/issues/Requests.vue'
-import RefineSearch from '@/components/RefineSearch.vue'
+import RefineSearch from '@/components/props/RefineSearch.vue'
 export default {
   components: {
     Requests,
