@@ -71,17 +71,35 @@ class Api::AgreementsController < ApplicationController
         if api_user_signed_in?
           agreement.create_host_notice!(host_id: agreement.host_id, action: 'created')
 
+          render_agreement = {
+            id: agreement.id, start_time: agreement.start_time, finish_time: agreement.finish_time,
+            state: agreement.state,
+            room: {
+              id: agreement.room.id
+            },
+            partner: {
+              name: agreement.host.name,
+              myid: agreement.host.myid
+            }
+          }
         elsif api_host_signed_in?
           agreement.create_user_notice!(user_id: agreement.user_id, action: 'created')
 
+          render_agreement = {
+            id: agreement.id, start_time: agreement.start_time, finish_time: agreement.finish_time,
+            state: agreement.state,
+            room: {
+              id: agreement.room.id
+            },
+            partner: {
+              name: agreement.user.name,
+              myid: agreement.user.myid
+            }
+          }
         end
-
         FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                     Time.zone.parse(params[:finish_time]))
-
-        render_agreement = agreement.as_json(
-          only: %i[id state start_time finish_time]
-        )
+        
         render json: { agreement: render_agreement }, status: :created
       else
         render json: agreement.errors, status: :bad_request

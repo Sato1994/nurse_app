@@ -25,13 +25,21 @@ export const mutations = {
 
   updateState(state, payload) {
     const target = state.agreements.find(agreement => agreement.id === payload.id)
-    target.state = payload.state
+    if (target) {
+      target.state = payload.state
+    } else {
+      state.agreements.push(payload)
+    }
   },
 
   updateTime(state, payload) {
     const target = state.agreements.find(agreement => agreement.id === payload.id)
-    target.start_time = payload.start_time
-    target.finish_time = payload.finish_time
+    if (target) {
+      target.start_time = payload.start_time
+      target.finish_time = payload.finish_time
+    } else {
+      state.agreements.push(payload)
+    }
   },
 
   removeAgreement(state, payload) {

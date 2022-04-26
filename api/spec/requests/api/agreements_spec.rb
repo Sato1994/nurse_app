@@ -86,7 +86,7 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json['agreement'].count).to eq(4)
+          expect(json['agreement'].count).to eq(6)
         end
 
         it '登録したらステータス201を返す' do
@@ -182,7 +182,7 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         it '登録したらプロパティagreementは期待する数のjsonを返す' do
           correct_post
-          expect(json['agreement'].count).to eq(4)
+          expect(json['agreement'].count).to eq(6)
         end
 
         it '登録したらステータス201を返す' do
