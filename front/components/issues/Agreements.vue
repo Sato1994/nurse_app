@@ -15,7 +15,7 @@
           :partnerName="agreement.partner.name"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
-          :color="timeCardColor(agreement)"
+          :color="timeCardColor(agreement.state)"
           :lockButton="false"
           @click.native="$router.push(`/rooms/${agreement.roomId}`)"
         >
@@ -52,13 +52,16 @@ export default {
   },
 
   methods: {
-    timeCardColor(agreement) {
-      if (agreement.state === 'requesting') {
-        return 'teal'
-      } else if (agreement.state === 'before' || agreement.state === 'during') {
-        return 'red'
-      } else {
-        return 'warning'
+    timeCardColor(state) {
+      switch (state) {
+        case 'before':
+          return 'red'
+        case 'during':
+          return 'pink'
+        case 'requesting':
+          return 'teal'
+        default:
+          return 'black'
       }
     },
   },

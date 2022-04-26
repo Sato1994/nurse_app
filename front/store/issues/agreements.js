@@ -33,6 +33,12 @@ export const mutations = {
     target.start_time = payload.start_time
     target.finish_time = payload.finish_time
   },
+
+  removeAgreement(state, payload) {
+    const target = state.agreements.find(agreement => agreement.id === payload.id)
+    const index = state.agreements.indexOf(target)
+    state.agreements.splice(index, 1)
+  }
 }
 
 export const actions = {

@@ -284,8 +284,12 @@ export default {
         this.$store.commit('agreement/updateState', { state: 'cancelled' })
         // room status変更
         this.$store.commit('room/updateState', { state: 'cancelled' })
-        // agreements status変更
-        this.$store.commit('issues/updateState', data.agreement)
+        // agreementsから削除
+        this.$store.commit('issues/agreements/removeAgreement', {
+          id: this.agreement.id,
+        })
+        // 代わりにroomsに代入
+        this.$store.commit('issues/rooms/addRoom', data.room)
       } catch (error) {
         // 48時間以内だった場合
         if (error.response.status === 702) {

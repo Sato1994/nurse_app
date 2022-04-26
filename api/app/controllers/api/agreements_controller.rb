@@ -148,7 +148,16 @@ class Api::AgreementsController < ApplicationController
 
     if agreement.start_time > (48.hours.from_now)
       agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled') if agreement.cancell_agreement
+      room = agreement.room
 
+      render_room = {
+        id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
+        partner: {
+          id: room.host.id, name: room.host.name
+        }
+      }
+
+      render json: { room: render_room }
     else
 
       if params[:comment].blank?
@@ -162,6 +171,16 @@ class Api::AgreementsController < ApplicationController
       if cancell_comment.save && agreement.cancell_agreement
         agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled')
 
+        room = agreement.room
+
+        render_room = {
+          id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
+          partner: {
+            id: room.host.id, name: room.host.name
+          }
+        }
+
+        render json: { room: render_room, cancell_comment: cancell_comment }
       end
     end
   end
