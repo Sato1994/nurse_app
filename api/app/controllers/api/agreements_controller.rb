@@ -71,15 +71,36 @@ class Api::AgreementsController < ApplicationController
         if api_user_signed_in?
           agreement.create_host_notice!(host_id: agreement.host_id, action: 'created')
 
+          render_agreement = {
+            id: agreement.id, start_time: agreement.start_time, finish_time: agreement.finish_time,
+            state: agreement.state,
+            room: {
+              id: agreement.room.id
+            },
+            partner: {
+              name: agreement.host.name,
+              myid: agreement.host.myid
+            }
+          }
         elsif api_host_signed_in?
           agreement.create_user_notice!(user_id: agreement.user_id, action: 'created')
 
+          render_agreement = {
+            id: agreement.id, start_time: agreement.start_time, finish_time: agreement.finish_time,
+            state: agreement.state,
+            room: {
+              id: agreement.room.id
+            },
+            partner: {
+              name: agreement.user.name,
+              myid: agreement.user.myid
+            }
+          }
         end
-
         FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                     Time.zone.parse(params[:finish_time]))
-        render json: agreement, status: :created
-
+        
+        render json: { agreement: render_agreement }, status: :created
       else
         render json: agreement.errors, status: :bad_request
 
@@ -98,8 +119,11 @@ class Api::AgreementsController < ApplicationController
 
       FreeTime.destroy_free_times(@user_id, Time.zone.parse(params[:start_time]),
                                   Time.zone.parse(params[:finish_time]))
-      render json: room.agreement, status: :ok
 
+      render_agreement = room.agreement.as_json(
+        only: %i[id state start_time finish_time]
+      )
+      render json: { agreement: render_agreement }, status: :ok
     else
       render json: room.agreement.errors, status: :bad_request
 
@@ -111,21 +135,17 @@ class Api::AgreementsController < ApplicationController
     agreement = Agreement.find(params[:id])
 
     if user_login_and_own?(agreement.user.id) || host_login_and_own?(agreement.host.id)
-
       if agreement.start_time > 24.hours.since
+        state = agreement.update_state
 
-        if state = agreement.update_state
+        if api_user_signed_in?
+          agreement.create_host_notice!(host_id: agreement.host_id, action: 'changed')
 
-          if api_user_signed_in?
-            agreement.create_host_notice!(host_id: agreement.host_id, action: 'changed')
-
-          elsif api_host_signed_in?
-            agreement.create_user_notice!(user_id: agreement.user_id, action: 'changed')
-
-          end
-          render json: state
+        elsif api_host_signed_in?
+          agreement.create_user_notice!(user_id: agreement.user_id, action: 'changed')
 
         end
+        render json: state
 
       else
         render body: nil, status: :bad_request
@@ -146,7 +166,16 @@ class Api::AgreementsController < ApplicationController
 
     if agreement.start_time > (48.hours.from_now)
       agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled') if agreement.cancell_agreement
+      room = agreement.room
 
+      render_room = {
+        id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
+        partner: {
+          id: room.host.id, name: room.host.name
+        }
+      }
+
+      render json: { room: render_room }
     else
 
       if params[:comment].blank?
@@ -160,6 +189,16 @@ class Api::AgreementsController < ApplicationController
       if cancell_comment.save && agreement.cancell_agreement
         agreement.create_host_notice!(host_id: agreement.host_id, action: 'cancelled')
 
+        room = agreement.room
+
+        render_room = {
+          id: room.id, created_at: room.created_at, start_time: room.start_time, finish_time: room.finish_time, state: room.state, closed: room.closed,
+          partner: {
+            id: room.host.id, name: room.host.name
+          }
+        }
+
+        render json: { room: render_room, cancell_comment: cancell_comment }
       end
     end
   end

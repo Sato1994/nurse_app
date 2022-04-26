@@ -14,7 +14,7 @@ class Api::RoomsController < ApplicationController
         only: %i[id start_time finish_time state closed],
         include: {
           host: {
-            only: %i[id name myid image]
+            only: %i[id name myid image phone]
           },
           user_messages: {
             only: %i[message created_at]
@@ -212,31 +212,49 @@ class Api::RoomsController < ApplicationController
   def cancell_room
     room = Room.find(params[:id])
 
+    unless room.state == 'negotiating' || room.state == 'user' || room.state == 'host'
+      render body: nil, status: :bad_request
+      return
+    end
+
+    if user_login_and_own?(room.user.id)
+      room.create_host_notice!(host_id: room.host_id, action: 'left') if  room.update(state: 'cancelled')
+
+    elsif host_login_and_own?(room.host.id)
+      room.create_user_notice!(user_id: room.user_id, action: 'left') if  room.update(state: 'cancelled')
+    else
+      render body: nil, status: :forbidden
+      return
+    end
+    render json: { state: room.state, closed: room.closed }
+  end
+
+  def leave
+    room = Room.find(params[:id])
+
     if user_login_and_own?(room.user.id)
       case room.closed
       when 'na'
-        room.create_host_notice!(host_id: room.host_id, action: 'left') if room.update(closed: 'user')
-      when 'host' || 'user'
+        room.update(closed: 'user')
+      when 'host'
         room.update(closed: 'both')
       else
         render body: nil, status: :bad_request
+        return
       end
-
-      room.update(state: 'cancelled')
-      render json: { state: room.state, closed: room.closed }
+      render json: { closed: room.closed }
 
     elsif host_login_and_own?(room.host.id)
       case room.closed
       when 'na'
-        room.create_user_notice!(user_id: room.user_id, action: 'left') if room.update(closed: 'host')
-      when 'host' || 'user'
+        room.update(closed: 'host')
+      when 'user'
         room.update(closed: 'both')
       else
         render body: nil, status: :bad_request
+        return
       end
-
-      room.update(state: 'cancelled')
-      render json: { state: room.state, closed: room.closed }
+      render json: { closed: room.closed }
 
     else
       render body: nil, status: :forbidden

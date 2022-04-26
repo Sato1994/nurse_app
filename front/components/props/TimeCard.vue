@@ -113,6 +113,15 @@
         text
         @click="clickCancellRoomButton"
       >
+        キャンセル
+      </v-btn>
+
+      <v-btn
+        v-if="leaveButton"
+        :disabled="!clickable"
+        text
+        @click="clickLeaveButton"
+      >
         退出
       </v-btn>
     </v-card-actions>
@@ -195,6 +204,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    leaveButton: {
+      type: Boolean,
+      default: false,
+    },
     color: {
       type: String,
       required: true,
@@ -263,6 +276,10 @@ export default {
     clickCancellRoomButton() {
       this.$emit('cancell-room-button-click')
     },
+    clickLeaveButton() {
+      this.$emit('leave-button-click')
+    },
+
     clickRemoveOfferButton() {
       this.$emit('remove-offer-button-click')
     },

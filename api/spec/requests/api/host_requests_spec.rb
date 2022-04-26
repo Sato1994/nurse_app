@@ -14,7 +14,7 @@ RSpec.describe 'Api::HostRequests', type: :request do
     context 'hostがログインしてる場合' do
       before do
         host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now)
-        host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 1.second)
+        host_request_2 = create(:host_request, :skip_validate, host: host_request.host, start_time: 7.hours.from_now + 2.second)
         post '/api/host/sign_in', params: { email: host_request_2.host.email, password: host_request_2.host.password }
         get '/api/host_requests', params: { id: host_request_2.host_id }, headers: headers
       end
@@ -33,7 +33,7 @@ RSpec.describe 'Api::HostRequests', type: :request do
 
       it '現在時刻からちょうど8時間を超えたものだけ削除される' do
         create(:host_request, :skip_validate, start_time: 7.hours.from_now, free_time: free_time)
-        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 1.second, free_time: free_time)
+        host_request = create(:host_request, :skip_validate, start_time: 7.hours.from_now + 2.second, free_time: free_time)
         post '/api/user/sign_in', params: { email: free_time.user.email, password: free_time.user.password }
         get '/api/host_requests', params: { id: free_time.user_id }, headers: headers
         expect(HostRequest.count).to eq(1)

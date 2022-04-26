@@ -1,16 +1,17 @@
 export default ({ $axios, redirect, store }) => {
   // リクエストログ
-  $axios.onRequest((config) => {
-    console.log(config)
-  })
-  // レスポンスログ
-  $axios.onResponse((config) => {
-    console.log(config)
-  })
-  // エラーログ
-  $axios.onError((e) => {
-    console.log(e.response)
-  })
+  // $axios.onRequest((config) => {
+  //   console.log(config)
+  // })
+  // // レスポンスログ
+  // $axios.onResponse((config) => {
+  //   console.log(config)
+  // })
+  // // エラーログ
+  // $axios.onError((e) => {
+  //   console.log(e.response)
+  // })
+
   // 401エラーならホームへ遷移
   $axios.onError((e) => {
     if (e.response.status === 401) {

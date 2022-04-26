@@ -49,7 +49,6 @@ export const actions = {
       )
       .then((response) => {
         commit('addTime', response.data)
-        commit('dialog/datePicker/hideDatePicker', null, { root: true })
         dispatch('snackbar/setMessage', '募集時間を登録しました。', { root: true })
       })
   },

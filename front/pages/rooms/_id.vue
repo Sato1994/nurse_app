@@ -8,6 +8,8 @@
         class="map"
       ></v-img>
 
+      {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
+
       <v-container v-if="agreement.state === 'finished'" fluid class="rateArea">
         <v-textarea
           v-model="inputComment"
@@ -38,15 +40,20 @@
         :updateStateButtonText="updateStateButtonText"
         :editAgreementButton="editAgreementButton"
         :cancellAgreementButton="cancellAgreementButton"
+        :leaveButton="leaveButton"
         :cancellRoomButton="cancellRoomButton"
         :color="timeCardColor"
         :shaped="false"
         :tile="true"
+        :lockButton="lockButton"
         @update-state-button-click="updateState"
         @update-time-button-click="openDatePicker"
-        @edit-agreement-button-click="editAgreement"
+        @edit-agreement-button-click="
+          editAgreement({ agreementId: agreement.id })
+        "
         @cancell-agreement-button-click="displayAsCancellAgreement"
         @cancell-room-button-click="displayConfirm"
+        @leave-button-click="leaveRoom"
       >
         <template #description>
           <v-card-subtitle
@@ -70,14 +77,21 @@
           >
             あなたの同意で契約完了します。</v-card-subtitle
           >
-          <v-card-subtitle v-if="room.state === 'conclusion'" class="pb-0">
+          <v-card-subtitle
+            v-if="room.state === 'conclusion' && agreement.state === 'before'"
+            class="pb-0"
+          >
             契約の途中変更は推奨されていません。</v-card-subtitle
           >
+
+          <v-card-subtitle v-if="agreement.state === 'during'" class="pb-0">
+            現在勤務時間です</v-card-subtitle
+          >
+
           <v-card-subtitle v-if="room.state === 'cancelled'" class="pb-0">
             やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
           >
 
-          <!--これがリアクティブじゃない-->
           <v-card-subtitle v-if="timeCardColor === 'teal'" class="pb-0">
             {{
               agreement6HoursLater
@@ -88,7 +102,8 @@
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
-        @agree-button-click="cancellRoom"
+        :phone="room.partnerPhone"
+        @agree-button-click="actionConfirmAgree"
         @disagree-button-click="hideConfirm"
       />
       <DatePicker
@@ -168,7 +183,6 @@ export default {
       }`
     },
 
-    // button 関係
     updateStateButton() {
       return this.room.state !== 'conclusion' && this.room.state !== 'cancelled'
     },
@@ -176,7 +190,7 @@ export default {
     updateStateButtonText() {
       return this.room.state === this.$cookies.get('user')
         ? '同意を解除'
-        : 'この時間で同意'
+        : '時間に同意'
     },
 
     updateTimeButton() {
@@ -184,21 +198,47 @@ export default {
         this.room.state === 'negotiating' && this.room.state !== 'cancelled'
       )
     },
+
     editAgreementButton() {
       return this.agreement.state === 'before'
     },
+
     cancellAgreementButton() {
-      return this.agreement.state === 'before'
-    },
-    cancellRoomButton() {
-      return this.room.state !== 'conclusion'
+      return (
+        (this.agreement.state === 'before' ||
+          this.agreement.state === 'requesting') &&
+        this.$cookies.get('user') === 'user'
+      )
     },
 
-    // ///////////
+    cancellRoomButton() {
+      return this.agreement.id === null && this.room.state !== 'cancelled'
+    },
+
+    leaveButton() {
+      return this.room.state === 'cancelled'
+    },
+
+    lockButton() {
+      return this.agreement.state !== 'during'
+    },
   },
 
   methods: {
-    ...mapActions('room', ['updateState', 'cancellRoom']),
+    ...mapActions('room', ['updateState', 'leaveRoom']),
+    ...mapActions('agreement', ['editAgreement']),
+
+    actionConfirmAgree(comment) {
+      this.agreement.id === null
+        ? this.cancellRoom()
+        : this.cancellAgreement(comment)
+    },
+
+    cancellRoom() {
+      this.$store.dispatch('room/cancellRoom')
+      this.confirmDialog = false
+    },
+
     createRate() {
       this.$axios.post(
         '/api/rates',
@@ -238,64 +278,41 @@ export default {
       this.datePickerDisplay = false
     },
 
-    editAgreement() {
-      this.$axios
-        .patch(
-          `/api/agreements/${this.agreement.id}`,
-          {},
-          {
-            headers: this.$cookies.get('authInfo'),
-          }
-        )
-        .then((response) => {
-          console.log('レスポンす', response)
-          // リアクティブに反映させてね！！！！！！！2
-          // agreement 変更した後の更新
-          // {"agreement":{
-          //   "user_id":49,
-          //   "start_time":"2022-04-27T12:00:00.000+09:00",
-          //   "id":1,
-          //   "state":"requesting",
-          //   "host_id":46,
-          //   "room_id":1,
-          //   "finish_time":"2022-04-27T17:00:00.000+09:00",
-          //   "created_at":"2022-04-20T00:38:27.216+09:00",
-          //   "updated_at":"2022-04-20T00:45:47.696+09:00"},
-          //   "room":{
-          //     "id":1,
-          //     "state":"negotiating",
-          //     "user_id":49,
-          //     "host_id":46,
-          //     "start_time":"2022-04-27T12:00:00.000+09:00",
-          //     "finish_time":"2022-04-27T17:00:00.000+09:00",
-          //     "closed":"na",
-          //     "created_at":"2022-04-20T00:38:27.190+09:00",
-          //     "updated_at":"2022-04-20T00:45:47.714+09:00"}
-          //     }
-        })
-    },
     displayAsCancellAgreement() {
       this.confirmDialog = true
       this.$store.commit('dialog/confirm/displayAsCancellAgreement')
     },
 
-    cancellAgreement(comment) {
-      this.$store
-        .dispatch('issues/agreements/cancellAgreement', {
-          agreementId: this.agreement.id,
-          roomId: this.room.id,
-          comment,
+    async cancellAgreement(comment) {
+      try {
+        const { data } = await this.$axios.patch(
+          '/api/agreements/cancell',
+          { id: this.agreement.id, comment },
+          { headers: this.$cookies.get('authInfo') }
+        )
+        this.$store.commit('dialog/confirm/reset')
+        this.confirmDialog = false
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          '契約をキャンセルしました。'
+        )
+        // agreement status変更
+        this.$store.commit('agreement/updateState', { state: 'cancelled' })
+        // room status変更
+        this.$store.commit('room/updateState', { state: 'cancelled' })
+        // agreementsから削除
+        this.$store.commit('issues/agreements/removeAgreement', {
+          id: this.agreement.id,
         })
-        .then(() => {
-          this.confirmDisplay = false
-        })
+        // 代わりにroomsに代入
+        this.$store.commit('issues/rooms/addRoom', data.room)
+      } catch (error) {
         // 48時間以内だった場合
-        .catch((error) => {
-          if (error.response.status === 400) {
-            this.confirmDisplay = true
-            this.$store.commit('dialog/confirm/displayWithComment')
-          }
-        })
+        if (error.response.status === 400) {
+          this.confirmDisplay = true
+          this.$store.commit('dialog/confirm/displayWithComment')
+        }
+      }
     },
   },
 }

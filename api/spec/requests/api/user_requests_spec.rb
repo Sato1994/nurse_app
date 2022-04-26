@@ -14,7 +14,7 @@ RSpec.describe 'Api::UserRequests', type: :request do
     context 'userがログインしてる場合' do
       before do
         user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now)
-        user_request_2 = create(:user_request, :skip_validate, user: user_request.user, start_time: 7.hours.from_now + 1.second)
+        user_request_2 = create(:user_request, :skip_validate, user: user_request.user, start_time: 7.hours.from_now + 2.second)
         post '/api/user/sign_in', params: { email: user_request_2.user.email, password: user_request_2.user.password }
         get '/api/user_requests', params: { id: user_request_2.user_id }, headers: headers
       end

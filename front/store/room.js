@@ -15,6 +15,7 @@ export const state = () => ({
       image: {
         url: null,
       },
+      phone: null,
     }
   },
 
@@ -108,60 +109,82 @@ export const actions = {
   async updateState({ commit, getters }) {
     const room = getters.room
     switch (room.state) {
-      case this.$cookies.get('user') === 'user' ? 'host' : 'user': {
+      case this.$cookies.get('user') === 'user' ? 'host' : 'user':
         // agreement create
-        await this.$axios
-          .post(
-            `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-            }/${room.partnerId}`,
-            {
-              room_id: room.id,
-              start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
-              finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
-            },
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        // 成功したらstate変更
-        const { data } = await this.$axios
-          .patch(
-            `/api/rooms/${room.id}/update_room_state`,
-            {},
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        commit('updateState', { state: data.state })
-      }
+        // または agreement再確定
+
+        try {
+          const agreementRes = await this.$axios
+            .post(
+              `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
+              }/${room.partnerId}`,
+              {
+                room_id: room.id,
+                start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
+                finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
+              },
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+          commit('agreement/saveAgreement', agreementRes.data.agreement, { root: true })
+          commit('issues/agreements/updateState', agreementRes.data.agreement, { root: true })
+          commit('issues/agreements/updateTime', agreementRes.data.agreement, { root: true })
+
+          const { data } = await this.$axios
+            .patch(
+              `/api/rooms/${room.id}/update_room_state`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+
+          commit('updateState', { state: data.state })
+          commit('issues/rooms/removeRoom', { id: room.id }, { root: true })
+        } catch {
+        }
         break
-      default: {
-        const { data } = await this.$axios
-          .patch(
-            `/api/rooms/${room.id}/update_room_state`,
-            {},
-            {
-              headers: this.$cookies.get('authInfo'),
-            }
-          )
-        commit('updateState', { state: data.state })
-      }
+      default:
+        try {
+          const { data } = await this.$axios
+            .patch(
+              `/api/rooms/${room.id}/update_room_state`,
+              {},
+              {
+                headers: this.$cookies.get('authInfo'),
+              }
+            )
+          commit('updateState', { state: data.state })
+        } catch {
+        }
     }
   },
 
-  async cancellRoom({ dispatch, commit, state, rootState }) {
-    await this.$axios
+  async cancellRoom({ state, dispatch, commit }) {
+    const { data } = await this.$axios
       .patch(
         '/api/rooms/cancell_room',
         { id: state.room.id },
         { headers: this.$cookies.get('authInfo') }
       )
-    this.$router.push(
-      `/${this.$cookies.get('user')}/${rootState.info.info.myid}`
-    )
-    commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
-    commit('removeRoom')
-    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
+    commit('issues/rooms/updateState', { id: state.room.id, state: data.state }, { root: true })
+    commit('updateState', { state: data.state })
+    dispatch('snackbar/setMessage', '交渉をキャンセルしました。', { root: true })
+  },
+
+  async leaveRoom({ commit, state, rootState }) {
+    try {
+      await this.$axios
+        .patch(
+          '/api/rooms/leave',
+          { id: state.room.id },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
+      this.$router.push(`/${this.$cookies.get('user')}/${rootState.info.info.myid}`)
+    } catch {
+    }
   },
 }
 
@@ -240,6 +263,7 @@ export const getters = {
       partnerId: state.room.partner.id,
       partnerName: state.room.partner.name,
       partnerMyid: state.room.partner.myid,
+      partnerPhone: state.room.partner.phone,
       state: state.room.state,
       closed: state.room.closed,
       startTime: newStartTime,

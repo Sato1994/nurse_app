@@ -15,7 +15,7 @@
           :partnerName="agreement.partner.name"
           :startTime="agreement.startTime"
           :finishTime="agreement.finishTime"
-          :color="timeCardColor(agreement)"
+          :color="timeCardColor(agreement.state)"
           :lockButton="false"
           @click.native="$router.push(`/rooms/${agreement.roomId}`)"
         >
@@ -25,12 +25,11 @@
                 $store.getters['agreement/formattingTo6HoursLater'](agreement)
               }}までに再確定してください
             </v-card-subtitle>
-            <v-card-subtitle
-              v-if="
-                agreement.state === 'before' || agreement.state === 'during'
-              "
-            >
+            <v-card-subtitle v-if="agreement.state === 'before'">
               契約中
+            </v-card-subtitle>
+            <v-card-subtitle v-if="agreement.state === 'during'">
+              現在勤務時間です
             </v-card-subtitle>
           </template>
         </TimeCard>
@@ -52,13 +51,15 @@ export default {
   },
 
   methods: {
-    timeCardColor(agreement) {
-      if (agreement.state === 'requesting') {
-        return 'teal'
-      } else if (agreement.state === 'before' || agreement.state === 'during') {
-        return 'red'
-      } else {
-        return 'warning'
+    timeCardColor(state) {
+      switch (state) {
+        case 'before':
+        case 'during':
+          return 'red'
+        case 'requesting':
+          return 'teal'
+        default:
+          return 'black'
       }
     },
   },

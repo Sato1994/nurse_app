@@ -321,18 +321,22 @@ export default {
 
     viewWeek({ date }) {
       this.focus = date
-      const selectedDate = new Date(date)
+      if (
+        this.$route.path === `/${this.$cookies.get('user')}/${this.info.myid}`
+      ) {
+        const selectedDate = new Date(date)
 
-      const newValue = {
-        year: selectedDate.getFullYear(),
-        month: selectedDate.getMonth() + 1,
-        day: selectedDate.getDate(),
-        hour: selectedDate.getHours(),
-        minute: 0,
+        const newValue = {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+          hour: selectedDate.getHours(),
+          minute: 0,
+        }
+
+        this.datePickerStartTime = this.datePickerFinishTime = newValue
+        this.datePickerDisplay = true
       }
-
-      this.datePickerStartTime = this.datePickerFinishTime = newValue
-      this.datePickerDisplay = true
     },
 
     setToday() {
