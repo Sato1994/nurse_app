@@ -181,7 +181,7 @@ export default {
     updateStateButtonText() {
       return this.room.state === this.$cookies.get('user')
         ? '同意を解除'
-        : 'この時間で同意'
+        : '時間に同意'
     },
 
     updateTimeButton() {
@@ -277,12 +277,12 @@ export default {
           { id: this.agreement.id, comment },
           { headers: this.$cookies.get('authInfo') }
         )
+        this.$store.commit('dialog/confirm/reset')
         this.confirmDialog = false
         this.$store.dispatch(
           'snackbar/setMessage',
           '契約をキャンセルしました。'
         )
-
         // agreement status変更
         this.$store.commit('agreement/updateState', { state: 'cancelled' })
         // room status変更
