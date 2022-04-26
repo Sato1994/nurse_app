@@ -25,12 +25,11 @@
                 $store.getters['agreement/formattingTo6HoursLater'](agreement)
               }}までに再確定してください
             </v-card-subtitle>
-            <v-card-subtitle
-              v-if="
-                agreement.state === 'before' || agreement.state === 'during'
-              "
-            >
+            <v-card-subtitle v-if="agreement.state === 'before'">
               契約中
+            </v-card-subtitle>
+            <v-card-subtitle v-if="agreement.state === 'during'">
+              現在勤務時間です
             </v-card-subtitle>
           </template>
         </TimeCard>
@@ -55,9 +54,8 @@ export default {
     timeCardColor(state) {
       switch (state) {
         case 'before':
-          return 'red'
         case 'during':
-          return 'pink'
+          return 'red'
         case 'requesting':
           return 'teal'
         default:

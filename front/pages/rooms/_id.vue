@@ -45,6 +45,7 @@
         :color="timeCardColor"
         :shaped="false"
         :tile="true"
+        :lockButton="lockButton"
         @update-state-button-click="updateState"
         @update-time-button-click="openDatePicker"
         @edit-agreement-button-click="
@@ -76,9 +77,17 @@
           >
             あなたの同意で契約完了します。</v-card-subtitle
           >
-          <v-card-subtitle v-if="room.state === 'conclusion'" class="pb-0">
+          <v-card-subtitle
+            v-if="room.state === 'conclusion' && agreement.state === 'before'"
+            class="pb-0"
+          >
             契約の途中変更は推奨されていません。</v-card-subtitle
           >
+
+          <v-card-subtitle v-if="agreement.state === 'during'" class="pb-0">
+            現在勤務時間です</v-card-subtitle
+          >
+
           <v-card-subtitle v-if="room.state === 'cancelled'" class="pb-0">
             やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
           >
@@ -208,6 +217,10 @@ export default {
 
     leaveButton() {
       return this.room.state === 'cancelled'
+    },
+
+    lockButton() {
+      return this.agreement.state !== 'during'
     },
   },
 
