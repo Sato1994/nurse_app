@@ -39,6 +39,11 @@ export const mutations = {
       target.start_time = payload.room.start_time
       target.finish_time = payload.room.finish_time
     }
+  },
+
+  updateState(state, payload) {
+    const target = state.rooms.find(room => room.id === payload.id)
+    target.state = payload.state
   }
 }
 

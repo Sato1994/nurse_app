@@ -211,12 +211,16 @@ export default {
   },
 
   methods: {
-    ...mapActions('room', ['updateState', 'cancellRoom', 'leaveRoom']),
-
+    ...mapActions('room', ['updateState', 'leaveRoom']),
     ...mapActions('agreement', ['editAgreement']),
 
     actionConfirmAgree() {
       this.agreement.id === null ? this.cancellRoom() : this.cancellAgreement()
+    },
+
+    cancellRoom() {
+      this.$store.dispatch('room/cancellRoom')
+      this.confirmDialog = false
     },
 
     createRate() {

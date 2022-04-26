@@ -160,19 +160,16 @@ export const actions = {
     }
   },
 
-  async cancellRoom({ dispatch, commit, state, rootState }) {
-    await this.$axios
+  async cancellRoom({ state, dispatch, commit }) {
+    const { data } = await this.$axios
       .patch(
         '/api/rooms/cancell_room',
         { id: state.room.id },
         { headers: this.$cookies.get('authInfo') }
       )
-    this.$router.push(
-      `/${this.$cookies.get('user')}/${rootState.info.info.myid}`
-    )
-    commit('issues/rooms/removeRoom', { id: state.room.id }, { root: true })
-    commit('removeRoom')
-    dispatch('snackbar/setMessage', 'トークルームを削除しました。', { root: true })
+    commit('issues/rooms/updateState', { id: state.room.id, state: data.state }, { root: true })
+    commit('updateState', { state: data.state })
+    dispatch('snackbar/setMessage', '交渉をキャンセルしました。', { root: true })
   },
 
   async leaveRoom({ commit, state, rootState }) {
