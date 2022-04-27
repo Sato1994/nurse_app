@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HostsController < ApplicationController
+class Api::Host::HostsController < ApplicationController
   include Pagination
 
   def index

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'api::hosts', type: :request do
+RSpec.describe 'Api::Host::Hosts', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }

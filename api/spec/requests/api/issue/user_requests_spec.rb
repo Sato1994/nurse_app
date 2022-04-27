@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::UserRequests', type: :request do
+RSpec.describe 'Api::Issue::UserRequests', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
@@ -39,10 +39,10 @@ RSpec.describe 'Api::UserRequests', type: :request do
         get '/api/user_requests', params: { id: recruitment_time.host_id }, headers: headers
         expect(UserRequest.count).to eq(1)
       end
-
+      
       it '関連しないインスタンスは削除しない' do
         create(:user_request, :skip_validate, start_time: 7.hours.from_now, recruitment_time: recruitment_time)
-        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 1.second,
+        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 2.second,
                                                              recruitment_time: recruitment_time)
         create(:user_request, :skip_validate, start_time: 7.hours.from_now, user: user_request.user)
         post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
@@ -72,8 +72,8 @@ RSpec.describe 'Api::UserRequests', type: :request do
     context 'リクエストが成功する場合' do
       before do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
-        post "/api/user_requests/#{recruitment_time.id}",
-             params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now },
+        post "/api/user_requests",
+             params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now, recruitment_time_id: recruitment_time.id  },
              headers: headers
       end
 
@@ -98,8 +98,8 @@ RSpec.describe 'Api::UserRequests', type: :request do
     context 'リクエストが失敗する場合' do
       before do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
-        post "/api/user_requests/#{recruitment_time.id}",
-             params: { start_time: Time.current, finish_time: Time.current },
+        post "/api/user_requests",
+             params: { start_time: Time.current, finish_time: Time.current, recruitment_time_id: recruitment_time.id  },
              headers: headers
       end
 

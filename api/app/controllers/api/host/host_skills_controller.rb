@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HostSkillsController < ApplicationController
+class Api::Host::HostSkillsController < ApplicationController
   before_action :authenticate_api_host!, only: [:destroy]
   
   def create

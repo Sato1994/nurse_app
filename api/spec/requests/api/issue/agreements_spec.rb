@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::Agreements', type: :request do
+RSpec.describe 'Api::Issue::Agreements', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
@@ -56,13 +56,19 @@ RSpec.describe 'Api::Agreements', type: :request do
 
   describe 'POST /create' do
     let!(:room) { create(:room) }
-    let!(:params) do
+    let!(:user_params) do
       { room_id: room.id, start_time: Time.current.change(usec: 0) + 24.hours,
-        finish_time: Time.current.change(usec: 0) + 32.hours }
+        finish_time: Time.current.change(usec: 0) + 32.hours,
+        host_id: room.host.id }
+    end
+    let!(:host_params) do
+      { room_id: room.id, start_time: Time.current.change(usec: 0) + 24.hours,
+        finish_time: Time.current.change(usec: 0) + 32.hours,
+        user_id: room.user.id }
     end
 
     context 'userとしてログインしている場合' do
-      let(:correct_post) { post "/api/agreements/host/#{room.host.id}", params: params, headers: headers }
+      let(:correct_post) { post "/api/agreements", params: user_params, headers: headers }
 
       before do
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
@@ -95,8 +101,8 @@ RSpec.describe 'Api::Agreements', type: :request do
         end
 
         it '失敗したらステータス400を返す' do
-          post "/api/agreements/host/#{room.host.id}",
-               params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
+          post "/api/agreements",
+               params: { host_id: room.host.id, room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
                headers: headers
           expect(response.status).to eq(400)
         end
@@ -122,8 +128,8 @@ RSpec.describe 'Api::Agreements', type: :request do
           create(:free_time, start_time: Time.current.change(usec: 0) + 30.hours,
                              finish_time: Time.current.change(usec: 0) + 38.hours, user: room.user)
           expect do
-            post "/api/agreements/host/#{room.host.id}",
-                 params: { room_id: room.id, start_time: Time.current.change(usec: 0) + 35.hours,
+            post "/api/agreements",
+                 params: { host_id: room.host.id, room_id: room.id, start_time: Time.current.change(usec: 0) + 35.hours,
                            finish_time: Time.current.change(usec: 0) + 40.hours },
                  headers: headers
           end.to change(FreeTime, :count).from(1).to(0)
@@ -141,8 +147,8 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         context '登録失敗' do
           before do
-            post "/api/agreements/host/#{room.host.id}",
-                 params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
+            post "/api/agreements",
+                 params: { host_id: room.host.id, room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
                  headers: headers
           end
 
@@ -158,7 +164,7 @@ RSpec.describe 'Api::Agreements', type: :request do
     end
 
     context 'hostとしてログインしている場合' do
-      let(:correct_post) { post "/api/agreements/user/#{room.user.id}", params: params, headers: headers }
+      let(:correct_post) { post "/api/agreements", params: host_params, headers: headers }
 
       before do
         post '/api/host/sign_in', params: { room_id: room.id, email: room.host.email, password: room.host.password }
@@ -192,8 +198,8 @@ RSpec.describe 'Api::Agreements', type: :request do
 
         context '登録失敗' do
           before do
-            post "/api/agreements/user/#{room.user.id}",
-                 params: { room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
+            post "/api/agreements",
+                 params: { user_id: room.user.id, room_id: room.id, start_time: '1000-08-06T00:00:00', finish_time: '1000-08-06T08:00:00' },
                  headers: headers
           end
 
@@ -227,8 +233,8 @@ RSpec.describe 'Api::Agreements', type: :request do
           create(:free_time, start_time: Time.current.change(usec: 0) + 30.hours,
                              finish_time: Time.current.change(usec: 0) + 38.hours, user: room.user)
           expect do
-            post "/api/agreements/user/#{room.user.id}",
-                 params: { room_id: room.id, start_time: Time.current.change(usec: 0) + 35.hours,
+            post "/api/agreements",
+                 params: { user_id: room.user.id, room_id: room.id, start_time: Time.current.change(usec: 0) + 35.hours,
                            finish_time: Time.current.change(usec: 0) + 40.hours },
                  headers: headers
           end.to change(FreeTime, :count).from(1).to(0)
@@ -245,8 +251,8 @@ RSpec.describe 'Api::Agreements', type: :request do
         end
 
         it '失敗したときのステータス400を返す' do
-          post "/api/agreements/host/#{room.user.id}",
-               params: { room_id: room.id, start_time: Time.current.change(usec: 0) + 1.hour,
+          post "/api/agreements",
+               params: { user_id: room.user.id, room_id: room.id, start_time: Time.current.change(usec: 0) + 1.hour,
                          finish_time: Time.current.change(usec: 0) + 2.hours },
                headers: headers
         end
@@ -255,12 +261,12 @@ RSpec.describe 'Api::Agreements', type: :request do
 
     context 'ログインしていない場合' do
       it 'ステータス401を返す' do
-        post "/api/agreements/user/#{room.user.id}", params: params
+        post "/api/agreements", params: user_params
         expect(response.status).to eq(401)
       end
 
       it 'ステータス401を返す' do
-        post "/api/agreements/host/#{room.host.id}", params: params
+        post "/api/agreements", params: host_params
         expect(response.status).to eq(401)
       end
     end
@@ -486,9 +492,9 @@ RSpec.describe 'Api::Agreements', type: :request do
           patch '/api/agreements/cancell', params: { id: agreement.id }, headers: headers
           expect(agreement.reload.state).not_to eq('cancelled')
         end
-
+        
         it '48時間以上ならcomment不要' do
-          time = 48.hours.from_now.change(usec: 0) + 1.second
+          time = 48.hours.from_now.change(usec: 0) + 2.second
           room = create(:room, start_time: time, finish_time: time + 8.hours)
           agreement = create(:agreement, user: room.user, host: room.host, room: room, start_time: time,
                                          finish_time: time + 8.hours)

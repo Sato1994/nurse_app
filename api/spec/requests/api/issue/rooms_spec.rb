@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::Rooms', type: :request do
+RSpec.describe 'Api::Issue::Rooms', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
@@ -191,8 +191,8 @@ RSpec.describe 'Api::Rooms', type: :request do
 
     it 'ログインしていなければ更新されない' do
       expect do
-        patch "/api/rooms/#{room.id}/update_room_time",
-              params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now }
+        patch "/api/rooms/update_room_time",
+              params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now }
       end.not_to change { room.reload.start_time }
     end
 
@@ -200,8 +200,8 @@ RSpec.describe 'Api::Rooms', type: :request do
       it '自分のroomなら更新される' do
         user_login
         expect do
-          patch "/api/rooms/#{room.id}/update_room_time",
-                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+          patch "/api/rooms/update_room_time",
+                params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
         end.to change { room.reload.start_time }
       end
@@ -210,8 +210,8 @@ RSpec.describe 'Api::Rooms', type: :request do
         room2 = create(:room)
         user_login
         expect do
-          patch "/api/rooms/#{room2.id}/update_room_time",
-                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+          patch "/api/rooms/update_room_time",
+                params: { room_id: room2.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
         end.not_to change { room.reload.start_time }
       end
@@ -221,8 +221,8 @@ RSpec.describe 'Api::Rooms', type: :request do
           user_login
           host_notice = create(:host_notice, source: room, host: room.host, action: 'changed', checked: true)
           expect do
-            patch "/api/rooms/#{room.id}/update_room_time",
-                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+            patch "/api/rooms/update_room_time",
+                  params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                   headers: headers
           end.to change(HostNotice, :count).to(2).from(1)
         end
@@ -231,8 +231,8 @@ RSpec.describe 'Api::Rooms', type: :request do
           user_login
           host_notice = create(:host_notice, source: room, host: room.host, action: 'changed', checked: false)
           expect do
-            patch "/api/rooms/#{room.id}/update_room_time",
-                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+            patch "/api/rooms/update_room_time",
+                  params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                   headers: headers
           end.not_to change(HostNotice, :count)
         end
@@ -243,8 +243,8 @@ RSpec.describe 'Api::Rooms', type: :request do
       it '自分のroomなら更新される' do
         host_login
         expect do
-          patch "/api/rooms/#{room.id}/update_room_time",
-                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+          patch "/api/rooms/update_room_time",
+                params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
         end.to change { room.reload.start_time }
       end
@@ -253,8 +253,8 @@ RSpec.describe 'Api::Rooms', type: :request do
         room2 = create(:room)
         host_login
         expect do
-          patch "/api/rooms/#{room2.id}/update_room_time",
-                params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+          patch "/api/rooms/update_room_time",
+                params: { room_id: room2.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                 headers: headers
         end.not_to change { room.reload.start_time }
       end
@@ -264,8 +264,8 @@ RSpec.describe 'Api::Rooms', type: :request do
           host_login
           user_notice = create(:user_notice, source: room, user: room.user, action: 'changed', checked: true)
           expect do
-            patch "/api/rooms/#{room.id}/update_room_time",
-                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+            patch "/api/rooms/update_room_time",
+                  params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                   headers: headers
           end.to change(UserNotice, :count).to(2).from(1)
         end
@@ -274,8 +274,8 @@ RSpec.describe 'Api::Rooms', type: :request do
           host_login
           user_notice = create(:user_notice, source: room, user: room.user, action: 'changed', checked: false)
           expect do
-            patch "/api/rooms/#{room.id}/update_room_time",
-                  params: { start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
+            patch "/api/rooms/update_room_time",
+                  params: { room_id: room.id, start_time: 22.hours.from_now, finish_time: 28.hours.from_now },
                   headers: headers
           end.not_to change(UserNotice, :count)
         end
@@ -295,7 +295,7 @@ RSpec.describe 'Api::Rooms', type: :request do
     it 'ログインしていなければ更新されない' do
       room = create(:room, state: 'user')
       expect do
-        patch "/api/rooms/#{room.id}/update_room_state"
+        patch "/api/rooms/update_room_state", params: { room_id: room.id }
       end.not_to change { room.reload.state }
     end
 
@@ -304,14 +304,14 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, finish_time: 39.hours.from_now.change(usec: 0))
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'user'
       end
 
       it 'stateがnegotiatingでstart,finsish間が18時間より大きければ期待するmessageを返す' do
-        room = create(:room, finish_time: 39.hours.from_now.change(usec: 0) + 1.second)
+        room = create(:room, finish_time: 39.hours.from_now.change(usec: 0) + 2.second)
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
-        patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+        patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         expect(response.body).to include('勤務時間は18時間以内にする必要があります。')
       end
 
@@ -319,7 +319,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'user')
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'negotiating'
       end
 
@@ -327,7 +327,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'host')
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'conclusion'
       end
 
@@ -335,7 +335,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'conclusion')
         post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.not_to change { room.reload.state }
       end
 
@@ -346,7 +346,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
             host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: true)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.to change(HostNotice, :count).to(2).from(1)
           end
 
@@ -355,7 +355,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
             host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: false)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.not_to change(HostNotice, :count)
           end
         end
@@ -367,7 +367,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/user/sign_in', params: { email: room.user.email, password: room.user.password }
             host_notice = create(:host_notice, host: room.host, source: room, action: 'agreed', checked: true)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.not_to change(HostNotice, :count)
           end
         end
@@ -379,7 +379,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'negotiating')
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'host'
       end
 
@@ -387,7 +387,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'user')
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'conclusion'
       end
 
@@ -395,7 +395,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'host')
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.to change { room.reload.state }.to 'negotiating'
       end
 
@@ -403,7 +403,7 @@ RSpec.describe 'Api::Rooms', type: :request do
         room = create(:room, state: 'conclusion')
         post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
         expect do
-          patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+          patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
         end.not_to change { room.reload.state }
       end
 
@@ -414,7 +414,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
             user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: true)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.to change(UserNotice, :count).to(2).from(1)
           end
 
@@ -423,7 +423,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
             user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: false)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.not_to change(UserNotice, :count)
           end
         end
@@ -435,7 +435,7 @@ RSpec.describe 'Api::Rooms', type: :request do
             post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
             user_notice = create(:user_notice, user: room.user, source: room, action: 'agreed', checked: true)
             expect do
-              patch "/api/rooms/#{room.id}/update_room_state", headers: headers
+              patch "/api/rooms/update_room_state", params: { room_id: room.id }, headers: headers
             end.not_to change(UserNotice, :count)
           end
         end

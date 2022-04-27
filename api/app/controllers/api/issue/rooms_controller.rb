@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::RoomsController < ApplicationController
+class Api::Issue::RoomsController < ApplicationController
   def show
     room = Room.includes(:user, :host, :user_messages, :host_messages, :agreement).find(params[:id])
 
@@ -116,7 +116,7 @@ class Api::RoomsController < ApplicationController
   end
 
   def update_room_time
-    room = Room.find(params[:id])
+    room = Room.find(params[:room_id])
 
     if user_login_and_own?(room.user.id)
 
@@ -154,7 +154,7 @@ class Api::RoomsController < ApplicationController
   end
 
   def update_room_state
-    room = Room.find(params[:id])
+    room = Room.find(params[:room_id])
     if user_login_and_own?(room.user.id)
       negotiating_to = 'user'
       user_to = 'negotiating'

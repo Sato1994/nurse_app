@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HostNoticesController < ApplicationController
+class Api::Host::HostNoticesController < ApplicationController
   def index
     return unless api_host_signed_in?
 

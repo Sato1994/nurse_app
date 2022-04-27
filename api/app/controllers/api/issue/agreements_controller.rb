@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::AgreementsController < ApplicationController
+class Api::Issue::AgreementsController < ApplicationController
   before_action :set_me, only: %i[create]
 
   def in_progress
@@ -207,11 +207,9 @@ class Api::AgreementsController < ApplicationController
   def set_me
     if api_user_signed_in?
       @me = 'user'
-      @id = current_api_user.id
       @user_id = current_api_user.id
     elsif api_host_signed_in?
       @me = 'host'
-      @id = current_api_host.id
       @user_id = params[:user_id]
     else
       render body: nil, status: :unauthorized

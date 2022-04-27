@@ -28,13 +28,27 @@ export const actions = {
   },
 
   createRequest({ dispatch, commit }, payload) {
-    this.$axios
-      .post(
-        `/api/${this.$cookies.get('user')}_requests/${payload.timeId}`,
-        {
+    let config = {}
+    switch (this.$cookies.get('user')) {
+      case 'user':
+        config = {
+          recruitment_time_id: payload.timeId,
           start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
           finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
-        },
+        }
+        break
+      case 'host':
+        config = {
+          free_time_id: payload.timeId,
+          start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
+          finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
+        }
+        break
+    }
+    this.$axios
+      .post(
+        `/api/${this.$cookies.get('user')}_requests`,
+        config,
         { headers: this.$cookies.get('authInfo') }
       )
       .then((response) => {
