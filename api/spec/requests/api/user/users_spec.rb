@@ -45,4 +45,16 @@ RSpec.describe 'Api::User::Users', type: :request do
       end
     end
   end
+
+  describe 'GET /history' do
+    let(:user) {create(:user)}
+
+    context '本人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        get "/api/users/#{user.myid}/history", { headers: headers }
+        expect(json).to eq(1)
+      end
+    end
+  end
 end

@@ -148,4 +148,40 @@ class Api::User::UsersController < ApplicationController
       }
     end
   end
+
+  def history
+    user = User.find_by(myid: params[:id])
+
+    if api_user_signed_in? && current_api_user.myid == params[:id]
+      user = User.includes([
+        agreements: %i[room host rate]
+      ]).find_by(myid: params[:id])
+
+      render_agreements_list = user.agreements.order(start_time: "DESC").not_in_progress.as_json(
+        only: %i[start_time state],
+        include: {
+          room: {
+            only: %i[id]
+          },
+          host: {
+            only: %i[name myid]
+          },
+          rate: {
+            only: %i[star]
+          },
+        }
+      )
+
+      render_agreements_list.each do |agreement|
+        agreement['partner'] = agreement.delete('host')
+      end
+      render json: {agreements_list: render_agreements_list}
+    else
+      render json: {user: '他人だよ'}
+
+    end
+
+
+  end
+
 end

@@ -52,17 +52,6 @@
         </v-row>
       </v-btn>
       <slot name="profile"></slot>
-      <v-btn
-        :to="{ path: `${$route.path}/history`, query: { prev: $route.path } }"
-        nuxt
-        class="mt-3"
-        rounded
-        small
-        depressed
-        block
-      >
-        ヒストリー
-      </v-btn>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
