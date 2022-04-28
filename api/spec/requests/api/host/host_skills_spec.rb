@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::HostSkills', type: :request do
+RSpec.describe 'Api::Host::HostSkills', type: :request do
   describe 'GET /index' do
     let(:host) { create(:host) }
     let(:skill) { create(:skill) }
@@ -18,12 +18,12 @@ RSpec.describe 'Api::HostSkills', type: :request do
 
     describe 'POST /create' do
       it 'ログインすれば登録できる' do
-        post "/api/skills/#{skill.id}/host_skills", headers: headers
+        post "/api/host_skills", params: {skill_id: skill.id }, headers: headers
         expect(host.skills.count).to eq(1)
       end
 
       it '適切な数のjsonを返す' do
-        post "/api/skills/#{skill.id}/host_skills", headers: headers
+        post "/api/host_skills", params: {skill_id: skill.id }, headers: headers
         json = JSON.parse(response.body)
         expect(json.count).to eq(2)
       end

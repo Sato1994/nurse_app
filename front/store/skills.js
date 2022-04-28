@@ -27,8 +27,8 @@ export const actions = {
   addSkill({ commit }, payload) {
     this.$axios
       .post(
-        `/api/skills/${payload.id}/${this.$cookies.get('user')}_skills`,
-        {},
+        `/api/${this.$cookies.get('user')}_skills`,
+        { skill_id: payload.id },
         {
           headers: this.$cookies.get('authInfo'),
         }

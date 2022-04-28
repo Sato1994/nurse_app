@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::UsersController < ApplicationController
+class Api::User::UsersController < ApplicationController
   include Pagination
 
   def index
@@ -35,7 +35,7 @@ class Api::UsersController < ApplicationController
 
     pagination = resources_with_pagination(users)
     @object = {
-     partners: users.as_json, kaminari: pagination
+      partners: users.as_json, kaminari: pagination
     }
     render json: @object
   end
@@ -145,6 +145,55 @@ class Api::UsersController < ApplicationController
 
       render json: {
         info: render_user, times: render_free_times, skills: render_user_skills
+      }
+    end
+  end
+
+  def history
+    user = User.find_by(myid: params[:id])
+
+    user = User.includes([
+                           agreements: %i[room host rate cancell_comment]
+                         ]).find_by(myid: params[:id])
+    if api_user_signed_in? && current_api_user.myid == params[:id]
+
+      render_agreements_list = user.agreements.order(start_time: 'DESC').not_in_progress.as_json(
+        only: %i[start_time state],
+        include: {
+          room: {
+            only: %i[id]
+          },
+          host: {
+            only: %i[name myid]
+          },
+          rate: {
+            only: %i[star]
+          }
+        }
+      )
+
+      render_cancell_comment = user.cancell_comments.count
+      render_agreements_count = user.agreements.in_finished.count
+
+      render_agreements_list.each do |agreement|
+        agreement['partner'] = agreement.delete('host')
+      end
+
+      render json: {
+        name: user.name,
+        agreements_list: render_agreements_list,
+        agreements_count: render_agreements_count,
+        cancell_count: render_cancell_comment
+      }
+
+    else
+      render_cancell_comment = user.cancell_comments.count
+      render_agreements_count = user.agreements.in_finished.count
+
+      render json: {
+        name: user.name,
+        cancell_count: render_cancell_comment,
+        agreements_count: render_agreements_count
       }
     end
   end

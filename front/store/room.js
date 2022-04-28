@@ -78,8 +78,12 @@ export const actions = {
   async sendMessage({ commit, rootState }, payload) {
     const { data } = await this.$axios
       .post(
-        `/api/${this.$cookies.get('user')}_messages/${payload.roomId}`,
-        { message: payload.message },
+        `/api/${this.$cookies.get('user')}_messages`,
+
+        {
+          message: payload.message,
+          room_id: payload.roomId
+        },
         { headers: this.$cookies.get('authInfo') }
       )
     rootState.info.me === 'user'
@@ -90,8 +94,9 @@ export const actions = {
   async updateTime({ commit, dispatch }, payload) {
     const { data } = await this.$axios
       .patch(
-        `/api/rooms/${payload.roomId}/update_room_time`,
+        `/api/rooms/update_room_time`,
         {
+          room_id: payload.roomId,
           start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
           finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
         },
@@ -114,18 +119,29 @@ export const actions = {
         // または agreement再確定
 
         try {
-          const agreementRes = await this.$axios
-            .post(
-              `/api/agreements/${this.$cookies.get('user') === 'user' ? 'host' : 'user'
-              }/${room.partnerId}`,
-              {
+          let config = {}
+          switch (this.$cookies.get('user')) {
+            case 'user':
+              config = {
+                host_id: room.partnerId,
                 room_id: room.id,
                 start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
                 finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
-              },
-              {
-                headers: this.$cookies.get('authInfo'),
               }
+              break
+            case 'host':
+              config = {
+                user_id: room.partnerId,
+                room_id: room.id,
+                start_time: `${room.startTime.year}-${room.startTime.month}-${room.startTime.day}T${room.startTime.hour}:${room.startTime.minute}`,
+                finish_time: `${room.finishTime.year}-${room.finishTime.month}-${room.finishTime.day}T${room.finishTime.hour}:${room.finishTime.minute}`,
+              }
+              break
+          }
+          const agreementRes = await this.$axios
+            .post(`/api/agreements`,
+              config,
+              { headers: this.$cookies.get('authInfo') }
             )
           commit('agreement/saveAgreement', agreementRes.data.agreement, { root: true })
           commit('issues/agreements/updateState', agreementRes.data.agreement, { root: true })
@@ -133,8 +149,8 @@ export const actions = {
 
           const { data } = await this.$axios
             .patch(
-              `/api/rooms/${room.id}/update_room_state`,
-              {},
+              `/api/rooms/update_room_state`,
+              { room_id: room.id },
               {
                 headers: this.$cookies.get('authInfo'),
               }
@@ -142,18 +158,17 @@ export const actions = {
 
           commit('updateState', { state: data.state })
           commit('issues/rooms/removeRoom', { id: room.id }, { root: true })
-        } catch {
+        } catch (e) {
+          console.log(e)
         }
         break
       default:
         try {
           const { data } = await this.$axios
             .patch(
-              `/api/rooms/${room.id}/update_room_state`,
-              {},
-              {
-                headers: this.$cookies.get('authInfo'),
-              }
+              `/api/rooms/update_room_state`,
+              { room_id: room.id },
+              { headers: this.$cookies.get('authInfo') }
             )
           commit('updateState', { state: data.state })
         } catch {

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::HostRequests', type: :request do
+RSpec.describe 'Api::Issue::HostRequests', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
@@ -70,8 +70,8 @@ RSpec.describe 'Api::HostRequests', type: :request do
     context 'リクエストが成功する場合' do
       before do
         post '/api/host/sign_in', params: { email: host.email, password: host.password }
-        post "/api/host_requests/#{free_time.id}",
-             params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now },
+        post "/api/host_requests",
+             params: { start_time: 21.hours.from_now, finish_time: 29.hours.from_now, free_time_id: free_time.id },
              headers: headers
       end
 
@@ -96,7 +96,7 @@ RSpec.describe 'Api::HostRequests', type: :request do
     context 'リクエストが失敗する場合' do
       before do
         post '/api/host/sign_in', params: { email: host.email, password: host.password }
-        post "/api/host_requests/#{free_time.id}", params: { start_time: Time.current, finish_time: Time.current },
+        post "/api/host_requests", params: { start_time: Time.current, finish_time: Time.current, free_time_id: free_time.id },
                                                    headers: headers
       end
 

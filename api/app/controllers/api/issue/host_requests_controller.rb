@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HostRequestsController < ApplicationController
+class Api::Issue::HostRequestsController < ApplicationController
   def index
     # Host本人のrequestが無効だった場合
     if api_host_signed_in?

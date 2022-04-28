@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::UserSkillsController < ApplicationController
+class Api::User::UserSkillsController < ApplicationController
   before_action :authenticate_api_user!, only: [:destroy]
 
   def create
