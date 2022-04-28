@@ -27,20 +27,6 @@
             :search="search"
             class="table"
           >
-            <template #[`item.star`]="{ item }">
-              <v-rating
-                v-if="Number.isInteger(item.star)"
-                :value="item.star"
-                color="amber"
-                dense
-                half-increments
-                readonly
-                size="14"
-              ></v-rating>
-              <span v-if="item.star === '未'"> 未 </span>
-              <span v-if="item.star === '-'"> - </span>
-            </template>
-
             <template #[`item.state`]="{ item }">
               <v-chip :color="getStateColor(item.state)" dark small>
                 {{ item.state }}
@@ -56,18 +42,7 @@
         <v-col align="center" justify="center" cols="6" sm="4" md="4" lg="4">
           <v-card rounded>
             <v-responsive aspect-ratio="1">
-              <v-card-text> 急に契約をキャンセルした回数 </v-card-text>
-              <v-card-text class="text-h1">
-                {{ cancellCount }}
-              </v-card-text>
-            </v-responsive>
-          </v-card>
-        </v-col>
-
-        <v-col align="center" justify="center" cols="6" sm="4" md="4" lg="4">
-          <v-card rounded>
-            <v-responsive aspect-ratio="1">
-              <v-card-text> 勤務した回数 </v-card-text>
+              <v-card-text> 契約回数 </v-card-text>
               <v-card-text class="text-h1">
                 {{ agreementsCount }}
               </v-card-text>
@@ -109,14 +84,13 @@ export default {
     const myid = route.path.replace('/history', '').replace(`/${me}/`, '')
 
     const { data } = await $axios.get(
-      `/api/users/${myid}/history`,
+      `/api/hosts/${myid}/history`,
 
       { headers: $cookies.get('authInfo') }
     )
     return {
       name: data.name,
       agreementsList: data.agreements_list,
-      cancellCount: data.cancell_count,
       agreementsCount: data.agreements_count,
     }
   },
@@ -131,7 +105,6 @@ export default {
       },
       { text: '日付', value: 'date' },
       { text: '結果', value: 'state' },
-      { text: '評価', value: 'star', sortable: false },
     ],
   }),
 
@@ -140,17 +113,7 @@ export default {
       if (this.agreementsList) {
         return this.agreementsList.map((obj) => {
           let s = new Date(obj.start_time)
-          let star = '-'
           let state = ''
-
-          switch (true) {
-            case typeof obj.rate !== 'undefined':
-              star = obj.rate.star
-              break
-            case obj.state === 'finished':
-              star = '未'
-              break
-          }
 
           switch (obj.state) {
             case 'finished':
@@ -169,8 +132,6 @@ export default {
             name: obj.partner.name,
             date: `${s.getMonth() + 1}/${s.getDate()}`,
             state,
-            star,
-
             roomId: obj.room.id,
           }
           return newObj

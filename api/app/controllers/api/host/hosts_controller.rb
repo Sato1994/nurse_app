@@ -192,4 +192,46 @@ class Api::Host::HostsController < ApplicationController
       }
     end
   end
+
+  def history
+    host = Host.find_by(myid: params[:id])
+
+    host = Host.includes([
+                           agreements: %i[room user]
+                         ]).find_by(myid: params[:id])
+    if api_host_signed_in? && current_api_host.myid == params[:id]
+
+      render_agreements_list = host.agreements.order(start_time: 'DESC').not_in_progress.as_json(
+        only: %i[start_time state],
+        include: {
+          room: {
+            only: %i[id]
+          },
+          user: {
+            only: %i[name myid]
+          }
+        }
+      )
+
+      render_agreements_count = host.agreements.in_finished.count
+
+      render_agreements_list.each do |agreement|
+        agreement['partner'] = agreement.delete('user')
+      end
+
+      render json: {
+        name: host.name,
+        agreements_list: render_agreements_list,
+        agreements_count: render_agreements_count,
+      }
+
+    else
+      render_agreements_count = host.agreements.in_finished.count
+
+      render json: {
+        name: host.name,
+        agreements_count: render_agreements_count
+      }
+    end
+  end
 end

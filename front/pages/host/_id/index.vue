@@ -33,7 +33,6 @@
         <v-btn
           :to="{
             path: `/host/${target.myid}/history`,
-            query: { me: 'host', myid: target.myid },
           }"
           nuxt
           class="mt-3"
