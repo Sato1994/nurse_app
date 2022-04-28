@@ -154,7 +154,8 @@ class Api::User::UsersController < ApplicationController
 
     if api_user_signed_in? && current_api_user.myid == params[:id]
       user = User.includes([
-        agreements: %i[room host rate]
+        agreements: %i[room host rate cancell_comment],
+        
       ]).find_by(myid: params[:id])
 
       render_agreements_list = user.agreements.order(start_time: "DESC").not_in_progress.as_json(
@@ -172,10 +173,15 @@ class Api::User::UsersController < ApplicationController
         }
       )
 
+      render_cancell_comment = user.cancell_comments.count
+
       render_agreements_list.each do |agreement|
         agreement['partner'] = agreement.delete('host')
       end
-      render json: {agreements_list: render_agreements_list}
+      render json: {
+        agreements_list: render_agreements_list,
+        cancell_count: render_cancell_comment
+      }
     else
       render json: {user: '他人だよ'}
 
