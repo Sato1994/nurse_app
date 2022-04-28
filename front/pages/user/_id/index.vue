@@ -46,6 +46,20 @@
               : 'プロフィールを登録していません。'
           }}
         </div>
+
+        <v-btn
+          :to="{
+            path: `/user/${target.myid}/history`,
+          }"
+          nuxt
+          class="mt-3"
+          rounded
+          small
+          depressed
+          block
+        >
+          ヒストリー
+        </v-btn>
       </template>
     </Home>
   </v-container>

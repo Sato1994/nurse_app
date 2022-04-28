@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::RecruitmentTimesController < ApplicationController
+class Api::Issue::RecruitmentTimesController < ApplicationController
   def index
     RecruitmentTime.where('host_id = ? && start_time <= ?', params[:id], 8.hours.from_now).destroy_all
 

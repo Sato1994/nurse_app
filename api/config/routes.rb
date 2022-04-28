@@ -9,46 +9,47 @@ Rails.application.routes.draw do
       registrations: 'api/host/registrations'
     }
 
-    resources :users, only: %i[index show]
-    resources :hosts, only: %i[index show]
-    resources :free_times, only: %i[index create destroy]
-    resources :recruitment_times, only: %i[index create destroy]
+    scope module: :user do
+      resources :users, only: %i[index show] do
+        get 'history', on: :member
+      end
+
+      resources :user_notices, only: %i[index destroy]
+      resources :user_messages, only: %i[create]
+      resources :user_skills, only: %i[create destroy]
+    end
+
+    scope module: :host do
+      resources :hosts, only: %i[index show] do
+        get 'history', on: :member
+      end
+
+      resources :host_notices, only: %i[index destroy]
+      resources :host_messages, only: %i[create]
+      resources :host_skills, only: %i[create destroy]
+    end
+
+    scope module: :issue do
+      resources :agreements, only: %i[update create] do
+        get 'in_progress', on: :collection
+        patch 'cancell', on: :collection
+      end
+      resources :rooms, only: %i[show update create] do
+        patch 'cancell_room', on: :collection
+        patch 'leave', on: :collection
+        patch 'update_room_time', on: :collection
+        patch 'update_room_state', on: :collection
+      end
+
+      resources :free_times, only: %i[index create destroy]
+      resources :recruitment_times, only: %i[index create destroy]
+      resources :user_requests, only: %i[index create destroy]
+      resources :host_requests, only: %i[index create destroy]
+    end
+
     resources :health_checks, only: :index
-    resources :user_requests, only: %i[index destroy]
-    resources :host_requests, only: %i[index destroy]
     resources :rates, only: [:create, :show]
-    resources :user_notices, only: %i[index destroy]
-    resources :host_notices, only: %i[index destroy]
-
-    resources :skills do
-      resources :user_skills, only: %i[create destroy], shallow: true
-      resources :host_skills, only: %i[create destroy], shallow: true
-    end
-
-    resources :agreements, only: %i[update] do
-      get 'in_progress', on: :collection
-      patch 'cancell', on: :collection
-    end
-
-    resources :rooms, only: %i[show update] do
-      patch 'cancell_room', on: :collection
-      patch 'leave', on: :collection
+    resources :skills, only: %i[index create update destroy] do
     end
   end
-  post 'api/agreements/user/:user_id', to: 'api/agreements#create'
-  post 'api/agreements/host/:host_id', to: 'api/agreements#create'
-
-  post 'api/host_requests/:free_time_id', to: 'api/host_requests#create'
-  post 'api/user_requests/:recruitment_time_id', to: 'api/user_requests#create'
-
-  delete 'api/user_requests', to: 'api/user_requests#destroy'
-  delete 'api/host_requests', to: 'api/host_requests#destroy'
-
-  post 'api/rooms', to: 'api/rooms#create'
-  patch 'api/rooms/:id/update_room_time', to: 'api/rooms#update_room_time'
-  patch 'api/rooms/:id/update_room_state', to: 'api/rooms#update_room_state'
-
-  post 'api/user_messages/:room_id', to: 'api/user_messages#create'
-
-  post 'api/host_messages/:room_id', to: 'api/host_messages#create'
 end

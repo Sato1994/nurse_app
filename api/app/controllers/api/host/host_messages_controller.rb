@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::HostMessagesController < ApplicationController
+class Api::Host::HostMessagesController < ApplicationController
   def create
     room = Room.find(params[:room_id])
     return unless host_login_and_own?(room.host.id)

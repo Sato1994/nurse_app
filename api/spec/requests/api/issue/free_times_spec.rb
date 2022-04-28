@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::FreeTimes', type: :request do
+RSpec.describe 'Api::Issue::FreeTimes', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
   end
 
   describe 'GET /index' do
-    let(:free_time) { create(:free_time, :skip_validate, start_time: 8.hours.from_now) }
+    let(:free_time) { create(:free_time, :skip_validate, start_time: 8.hours.from_now - 1.second) }
     let(:free_time_2) do
       create(:free_time, :skip_validate, user: free_time.user, start_time: 8.hours.from_now + 1.second)
     end
@@ -18,7 +18,6 @@ RSpec.describe 'Api::FreeTimes', type: :request do
     before do
       get '/api/free_times', params: { id: free_time_2.user_id }
     end
-
     it '現在時刻からちょうど8時間を超えるものだけ削除される' do
       expect(FreeTime.count).to eq(1)
     end

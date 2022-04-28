@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::FreeTimesController < ApplicationController
+class Api::Issue::FreeTimesController < ApplicationController
   def index
     FreeTime.where('user_id = ? && start_time <= ?', params[:id], 8.hours.from_now).destroy_all
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::HostMessages', type: :request do
+RSpec.describe 'Api::Host::HostMessages', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
@@ -11,14 +11,14 @@ RSpec.describe 'Api::HostMessages', type: :request do
   describe 'POST /create' do
     it 'ログインしていなければ失敗' do
       room = create(:room)
-      post "/api/host_messages/#{room.id}", params: { message: 'こんにちは' }
+      post "/api/host_messages", params: { message: 'こんにちは', room_id: room.id }
       expect(HostMessage.count).to eq(0)
     end
 
     it '適切な数のjsonを返す' do
       room = create(:room)
       post '/api/host/sign_in', params: { email: room.host.email, password: room.host.password }
-      post "/api/host_messages/#{room.id}", params: { message: 'こんにちは' }, headers: headers
+      post "/api/host_messages", params: { message: 'こんにちは', room_id: room.id }, headers: headers
       json = JSON.parse(response.body)
       expect(json['host_message'].count).to eq(2)
     end

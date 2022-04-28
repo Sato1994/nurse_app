@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::UserRequestsController < ApplicationController
+class Api::Issue::UserRequestsController < ApplicationController
   def index
     if api_user_signed_in?
       UserRequest.where('user_id = ? && start_time <= ?', params[:id], 7.hours.from_now).destroy_all
