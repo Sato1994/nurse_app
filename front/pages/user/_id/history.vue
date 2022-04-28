@@ -1,50 +1,53 @@
 <template>
   <v-card>
-    <v-card-title class="justify-center">山田孝之 </v-card-title>
+    <v-card-title class="justify-center">{{ name }} </v-card-title>
     <v-divider class="mx-4"></v-divider>
 
     <v-container>
       <v-card>
-        <v-card-title>
-          過去の契約
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="検索"
-            single-line
-            hide-details
-            dense
-          ></v-text-field>
-        </v-card-title>
-        <v-data-table
-          @click:row="clickTable"
-          :headers="headers"
-          :items="agreements"
-          :search="search"
-          dense
-          class="table"
-        >
-          <template #[`item.star`]="{ item }">
-            <v-rating
-              v-if="Number.isInteger(item.star)"
-              :value="item.star"
-              color="amber"
+        <div v-if="agreements !== null">
+          <v-card-title>
+            過去の契約
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="検索"
+              single-line
+              hide-details
               dense
-              half-increments
-              readonly
-              size="14"
-            ></v-rating>
-            <span v-if="item.star === '未'"> 未 </span>
-            <span v-if="item.star === '-'"> - </span>
-          </template>
+            ></v-text-field>
+          </v-card-title>
 
-          <template #[`item.state`]="{ item }">
-            <v-chip :color="getStateColor(item.state)" dark small>
-              {{ item.state }}
-            </v-chip>
-          </template>
-        </v-data-table>
+          <v-data-table
+            v-if="agreements !== null"
+            @click:row="clickTable"
+            :headers="headers"
+            :items="agreements"
+            :search="search"
+            class="table"
+          >
+            <template #[`item.star`]="{ item }">
+              <v-rating
+                v-if="Number.isInteger(item.star)"
+                :value="item.star"
+                color="amber"
+                dense
+                half-increments
+                readonly
+                size="14"
+              ></v-rating>
+              <span v-if="item.star === '未'"> 未 </span>
+              <span v-if="item.star === '-'"> - </span>
+            </template>
+
+            <template #[`item.state`]="{ item }">
+              <v-chip :color="getStateColor(item.state)" dark small>
+                {{ item.state }}
+              </v-chip>
+            </template>
+          </v-data-table>
+        </div>
       </v-card>
     </v-container>
 
@@ -53,7 +56,7 @@
         <v-col align="center" justify="center" cols="6" sm="4" md="4" lg="4">
           <v-card rounded>
             <v-responsive aspect-ratio="1">
-              <v-card-text> 急な契約のキャンセル回数 </v-card-text>
+              <v-card-text> 急に契約をキャンセルした回数 </v-card-text>
               <v-card-text class="text-h1">
                 {{ cancellCount }}
               </v-card-text>
@@ -64,8 +67,10 @@
         <v-col align="center" justify="center" cols="6" sm="4" md="4" lg="4">
           <v-card rounded>
             <v-responsive aspect-ratio="1">
-              <v-card-text> カミングスーーン </v-card-text>
-              <v-card-text class="text-h1"> </v-card-text>
+              <v-card-text> 勤務した回数 </v-card-text>
+              <v-card-text class="text-h1">
+                {{ agreementsCount }}
+              </v-card-text>
             </v-responsive>
           </v-card>
         </v-col>
@@ -107,8 +112,10 @@ export default {
       { headers: $cookies.get('authInfo') }
     )
     return {
+      name: data.name,
       agreementsList: data.agreements_list,
       cancellCount: data.cancell_count,
+      agreementsCount: data.agreements_count,
     }
   },
 
@@ -128,43 +135,47 @@ export default {
 
   computed: {
     agreements() {
-      return this.agreementsList.map((obj) => {
-        let s = new Date(obj.start_time)
-        let star = '-'
-        let state = ''
+      if (this.agreementsList) {
+        return this.agreementsList.map((obj) => {
+          let s = new Date(obj.start_time)
+          let star = '-'
+          let state = ''
 
-        switch (true) {
-          case typeof obj.rate !== 'undefined':
-            star = obj.rate.star
-            break
-          case obj.state === 'finished':
-            star = '未'
-            break
-        }
+          switch (true) {
+            case typeof obj.rate !== 'undefined':
+              star = obj.rate.star
+              break
+            case obj.state === 'finished':
+              star = '未'
+              break
+          }
 
-        switch (obj.state) {
-          case 'finished':
-            state = '終了'
-            break
-          case 'cancelled':
-            state = 'キャンセル'
-            break
-        }
+          switch (obj.state) {
+            case 'finished':
+              state = '終了'
+              break
+            case 'cancelled':
+              state = 'キャンセル'
+              break
+          }
 
-        if (process.server) {
-          s = new Date(s.setHours(s.getHours() + 9))
-        }
+          if (process.server) {
+            s = new Date(s.setHours(s.getHours() + 9))
+          }
 
-        const newObj = {
-          name: obj.partner.name,
-          date: `${s.getMonth() + 1}/${s.getDate()}`,
-          state,
-          star,
+          const newObj = {
+            name: obj.partner.name,
+            date: `${s.getMonth() + 1}/${s.getDate()}`,
+            state,
+            star,
 
-          roomId: obj.room.id,
-        }
-        return newObj
-      })
+            roomId: obj.room.id,
+          }
+          return newObj
+        })
+      } else {
+        return null
+      }
     },
   },
 

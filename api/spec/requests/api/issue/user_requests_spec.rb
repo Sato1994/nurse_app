@@ -33,7 +33,7 @@ RSpec.describe 'Api::Issue::UserRequests', type: :request do
 
       it '現在時刻からちょうど8時間を超えたものだけ削除される' do
         create(:user_request, :skip_validate, start_time: 7.hours.from_now, recruitment_time: recruitment_time)
-        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 1.second,
+        user_request = create(:user_request, :skip_validate, start_time: 7.hours.from_now + 2.second,
                                                              recruitment_time: recruitment_time)
         post '/api/host/sign_in', params: { email: recruitment_time.host.email, password: recruitment_time.host.password }
         get '/api/user_requests', params: { id: recruitment_time.host_id }, headers: headers

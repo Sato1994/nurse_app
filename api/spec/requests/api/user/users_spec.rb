@@ -53,7 +53,15 @@ RSpec.describe 'Api::User::Users', type: :request do
       it '期待する数のプロパティを返す' do
         post '/api/user/sign_in', params: { email: user.email, password: user.password }
         get "/api/users/#{user.myid}/history", { headers: headers }
-        expect(json.count).to eq(2)
+        expect(json.count).to eq(4)
+      end
+    end
+
+    context '他人のページの場合' do
+      it '期待する数のプロパティを返す' do
+        post '/api/user/sign_in', params: { email: user.email, password: user.password }
+        get "/api/users/#{user.myid}/history"
+        expect(json.count).to eq(3)
       end
     end
   end

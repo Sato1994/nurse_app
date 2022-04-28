@@ -83,13 +83,13 @@ RSpec.describe Agreement, type: :model do
   end
 
   describe 'methods' do
-    context 'in_progress' do
-      let(:agreement_1) { create(:agreement, state: 'before') }
-      let(:agreement_2) { create(:agreement, state: 'during') }
-      let(:agreement_3) { create(:agreement, state: 'finished') }
-      let(:agreement_4) { create(:agreement, state: 'requesting') }
-      let(:agreement_5) { create(:agreement, state: 'cancelled') }
+    let(:agreement_1) { create(:agreement, state: 'before') }
+    let(:agreement_2) { create(:agreement, state: 'during') }
+    let(:agreement_3) { create(:agreement, state: 'finished') }
+    let(:agreement_4) { create(:agreement, state: 'requesting') }
+    let(:agreement_5) { create(:agreement, state: 'cancelled') }
 
+    context 'in_progress' do
       it 'stateがbefore, duringまたはrequestingのものが検索される' do
         expect(described_class.in_progress).to include(agreement_1, agreement_2, agreement_4)
       end
@@ -100,18 +100,22 @@ RSpec.describe Agreement, type: :model do
     end
 
     context 'not_in_progress' do
-      let(:agreement_1) { create(:agreement, state: 'before') }
-      let(:agreement_2) { create(:agreement, state: 'during') }
-      let(:agreement_3) { create(:agreement, state: 'finished') }
-      let(:agreement_4) { create(:agreement, state: 'requesting') }
-      let(:agreement_5) { create(:agreement, state: 'cancelled') }
-
       it 'stateがfinishedまたはcancelledのものが検索される' do
         expect(described_class.not_in_progress).to include(agreement_3, agreement_5)
       end
 
       it 'その他は検索されない' do
         expect(described_class.not_in_progress).not_to include(agreement_1, agreement_2, agreement_4)
+      end
+    end
+
+    context 'in_finished' do
+      it 'stateがfinishedものが検索される' do
+        expect(described_class.in_finished).to include(agreement_3)
+      end
+
+      it 'その他は検索されない' do
+        expect(described_class.in_finished).not_to include(agreement_1, agreement_2, agreement_4, agreement_5)
       end
     end
 

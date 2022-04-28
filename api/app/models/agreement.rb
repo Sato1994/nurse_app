@@ -22,6 +22,7 @@ class Agreement < ApplicationRecord
 
   scope :in_progress, -> { where(state: %i[before during requesting]) }
   scope :not_in_progress, -> { where(state: %i[finished cancelled])}
+  scope :in_finished, -> { where(state: %i[finished])}
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
