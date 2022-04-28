@@ -105,7 +105,7 @@ describe('_id', () => {
   it('TimeCardへ渡している値が期待しているもの', () => {
     expect(wrapper.vm.partnerLink).toEqual(`/host/${initialRoom.partnerMyid}`)
     expect(wrapper.vm.updateStateButton).toEqual(true)
-    expect(wrapper.vm.updateStateButtonText).toEqual('この時間で同意')
+    expect(wrapper.vm.updateStateButtonText).toEqual('時間に同意')
     expect(wrapper.vm.updateTimeButton).toEqual(true)
     expect(wrapper.vm.editAgreementButton).toEqual(false)
     expect(wrapper.vm.cancellAgreementButton).toEqual(false)
