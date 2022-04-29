@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mx-auto">
       <v-img
-        v-if="agreement.state !== 'cancelled'"
+        v-if="mapDisplay"
         height="250"
         src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
         class="map"
@@ -222,6 +222,17 @@ export default {
     lockButton() {
       return this.agreement.state !== 'during'
     },
+
+    mapDisplay() {
+      if (this.agreement.id) {
+        return (
+          this.agreement.state === 'before' ||
+          this.agreement.state === 'requesting'
+        )
+      } else {
+        return this.room.state !== 'cancelled'
+      }
+    },
   },
 
   methods: {
@@ -296,9 +307,7 @@ export default {
           'snackbar/setMessage',
           '契約をキャンセルしました。'
         )
-        // agreement status変更
         this.$store.commit('agreement/updateState', { state: 'cancelled' })
-        // room status変更
         this.$store.commit('room/updateState', { state: 'cancelled' })
         // agreementsから削除
         this.$store.commit('issues/agreements/removeAgreement', {
