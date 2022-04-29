@@ -1,6 +1,8 @@
 <template>
   <v-container>
+    agreement
     <Agreements />
+    rooms
     <Rooms />
   </v-container>
 </template>
