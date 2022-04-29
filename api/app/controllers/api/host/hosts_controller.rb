@@ -97,7 +97,7 @@ class Api::Host::HostsController < ApplicationController
         only: %i[id myid name address lat lng image wanted phone profile created_at]
       )
 
-      render_agreements = host.agreements.in_progress.as_json(
+      render_agreements = host.agreements.in_progress.order(:start_time).as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {
@@ -117,6 +117,7 @@ class Api::Host::HostsController < ApplicationController
       render_rooms = host.rooms
                          .host_have_not_exited
                          .related_agreement_is_not_in_progress
+                         .order(:start_time)
                          .as_json(
                            only: %i[id state closed start_time finish_time created_at],
                            include: {
@@ -130,7 +131,7 @@ class Api::Host::HostsController < ApplicationController
         room['partner'] = room.delete('user')
       end
 
-      render_host_requests = host.host_requests.as_json(
+      render_host_requests = host.host_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           user: {
@@ -143,11 +144,11 @@ class Api::Host::HostsController < ApplicationController
         request['partner'] = request.delete('user')
       end
 
-      render_recruitment_times = host.recruitment_times.as_json(
+      render_recruitment_times = host.recruitment_times.order(:start_time).as_json(
         only: %i[id start_time finish_time]
       )
 
-      render_user_requests = host.user_requests.as_json(
+      render_user_requests = host.user_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           user: {
@@ -222,7 +223,7 @@ class Api::Host::HostsController < ApplicationController
       render json: {
         name: host.name,
         agreements_list: render_agreements_list,
-        agreements_count: render_agreements_count,
+        agreements_count: render_agreements_count
       }
 
     else

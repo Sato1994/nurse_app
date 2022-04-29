@@ -53,7 +53,7 @@ class Api::User::UsersController < ApplicationController
         only: %i[id myid name address lat lng image wanted sex age year profile created_at]
       )
 
-      render_agreements = user.agreements.in_progress.as_json(
+      render_agreements = user.agreements.order(:start_time).in_progress.as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {
@@ -73,6 +73,7 @@ class Api::User::UsersController < ApplicationController
       render_rooms = user.rooms
                          .user_have_not_exited
                          .related_agreement_is_not_in_progress
+                         .order(:start_time)
                          .as_json(
                            only: %i[id state closed start_time finish_time created_at],
                            include: {
@@ -86,7 +87,7 @@ class Api::User::UsersController < ApplicationController
         room['partner'] = room.delete('host')
       end
 
-      render_user_requests = user.user_requests.as_json(
+      render_user_requests = user.user_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           host: {
@@ -99,11 +100,11 @@ class Api::User::UsersController < ApplicationController
         request['partner'] = request.delete('host')
       end
 
-      render_free_times = user.free_times.as_json(
+      render_free_times = user.free_times.order(:start_time).as_json(
         only: %i[id start_time finish_time]
       )
 
-      render_host_requests = user.host_requests.as_json(
+      render_host_requests = user.host_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           host: {
