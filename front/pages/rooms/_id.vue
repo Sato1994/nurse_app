@@ -10,7 +10,7 @@
 
       {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
 
-      <v-container v-if="agreement.state === 'finished'" fluid class="rateArea">
+      <v-container v-if="rateAreaDisplay" fluid class="rateArea">
         <v-textarea
           v-model="inputComment"
           append-icon="mdi-send-outline"
@@ -216,7 +216,9 @@ export default {
     },
 
     leaveButton() {
-      return this.room.state === 'cancelled'
+      return (
+        this.room.state === 'cancelled' || this.agreement.state === 'finished'
+      )
     },
 
     lockButton() {
@@ -232,6 +234,13 @@ export default {
       } else {
         return this.room.state !== 'cancelled'
       }
+    },
+
+    rateAreaDisplay() {
+      return (
+        this.$cookies.get('user') === 'user' &&
+        this.agreement.state === 'finished'
+      )
     },
   },
 
