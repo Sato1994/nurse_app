@@ -1,15 +1,10 @@
 <template>
   <v-card class="mx-auto">
-    <!-- 節約中だよ。v-if="!target.address"に変えてね -->
-    <v-img
-      v-if="target.address"
-      height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-    ></v-img>
-    <!-- 節約中だよ。  v-else に変えてね -->
-    <template v-if="false">
+    <template>
+      <!-- 節約するときはv-if="!target.adresss" -->
       <GmapMap
         map-type-id="roadmap"
+        v-if="target.address"
         :center="maplocation"
         :zoom="15"
         :style="{ width: '100%', height: '250px' }"
@@ -22,6 +17,12 @@
           :draggable="false"
         />
       </GmapMap>
+
+      <v-img
+        v-else
+        height="250"
+        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      ></v-img>
     </template>
 
     <v-card-title

@@ -1,12 +1,29 @@
 <template>
   <v-container>
     <v-card class="mx-auto">
-      <v-img
-        v-if="mapDisplay"
-        height="250"
-        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-        class="map"
-      ></v-img>
+      <template>
+        <GmapMap
+          map-type-id="roadmap"
+          v-if="mapDisplay"
+          :center="maplocation"
+          :zoom="15"
+          :style="{ width: '100%', height: '250px' }"
+          :options="mapOptions"
+        >
+          <GmapMarker
+            :title="target.address"
+            :position="maplocation"
+            :clickable="false"
+            :draggable="false"
+          />
+        </GmapMap>
+        <v-img
+          v-else
+          height="250"
+          src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+          class="map"
+        ></v-img>
+      </template>
 
       {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
 
@@ -140,6 +157,16 @@ export default {
     agreementId: null,
     roomId: null,
     phone: null,
+    mapOptions: {
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoomControl: false,
+    },
+    target: {
+      address: '横須賀',
+      lng: 0,
+      lat: 0,
+    },
   }),
 
   async fetch({ store, route }) {
@@ -228,11 +255,15 @@ export default {
     mapDisplay() {
       if (this.agreement.id) {
         return (
-          this.agreement.state === 'before' ||
-          this.agreement.state === 'requesting'
+          this.$cookies.get('user') === 'user' &&
+          (this.agreement.state === 'before' ||
+            this.agreement.state === 'requesting')
         )
       } else {
-        return this.room.state !== 'cancelled'
+        return (
+          this.$cookies.get('user') === 'user' &&
+          this.room.state !== 'cancelled'
+        )
       }
     },
 
@@ -241,6 +272,13 @@ export default {
         this.$cookies.get('user') === 'user' &&
         this.agreement.state === 'finished'
       )
+    },
+
+    maplocation() {
+      return {
+        lng: this.target.lng,
+        lat: this.target.lat,
+      }
     },
   },
 
