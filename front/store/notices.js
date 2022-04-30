@@ -9,11 +9,32 @@ export const mutations = {
     state.notices.splice(index, 1)
   },
 
-  saveFormedNotices(state, notices) {
-    const formedNotices = notices.map((obj) => {
+
+  saveNotices(state, notices) {
+    state.notices = notices
+  },
+}
+
+export const actions = {
+  async removeNotice({ commit }, payload) {
+    await this.$axios.delete(`/api/${this.$cookies.get('user') === 'user' ? 'user' : 'host'}_notices/${payload.noticeId}`, {
+      headers: this.$cookies.get('authInfo'),
+    })
+    commit('removeNotice', payload)
+  },
+}
+
+export const getters = {
+  noticesOnDialog(state, _, rootState) {
+    return state.notices.map((obj) => {
+      const id = obj.id
+      const sourceId = obj.source_id
+      const partnerMyId = obj.source.partner.myid
       let title = ''
       let subTitle = ''
       let sourceLink = ''
+      let partnerImage = obj.source.partner.image.url
+      let partnerName = obj.source.partner.name
       switch (obj.source_type) {
         case 'UserRequest':
         case 'HostRequest':
@@ -64,9 +85,11 @@ export const mutations = {
           }
           break
         case 'Rate':
-          sourceLink = `/something`
+          sourceLink = `/${rootState.info.me}/${rootState.info.info.myid}/rates`
           title = '評価されました！'
           subTitle = '確認してみましょう'
+          partnerImage = '/image/nurse_hop_logo.png'
+          partnerName = 'nurse hop'
           break
       }
       const today = new Date()
@@ -88,33 +111,9 @@ export const mutations = {
       }
 
       const newObject = {
-        id: obj.id,
-        title,
-        subTitle,
-        createdAt,
-        sourceId: obj.source_id,
-        sourceLink,
-        partnerName: obj.source.partner.name,
-        partnerMyId: obj.source.partner.myid,
-        partnerImage: obj.source.partner.image.url
+        id, title, subTitle, createdAt, sourceId, sourceLink, partnerName, partnerMyId, partnerImage,
       }
       return newObject
     })
-    state.notices = formedNotices
-  },
-}
-
-export const actions = {
-  async removeNotice({ commit }, payload) {
-    await this.$axios.delete(`/api/${this.$cookies.get('user') === 'user' ? 'user' : 'host'}_notices/${payload.noticeId}`, {
-      headers: this.$cookies.get('authInfo'),
-    })
-    commit('removeNotice', payload)
-  },
-}
-
-export const getters = {
-  noticesOnDialog(state) {
-    return state.notices
   },
 }

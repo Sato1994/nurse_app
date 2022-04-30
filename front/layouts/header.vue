@@ -124,7 +124,7 @@ export default {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
-          this.$store.commit('notices/saveFormedNotices', response.data)
+          this.$store.commit('notices/saveNotices', response.data)
         })
     }
   },
