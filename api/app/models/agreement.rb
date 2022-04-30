@@ -21,8 +21,8 @@ class Agreement < ApplicationRecord
   enum state: { before: 0, during: 1, finished: 2, requesting: 3, cancelled: 4 }
 
   scope :in_progress, -> { where(state: %i[before during requesting]) }
-  scope :not_in_progress, -> { where(state: %i[finished cancelled])}
-  scope :in_finished, -> { where(state: %i[finished])}
+  scope :not_in_progress, -> { where(state: %i[finished cancelled]) }
+  scope :in_finished, -> { where(state: %i[finished]) }
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
@@ -55,13 +55,15 @@ class Agreement < ApplicationRecord
   def update_state
     transaction do
       update(state: 'requesting')
+      save!(validate: false)
       room.update(state: 'negotiating')
+      room.save!(validate: false)
     end
 
     {
       agreement: {
-        state: self.state,
-        id: self.id
+        state: state,
+        id: id
       },
       room: {
         state: room.state,
@@ -75,7 +77,9 @@ class Agreement < ApplicationRecord
   def cancell_agreement
     transaction do
       update(state: 'cancelled')
+      save!(validate: false)
       room.update(state: 'cancelled')
+      room.save!(validate: false)
     end
   end
 

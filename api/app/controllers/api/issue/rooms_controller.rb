@@ -182,7 +182,8 @@ class Api::Issue::RoomsController < ApplicationController
         return
       end
 
-      if room.update(state: negotiating_to)
+      room.update(state: negotiating_to)
+      if room.save!(validate: false)
         case negotiating_to
         when 'user'
           room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'agreed')
@@ -196,14 +197,17 @@ class Api::Issue::RoomsController < ApplicationController
       end
 
     when 'user'
-      if room.update(state: user_to)
+      room.update(state: user_to)
+      if room.save!(validate: false)
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
       end
 
     when 'host'
-      if room.update(state: host_to)
+      room.update(state: host_to)
+      if room.save!(validate: false)
+
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
@@ -223,10 +227,13 @@ class Api::Issue::RoomsController < ApplicationController
     end
 
     if user_login_and_own?(room.user.id)
-      room.create_host_notice!(host_id: room.host_id, action: 'left') if  room.update(state: 'cancelled')
+      room.update!(state: 'cancelled')
+      room.create_host_notice!(host_id: room.host_id, action: 'left') if room.save!(validate: false)
 
     elsif host_login_and_own?(room.host.id)
-      room.create_user_notice!(user_id: room.user_id, action: 'left') if  room.update(state: 'cancelled')
+
+      room.update!(state: 'cancelled')
+      room.create_user_notice!(user_id: room.user_id, action: 'left') if room.save!(validate: false)
     else
       render body: nil, status: :forbidden
       return
@@ -241,8 +248,10 @@ class Api::Issue::RoomsController < ApplicationController
       case room.closed
       when 'na'
         room.update(closed: 'user')
+        room.save!(validate: false)
       when 'host'
         room.update(closed: 'both')
+        room.save!(validate: false)
       else
         render body: nil, status: :bad_request
         return
@@ -253,8 +262,10 @@ class Api::Issue::RoomsController < ApplicationController
       case room.closed
       when 'na'
         room.update(closed: 'host')
+        room.save!(validate: false)
       when 'user'
         room.update(closed: 'both')
+        room.save!(validate: false)
       else
         render body: nil, status: :bad_request
         return
