@@ -5,16 +5,15 @@
         <GmapMap
           map-type-id="roadmap"
           v-if="mapDisplay"
-          :center="maplocation"
+          :center="endLocation"
           :zoom="15"
           :style="{ width: '100%', height: '250px' }"
           :options="mapOptions"
         >
-          <GmapMarker
-            :title="target.address"
-            :position="maplocation"
-            :clickable="false"
-            :draggable="false"
+          <DirectionsRenderer
+            travelMode="DRIVING"
+            :origin="startLocation"
+            :destination="endLocation"
           />
         </GmapMap>
         <v-img
@@ -24,8 +23,6 @@
           class="map"
         ></v-img>
       </template>
-
-      {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
 
       <v-container v-if="rateAreaDisplay" fluid class="rateArea">
         <v-textarea
@@ -141,12 +138,14 @@ import Message from '@/components/props/Message.vue'
 import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
+import DirectionsRenderer from '@/components/props/DirectionsRenderer.vue'
 export default {
   components: {
     Message,
     TimeCard,
     Confirm,
     DatePicker,
+    DirectionsRenderer,
   },
 
   data: () => ({
@@ -161,11 +160,6 @@ export default {
       streetViewControl: false,
       mapTypeControl: false,
       zoomControl: false,
-    },
-    target: {
-      address: '横須賀',
-      lng: 0,
-      lat: 0,
     },
   }),
 
@@ -276,8 +270,22 @@ export default {
 
     maplocation() {
       return {
-        lng: this.target.lng,
-        lat: this.target.lat,
+        lng: this.room.partnerLng,
+        lat: this.room.partnerLat,
+      }
+    },
+
+    startLocation() {
+      return {
+        lng: this.$store.state.info.info.lng,
+        lat: this.$store.state.info.info.lat,
+      }
+    },
+
+    endLocation() {
+      return {
+        lng: this.room.partnerLng,
+        lat: this.room.partnerLat,
       }
     },
   },

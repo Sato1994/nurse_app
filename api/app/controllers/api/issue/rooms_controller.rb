@@ -14,7 +14,7 @@ class Api::Issue::RoomsController < ApplicationController
         only: %i[id start_time finish_time state closed],
         include: {
           host: {
-            only: %i[id name myid image phone]
+            only: %i[id name myid image phone address lng lat]
           },
           user_messages: {
             only: %i[message created_at]
