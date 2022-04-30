@@ -2,7 +2,7 @@
 
 class Api::Issue::RoomsController < ApplicationController
   def show
-    room = Room.includes(:user, :host, :user_messages, :host_messages, :agreement).find(params[:id])
+    room = Room.includes(:user, :host, :user_messages, :host_messages, [agreement: :rate]).find(params[:id])
 
     unless user_login_and_own?(room.user.id) || host_login_and_own?(room.host.id)
       render json: nil, status: :unauthorized
@@ -28,7 +28,12 @@ class Api::Issue::RoomsController < ApplicationController
       render_room['partner'] = render_room.delete('host')
 
       render_agreement = room.agreement.as_json(
-        only: %i[id start_time finish_time state]
+        only: %i[id start_time finish_time state],
+        include: {
+          rate: {
+            only: %i[comment star]
+          }
+        }
       )
 
       render json: { room: render_room, agreement: render_agreement }

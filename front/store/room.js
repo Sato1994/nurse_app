@@ -68,7 +68,7 @@ export const actions = {
       headers: this.$cookies.get('authInfo'),
     })
     commit('saveRoom', data.room)
-    if (data.agreement !== null) {
+    if (data.agreement) {
       commit('agreement/saveAgreement', data.agreement, { root: true })
     } else {
       commit('agreement/resetAgreement', {}, { root: true })

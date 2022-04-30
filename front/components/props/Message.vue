@@ -6,7 +6,7 @@
         append-icon="mdi-email-fast-outline"
         filled
         rows="2"
-        label="入力してください"
+        label="メッセージ"
         auto-grow
         :counter="500"
         @click:append="sendMessage"

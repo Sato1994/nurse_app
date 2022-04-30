@@ -1,10 +1,12 @@
 <template>
   <v-container>
     <v-card class="mx-auto">
-      <template>
+      ★agreement★{{ agreement }}★agreement★ ★room★{{ room }}★room★
+      <div>
+        <!-- v-if="mapDisplay" に変更する -->
         <GmapMap
+          v-if="false"
           map-type-id="roadmap"
-          v-if="mapDisplay"
           :center="endLocation"
           :zoom="15"
           :style="{ width: '100%', height: '250px' }"
@@ -16,34 +18,8 @@
             :destination="endLocation"
           />
         </GmapMap>
-        <v-img
-          v-else
-          height="250"
-          src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-          class="map"
-        ></v-img>
-      </template>
+      </div>
 
-      <v-container v-if="rateAreaDisplay" fluid class="rateArea">
-        <v-textarea
-          v-model="inputComment"
-          append-icon="mdi-send-outline"
-          filled
-          rows="4"
-          label="勤務お疲れさまでした。この病院の評価を投稿しましょう！"
-          auto-grow
-          :counter="300"
-          @click:append="createRate"
-        ></v-textarea>
-        <v-row align="center" class="mx-0">
-          <v-rating
-            v-model="inputStar"
-            color="amber"
-            dense
-            size="30"
-          ></v-rating>
-        </v-row>
-      </v-container>
       <TimeCard
         :partnerLink="partnerLink"
         :partnerName="room.partnerName"
@@ -113,6 +89,13 @@
           </v-card-subtitle>
         </template>
       </TimeCard>
+      <Rate
+        :inputRateDisplay="inputRateDisplay"
+        :rateDisplay="rateDisplay"
+        :rate="agreement.rate"
+        @agree-button-click="createRate"
+      />
+
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
@@ -139,6 +122,7 @@ import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import DirectionsRenderer from '@/components/props/DirectionsRenderer.vue'
+import Rate from '@/components/props/Rate.vue'
 export default {
   components: {
     Message,
@@ -146,6 +130,7 @@ export default {
     Confirm,
     DatePicker,
     DirectionsRenderer,
+    Rate,
   },
 
   data: () => ({
@@ -261,10 +246,19 @@ export default {
       }
     },
 
-    rateAreaDisplay() {
+    inputRateDisplay() {
       return (
         this.$cookies.get('user') === 'user' &&
-        this.agreement.state === 'finished'
+        this.agreement.state === 'finished' &&
+        !this.agreement.rate.comment
+      )
+    },
+
+    rateDisplay() {
+      return (
+        this.$cookies.get('user') === 'user' &&
+        this.agreement.state === 'finished' &&
+        this.agreement.rate.comment !== null
       )
     },
 
@@ -305,17 +299,24 @@ export default {
       this.confirmDialog = false
     },
 
-    createRate() {
-      this.$axios.post(
-        '/api/rates',
-        {
-          agreement_id: this.agreement.id,
-          comment: this.inputComment,
-        },
-        {
-          headers: this.$cookies.get('authInfo'),
-        }
-      )
+    async createRate(payload) {
+      try {
+        await this.$axios.post(
+          '/api/rates',
+          {
+            agreement_id: this.agreement.id,
+            comment: payload.comment,
+            star: payload.star,
+          },
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        this.$store.commit('agreement/saveRate', {
+          comment: payload.comment,
+          star: payload.star,
+        })
+      } catch {}
     },
 
     displayConfirm() {

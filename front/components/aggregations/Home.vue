@@ -1,10 +1,10 @@
 <template>
   <v-card class="mx-auto">
-    <template>
+    <div>
       <!-- 節約するときはv-if="!target.adresss" -->
       <GmapMap
+        v-if="!target.address"
         map-type-id="roadmap"
-        v-if="target.address"
         :center="maplocation"
         :zoom="15"
         :style="{ width: '100%', height: '250px' }"
@@ -23,7 +23,7 @@
         height="250"
         src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
       ></v-img>
-    </template>
+    </div>
 
     <v-card-title
       >{{ target.name }}
