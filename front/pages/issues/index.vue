@@ -9,6 +9,12 @@
     <Times />
     <Offers />
     <Requests />
+    <v-img
+      class="noContent"
+      v-if="noContentDisplay"
+      width="100"
+      src="/image/no_content.png"
+    ></v-img>
   </v-container>
 </template>
 
@@ -28,6 +34,16 @@ export default {
 
   head: {
     title: '登録一覧',
+  },
+
+  computed: {
+    noContentDisplay() {
+      return (
+        this.$store.state.issues.times.times.length === 0 &&
+        this.$store.state.issues.offers.offers.length === 0 &&
+        this.$store.state.issues.requests.requests.length === 0
+      )
+    },
   },
 
   methods: {
@@ -50,3 +66,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.noContent {
+  position: fixed;
+  top: 50%;
+  left: 43%;
+}
+</style>

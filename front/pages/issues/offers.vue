@@ -6,6 +6,12 @@
       @refine-button-click="refineSearch"
     />
     <Offers />
+    <v-img
+      class="noContent"
+      v-if="noContentDisplay"
+      width="100"
+      src="/image/no_content.png"
+    ></v-img>
   </v-container>
 </template>
 
@@ -21,6 +27,12 @@ export default {
 
   head: {
     title: '届いたリクエスト',
+  },
+
+  computed: {
+    noContentDisplay() {
+      return this.$store.state.issues.offers.offers.length === 0
+    },
   },
 
   methods: {
@@ -43,3 +55,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.noContent {
+  position: fixed;
+  top: 50%;
+  left: 43%;
+}
+</style>
