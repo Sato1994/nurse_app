@@ -21,11 +21,11 @@
 
           <v-data-table
             v-if="agreements !== null"
-            @click:row="clickTable"
             :headers="headers"
             :items="agreements"
             :search="search"
             class="table"
+            @click:row="clickTable"
           >
             <template #[`item.star`]="{ item }">
               <v-rating
@@ -131,7 +131,7 @@ export default {
       },
       { text: '日付', value: 'date' },
       { text: '結果', value: 'state' },
-      { text: '評価', value: 'star', sortable: false },
+      { text: 'つけた評価', value: 'star', sortable: false },
     ],
   }),
 

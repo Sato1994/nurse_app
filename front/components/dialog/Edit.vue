@@ -62,7 +62,7 @@
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="info.address"
+                    v-model="address"
                     label="住所"
                     required
                     color="warning"
@@ -190,6 +190,7 @@ export default {
     ],
     setImageUrl: null,
     deletable: false,
+    address: '',
   }),
 
   computed: {
@@ -229,6 +230,10 @@ export default {
     },
   },
 
+  mounted() {
+    this.address = this.info.address
+  },
+
   methods: {
     ...mapMutations('dialog/edit', ['hideEdit']),
 
@@ -250,18 +255,18 @@ export default {
         })
     },
 
-    getAddress() {
-      this.$axios
-        .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
-        .then((response) => {
-          this.info.address = response.data.data.fullAddress
-        })
-        .catch(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            '住所の検索の取得に失敗しました。'
-          )
-        })
+    async getAddress() {
+      try {
+        const { data } = await this.$axios.get(
+          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
+        )
+        this.address = data.data.fullAddress
+      } catch {
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          '住所の検索の取得に失敗しました。'
+        )
+      }
     },
 
     // イメージがセットされているならされているurlを代入
@@ -274,39 +279,41 @@ export default {
       }
     },
 
-    editUser() {
-      this.hideEdit()
-      const formData = new FormData()
-      const headers = {
-        'content-type': 'multipart/form-data',
-        'access-token': this.$cookies.get('authInfo')['access-token'],
-        client: this.$cookies.get('authInfo').client,
-        uid: this.$cookies.get('authInfo').uid,
-      }
-      // 入力欄が埋まってるものだけformDataに
-      for (const key in this.info) {
-        if (this.info[key] != null) {
-          formData.append(key, this.info[key])
+    async editUser() {
+      try {
+        this.hideEdit()
+        const formData = new FormData()
+        const headers = {
+          'content-type': 'multipart/form-data',
+          'access-token': this.$cookies.get('authInfo')['access-token'],
+          client: this.$cookies.get('authInfo').client,
+          uid: this.$cookies.get('authInfo').uid,
         }
-      }
+        // 入力欄が埋まってるものだけformDataに
+        for (const key in this.info) {
+          if (this.info[key] != null) formData.append(key, this.info[key])
+        }
+        formData.set('address', this.address)
 
-      this.$axios
-        .put(`/api/${this.$cookies.get('user')}`, formData, {
-          headers,
-        })
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'プロフィールを変更しました。'
-          )
-          this.$store.commit('info/saveInfo', response.data.data)
-        })
-        .catch(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'プロフィールの更新に失敗しました。'
-          )
-        })
+        const { data } = await this.$axios.put(
+          `/api/${this.$cookies.get('user')}`,
+          formData,
+          {
+            headers,
+          }
+        )
+
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          'プロフィールを変更しました。'
+        )
+        this.$store.commit('info/saveInfo', data.data)
+      } catch {
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          'プロフィールの更新に失敗しました。'
+        )
+      }
     },
   },
 }

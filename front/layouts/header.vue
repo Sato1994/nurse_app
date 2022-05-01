@@ -43,7 +43,7 @@
       </v-tooltip>
 
       <div>
-        <v-img width="70" src="/image/nurse_hop_logo.png"></v-img>
+        <v-img width="45" src="/image/nurse_hop_logo.png"></v-img>
       </div>
       <div class="bellIcon">
         <Notice />

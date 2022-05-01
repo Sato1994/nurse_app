@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Home from '@/components/aggregations/Home.vue'
 
 export default {
@@ -126,6 +127,8 @@ export default {
   }),
 
   computed: {
+    ...mapState('info', ['info']),
+
     reloadTimesPath() {
       return '/api/recruitment_times'
     },
@@ -135,6 +138,12 @@ export default {
     },
     reloadOffersPath() {
       return '/api/user_requests'
+    },
+  },
+
+  watch: {
+    info(newValue) {
+      this.target = newValue
     },
   },
 
