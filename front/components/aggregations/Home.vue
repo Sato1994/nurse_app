@@ -1,9 +1,10 @@
 <template>
   <v-card class="mx-auto">
     <div>
-      <!-- 節約するときはv-if="!target.adresss" -->
+      <!-- 節約するときはv-if="false" -->
+      <!-- v-if="maplocation.lng !== undefined"-->
       <GmapMap
-        v-if="!target.address"
+        v-if="false"
         map-type-id="roadmap"
         :center="maplocation"
         :zoom="15"

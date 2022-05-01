@@ -158,9 +158,9 @@ export default {
           break
 
         case 1:
-          this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('info/logout')
+          this.$cookies.removeAll()
+          this.$store.commit('info/reset')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
       }

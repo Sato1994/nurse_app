@@ -1,5 +1,5 @@
 export const state = () => ({
-  info: [],
+  info: {},
   me: '',
 })
 
@@ -16,17 +16,14 @@ export const mutations = {
     state.me = 'host'
   },
 
-  logout(state) {
-    state.info = []
+  reset(state) {
+    state.info = {}
   },
 }
 
 export const actions = {
   saveInfo({ commit }, info) {
     commit('saveInfo', info)
-  },
-  logout({ commit }) {
-    commit('logout')
   },
 
   loginAsGuestUser({ dispatch, commit }) {
