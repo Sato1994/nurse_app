@@ -1,14 +1,10 @@
 <template>
   <v-card class="mx-auto">
-    <!-- 節約中だよ。v-if="!target.address"に変えてね -->
-    <v-img
-      v-if="target.address"
-      height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-    ></v-img>
-    <!-- 節約中だよ。  v-else に変えてね -->
-    <template v-if="false">
+    <div>
+      <!-- 節約するときはv-if="false" -->
+      <!-- v-if="maplocation.lng !== undefined"-->
       <GmapMap
+        v-if="false"
         map-type-id="roadmap"
         :center="maplocation"
         :zoom="15"
@@ -22,7 +18,13 @@
           :draggable="false"
         />
       </GmapMap>
-    </template>
+
+      <v-img
+        v-else
+        height="250"
+        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      ></v-img>
+    </div>
 
     <v-card-title
       >{{ target.name }}
@@ -40,7 +42,7 @@
       >
         <v-row align="center" class="mx-0">
           <v-rating
-            :value="4.5"
+            :value="target.rate_average"
             color="amber"
             dense
             half-increments
@@ -48,7 +50,9 @@
             size="14"
           ></v-rating>
 
-          <div class="grey--text ms-4">4.5 (413)</div>
+          <div class="grey--text ms-4">
+            {{ target.rate_average }} （{{ target.rate_count }}）
+          </div>
         </v-row>
       </v-btn>
       <slot name="profile"></slot>

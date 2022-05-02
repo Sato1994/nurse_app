@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Home from '@/components/aggregations/Home.vue'
 
 export default {
@@ -104,6 +105,8 @@ export default {
   }),
 
   computed: {
+    ...mapState('info', ['info']),
+
     reloadTimesPath() {
       return '/api/free_times'
     },
@@ -119,6 +122,12 @@ export default {
       } else {
         return 'mdi-face-man'
       }
+    },
+  },
+
+  watch: {
+    info(newValue) {
+      this.target = newValue
     },
   },
 

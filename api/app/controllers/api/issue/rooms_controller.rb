@@ -2,7 +2,7 @@
 
 class Api::Issue::RoomsController < ApplicationController
   def show
-    room = Room.includes(:user, :host, :user_messages, :host_messages, :agreement).find(params[:id])
+    room = Room.includes(:user, :host, :user_messages, :host_messages, [agreement: :rate]).find(params[:id])
 
     unless user_login_and_own?(room.user.id) || host_login_and_own?(room.host.id)
       render json: nil, status: :unauthorized
@@ -14,7 +14,7 @@ class Api::Issue::RoomsController < ApplicationController
         only: %i[id start_time finish_time state closed],
         include: {
           host: {
-            only: %i[id name myid image phone]
+            only: %i[id name myid image phone address lng lat]
           },
           user_messages: {
             only: %i[message created_at]
@@ -28,7 +28,12 @@ class Api::Issue::RoomsController < ApplicationController
       render_room['partner'] = render_room.delete('host')
 
       render_agreement = room.agreement.as_json(
-        only: %i[id start_time finish_time state]
+        only: %i[id start_time finish_time state],
+        include: {
+          rate: {
+            only: %i[comment star]
+          }
+        }
       )
 
       render json: { room: render_room, agreement: render_agreement }
@@ -177,7 +182,8 @@ class Api::Issue::RoomsController < ApplicationController
         return
       end
 
-      if room.update(state: negotiating_to)
+      room.update(state: negotiating_to)
+      if room.save!(validate: false)
         case negotiating_to
         when 'user'
           room.create_host_notice_with_checked_validate!(host_id: room.host_id, action: 'agreed')
@@ -191,14 +197,17 @@ class Api::Issue::RoomsController < ApplicationController
       end
 
     when 'user'
-      if room.update(state: user_to)
+      room.update(state: user_to)
+      if room.save!(validate: false)
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
       end
 
     when 'host'
-      if room.update(state: host_to)
+      room.update(state: host_to)
+      if room.save!(validate: false)
+
         render json: room, status: :ok
       else
         render json: room.errors, status: :bad_request
@@ -218,10 +227,13 @@ class Api::Issue::RoomsController < ApplicationController
     end
 
     if user_login_and_own?(room.user.id)
-      room.create_host_notice!(host_id: room.host_id, action: 'left') if  room.update(state: 'cancelled')
+      room.update!(state: 'cancelled')
+      room.create_host_notice!(host_id: room.host_id, action: 'left') if room.save!(validate: false)
 
     elsif host_login_and_own?(room.host.id)
-      room.create_user_notice!(user_id: room.user_id, action: 'left') if  room.update(state: 'cancelled')
+
+      room.update!(state: 'cancelled')
+      room.create_user_notice!(user_id: room.user_id, action: 'left') if room.save!(validate: false)
     else
       render body: nil, status: :forbidden
       return
@@ -236,8 +248,10 @@ class Api::Issue::RoomsController < ApplicationController
       case room.closed
       when 'na'
         room.update(closed: 'user')
+        room.save!(validate: false)
       when 'host'
         room.update(closed: 'both')
+        room.save!(validate: false)
       else
         render body: nil, status: :bad_request
         return
@@ -248,8 +262,10 @@ class Api::Issue::RoomsController < ApplicationController
       case room.closed
       when 'na'
         room.update(closed: 'host')
+        room.save!(validate: false)
       when 'user'
         room.update(closed: 'both')
+        room.save!(validate: false)
       else
         render body: nil, status: :bad_request
         return

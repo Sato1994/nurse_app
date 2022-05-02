@@ -1,5 +1,5 @@
 export const state = () => ({
-  info: [],
+  info: {},
   me: '',
 })
 
@@ -16,17 +16,14 @@ export const mutations = {
     state.me = 'host'
   },
 
-  logout(state) {
-    state.info = []
+  reset(state) {
+    state.info = {}
   },
 }
 
 export const actions = {
   saveInfo({ commit }, info) {
     commit('saveInfo', info)
-  },
-  logout({ commit }) {
-    commit('logout')
   },
 
   loginAsGuestUser({ dispatch, commit }) {
@@ -116,6 +113,16 @@ export const actions = {
       .catch(() => {
         dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
       })
+  },
+
+  resetAllStores({ commit }) {
+    commit('reset')
+    commit('issues/agreements/reset', {}, { root: true })
+    commit('issues/offers/reset', {}, { root: true })
+    commit('issues/requests/reset', {}, { root: true })
+    commit('issues/rooms/reset', {}, { root: true })
+    commit('issues/times/reset', {}, { root: true })
+    commit('notices/reset', {}, { root: true })
   },
 }
 

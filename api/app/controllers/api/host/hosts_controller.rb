@@ -28,47 +28,35 @@ class Api::Host::HostsController < ApplicationController
     end
 
     # host検索
-    if api_user_signed_in? && params[:sortBy]
-      case params[:sortBy]
-
+    if api_user_signed_in? && params[:sortBy] === 'distance'
       # 距離順
-      when 'distance'
-        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-          target_hosts_id, params[:skillsId]
-        )
-        all_hosts = calc_distance(all_hosts)
+      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+        target_hosts_id, params[:skillsId]
+      )
+      all_hosts = calc_distance(all_hosts)
 
-        sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
+      sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
 
-        sorted_hosts = sorted_hosts.as_json(
-          only: %i[id myid image name profile wanted distance address]
-        )
+      sorted_hosts = sorted_hosts.as_json(
+        only: %i[id myid image name profile wanted distance address]
+      )
 
-        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
+      render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
 
-        render json: {
-          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-        }
-
+    elsif params[:sortBy] === 'rate'
       # 評価順
-      when 'rate'
-        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-          target_hosts_id, params[:skillsId]
-        )
-        all_hosts = rate_average(all_hosts)
+      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+        target_hosts_id, params[:skillsId]
+      )
+      all_hosts = rate_average(all_hosts)
 
-        sorted_hosts = all_hosts.sort_by { |host| -host[:rate_average] }
+      sorted_hosts = all_hosts.sort_by { |host| -host[:rate_average] }
 
-        sorted_hosts = sorted_hosts.as_json(
-          only: %i[id myid image name profile wanted address rate_average rate_count]
-        )
+      sorted_hosts = sorted_hosts.as_json(
+        only: %i[id myid image name profile wanted address rate_average rate_count]
+      )
 
-        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
-
-        render json: {
-          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-        }
-      end
+      render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
 
     else
       all_hosts = all_hosts.order('RAND()').name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
@@ -78,10 +66,10 @@ class Api::Host::HostsController < ApplicationController
       )
       render_hosts = Kaminari.paginate_array(all_hosts).page(params[:page]).per(10)
 
-      render json: {
-        partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-      }
     end
+    render json: {
+      partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
+    }
   end
 
   def show
@@ -93,11 +81,13 @@ class Api::Host::HostsController < ApplicationController
                             recruitment_times: [user_requests: :user],
                             host_skills: :skill]).find(current_api_host.id)
 
-      render_host = host.as_json(
-        only: %i[id myid name address lat lng image wanted phone profile created_at]
-      )
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
 
-      render_agreements = host.agreements.in_progress.as_json(
+      render_agreements = host.agreements.in_progress.order(:start_time).as_json(
         only: %i[id start_time finish_time state],
         include: {
           room: {
@@ -117,6 +107,7 @@ class Api::Host::HostsController < ApplicationController
       render_rooms = host.rooms
                          .host_have_not_exited
                          .related_agreement_is_not_in_progress
+                         .order(:start_time)
                          .as_json(
                            only: %i[id state closed start_time finish_time created_at],
                            include: {
@@ -130,7 +121,7 @@ class Api::Host::HostsController < ApplicationController
         room['partner'] = room.delete('user')
       end
 
-      render_host_requests = host.host_requests.as_json(
+      render_host_requests = host.host_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           user: {
@@ -143,11 +134,11 @@ class Api::Host::HostsController < ApplicationController
         request['partner'] = request.delete('user')
       end
 
-      render_recruitment_times = host.recruitment_times.as_json(
+      render_recruitment_times = host.recruitment_times.order(:start_time).as_json(
         only: %i[id start_time finish_time]
       )
 
-      render_user_requests = host.user_requests.as_json(
+      render_user_requests = host.user_requests.order(:start_time).as_json(
         only: %i[id start_time finish_time],
         include: {
           user: {
@@ -183,9 +174,11 @@ class Api::Host::HostsController < ApplicationController
         only: %i[name]
       )
 
-      render_host = host.as_json(
-        only: %i[id myid name address lat lng image wanted phone profile created_at]
-      )
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
 
       render json: {
         info: render_host, times: render_recruitment_times, skills: render_host_skills
@@ -222,7 +215,7 @@ class Api::Host::HostsController < ApplicationController
       render json: {
         name: host.name,
         agreements_list: render_agreements_list,
-        agreements_count: render_agreements_count,
+        agreements_count: render_agreements_count
       }
 
     else

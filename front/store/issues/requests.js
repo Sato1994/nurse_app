@@ -15,6 +15,10 @@ export const mutations = {
     const target = state.requests.find(request => request.id === id)
     const index = state.requests.indexOf(target)
     state.requests.splice(index, 1)
+  },
+
+  reset(state) {
+    state.requests = []
   }
 }
 

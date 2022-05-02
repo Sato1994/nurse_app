@@ -25,13 +25,10 @@
         </v-list>
       </v-menu>
 
-      <v-app-bar-title>NurseHop</v-app-bar-title>
-
-      <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestUser">
-            <v-icon>mdi-doctor</v-icon>
+            <v-icon size="30">mdi-doctor</v-icon>
           </v-btn>
         </template>
         <span>ゲスト看護師 ログイン</span>
@@ -39,14 +36,18 @@
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestHost">
-            <v-icon>mdi-hospital-building</v-icon>
+            <v-icon size="30">mdi-hospital-building</v-icon>
           </v-btn>
         </template>
         <span>ゲスト病院 ログイン</span>
       </v-tooltip>
 
-      <v-spacer> </v-spacer>
-      <Notice />
+      <div>
+        <v-img width="45" src="/image/nurse_hop_logo.png"></v-img>
+      </div>
+      <div class="bellIcon">
+        <Notice />
+      </div>
       <template #extension>
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
@@ -123,7 +124,7 @@ export default {
           headers: this.$cookies.get('authInfo'),
         })
         .then((response) => {
-          this.$store.commit('notices/saveFormedNotices', response.data)
+          this.$store.commit('notices/saveNotices', response.data)
         })
     }
   },
@@ -157,9 +158,9 @@ export default {
           break
 
         case 1:
-          this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('info/logout')
+          this.$cookies.removeAll()
+          this.$store.dispatch('info/resetAllStores')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
       }
@@ -167,3 +168,12 @@ export default {
   },
 }
 </script>
+
+
+<style scoped>
+.bellIcon {
+  position: fixed;
+  top: 13px;
+  right: 33px;
+}
+</style>

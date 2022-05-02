@@ -6,10 +6,11 @@
         append-icon="mdi-email-fast-outline"
         filled
         rows="2"
-        label="入力してください"
+        label="メッセージ"
         auto-grow
         :counter="500"
         @click:append="sendMessage"
+        @keydown.enter.prevent="sendMessage"
       ></v-textarea>
     </v-container>
 
@@ -71,11 +72,13 @@ export default {
 
   methods: {
     sendMessage() {
-      this.$store.dispatch('room/sendMessage', {
-        message: this.inputMessage,
-        roomId: this.$route.params.id,
-      })
-      this.inputMessage = ''
+      if (this.inputMessage) {
+        this.$store.dispatch('room/sendMessage', {
+          message: this.inputMessage,
+          roomId: this.$route.params.id,
+        })
+        this.inputMessage = ''
+      }
     },
   },
 }

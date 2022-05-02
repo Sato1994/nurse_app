@@ -1,35 +1,25 @@
 <template>
   <v-container>
     <v-card class="mx-auto">
-      <v-img
-        v-if="agreement.state !== 'cancelled'"
-        height="250"
-        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-        class="map"
-      ></v-img>
+      ★agreement★{{ agreement }}★agreement★ ★room★{{ room }}★room★
+      <div>
+        <!-- v-if="mapDisplay" に変更する -->
+        <GmapMap
+          v-if="mapDisplay"
+          map-type-id="roadmap"
+          :center="endLocation"
+          :zoom="15"
+          :style="{ width: '100%', height: '250px' }"
+          :options="mapOptions"
+        >
+          <DirectionsRenderer
+            travelMode="DRIVING"
+            :origin="startLocation"
+            :destination="endLocation"
+          />
+        </GmapMap>
+      </div>
 
-      {{ agreement }} @@agreement.agreement@@ {{ room }} @@room.room@@
-
-      <v-container v-if="agreement.state === 'finished'" fluid class="rateArea">
-        <v-textarea
-          v-model="inputComment"
-          append-icon="mdi-send-outline"
-          filled
-          rows="4"
-          label="勤務お疲れさまでした。この病院の評価を投稿しましょう！"
-          auto-grow
-          :counter="300"
-          @click:append="createRate"
-        ></v-textarea>
-        <v-row align="center" class="mx-0">
-          <v-rating
-            v-model="inputStar"
-            color="amber"
-            dense
-            size="30"
-          ></v-rating>
-        </v-row>
-      </v-container>
       <TimeCard
         :partnerLink="partnerLink"
         :partnerName="room.partnerName"
@@ -99,6 +89,13 @@
           </v-card-subtitle>
         </template>
       </TimeCard>
+      <Rate
+        :inputRateDisplay="inputRateDisplay"
+        :rateDisplay="rateDisplay"
+        :rate="agreement.rate"
+        @agree-button-click="createRate"
+      />
+
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
@@ -124,12 +121,16 @@ import Message from '@/components/props/Message.vue'
 import TimeCard from '@/components/props/TimeCard.vue'
 import Confirm from '@/components/dialog/Confirm.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
+import DirectionsRenderer from '@/components/props/DirectionsRenderer.vue'
+import Rate from '@/components/props/Rate.vue'
 export default {
   components: {
     Message,
     TimeCard,
     Confirm,
     DatePicker,
+    DirectionsRenderer,
+    Rate,
   },
 
   data: () => ({
@@ -140,6 +141,11 @@ export default {
     agreementId: null,
     roomId: null,
     phone: null,
+    mapOptions: {
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoomControl: false,
+    },
   }),
 
   async fetch({ store, route }) {
@@ -216,11 +222,65 @@ export default {
     },
 
     leaveButton() {
-      return this.room.state === 'cancelled'
+      return (
+        this.room.state === 'cancelled' || this.agreement.state === 'finished'
+      )
     },
 
     lockButton() {
       return this.agreement.state !== 'during'
+    },
+
+    mapDisplay() {
+      if (this.agreement.id) {
+        return (
+          this.$cookies.get('user') === 'user' &&
+          (this.agreement.state === 'before' ||
+            this.agreement.state === 'requesting')
+        )
+      } else {
+        return (
+          this.$cookies.get('user') === 'user' &&
+          this.room.state !== 'cancelled'
+        )
+      }
+    },
+
+    inputRateDisplay() {
+      return (
+        this.$cookies.get('user') === 'user' &&
+        this.agreement.state === 'finished' &&
+        !this.agreement.rate.comment
+      )
+    },
+
+    rateDisplay() {
+      return (
+        this.$cookies.get('user') === 'user' &&
+        this.agreement.state === 'finished' &&
+        this.agreement.rate.comment !== null
+      )
+    },
+
+    maplocation() {
+      return {
+        lng: this.room.partnerLng,
+        lat: this.room.partnerLat,
+      }
+    },
+
+    startLocation() {
+      return {
+        lng: this.$store.state.info.info.lng,
+        lat: this.$store.state.info.info.lat,
+      }
+    },
+
+    endLocation() {
+      return {
+        lng: this.room.partnerLng,
+        lat: this.room.partnerLat,
+      }
     },
   },
 
@@ -239,17 +299,24 @@ export default {
       this.confirmDialog = false
     },
 
-    createRate() {
-      this.$axios.post(
-        '/api/rates',
-        {
-          agreement_id: this.agreement.id,
-          comment: this.inputComment,
-        },
-        {
-          headers: this.$cookies.get('authInfo'),
-        }
-      )
+    async createRate(payload) {
+      try {
+        await this.$axios.post(
+          '/api/rates',
+          {
+            agreement_id: this.agreement.id,
+            comment: payload.comment,
+            star: payload.star,
+          },
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+        this.$store.commit('agreement/saveRate', {
+          comment: payload.comment,
+          star: payload.star,
+        })
+      } catch {}
     },
 
     displayConfirm() {
@@ -296,9 +363,7 @@ export default {
           'snackbar/setMessage',
           '契約をキャンセルしました。'
         )
-        // agreement status変更
         this.$store.commit('agreement/updateState', { state: 'cancelled' })
-        // room status変更
         this.$store.commit('room/updateState', { state: 'cancelled' })
         // agreementsから削除
         this.$store.commit('issues/agreements/removeAgreement', {

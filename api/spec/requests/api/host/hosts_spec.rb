@@ -112,7 +112,7 @@ RSpec.describe 'Api::Host::Hosts', type: :request do
 
         it 'プロパティpartnersは期待した数のプロパティを返す' do
           get '/api/hosts', params: { sortBy: 'rate' }, headers: headers
-          expect(json['partners'][0].count).to eq(7)
+          expect(json['partners'][0].count).to eq(9)
         end
       end
     end

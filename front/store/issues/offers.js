@@ -11,6 +11,10 @@ export const mutations = {
     const target = state.offers.find(offer => offer.id === id)
     const index = state.offers.indexOf(target)
     state.offers.splice(index, 1)
+  },
+
+  reset(state) {
+    state.offers = []
   }
 }
 

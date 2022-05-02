@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <RefineSearch
+      v-if="$cookies.get('user') !== 'host'"
       :targets="true"
       :text="text"
       @refine-button-click="refineSearch"

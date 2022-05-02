@@ -16,6 +16,10 @@ export const mutations = {
     const index = state.times.indexOf(target)
     state.times.splice(index, 1)
   },
+
+  reset(state) {
+    state.times = []
+  }
 }
 
 export const actions = {

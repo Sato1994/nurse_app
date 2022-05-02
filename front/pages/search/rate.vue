@@ -5,10 +5,9 @@
 </template>
 
 <script>
-import Search from '@/components/aggregations/Search.vue'
 export default {
   components: {
-    Search,
+    Search: () => import('@/components/aggregations/Search.vue'),
   },
 
   head: {

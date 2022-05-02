@@ -1,21 +1,5 @@
 export const state = () => ({
   agreements: [],
-  // agreements: [
-  //   {
-  //     "id": 1,
-  //     "start_time":
-  //     "2022-04-27T12:00:00.000+09:00",
-  //     "finish_time": "2022-04-27T17:00:00.000+09:00",
-  //     "state": "requesting",
-  //     "room":{
-  //       "id": 1
-  //     },
-  //     "partner": {
-  //       "name": "山田 孝之",
-  //       "myid": "yamada"
-  //     }
-  //   }
-  // ]
 })
 
 export const mutations = {
@@ -46,6 +30,10 @@ export const mutations = {
     const target = state.agreements.find(agreement => agreement.id === payload.id)
     const index = state.agreements.indexOf(target)
     state.agreements.splice(index, 1)
+  },
+
+  reset(state) {
+    state.agreements = []
   }
 }
 
