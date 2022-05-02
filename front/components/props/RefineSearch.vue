@@ -25,7 +25,13 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="targets" plain value="distance" v-bind="attrs" v-on="on">
+          <v-btn
+            v-if="targets && $cookies.get('user') === 'user'"
+            plain
+            value="distance"
+            v-bind="attrs"
+            v-on="on"
+          >
             <v-icon>mdi-map-marker-distance</v-icon>
           </v-btn>
         </template>

@@ -3,8 +3,8 @@
     <Agreements />
     <Rooms />
     <v-img
-      class="noContent"
       v-if="noContentDisplay"
+      class="noContent"
       width="100"
       src="/image/no_content.png"
     ></v-img>

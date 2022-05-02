@@ -28,16 +28,17 @@ class Api::User::UsersController < ApplicationController
       target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length
     end
 
-    # user検索
-    users = Kaminari.paginate_array(User.all.year_gt(params[:lowerYear].to_i).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-                                      target_users_id, params[:skillsId]
-                                    )).page(params[:page]).per(10)
+    all_users = all_users.order('RAND()').year_gt(params[:lowerYear].to_i).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+      target_users_id, params[:skillsId]
+    ).as_json(
+      only: %i[id myid image name profile wanted address]
+    )
 
-    pagination = resources_with_pagination(users)
-    @object = {
-      partners: users.as_json, kaminari: pagination
+    render_users = Kaminari.paginate_array(all_users).page(params[:page]).per(10)
+
+    render json: {
+      partners: render_users, kaminari: resources_with_pagination(render_users)
     }
-    render json: @object
   end
 
   def show
