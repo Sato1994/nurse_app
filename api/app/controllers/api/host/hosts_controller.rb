@@ -28,47 +28,35 @@ class Api::Host::HostsController < ApplicationController
     end
 
     # host検索
-    if api_user_signed_in? && params[:sortBy]
-      case params[:sortBy]
-
+    if api_user_signed_in? && params[:sortBy] === 'distance'
       # 距離順
-      when 'distance'
-        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-          target_hosts_id, params[:skillsId]
-        )
-        all_hosts = calc_distance(all_hosts)
+      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+        target_hosts_id, params[:skillsId]
+      )
+      all_hosts = calc_distance(all_hosts)
 
-        sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
+      sorted_hosts = all_hosts.sort_by { |host| host[:distance] }
 
-        sorted_hosts = sorted_hosts.as_json(
-          only: %i[id myid image name profile wanted distance address]
-        )
+      sorted_hosts = sorted_hosts.as_json(
+        only: %i[id myid image name profile wanted distance address]
+      )
 
-        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
+      render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
 
-        render json: {
-          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-        }
-
+    elsif params[:sortBy] === 'rate'
       # 評価順
-      when 'rate'
-        all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-          target_hosts_id, params[:skillsId]
-        )
-        all_hosts = rate_average(all_hosts)
+      all_hosts = all_hosts.name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+        target_hosts_id, params[:skillsId]
+      )
+      all_hosts = rate_average(all_hosts)
 
-        sorted_hosts = all_hosts.sort_by { |host| -host[:rate_average] }
+      sorted_hosts = all_hosts.sort_by { |host| -host[:rate_average] }
 
-        sorted_hosts = sorted_hosts.as_json(
-          only: %i[id myid image name profile wanted address rate_average rate_count]
-        )
+      sorted_hosts = sorted_hosts.as_json(
+        only: %i[id myid image name profile wanted address rate_average rate_count]
+      )
 
-        render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
-
-        render json: {
-          partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-        }
-      end
+      render_hosts = Kaminari.paginate_array(sorted_hosts).page(params[:page]).per(10)
 
     else
       all_hosts = all_hosts.order('RAND()').name_like(params[:name]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
@@ -78,10 +66,10 @@ class Api::Host::HostsController < ApplicationController
       )
       render_hosts = Kaminari.paginate_array(all_hosts).page(params[:page]).per(10)
 
-      render json: {
-        partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
-      }
     end
+    render json: {
+      partners: render_hosts, kaminari: resources_with_pagination(render_hosts)
+    }
   end
 
   def show
