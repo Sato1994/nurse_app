@@ -1,9 +1,13 @@
 <template>
   <v-container>
-    agreement
     <Agreements />
-    rooms
     <Rooms />
+    <v-img
+      class="noContent"
+      v-if="noContentDisplay"
+      width="100"
+      src="/image/no_content.png"
+    ></v-img>
   </v-container>
 </template>
 
@@ -21,5 +25,22 @@ export default {
   head: {
     title: 'メッセージ',
   },
+
+  computed: {
+    noContentDisplay() {
+      return (
+        this.$store.state.issues.rooms.rooms.length === 0 &&
+        this.$store.state.issues.agreements.agreements.length === 0
+      )
+    },
+  },
 }
 </script>
+
+<style scoped>
+.noContent {
+  position: fixed;
+  top: 50%;
+  left: 43%;
+}
+</style>
