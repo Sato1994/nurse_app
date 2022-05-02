@@ -98,7 +98,6 @@ RSpec.describe User, type: :model do
     expect(user).to be_valid
   end
 
-  ########## メソッド ##########
   describe 'year_gt' do
     let!(:user1) { create(:user, year: 0) }
     let!(:user2) { create(:user, year: 1) }
@@ -156,6 +155,89 @@ RSpec.describe User, type: :model do
 
     it '引数のparamsが空なとき全てのuserを返す' do
       expect(described_class.id_include([1, 3], [])).to include(user1, user2, user3)
+    end
+  end
+
+  describe 'soft_delete' do
+    let(:user) { create(:user) }
+
+    it 'nameが期待した値に変わる' do
+      expect do
+        user.soft_delete
+      end.to change(user, :name).to('退会したユーザー')
+    end
+
+    it 'wantedがfalseに変わる' do
+      expect do
+        user.soft_delete
+      end.to change(user, :wanted).to false
+    end
+
+    it 'deleteed_atが入力される' do
+      expect do
+        user.soft_delete
+      end.to change(user, :deleted_at).to be_truthy
+    end
+
+    it 'free_timesが削除される' do
+      create(:free_time, user: user)
+      expect do
+        user.soft_delete
+      end.to change { user.free_times.count }.from(1).to(0)
+    end
+
+    it 'user_requestsが削除される' do
+      user_request = create(:user_request)
+      user = user_request.user
+      expect do
+        user.soft_delete
+      end.to change { user.user_requests.count }.from(1).to(0)
+    end
+
+    it 'host_requestsが削除される' do
+      host_request = create(:host_request)
+      user = host_request.free_time.user
+      expect do
+        user.soft_delete
+      end.to change { user.host_requests.count }.from(1).to(0)
+    end
+  end
+
+  describe 'active_for_authentication?' do
+    it 'deleted_atが未入力ならtrueを返す' do
+      user = create(:user)
+      expect(user.active_for_authentication?).to be(true)
+    end
+
+    it 'delete_atが入力済みならfalseを返す' do
+      user = create(:user, deleted_at: Time.current)
+      expect(user.active_for_authentication?).to be(false)
+    end
+  end
+
+  describe 'valid_agreements_exists?' do
+    let(:user) { create(:user) }
+
+    it '有効なagreementsが存在すればtrueを返す' do
+      agreement = create(:agreement, user: user)
+      expect(user.valid_agreements_exists?).to be(true)
+    end
+
+    it '有効なagreementsが存在しなければfalseを返す' do
+      expect(user.valid_agreements_exists?).to be(false)
+    end
+  end
+
+  describe 'valid_rooms_exists?' do
+    let(:user) { create(:user) }
+
+    it '有効なroomsが存在すればtrueを返す' do
+      room = create(:room, user: user)
+      expect(user.valid_rooms_exists?).to be(true)
+    end
+
+    it '有効なroomsが存在しなければfalseを返す' do
+      expect(user.valid_rooms_exists?).to be(false)
     end
   end
 end

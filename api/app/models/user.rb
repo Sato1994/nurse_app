@@ -51,4 +51,27 @@ class User < ApplicationRecord
   scope :address_like, ->(address) { where('address LIKE ?', "%#{address}%") if address.present? }
   scope :wanted_true, ->(wanted) { where(wanted: true) if wanted.present? }
   scope :id_include, ->(ids, params) { where(id: ids) if ids.present? && params.present? }
+
+  def soft_delete
+    transaction do
+      update_attribute(:name, '退会したユーザー')
+      update_attribute(:wanted, false)
+      update_attribute(:deleted_at, Time.current)
+      free_times.destroy_all
+      user_requests.destroy_all
+      host_requests.destroy_all
+    end
+  end
+
+  def active_for_authentication?
+    super && !deleted_at
+  end
+
+  def valid_agreements_exists?
+    agreements.exists?(state: %i[before during requesting])
+  end
+
+  def valid_rooms_exists?
+    rooms.exists?(state: %i[negotiating user host conclusion])
+  end
 end

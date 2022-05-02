@@ -163,4 +163,87 @@ RSpec.describe Host, type: :model do
       expect(host.star_average).to eq(0)
     end
   end
+
+  describe 'soft_delete' do
+    let(:host) { create(:host) }
+
+    it 'nameが期待した値に変わる' do
+      expect do
+        host.soft_delete
+      end.to change(host, :name).to('退会したユーザー')
+    end
+
+    it 'wantedがfalseに変わる' do
+      expect do
+        host.soft_delete
+      end.to change(host, :wanted).to false
+    end
+
+    it 'deleteed_atが入力される' do
+      expect do
+        host.soft_delete
+      end.to change(host, :deleted_at).to be_truthy
+    end
+
+    it 'recruitment_timesが削除される' do
+      create(:recruitment_time, host: host)
+      expect do
+        host.soft_delete
+      end.to change { host.recruitment_times.count }.from(1).to(0)
+    end
+
+    it 'host_requestsが削除される' do
+      host_request = create(:host_request)
+      host = host_request.host
+      expect do
+        host.soft_delete
+      end.to change { host.host_requests.count }.from(1).to(0)
+    end
+
+    it 'user_requestsが削除される' do
+      user_request = create(:user_request)
+      host = user_request.recruitment_time.host
+      expect do
+        host.soft_delete
+      end.to change { host.user_requests.count }.from(1).to(0)
+    end
+  end
+
+  describe 'active_for_authentication?' do
+    it 'deleted_atが未入力ならtrueを返す' do
+      host = create(:host)
+      expect(host.active_for_authentication?).to be(true)
+    end
+
+    it 'delete_atが入力済みならfalseを返す' do
+      host = create(:host, deleted_at: Time.current)
+      expect(host.active_for_authentication?).to be(false)
+    end
+  end
+
+  describe 'valid_agreements_exists?' do
+    let(:host) { create(:host) }
+
+    it '有効なagreementsが存在すればtrueを返す' do
+      agreement = create(:agreement, host: host)
+      expect(host.valid_agreements_exists?).to be(true)
+    end
+
+    it '有効なagreementsが存在しなければfalseを返す' do
+      expect(host.valid_agreements_exists?).to be(false)
+    end
+  end
+
+  describe 'valid_rooms_exists?' do
+    let(:host) { create(:host) }
+
+    it '有効なroomsが存在すればtrueを返す' do
+      room = create(:room, host: host)
+      expect(host.valid_rooms_exists?).to be(true)
+    end
+
+    it '有効なroomsが存在しなければfalseを返す' do
+      expect(host.valid_rooms_exists?).to be(false)
+    end
+  end
 end
