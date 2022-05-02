@@ -13,6 +13,10 @@ export const mutations = {
   saveNotices(state, notices) {
     state.notices = notices
   },
+
+  reset(state) {
+    state.notices = []
+  },
 }
 
 export const actions = {

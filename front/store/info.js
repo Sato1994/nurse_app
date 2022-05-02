@@ -114,6 +114,16 @@ export const actions = {
         dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
       })
   },
+
+  resetAllStores({ commit }) {
+    commit('reset')
+    commit('issues/agreements/reset', {}, { root: true })
+    commit('issues/offers/reset', {}, { root: true })
+    commit('issues/requests/reset', {}, { root: true })
+    commit('issues/rooms/reset', {}, { root: true })
+    commit('issues/times/reset', {}, { root: true })
+    commit('notices/reset', {}, { root: true })
+  },
 }
 
 export const getters = {

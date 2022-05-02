@@ -250,7 +250,7 @@ export default {
           this.hideEdit()
           this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('info/logout')
+          this.$store.dispatch('info/resetAllStores')
           this.$store.dispatch('snackbar/setMessage', 'さよなら')
         })
     },

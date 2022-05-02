@@ -160,7 +160,7 @@ export default {
         case 1:
           this.$router.push('/')
           this.$cookies.removeAll()
-          this.$store.commit('info/reset')
+          this.$store.dispatch('info/resetAllStores')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
       }

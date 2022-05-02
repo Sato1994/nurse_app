@@ -5,7 +5,7 @@
       <div>
         <!-- v-if="mapDisplay" に変更する -->
         <GmapMap
-          v-if="false"
+          v-if="mapDisplay"
           map-type-id="roadmap"
           :center="endLocation"
           :zoom="15"
