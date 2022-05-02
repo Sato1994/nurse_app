@@ -26,8 +26,7 @@ class Agreement < ApplicationRecord
 
   def limitation_of_working_hours
     unless finish_time >= (start_time + 1.hour) && (start_time + 18.hours) >= finish_time
-      errors.add(:message,
-                 '勤務時間は1～18時間までです。')
+      errors.add(:message, '勤務時間は1～18時間までです。')
     end
   end
 

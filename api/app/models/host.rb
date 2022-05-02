@@ -61,4 +61,27 @@ class Host < ApplicationRecord
                      (stars_sum / rates.count.to_f).round(1)
                    end
   end
+
+  def soft_delete
+    transaction do
+      update_attribute(:name, '退会したユーザー')
+      update_attribute(:wanted, false)
+      update_attribute(:deleted_at, Time.current)
+      recruitment_times.destroy_all
+      user_requests.destroy_all
+      host_requests.destroy_all
+    end
+  end
+
+  def active_for_authentication?
+    super && !deleted_at
+  end
+
+  def valid_agreements_exists?
+    agreements.exists?(state: %i[before during requesting])
+  end
+
+  def valid_rooms_exists?
+    rooms.exists?(state: %i[negotiating user host conclusion])
+  end
 end

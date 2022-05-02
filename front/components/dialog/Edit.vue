@@ -156,7 +156,7 @@
                   text
                   @click="deleteAccount"
                 >
-                  アカウント削除
+                  退会する
                 </v-btn>
               </v-col>
             </v-row>
