@@ -32,7 +32,7 @@
             v-bind="attrs"
             v-on="on"
           >
-            <v-icon>mdi-map-marker-distance</v-icon>
+            <v-icon>mdi-map-marker</v-icon>
           </v-btn>
         </template>
         <span>距離順</span>

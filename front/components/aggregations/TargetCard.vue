@@ -10,13 +10,35 @@
 
     <v-card-title> {{ target.address }}</v-card-title>
 
+    <v-card-text v-if="target.rate_average || target.rate_average === 0">
+      <v-row align="center" class="mx-0">
+        <v-rating
+          :value="target.rate_average"
+          color="amber"
+          dense
+          half-increments
+          readonly
+          size="14"
+        ></v-rating>
+        <div class="grey--text ms-4">
+          {{ target.rate_average }} （{{ target.rate_count }}）
+        </div>
+      </v-row>
+    </v-card-text>
+
+    <v-card-text v-if="target.distance">
+      <div class="grey--text ms-4">
+        <v-icon color="blue">mdi-map-marker</v-icon>{{ target.distance }}キロ
+      </div>
+    </v-card-text>
+
     <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
       target.wanted === true ? '募集中' : '募集していません'
     }}</v-chip>
 
     <v-card-actions>
       <v-btn color="orange lighten-2" text :to="targetPageURL" nuxt>
-        お相手のページへgo
+        お相手のページへ移動
       </v-btn>
 
       <v-spacer></v-spacer>

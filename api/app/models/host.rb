@@ -48,4 +48,17 @@ class Host < ApplicationRecord
   scope :address_like, ->(address) { where('address LIKE ?', "%#{address}%") if address.present? }
   scope :wanted_true, ->(wanted) { where(wanted: true) if wanted.present? }
   scope :id_include, ->(ids, params) { where(id: ids) if ids.present? && params.present? }
+
+  def star_average
+    stars_sum = 0
+    rates.each do |rate|
+      stars_sum += rate.star
+    end
+
+    rate_average = if rates.count.zero?
+                     0
+                   else
+                     (stars_sum / rates.count.to_f).round(1)
+                   end
+  end
 end

@@ -42,7 +42,7 @@
       >
         <v-row align="center" class="mx-0">
           <v-rating
-            :value="4.5"
+            :value="target.rate_average"
             color="amber"
             dense
             half-increments
@@ -50,7 +50,9 @@
             size="14"
           ></v-rating>
 
-          <div class="grey--text ms-4">4.5 (413)</div>
+          <div class="grey--text ms-4">
+            {{ target.rate_average }} （{{ target.rate_count }}）
+          </div>
         </v-row>
       </v-btn>
       <slot name="profile"></slot>

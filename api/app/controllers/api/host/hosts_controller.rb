@@ -81,9 +81,11 @@ class Api::Host::HostsController < ApplicationController
                             recruitment_times: [user_requests: :user],
                             host_skills: :skill]).find(current_api_host.id)
 
-      render_host = host.as_json(
-        only: %i[id myid name address lat lng image wanted phone profile created_at]
-      )
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
 
       render_agreements = host.agreements.in_progress.order(:start_time).as_json(
         only: %i[id start_time finish_time state],
@@ -172,9 +174,11 @@ class Api::Host::HostsController < ApplicationController
         only: %i[name]
       )
 
-      render_host = host.as_json(
-        only: %i[id myid name address lat lng image wanted phone profile created_at]
-      )
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
 
       render json: {
         info: render_host, times: render_recruitment_times, skills: render_host_skills

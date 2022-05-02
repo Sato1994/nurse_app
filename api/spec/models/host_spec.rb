@@ -90,7 +90,6 @@ RSpec.describe Host, type: :model do
     expect(host).to be_valid
   end
 
-  ########## メソッド ##########
   describe 'name_like' do
     let!(:host1) { create(:host, name: '東京病院') }
     let!(:host2) { create(:host, name: '千葉病院') }
@@ -148,6 +147,20 @@ RSpec.describe Host, type: :model do
 
     it '引数のparamsが空なとき全てのhostを返す' do
       expect(described_class.id_include([1, 3], [])).to include(host1, host2, host3)
+    end
+  end
+
+  describe 'star_average' do
+    it '評価の平均を返す' do
+      rate_1 = create(:rate)
+      agreement = create(:agreement, host: rate_1.agreement.host)
+      rate_2 = create(:rate, :skip_validate, agreement: agreement)
+      expect(rate_1.host.star_average).to eq((rate_1.star + rate_2.star) / 2.to_f.round(1))
+    end
+
+    it '評価数が0なら0を返す' do
+      host = create(:host)
+      expect(host.star_average).to eq(0)
     end
   end
 end
