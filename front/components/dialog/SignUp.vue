@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="$store.state.dialog.signUp.signUpIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog :value="signUpDisplay" @click:outside="close" max-width="600px">
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -103,9 +99,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="hideSignUp">
-              閉じる
-            </v-btn>
+            <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
             <v-btn
               color="warning darken-1"
               text
@@ -122,11 +116,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 export default {
   data: () => ({
     info: {},
   }),
+
+  props: {
+    signUpDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   computed: {
     nameLengthRule() {
@@ -137,12 +137,15 @@ export default {
   },
 
   methods: {
-    ...mapActions('dialog/signUp', ['signUp']),
+    signUp(payload) {
+      this.$emit('close-sign-up-click')
+      this.$store.dispatch('info/signUp', payload)
+    },
 
-    hideSignUp() {
-      this.$store.commit('dialog/signUp/hideSignUp')
+    close() {
       this.$cookies.removeAll()
       this.info = {}
+      this.$emit('close-sign-up-click')
     },
   },
 }

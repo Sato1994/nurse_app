@@ -1,8 +1,9 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="$store.state.dialog.selectUserType.selectUserTypeIsDisplay"
+      :value="selectTypeDisplay"
       max-width="600px"
+      @click:outside="close"
     >
       <v-card>
         <v-card-title>
@@ -41,26 +42,26 @@
 
 <script>
 export default {
-  data: () => ({}),
+  props: {
+    selectTypeDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   methods: {
     selectUser() {
       this.$cookies.set('user', 'user')
-      this.go()
+      this.$emit('select-click')
     },
 
     selectHost() {
       this.$cookies.set('user', 'host')
-      this.go()
+      this.$emit('select-click')
     },
 
-    go() {
-      this.$store.commit('dialog/selectUserType/hideSelectUserType')
-      if (this.$cookies.get('sign') === 'in') {
-        this.$store.commit('dialog/signIn/displaySignIn')
-      } else {
-        this.$store.commit('dialog/signUp/displaySignUp')
-      }
+    close() {
+      this.$emit('close-select-type-click')
     },
   },
 }
