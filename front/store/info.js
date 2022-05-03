@@ -1,5 +1,21 @@
 export const state = () => ({
-  info: {},
+  info: {
+    id: null,
+    name: null,
+    address: null,
+    image: {
+      url: null,
+    },
+    wanted: null,
+    sex: null,
+    age: null,
+    year: null,
+    profile: null,
+    created_at: null,
+    myid: null,
+    lat: null,
+    lng: null,
+  },
   me: '',
 })
 
@@ -17,7 +33,23 @@ export const mutations = {
   },
 
   reset(state) {
-    state.info = {}
+    state.info = {
+      id: null,
+      name: null,
+      address: null,
+      image: {
+        url: null,
+      },
+      wanted: null,
+      sex: null,
+      age: null,
+      year: null,
+      profile: null,
+      created_at: null,
+      myid: null,
+      lat: null,
+      lng: null,
+    }
   },
 }
 

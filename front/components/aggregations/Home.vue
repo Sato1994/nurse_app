@@ -1,6 +1,7 @@
 <template>
   <v-card class="mx-auto">
     <div>
+      {{ $store.state.info.info }}
       <!-- 節約するときはv-if="false" -->
       <!-- v-if="maplocation.lng !== undefined"-->
       <GmapMap
