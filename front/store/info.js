@@ -1,5 +1,21 @@
 export const state = () => ({
-  info: {},
+  info: {
+    id: null,
+    name: null,
+    address: null,
+    image: {
+      url: null,
+    },
+    wanted: null,
+    sex: null,
+    age: null,
+    year: null,
+    profile: null,
+    created_at: null,
+    myid: null,
+    lat: null,
+    lng: null,
+  },
   me: '',
 })
 
@@ -17,7 +33,23 @@ export const mutations = {
   },
 
   reset(state) {
-    state.info = {}
+    state.info = {
+      id: null,
+      name: null,
+      address: null,
+      image: {
+        url: null,
+      },
+      wanted: null,
+      sex: null,
+      age: null,
+      year: null,
+      profile: null,
+      created_at: null,
+      myid: null,
+      lat: null,
+      lng: null,
+    }
   },
 }
 
@@ -113,6 +145,88 @@ export const actions = {
       .catch(() => {
         dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
       })
+  },
+
+
+  async signIn({ commit, dispatch }, payload) {
+    try {
+      const res = await this.$axios
+        .post(`/api/${this.$cookies.get('user')}/sign_in`, payload)
+      dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
+      this.$cookies.set('myid', res.data.data.myid)
+
+      switch (this.$cookies.get('user')) {
+        case 'user':
+          commit('iAmUser')
+          break
+        case 'host':
+          commit('iAmHost')
+          break
+      }
+
+      const authInfo = {
+        'access-token': res.headers['access-token'],
+        client: res.headers.client,
+        uid: res.headers.uid,
+      }
+      this.$cookies.set('authInfo', authInfo)
+      try {
+        const response = await this.$axios
+          .get(
+            `/api/${this.$cookies.get('user')}s/${res.data.data.myid}`,
+            { headers: authInfo }
+          )
+        commit('saveInfo', response.data.info)
+        dispatch('skills/saveSkills', response.data.skills, { root: true })
+        dispatch('issues/times/saveTimes', response.data.times, { root: true })
+        dispatch('issues/requests/saveRequests', response.data.requests, { root: true })
+        dispatch('issues/agreements/saveAgreements', response.data.agreements, { root: true })
+        dispatch('issues/offers/saveOffers', response.data.offers, { root: true })
+        dispatch('issues/rooms/saveRooms', response.data.rooms, { root: true })
+        this.$router.push(`/${this.$cookies.get('user')}/${response.data.info.myid}`)
+      } catch {
+        this.$cookies.removeAll()
+      }
+    } catch {
+      dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
+    }
+  },
+
+  async signUp({ commit, dispatch }, payload) {
+    try {
+      const { data, headers } = await this.$axios
+        .post(`/api/${this.$cookies.get('user')}`, payload)
+      this.$cookies.set('myid', data.data.myid)
+
+      switch (this.$cookies.get('user')) {
+        case 'user':
+          commit('iAmUser')
+          break
+        case 'host':
+          commit('iAmHost')
+          break
+      }
+
+      const authInfo = {
+        'access-token': headers['access-token'],
+        client: headers.client,
+        uid: headers.uid,
+      }
+      this.$cookies.set('authInfo', authInfo)
+
+      try {
+        const res = await this.$axios
+          .get(
+            `/api/${this.$cookies.get('user')}s/${data.data.myid}`,
+            { headers: authInfo })
+        commit('saveInfo', res.data.info)
+        this.$router.push(`/${this.$cookies.get('user')}/${res.data.info.myid}`)
+      } catch {
+        this.$cookies.removeAll()
+      }
+    } catch {
+      dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
+    }
   },
 
   resetAllStores({ commit }) {

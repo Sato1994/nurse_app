@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="$store.state.dialog.signIn.signInIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog :value="signInDisplay" @click:outside="close" max-width="600px">
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -36,9 +32,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="hideSignIn">
-              閉じる
-            </v-btn>
+            <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
             <v-btn
               color="warning darken-1"
               text
@@ -55,19 +49,28 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 export default {
   data: () => ({
     info: {},
   }),
 
-  methods: {
-    ...mapActions('dialog/signIn', ['signIn']),
+  props: {
+    signInDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
-    hideSignIn() {
-      this.$store.commit('dialog/signIn/hideSignIn')
+  methods: {
+    signIn(payload) {
+      this.$emit('close-sign-in-click')
+      this.$store.dispatch('info/signIn', payload)
+    },
+
+    close() {
       this.$cookies.removeAll()
       this.info = {}
+      this.$emit('close-sign-in-click')
     },
   },
 }
