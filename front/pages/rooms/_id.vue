@@ -223,7 +223,9 @@ export default {
 
     leaveButton() {
       return (
-        this.room.state === 'cancelled' || this.agreement.state === 'finished'
+        (this.room.state === 'cancelled' ||
+          this.agreement.state === 'finished') &&
+        this.room.closed !== this.$cookies.get('user')
       )
     },
 
