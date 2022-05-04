@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="signInDisplay" @click:outside="close" max-width="600px">
+    <v-dialog :value="signInDisplay" max-width="600px" @click:outside="close">
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -50,16 +50,16 @@
 
 <script>
 export default {
-  data: () => ({
-    info: {},
-  }),
-
   props: {
     signInDisplay: {
       type: Boolean,
       default: false,
     },
   },
+
+  data: () => ({
+    info: {},
+  }),
 
   methods: {
     signIn(payload) {

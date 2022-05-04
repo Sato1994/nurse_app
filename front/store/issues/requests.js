@@ -31,7 +31,7 @@ export const actions = {
     commit('addRequest', request)
   },
 
-  createRequest({ dispatch, commit }, payload) {
+  async createRequest({ dispatch, commit }, payload) {
     let config = {}
     switch (this.$cookies.get('user')) {
       case 'user':
@@ -48,20 +48,22 @@ export const actions = {
           finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
         }
         break
+      default:
+        dispatch('snackbar/setMessage', 'ログインしてください', { root: true })
+        return
     }
-    this.$axios
+
+    const { data } = await this.$axios
       .post(
         `/api/${this.$cookies.get('user')}_requests`,
         config,
         { headers: this.$cookies.get('authInfo') }
       )
-      .then((response) => {
-        dispatch(
-          'snackbar/setMessage',
-          'リクエストを送信しました。', { root: true }
-        )
-        commit('addRequest', response.data)
-      })
+    dispatch(
+      'snackbar/setMessage',
+      'リクエストを送信しました。', { root: true }
+    )
+    commit('addRequest', data)
   },
 
   removeRequest({ commit, dispatch }, requestId) {
