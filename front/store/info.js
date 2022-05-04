@@ -186,8 +186,13 @@ export const actions = {
       } catch {
         this.$cookies.removeAll()
       }
-    } catch {
-      dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
+    } catch (e) {
+      if (e.response.status === 422) {
+        dispatch('snackbar/setMessage', e.response.data.errors.full_messages[0], { root: true })
+      }
+      else {
+        dispatch('snackbar/setMessage', '入力内容を見直してください。', { root: true })
+      }
     }
   },
 
@@ -223,8 +228,13 @@ export const actions = {
       } catch {
         this.$cookies.removeAll()
       }
-    } catch {
-      dispatch('snackbar/setMessage', '入力内容に誤りがあります。', { root: true })
+    } catch (e) {
+      if (e.response.status === 422) {
+        dispatch('snackbar/setMessage', e.response.data.errors.full_messages[0], { root: true })
+      }
+      else {
+        dispatch('snackbar/setMessage', '入力内容を見直してください。', { root: true })
+      }
     }
   },
 
