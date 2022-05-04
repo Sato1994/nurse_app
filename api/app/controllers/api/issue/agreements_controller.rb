@@ -199,6 +199,7 @@ class Api::Issue::AgreementsController < ApplicationController
         }
 
         render json: { room: render_room, cancell_comment: cancell_comment }
+      else render body: nil, status: :bad_request
       end
     end
   end

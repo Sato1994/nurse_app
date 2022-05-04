@@ -18,6 +18,9 @@ export const state = () => ({
   rate: {
     comment: null,
     star: null,
+  },
+  cancellComment: {
+    comment: null,
   }
 })
 
@@ -32,6 +35,12 @@ export const mutations = {
     } else {
       state.rate.comment = null
       state.rate.star = null
+    }
+
+    if (payload.cancell_comment) {
+      state.cancellComment.comment = payload.cancell_comment.comment
+    } else {
+      state.cancellComment.comment = null
     }
 
     const startTime = new Date(payload.start_time)
@@ -76,6 +85,10 @@ export const mutations = {
   saveRate(state, payload) {
     state.rate.comment = payload.comment
     state.rate.star = payload.star
+  },
+
+  saveCancellComment(state, payload) {
+    state.cancellComment.comment = payload.comment
   },
 }
 
