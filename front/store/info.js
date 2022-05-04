@@ -77,8 +77,7 @@ export const actions = {
           uid: response.headers.uid,
         }
         this.$cookies.set('authInfo', authInfo)
-        // ログイン者情報の取得
-        // いる？
+
         this.$axios
           .get(
             `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
@@ -122,7 +121,7 @@ export const actions = {
           uid: response.headers.uid,
         }
         this.$cookies.set('authInfo', authInfo)
-        // ログイン者情報の取得
+
         this.$axios
           .get(
             `/api/${this.$cookies.get('user')}s/${response.data.data.myid}`,
