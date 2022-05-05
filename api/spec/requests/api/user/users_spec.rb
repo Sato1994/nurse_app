@@ -34,7 +34,7 @@ RSpec.describe 'Api::User::Users', type: :request do
         get "/api/users/#{user.myid}", {
           headers: headers
         }
-        expect(json.count).to eq(7)
+        expect(json.count).to eq(8)
       end
     end
 

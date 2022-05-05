@@ -127,7 +127,7 @@ RSpec.describe 'Api::Host::Hosts', type: :request do
         get "/api/hosts/#{host.myid}", {
           headers: headers
         }
-        expect(json.count).to eq(7)
+        expect(json.count).to eq(8)
       end
     end
 
