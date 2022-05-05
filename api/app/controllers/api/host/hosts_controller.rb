@@ -78,6 +78,7 @@ class Api::Host::HostsController < ApplicationController
       host = Host.includes([agreements: %i[room user],
                             rooms: :user,
                             host_requests: :user,
+                            host_notices: [source: %i[user room]],
                             recruitment_times: [user_requests: :user],
                             host_skills: :skill]).find(current_api_host.id)
 
@@ -134,6 +135,27 @@ class Api::Host::HostsController < ApplicationController
         request['partner'] = request.delete('user')
       end
 
+      render_host_notices = host.host_notices.order(created_at: :desc).as_json(
+        only: %i[action checked created_at id source_id source_type],
+        include: {
+          source: {
+            only: [],
+            include: {
+              user: {
+                only: %i[name myid image]
+              }
+            }
+          }
+        }
+      )
+
+      render_host_notices.each do |notice|
+        notice['source']['partner'] = notice['source'].delete('user')
+        if notice['source_type'] === 'Agreement'
+          notice['source']['room'] = { id: host.host_notices.find(notice['id']).source.room.id }
+        end
+      end
+
       render_recruitment_times = host.recruitment_times.order(:start_time).as_json(
         only: %i[id start_time finish_time]
       )
@@ -157,7 +179,7 @@ class Api::Host::HostsController < ApplicationController
 
       render json: {
         info: render_host, agreements: render_agreements, rooms: render_rooms, requests: render_host_requests,
-        times: render_recruitment_times, offers: render_user_requests, skills: render_host_skills
+        times: render_recruitment_times, offers: render_user_requests, skills: render_host_skills, notices: render_host_notices
       }
 
     else

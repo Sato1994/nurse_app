@@ -131,18 +131,6 @@ export default {
     },
   },
 
-  async mounted() {
-    if (this.$store.state.info.info.myid) {
-      await this.$axios
-        .get(`/api/${this.$cookies.get('user')}_notices`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$store.commit('notices/saveNotices', response.data)
-        })
-    }
-  },
-
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),

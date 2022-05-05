@@ -47,6 +47,7 @@ class Api::User::UsersController < ApplicationController
       user = User.includes([agreements: %i[room host],
                             rooms: :host,
                             user_requests: :host,
+                            user_notices: [source: %i[host room]],
                             free_times: [host_requests: :host],
                             user_skills: :skill]).find(current_api_user.id)
 
@@ -101,6 +102,27 @@ class Api::User::UsersController < ApplicationController
         request['partner'] = request.delete('host')
       end
 
+      render_user_notices = user.user_notices.order(created_at: :desc).as_json(
+        only: %i[action checked created_at id source_id source_type],
+        include: {
+          source: {
+            only: [],
+            include: {
+              host: {
+                only: %i[name myid image]
+              }
+            }
+          }
+        }
+      )
+
+      render_user_notices.each do |notice|
+        notice['source']['partner'] = notice['source'].delete('host')
+        if notice['source_type'] === 'Agreement'
+          notice['source']['room'] = { id: user.user_notices.find(notice['id']).source.room.id }
+        end
+      end
+
       render_free_times = user.free_times.order(:start_time).as_json(
         only: %i[id start_time finish_time]
       )
@@ -124,7 +146,7 @@ class Api::User::UsersController < ApplicationController
 
       render json: {
         info: render_user, agreements: render_agreements, rooms: render_rooms, requests: render_user_requests,
-        times: render_free_times, offers: render_host_requests, skills: render_user_skills
+        times: render_free_times, offers: render_host_requests, skills: render_user_skills, notices: render_user_notices
       }
 
     else
