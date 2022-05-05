@@ -14,7 +14,9 @@ export default ({ $axios, redirect, store }) => {
 
   // 401エラーならtopへ遷移
   $axios.onError((e) => {
-    if (e.response.status === 401) redirect('/')
+    if (e.response.status === 401) {
+      redirect('/')
+    }
   })
 
   // エラーメッセージをsnackbarで表示

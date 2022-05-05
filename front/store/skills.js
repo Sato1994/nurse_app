@@ -19,7 +19,7 @@ export const mutations = {
 
   reset(state) {
     state.skills = []
-  }
+  },
 }
 
 export const actions = {
