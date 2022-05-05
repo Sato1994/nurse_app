@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <v-card class="mx-auto">
-      ★agreement★{{ agreement }}★agreement★ ★room★{{ room }}★room★
       <div>
         <!-- v-if="mapDisplay" に変更する -->
         <GmapMap
@@ -96,6 +95,11 @@
         @agree-button-click="createRate"
       />
 
+      <CancellComment
+        :cancellCommentDisplay="cancellCommentDisplay"
+        :comment="agreement.cancellComment.comment"
+      />
+
       <Message />
       <Confirm
         :confirmDisplay="confirmDialog"
@@ -123,6 +127,7 @@ import Confirm from '@/components/dialog/Confirm.vue'
 import DatePicker from '@/components/dialog/DatePicker.vue'
 import DirectionsRenderer from '@/components/props/DirectionsRenderer.vue'
 import Rate from '@/components/props/Rate.vue'
+import CancellComment from '@/components/props/CancellComment.vue'
 export default {
   components: {
     Message,
@@ -131,6 +136,7 @@ export default {
     DatePicker,
     DirectionsRenderer,
     Rate,
+    CancellComment,
   },
 
   data: () => ({
@@ -264,6 +270,10 @@ export default {
       )
     },
 
+    cancellCommentDisplay() {
+      return this.agreement.cancellComment.comment !== null
+    },
+
     maplocation() {
       return {
         lng: this.room.partnerLng,
@@ -365,6 +375,9 @@ export default {
           'snackbar/setMessage',
           '契約をキャンセルしました。'
         )
+        if (comment.length) {
+          this.$store.commit('agreement/saveCancellComment', { comment })
+        }
         this.$store.commit('agreement/updateState', { state: 'cancelled' })
         this.$store.commit('room/updateState', { state: 'cancelled' })
         // agreementsから削除
