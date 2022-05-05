@@ -230,7 +230,8 @@ export default {
       return (
         (this.room.state === 'cancelled' ||
           this.agreement.state === 'finished') &&
-        this.room.closed !== this.$cookies.get('user')
+        this.room.closed !== this.$cookies.get('user') &&
+        this.room.closed !== 'both'
       )
     },
 

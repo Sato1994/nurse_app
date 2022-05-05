@@ -12,7 +12,7 @@ export default ({ $axios, redirect, store }) => {
   //   console.log(e.response)
   // })
 
-  // 401エラーならホームへ遷移
+  // 401エラーならtopへ遷移
   $axios.onError((e) => {
     if (e.response.status === 401) {
       redirect('/')
@@ -21,9 +21,7 @@ export default ({ $axios, redirect, store }) => {
 
   // エラーメッセージをsnackbarで表示
   $axios.onError(e => {
-    if (!e.response) {
-      return
-    }
+    if (!e.response) return
 
     if (e.response.status === 400) {
       if (e.response.data === undefined) {
