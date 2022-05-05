@@ -26,27 +26,35 @@
     </v-card-title>
 
     <v-card-text>
-      <v-btn
+      <v-row
         v-if="$route.path === `/host/${target.myid}`"
-        text
-        class="pa-0"
-        @click="$router.push(`/host/${target.myid}/rates`)"
+        align="center"
+        class="mx-0"
       >
-        <v-row align="center" class="mx-0">
-          <v-rating
-            :value="target.rate_average"
-            color="amber"
-            dense
-            half-increments
-            readonly
-            size="14"
-          ></v-rating>
-
+        <v-rating
+          :value="target.rate_average"
+          color="amber"
+          dense
+          smasll
+          half-increments
+          readonly
+          size="14"
+        ></v-rating>
+        <v-btn
+          :to="{
+            path: `/host/${target.myid}/rates`,
+          }"
+          class="pa-0"
+          depressed
+          rounded
+          nuxt
+        >
           <div class="grey--text ms-4">
             {{ target.rate_average }} （{{ target.rate_count }}）
           </div>
-        </v-row>
-      </v-btn>
+        </v-btn>
+      </v-row>
+
       <slot name="profile"></slot>
     </v-card-text>
 
