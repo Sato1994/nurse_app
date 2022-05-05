@@ -30,12 +30,18 @@
           }}
         </div>
 
+        <div class="pt-3">
+          <v-btn depressed rounded nuxt @click="openSkillList">
+            <div class="grey--text">必須スキル {{ targetSkills.length }}</div>
+          </v-btn>
+        </div>
+
         <v-btn
           :to="{
             path: `/host/${target.myid}/history`,
           }"
           nuxt
-          class="mt-3"
+          class="mt-3 grey--text"
           rounded
           small
           depressed
@@ -45,15 +51,21 @@
         </v-btn>
       </template>
     </Home>
+    <SkillList
+      :skillListDisplay="skillListDisplay"
+      @close-skill-list-click="closeSkillList"
+    />
   </v-container>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import SkillList from '@/components/dialog/SkillList.vue'
 import Home from '@/components/aggregations/Home.vue'
 
 export default {
   components: {
+    SkillList,
     Home,
   },
 
@@ -124,6 +136,7 @@ export default {
     offers: [],
     requests: [],
     target: [],
+    skillListDisplay: false,
   }),
 
   computed: {
@@ -159,8 +172,17 @@ export default {
     updateOffers(newValue) {
       this.offers = newValue
     },
+
     updateAgreements(newValue) {
       this.agreements = newValue
+    },
+
+    openSkillList() {
+      this.skillListDisplay = true
+    },
+
+    closeSkillList() {
+      this.skillListDisplay = false
     },
   },
 }

@@ -2,7 +2,7 @@
   <v-card class="mx-auto">
     <div>
       <GmapMap
-        v-if="maplocation.lng"
+        v-if="!maplocation.lng"
         map-type-id="roadmap"
         :center="maplocation"
         :zoom="13"
@@ -61,60 +61,21 @@
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" :wanted="target.wanted" />
-
-    <v-divider class="mx-4"></v-divider>
-
-    <v-card-title>NG技術</v-card-title>
-
-    <v-card-text>
-      <div>
-        <v-chip
-          v-for="(skill, i) in targetSkills"
-          :key="i"
-          class="ma-1"
-          color="warning"
-          small
-        >
-          {{ skill.name }}
-        </v-chip>
-      </div>
-    </v-card-text>
-
-    <v-card-actions
-      v-if="$route.path === `/user/${$store.state.info.info.myid}`"
-    >
-      <v-btn
-        class="ma-2"
-        color="amber lighten-4"
-        small
-        depressed
-        @click="displaySkillList"
-      >
-        <v-icon>mdi-plus-box-multiple-outline</v-icon>
-      </v-btn>
-    </v-card-actions>
-    <SkillList />
   </v-card>
 </template>
 
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/aggregations/Calendar.vue'
 export default {
   components: {
-    SkillList,
     Calendar,
   },
 
   props: {
     target: {
       type: Object,
-      default: null,
-    },
-    targetSkills: {
-      type: Array,
       default: null,
     },
     requests: {
@@ -296,7 +257,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
 
     updateTimes(newValue) {

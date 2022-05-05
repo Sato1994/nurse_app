@@ -1,9 +1,13 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="skillListIsDisplay" persistent max-width="600px">
+    <v-dialog
+      max-width="600px"
+      :value="skillListDisplay"
+      @click:outside="close"
+    >
       <v-card>
         <v-card-title>
-          <span>登録済みスキル</span>
+          <span>登録済み</span>
         </v-card-title>
         <v-container>
           <v-sheet color="orange lighten-5">
@@ -28,7 +32,7 @@
           <v-row>
             <v-col cols="12">
               <v-card-title>
-                <span>未登録スキル</span>
+                <span>未登録</span>
               </v-card-title>
             </v-col>
 
@@ -47,14 +51,14 @@
             <v-card-text>
               <div class="text-center">
                 <v-chip
-                  v-for="unselectedSkill in unselectedSkills"
-                  :key="unselectedSkill.id"
+                  v-for="skill in unselectedSkills"
+                  :key="skill.id"
                   class="ma-1"
                   color="orange"
                   text-color="white"
-                  @click="addSkill(unselectedSkill)"
+                  @click="addSkill(skill)"
                 >
-                  {{ unselectedSkill.name }}
+                  {{ skill.name }}
                 </v-chip>
               </div>
             </v-card-text>
@@ -63,9 +67,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="hideSkillList">
-            閉じる
-          </v-btn>
+          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -73,16 +75,20 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
+  props: {
+    skillListDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     allSkills: [],
     inputValue: '',
   }),
 
   computed: {
-    ...mapState('dialog/skillList', ['skillListIsDisplay']),
-
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
         (obj) => !this.skills.map((obj) => obj.id).includes(obj.id)
@@ -100,44 +106,18 @@ export default {
 
   created() {
     this.$axios.get('/api/skills').then((response) => {
-      this.allSkills = response.data
+      this.allSkills = response.data.skills
     })
   },
 
   methods: {
-    // 試す
     ...mapActions('skills', ['addSkill']),
     ...mapActions('skills', ['removeSkill']),
-    ...mapMutations('dialog/skillList', ['hideSkillList']),
 
-    // モジュールの階層分け中
-    // 現在はskill追加ボタンを押すとエラーが出てきている
-
-    // addSkill(skill) {
-    //   this.$axios
-    //     .post(
-    //       `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
-    //       {},
-    //       {
-    //         headers: this.$cookies.get('authInfo'),
-    //       }
-    //     )
-    //     .then((response) => {
-    //       this.$emit('add-button-click', skill)
-    //       this.$store.commit('skills/addSkill', response.data)
-    //     })
-    // },
-
-    // removeSkill(skill) {
-    //   this.$axios
-    //     .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
-    //       headers: this.$cookies.get('authInfo'),
-    //     })
-    //     .then((response) => {
-    //       this.$emit('remove-button-click', skill)
-    //       this.$store.commit('skills/removeSkill', response.data)
-    //     })
-    // },
+    close() {
+      this.$emit('close-skill-list-click')
+      this.inputValue = ''
+    },
   },
 }
 </script>
