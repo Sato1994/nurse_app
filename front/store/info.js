@@ -237,6 +237,7 @@ export const actions = {
     commit('issues/rooms/reset', {}, { root: true })
     commit('issues/times/reset', {}, { root: true })
     commit('notices/reset', {}, { root: true })
+    commit('skills/reset', {}, { root: true })
   },
 }
 

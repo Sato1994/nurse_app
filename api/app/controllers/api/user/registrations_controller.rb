@@ -12,7 +12,6 @@ class Api::User::RegistrationsController < DeviseTokenAuth::RegistrationsControl
     else
       if @resource.soft_delete
         Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
-        yield resource if block_given?
         render_destroy_success
       else
         render render_message
