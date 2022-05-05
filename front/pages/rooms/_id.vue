@@ -2,7 +2,6 @@
   <v-container>
     <v-card class="mx-auto">
       <div>
-        <!-- v-if="mapDisplay" に変更する -->
         <GmapMap
           v-if="mapDisplay"
           map-type-id="roadmap"

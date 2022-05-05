@@ -1,13 +1,11 @@
 <template>
   <v-card class="mx-auto">
     <div>
-      <!-- 節約するときはv-if="false" -->
-      <!-- v-if="maplocation.lng !== undefined"-->
       <GmapMap
-        v-if="false"
+        v-if="maplocation.lng"
         map-type-id="roadmap"
         :center="maplocation"
-        :zoom="15"
+        :zoom="13"
         :style="{ width: '100%', height: '250px' }"
         :options="mapOptions"
       >
@@ -18,12 +16,6 @@
           :draggable="false"
         />
       </GmapMap>
-
-      <v-img
-        v-else
-        height="250"
-        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-      ></v-img>
     </div>
 
     <v-card-title
