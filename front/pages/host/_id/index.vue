@@ -54,7 +54,11 @@
     <SkillList
       :skillListDisplay="skillListDisplay"
       @close-skill-list-click="closeSkillList"
-    />
+    >
+      <template #description>
+        選択した技術を苦手に設定している看護師は検索されなくなります
+      </template>
+    </SkillList>
   </v-container>
 </template>
 

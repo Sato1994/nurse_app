@@ -1,77 +1,71 @@
 <template>
-  <v-row justify="center">
-    <v-dialog
-      max-width="600px"
-      :value="skillListDisplay"
-      @click:outside="close"
-    >
-      <v-card>
-        <v-card-title>
-          <span>登録済み</span>
-        </v-card-title>
-        <v-container>
-          <v-sheet color="orange lighten-5">
-            <v-card-text>
-              <div class="text-center">
-                <v-chip
-                  v-for="skill in skills"
-                  :key="skill.id"
-                  class="ma-1"
-                  color="orange"
-                  text-color="white"
-                  @click="removeSkill(skill)"
-                >
-                  {{ skill.name }}
-                </v-chip>
-              </div>
-            </v-card-text>
-          </v-sheet>
-        </v-container>
+  <v-dialog :value="skillListDisplay" @click:outside="close">
+    <v-card :min-height="400">
+      <div class="py-3" align="center">
+        <v-btn depressed rounded nuxt @click="switchPage = 1">
+          <div class="grey--text">登録済み {{ skills.length }}</div>
+        </v-btn>
 
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-card-title>
-                <span>未登録</span>
-              </v-card-title>
-            </v-col>
+        <v-btn depressed rounded nuxt @click="switchPage = 2">
+          <div class="grey--text">スキル一覧</div>
+        </v-btn>
 
-            <v-col cols="12">
-              <v-text-field
-                v-model="inputValue"
-                label="スキルを検索"
-                prepend-icon="mdi-magnify"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-card-text class="grey--text">
+          <slot name="description"></slot
+        ></v-card-text>
+      </div>
 
-        <v-container>
-          <v-sheet color="orange lighten-5">
-            <v-card-text>
-              <div class="text-center">
-                <v-chip
-                  v-for="skill in unselectedSkills"
-                  :key="skill.id"
-                  class="ma-1"
-                  color="orange"
-                  text-color="white"
-                  @click="addSkill(skill)"
-                >
-                  {{ skill.name }}
-                </v-chip>
-              </div>
-            </v-card-text>
-          </v-sheet>
-        </v-container>
+      <template v-if="switchPage === 1">
+        <v-sheet height="400" color="orange lighten-5">
+          <div class="text-center">
+            <v-chip
+              v-for="skill in skills"
+              :key="skill.id"
+              small
+              class="ma-1"
+              color="orange"
+              text-color="white"
+              @click="removeSkill(skill)"
+            >
+              {{ skill.name }}
+            </v-chip>
+          </div>
+        </v-sheet>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+      </template>
+      <template v-if="switchPage === 2">
+        <v-text-field
+          v-model="inputValue"
+          label="スキルを検索"
+          prepend-icon="mdi-magnify"
+        ></v-text-field>
+        <v-sheet color="orange lighten-5">
+          <div class="text-center">
+            <v-chip
+              v-for="skill in unselectedSkills"
+              :key="skill.id"
+              class="ma-1"
+              color="orange"
+              text-color="white"
+              small
+              @click="addSkill(skill)"
+            >
+              {{ skill.name }}
+            </v-chip>
+          </div>
+        </v-sheet>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+        </v-card-actions>
+      </template>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -86,6 +80,7 @@ export default {
   data: () => ({
     allSkills: [],
     inputValue: '',
+    switchPage: 1,
   }),
 
   computed: {
@@ -117,6 +112,7 @@ export default {
     close() {
       this.$emit('close-skill-list-click')
       this.inputValue = ''
+      this.switchPage = 1
     },
   },
 }
