@@ -2,7 +2,6 @@
   <v-container>
     <Home
       :target="target"
-      :targetSkills="targetSkills"
       :requests="requests"
       :offers="offers"
       :agreements="agreements"
@@ -52,11 +51,12 @@
       </template>
     </Home>
     <SkillList
+      :targetSkills="targetSkills"
       :skillListDisplay="skillListDisplay"
       @close-skill-list-click="closeSkillList"
     >
       <template #description>
-        選択した技術を苦手に設定している看護師は検索されなくなります
+        選択した技術を苦手に設定しているお相手は検索されなくなります
       </template>
     </SkillList>
   </v-container>

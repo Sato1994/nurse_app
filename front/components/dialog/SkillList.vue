@@ -3,10 +3,16 @@
     <v-card :min-height="400">
       <div class="py-3" align="center">
         <v-btn depressed rounded nuxt @click="switchPage = 1">
-          <div class="grey--text">登録済み {{ skills.length }}</div>
+          <div class="grey--text">登録済み {{ targetSkills.length }}</div>
         </v-btn>
 
-        <v-btn depressed rounded nuxt @click="switchPage = 2">
+        <v-btn
+          v-if="switchClickable"
+          depressed
+          rounded
+          nuxt
+          @click="switchPage = 2"
+        >
           <div class="grey--text">スキル一覧</div>
         </v-btn>
 
@@ -19,12 +25,13 @@
         <v-sheet height="400" color="orange lighten-5">
           <div class="text-center">
             <v-chip
-              v-for="skill in skills"
+              v-for="skill in targetSkills"
               :key="skill.id"
               small
               class="ma-1"
               color="orange"
               text-color="white"
+              :disabled="!switchClickable"
               @click="removeSkill(skill)"
             >
               {{ skill.name }}
@@ -76,6 +83,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    targetSkills: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     allSkills: [],
@@ -86,7 +97,7 @@ export default {
   computed: {
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
-        (obj) => !this.skills.map((obj) => obj.id).includes(obj.id)
+        (obj) => !this.targetSkills.map((obj) => obj.id).includes(obj.id)
       )
       const searchedSkills = unselectedSkills.filter((obj) =>
         obj.name.includes(this.inputValue)
@@ -97,9 +108,20 @@ export default {
     skills() {
       return this.$store.getters['skills/skills']
     },
+
+    switchClickable() {
+      if (
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 
-  created() {
+  mounted() {
     this.$axios.get('/api/skills').then((response) => {
       this.allSkills = response.data.skills
     })
