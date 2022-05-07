@@ -336,7 +336,7 @@ export default {
           'snackbar/setMessage',
           'プロフィールを変更しました。'
         )
-        this.$store.commit('info/saveInfo', data.data)
+        this.$store.commit('info/saveInfo', data.info)
       } catch {
         this.$store.dispatch(
           'snackbar/setMessage',
