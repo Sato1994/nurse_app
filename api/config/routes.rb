@@ -49,7 +49,7 @@ Rails.application.routes.draw do
 
     resources :health_checks, only: :index
     resources :rates, only: [:create, :show]
-    resources :skills, only: %i[index create update destroy] do
+    resources :skills, only: %i[index] do
     end
   end
 end

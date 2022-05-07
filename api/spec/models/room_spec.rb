@@ -40,7 +40,7 @@ RSpec.describe Room, type: :model do
 
     context '勤務時間' do
       it '1時間なら有効' do
-        room = build(:room, finish_time: 22.hours.from_now)
+        room = build(:room, finish_time: 22.hours.from_now + 1.second)
         expect(room).to be_valid
       end
 
