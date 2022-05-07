@@ -22,7 +22,7 @@
       </div>
 
       <template v-if="switchPage === 1">
-        <v-sheet height="400" color="orange lighten-5">
+        <v-sheet min-height="400" color="orange lighten-5">
           <div class="text-center">
             <v-chip
               v-for="skill in targetSkills"
@@ -50,7 +50,7 @@
           label="スキルを検索"
           prepend-icon="mdi-magnify"
         ></v-text-field>
-        <v-sheet color="orange lighten-5">
+        <v-sheet min-height="400" color="orange lighten-5">
           <div class="text-center">
             <v-chip
               v-for="skill in unselectedSkills"

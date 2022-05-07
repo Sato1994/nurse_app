@@ -73,6 +73,21 @@
         <span>リクエスト</span>
       </v-tooltip>
     </v-btn-toggle>
+
+    <v-tooltip bottom>
+      <template #activator="{ on, attrs }">
+        <v-btn
+          v-if="searchButton"
+          plain
+          v-bind="attrs"
+          v-on="on"
+          @click="openSearchDialog"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+      </template>
+      <span>検索</span>
+    </v-tooltip>
   </v-app-bar>
 </template>
 
@@ -97,6 +112,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    searchButton: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -113,6 +133,10 @@ export default {
   methods: {
     changeText(newValue) {
       this.$emit('refine-button-click', newValue)
+    },
+
+    openSearchDialog() {
+      this.$emit('open-search-dialog-click')
     },
   },
 }

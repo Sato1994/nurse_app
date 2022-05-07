@@ -4,6 +4,10 @@ class Api::User::UsersController < ApplicationController
   include Pagination
 
   def index
+
+    # host_skill_ids = []
+    # current_api_host.host_skills.map { |skill| host_skill_ids.push(skill.skill_id) }
+
     # skillが被っていないuserのidの配列の作成
 
     host_skill_ids = []
@@ -28,7 +32,7 @@ class Api::User::UsersController < ApplicationController
       target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length
     end
 
-    all_users = all_users.order('RAND()').year_gt(params[:lowerYear].to_i).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+    all_users = all_users.order('RAND()').year_gt(params[:lowerYear]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
       target_users_id, params[:skillsId]
     ).as_json(
       only: %i[id myid image name profile wanted address]
