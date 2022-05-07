@@ -12,7 +12,6 @@ class Api::Host::RegistrationsController < DeviseTokenAuth::RegistrationsControl
     else
       if @resource.soft_delete
         Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
-        yield resource if block_given?
         render_destroy_success
       else
         render render_message
@@ -23,7 +22,7 @@ class Api::Host::RegistrationsController < DeviseTokenAuth::RegistrationsControl
   private
 
   def sign_up_params
-    params.permit(:name, :email, :wanted, :profile, :myid, :phone, :password, :password_confirmation)
+    params.permit(:name, :email, :address, :wanted, :profile, :myid, :phone, :password, :password_confirmation)
   end
 
   def account_update_params

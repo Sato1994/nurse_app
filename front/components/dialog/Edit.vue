@@ -9,7 +9,6 @@
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
             <span class="text-h5">プロフィール編集</span>
-            {{ $cookies.get('user') }}{{ gotAddress }}{{ address2Display }}
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -199,8 +198,8 @@ export default {
     ],
     setImageUrl: null,
     deletable: false,
-    address1: '',
-    address2: '',
+    address1: null,
+    address2: null,
     gotAddress: false,
   }),
 
@@ -257,7 +256,6 @@ export default {
     hideEdit() {
       this.$store.commit('dialog/edit/hideEdit')
       this.deletable = false
-      this.address1 = this.info.address
       this.address2 = ''
       this.gotAddress = false
       this.postalCode = ''
@@ -320,7 +318,11 @@ export default {
         for (const key in this.info) {
           if (this.info[key] != null) formData.append(key, this.info[key])
         }
-        formData.set('address', `${this.address1}${this.address2}`)
+
+        let address2 = this.address2
+        if (this.address2 === undefined) address2 = ''
+
+        formData.set('address', `${this.address1}${address2}`)
 
         const { data } = await this.$axios.put(
           `/api/${this.$cookies.get('user')}`,
