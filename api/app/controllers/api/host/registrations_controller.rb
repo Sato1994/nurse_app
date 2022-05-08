@@ -5,7 +5,11 @@ class Api::Host::RegistrationsController < DeviseTokenAuth::RegistrationsControl
     if @resource
       if @resource.send(resource_update_method, account_update_params)
 
-        render_host = @resource.render_host
+        render_host = {
+          id: @resource.id, myid: @resource.myid, name: @resource.name, address: @resource.address, lat: @resource.lat, lng: @resource.lng,
+          image: @resource.image, wanted: @resource.wanted, phone: @resource.phone, profile: @resource.profile,
+          created_at: @resource.created_at, rate_count: @resource.rates.count, rate_average: @resource.star_average
+        }
 
         render json: {
           info: render_host
@@ -67,7 +71,11 @@ class Api::Host::RegistrationsController < DeviseTokenAuth::RegistrationsControl
         update_auth_header
       end
 
-      render_host = @resource.render_host
+      render_host = {
+        id: @resource.id, myid: @resource.myid, name: @resource.name, address: @resource.address, lat: @resource.lat, lng: @resource.lng,
+        image: @resource.image, wanted: @resource.wanted, phone: @resource.phone, profile: @resource.profile,
+        created_at: @resource.created_at, rate_count: @resource.rates.count, rate_average: @resource.star_average
+      }
 
       render json: {
         info: render_host
