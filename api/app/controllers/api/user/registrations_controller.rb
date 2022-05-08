@@ -5,9 +5,7 @@ class Api::User::RegistrationsController < DeviseTokenAuth::RegistrationsControl
     if @resource
       if @resource.send(resource_update_method, account_update_params)
 
-        render_user = @resource.as_json(
-          only: %i[id myid name address lat lng image wanted sex age year profile created_at]
-        )
+        render_user = @resource.render_user
 
         render json: {
           info: render_user
@@ -69,9 +67,7 @@ class Api::User::RegistrationsController < DeviseTokenAuth::RegistrationsControl
         update_auth_header
       end
 
-      render_user = @resource.as_json(
-        only: %i[id myid name address lat lng image wanted sex age year profile created_at]
-      )
+      render_user = @resource.render_user
 
       render json: {
         info: render_user

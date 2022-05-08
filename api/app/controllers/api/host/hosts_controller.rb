@@ -82,100 +82,14 @@ class Api::Host::HostsController < ApplicationController
                             recruitment_times: [user_requests: :user],
                             host_skills: :skill]).find(current_api_host.id)
 
-      render_host = {
-        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
-        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
-        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
-      }
-
-      render_agreements = host.agreements.in_progress.order(:start_time).as_json(
-        only: %i[id start_time finish_time state],
-        include: {
-          room: {
-            only: %i[id]
-          },
-          user: {
-            only: %i[name myid]
-          }
-        }
-      )
-
-      # key変更
-      render_agreements.each do |agreement|
-        agreement['partner'] = agreement.delete('user')
-      end
-
-      render_rooms = host.rooms
-                         .host_have_not_exited
-                         .related_agreement_is_not_in_progress
-                         .order(:start_time)
-                         .as_json(
-                           only: %i[id state closed start_time finish_time created_at],
-                           include: {
-                             user: {
-                               only: %i[id name]
-                             }
-                           }
-                         )
-
-      render_rooms.each do |room|
-        room['partner'] = room.delete('user')
-      end
-
-      render_host_requests = host.host_requests.order(:start_time).as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          user: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-
-      render_host_requests.each do |request|
-        request['partner'] = request.delete('user')
-      end
-
-      render_host_notices = host.host_notices.order(created_at: :desc).as_json(
-        only: %i[action checked created_at id source_id source_type],
-        include: {
-          source: {
-            only: [],
-            include: {
-              user: {
-                only: %i[name myid image]
-              }
-            }
-          }
-        }
-      )
-
-      render_host_notices.each do |notice|
-        notice['source']['partner'] = notice['source'].delete('user')
-        if notice['source_type'] === 'Agreement'
-          notice['source']['room'] = { id: host.host_notices.find(notice['id']).source.room.id }
-        end
-      end
-
-      render_recruitment_times = host.recruitment_times.order(:start_time).as_json(
-        only: %i[id start_time finish_time]
-      )
-
-      render_user_requests = host.user_requests.order(:start_time).as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          user: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-
-      render_user_requests.each do |request|
-        request['partner'] = request.delete('user')
-      end
-
-      render_host_skills = host.skills.as_json(
-        only: %i[id name]
-      )
+      render_host = host.render_host
+      render_agreements = host.render_agreements
+      render_rooms = host.render_rooms
+      render_host_requests = host.render_host_requests
+      render_host_notices = host.render_host_notices
+      render_recruitment_times = host.render_recruitment_times
+      render_user_requests = host.render_user_requests
+      render_host_skills = host.render_host_skills
 
       render json: {
         info: render_host, agreements: render_agreements, rooms: render_rooms, requests: render_host_requests,
@@ -188,19 +102,9 @@ class Api::Host::HostsController < ApplicationController
                              host_skills: :skill
                            ]).find_by(myid: params[:id])
 
-      render_recruitment_times = host.recruitment_times.as_json(
-        only: %i[id start_time finish_time]
-      )
-
-      render_host_skills = host.skills.as_json(
-        only: %i[name]
-      )
-
-      render_host = {
-        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
-        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
-        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
-      }
+      render_recruitment_times = host.render_recruitment_times
+      render_host_skills = host.render_host_skills
+      render_host = host.render_host
 
       render json: {
         info: render_host, times: render_recruitment_times, skills: render_host_skills

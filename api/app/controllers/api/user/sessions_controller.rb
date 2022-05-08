@@ -24,95 +24,14 @@ class Api::User::SessionsController < DeviseTokenAuth::SessionsController
 
       sign_in(:user, @resource, store: false, bypass: false)
 
-      render_user = @resource.as_json(
-        only: %i[id myid name address lat lng image wanted sex age year profile created_at]
-      )
-
-      render_agreements = @resource.agreements.order(:start_time).in_progress.as_json(
-        only: %i[id start_time finish_time state],
-        include: {
-          room: {
-            only: %i[id]
-          },
-          host: {
-            only: %i[name myid phone]
-          }
-        }
-      )
-      render_agreements.each do |agreement|
-        agreement['partner'] = agreement.delete('host')
-      end
-
-      render_rooms = @resource.rooms
-                              .user_have_not_exited
-                              .related_agreement_is_not_in_progress
-                              .order(:start_time)
-                              .as_json(
-                                only: %i[id state closed start_time finish_time created_at],
-                                include: {
-                                  host: {
-                                    only: %i[id name]
-                                  }
-                                }
-                              )
-
-      render_rooms.each do |room|
-        room['partner'] = room.delete('host')
-      end
-
-      render_user_requests = @resource.user_requests.order(:start_time).as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          host: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-      render_user_requests.each do |request|
-        request['partner'] = request.delete('host')
-      end
-
-      render_user_notices = @resource.user_notices.order(created_at: :desc).as_json(
-        only: %i[action checked created_at id source_id source_type],
-        include: {
-          source: {
-            only: [],
-            include: {
-              host: {
-                only: %i[name myid image]
-              }
-            }
-          }
-        }
-      )
-
-      render_user_notices.each do |notice|
-        notice['source']['partner'] = notice['source'].delete('host')
-        if notice['source_type'] === 'Agreement'
-          notice['source']['room'] = { id: @resource.user_notices.find(notice['id']).source.room.id }
-        end
-      end
-
-      render_free_times = @resource.free_times.order(:start_time).as_json(
-        only: %i[id start_time finish_time]
-      )
-
-      render_host_requests = @resource.host_requests.order(:start_time).as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          host: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-
-      render_host_requests.each do |request|
-        request['partner'] = request.delete('host')
-      end
-
-      render_user_skills = @resource.skills.as_json(
-        only: %i[id name]
-      )
+      render_user = @resource.render_user
+      render_agreements = @resource.render_agreements
+      render_rooms = @resource.render_rooms
+      render_user_requests = @resource.render_user_requests
+      render_user_notices = @resource.render_user_notices
+      render_free_times = @resource.render_free_times
+      render_host_requests = @resource.render_host_requests
+      render_user_skills = @resource.render_user_skills
 
       render json: {
         info: render_user, agreements: render_agreements, rooms: render_rooms, requests: render_user_requests,
