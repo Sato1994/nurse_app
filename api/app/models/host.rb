@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Host < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
@@ -36,8 +34,6 @@ class Host < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 40 }
   validates :email, presence: true, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
-  # validates :address,
-  # validates :image,
   validates :phone, presence: true, length: { maximum: 13 }
   validates :wanted, exclusion: { in: [nil] }
   validates :profile, length: { maximum: 300 }
@@ -104,9 +100,7 @@ class Host < ApplicationRecord
       }
     )
 
-    render_agreements.each do |agreement|
-      agreement['partner'] = agreement.delete('user')
-    end
+    change_property_to_partner render_agreements
   end
 
   def render_rooms
@@ -123,9 +117,7 @@ class Host < ApplicationRecord
                      }
                    )
 
-    render_rooms.each do |room|
-      room['partner'] = room.delete('user')
-    end
+    change_property_to_partner render_rooms
   end
 
   def render_host_requests
@@ -138,9 +130,7 @@ class Host < ApplicationRecord
       }
     )
 
-    render_host_requests.each do |request|
-      request['partner'] = request.delete('user')
-    end
+    change_property_to_partner render_host_requests
   end
 
   def render_user_requests
@@ -153,9 +143,7 @@ class Host < ApplicationRecord
       }
     )
 
-    render_user_requests.each do |request|
-      request['partner'] = request.delete('user')
-    end
+    change_property_to_partner render_user_requests
   end
 
   def render_host_notices
@@ -191,5 +179,11 @@ class Host < ApplicationRecord
     skills.as_json(
       only: %i[id name]
     )
+  end
+
+  def change_property_to_partner(resources)
+    resources.each do |resource|
+      resource['partner'] = resource.delete('user')
+    end
   end
 end
