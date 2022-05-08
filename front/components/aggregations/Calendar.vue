@@ -36,6 +36,7 @@
           v-model="focus"
           color="primary"
           :events="events"
+          :day-format="dayFormat"
           type="month"
           @click:event="showEvent"
           @click:date="viewWeek"
@@ -369,6 +370,10 @@ export default {
         open()
       }
       nativeEvent.stopPropagation()
+    },
+
+    dayFormat(date) {
+      return new Date(date.date).getDate()
     },
   },
 }

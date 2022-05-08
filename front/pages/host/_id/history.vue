@@ -21,7 +21,14 @@
 
           <v-data-table
             v-if="agreements !== null"
+            no-data-text="データはありません"
+            no-results-text="見つかりません"
+            :items-per-page="5"
             :headers="headers"
+            :footer-props="{
+              'disable-items-per-page': true,
+              'items-per-page-text': '',
+            }"
             :items="agreements"
             :search="search"
             class="table"
@@ -65,7 +72,7 @@
       <v-btn
         :to="`/${routeConfig.me}/${routeConfig.myid}`"
         nuxt
-        class="mt-3"
+        class="mt-3 grey--text"
         rounded
         small
         depressed

@@ -122,7 +122,8 @@ end
 ##################################################################################################################################
 
 # hosts ##########################################################################################################################
-CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
+# CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
+CSV.foreach("db/csv/host_min.csv", headers: true) do |row|
   hosts = Host.create(
     name: row['name'],
     email: Faker::Internet.email,
@@ -130,8 +131,8 @@ CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
     phone: row['phone'],
     password: 'llllll',
     address: row['address'],
-    lat: "35.#{rand(100_000..999_999)}".to_f,
-    lng: "139.7#{rand(10_000..99_999)}".to_f,
+    # lat: "35.#{rand(100_000..999_999)}".to_f,
+    # lng: "139.7#{rand(10_000..99_999)}".to_f,
     wanted: [true, false].sample,
     profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
   )
@@ -143,15 +144,16 @@ end
 ##################################################################################################################################
 
 # users ##########################################################################################################################
-CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
+# CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
+CSV.foreach("db/csv/user_min.csv", headers: true) do |row|
   User.create(
     name: Faker::Name.name,
     email: Faker::Internet.email,
     myid: Faker::Lorem.characters(number: 10),
     password: 'llllll',
     address: "#{row['address1']}#{row['address2']}#{row['address3']}",
-    lat: 35.658581,
-    lng: 139.745433,
+    # lat: 35.658581,
+    # lng: 139.745433,
     wanted: [true, false].sample,
     sex: [true, false].sample,
     age: rand(20..60),
@@ -204,8 +206,8 @@ guest_host = Host.create(
   name: '東京都立孝之協同病院',
   email: 'takayuki@guest.host',
   address: '東京都新宿区須賀町2-3',
-  lat: 35.658034,
-  lng: 139.701636,
+  # lat: 35.658034,
+  # lng: 139.701636,
   myid: 'takayuki',
   phone: '029-1234-5678',
   password: 'takayukipass',
@@ -218,8 +220,8 @@ other_host = Host.create(
   name: '平成餅麦病院',
   email: Faker::Internet.email,
   address: '東京都足立区谷中2丁目16-7',
-  lat: 35.658581,
-  lng: 139.745433,
+  # lat: 35.658581,
+  # lng: 139.745433,
   myid: 'mochimugi',
   phone: '029-9876-5432',
   password: 'llllll',
@@ -236,8 +238,8 @@ guest_user = User.create(
   myid: 'yamada',
   password: 'yamadapass',
   address: '東京都港区芝公園',
-  lat: 35.689407,
-  lng: 139.700306,
+  # lat: 35.689407,
+  # lng: 139.700306,
   wanted: true,
   age: 27,
   year: 6,
@@ -252,8 +254,8 @@ other_user = User.create(
   myid: 'matsumoto',
   password: 'llllll',
   address: '東京都杉並区永福',
-  lat: 35.658581,
-  lng: 139.745433,
+  # lat: 35.658581,
+  # lng: 139.745433,
   wanted: true,
   age: 56,
   year: 30,
