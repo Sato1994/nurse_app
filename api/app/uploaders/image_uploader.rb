@@ -30,11 +30,7 @@ class ImageUploader < CarrierWave::Uploader::Base
       end
 
     else
-      if model.instance_of?(User)
-        '/images/default/nurse.png'    
-      elsif model.instance_of?(Host)
-        '/images/default/hospital.png'
-      end
+      'something'
     end
 
     #   # For Rails 3.1+ asset pipeline compatibility:
