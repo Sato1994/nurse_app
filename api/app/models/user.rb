@@ -20,8 +20,8 @@ class User < ApplicationRecord
   has_many :user_notices, dependent: :destroy
 
   mount_uploader :image, ImageUploader
-  # geocoded_by :address, latitude: :lat, longitude: :lng
-  # after_validation :geocode
+  geocoded_by :address, latitude: :lat, longitude: :lng
+  after_validation :geocode
 
   def to_param
     myid
