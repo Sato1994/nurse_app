@@ -4,6 +4,9 @@ class Api::User::UsersController < ApplicationController
   include Pagination
 
   def index
+    # host_skill_ids = []
+    # current_api_host.host_skills.map { |skill| host_skill_ids.push(skill.skill_id) }
+
     # skillが被っていないuserのidの配列の作成
 
     host_skill_ids = []
@@ -28,16 +31,17 @@ class Api::User::UsersController < ApplicationController
       target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length
     end
 
-    # user検索
-    users = Kaminari.paginate_array(User.all.year_gt(params[:lowerYear].to_i).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
-                                      target_users_id, params[:skillsId]
-                                    )).page(params[:page]).per(10)
+    all_users = all_users.order('RAND()').year_gt(params[:lowerYear]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
+      target_users_id, params[:skillsId]
+    ).as_json(
+      only: %i[id myid image name profile wanted address]
+    )
 
-    pagination = resources_with_pagination(users)
-    @object = {
-      partners: users.as_json, kaminari: pagination
+    render_users = Kaminari.paginate_array(all_users).page(params[:page]).per(10)
+
+    render json: {
+      partners: render_users, kaminari: resources_with_pagination(render_users)
     }
-    render json: @object
   end
 
   def show
@@ -46,83 +50,22 @@ class Api::User::UsersController < ApplicationController
       user = User.includes([agreements: %i[room host],
                             rooms: :host,
                             user_requests: :host,
+                            user_notices: [source: %i[host room]],
                             free_times: [host_requests: :host],
                             user_skills: :skill]).find(current_api_user.id)
 
-      render_user = user.as_json(
-        only: %i[id myid name address lat lng image wanted sex age year profile created_at]
-      )
-
-      render_agreements = user.agreements.in_progress.as_json(
-        only: %i[id start_time finish_time state],
-        include: {
-          room: {
-            only: %i[id]
-          },
-          host: {
-            only: %i[name myid phone]
-          }
-        }
-      )
-
-      # key変更
-      render_agreements.each do |agreement|
-        agreement['partner'] = agreement.delete('host')
-      end
-
-      render_rooms = user.rooms
-                         .user_have_not_exited
-                         .related_agreement_is_not_in_progress
-                         .as_json(
-                           only: %i[id state closed start_time finish_time created_at],
-                           include: {
-                             host: {
-                               only: %i[id name]
-                             }
-                           }
-                         )
-
-      render_rooms.each do |room|
-        room['partner'] = room.delete('host')
-      end
-
-      render_user_requests = user.user_requests.as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          host: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-
-      render_user_requests.each do |request|
-        request['partner'] = request.delete('host')
-      end
-
-      render_free_times = user.free_times.as_json(
-        only: %i[id start_time finish_time]
-      )
-
-      render_host_requests = user.host_requests.as_json(
-        only: %i[id start_time finish_time],
-        include: {
-          host: {
-            only: %i[id name image myid]
-          }
-        }
-      )
-
-      render_host_requests.each do |request|
-        request['partner'] = request.delete('host')
-      end
-
-      render_user_skills = user.skills.as_json(
-        only: %i[id name]
-      )
+      render_user = user.render_user
+      render_agreements = user.render_agreements
+      render_rooms = user.render_rooms
+      render_user_requests = user.render_user_requests
+      render_user_notices = user.render_user_notices
+      render_free_times = user.render_free_times
+      render_host_requests = user.render_host_requests
+      render_user_skills = user.render_user_skills
 
       render json: {
         info: render_user, agreements: render_agreements, rooms: render_rooms, requests: render_user_requests,
-        times: render_free_times, offers: render_host_requests, skills: render_user_skills
+        times: render_free_times, offers: render_host_requests, skills: render_user_skills, notices: render_user_notices
       }
 
     else
@@ -131,17 +74,9 @@ class Api::User::UsersController < ApplicationController
                              user_skills: :skill
                            ]).find_by(myid: params[:id])
 
-      render_free_times = user.free_times.as_json(
-        only: %i[id start_time finish_time]
-      )
-
-      render_user_skills = user.skills.as_json(
-        only: %i[name]
-      )
-
-      render_user = user.as_json(
-        only: %i[id myid name address lat lng image wanted sex age year profile created_at]
-      )
+      render_free_times = user.render_free_times
+      render_user_skills = user.render_user_skills
+      render_user = user.render_user
 
       render json: {
         info: render_user, times: render_free_times, skills: render_user_skills

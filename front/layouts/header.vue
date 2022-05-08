@@ -25,13 +25,10 @@
         </v-list>
       </v-menu>
 
-      <v-app-bar-title>NurseHop</v-app-bar-title>
-
-      <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestUser">
-            <v-icon>mdi-doctor</v-icon>
+            <v-icon size="30">mdi-doctor</v-icon>
           </v-btn>
         </template>
         <span>ゲスト看護師 ログイン</span>
@@ -39,14 +36,18 @@
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestHost">
-            <v-icon>mdi-hospital-building</v-icon>
+            <v-icon size="30">mdi-hospital-building</v-icon>
           </v-btn>
         </template>
         <span>ゲスト病院 ログイン</span>
       </v-tooltip>
 
-      <v-spacer> </v-spacer>
-      <Notice />
+      <div>
+        <v-img width="45" src="/image/nurse_hop_logo.png"></v-img>
+      </div>
+      <div class="bellIcon">
+        <Notice />
+      </div>
       <template #extension>
         <v-tabs v-model="tabs" fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
@@ -73,9 +74,19 @@
           </v-tab>
         </v-tabs>
       </template>
-      <SignUp />
-      <SignIn />
-      <SelectUserType />
+      <SignUp
+        :signUpDisplay="signUpDisplay"
+        @close-sign-up-click="closeSignUp"
+      />
+      <SignIn
+        :signInDisplay="signInDisplay"
+        @close-sign-in-click="closeSignIn"
+      />
+      <SelectType
+        :selectTypeDisplay="selectTypeDisplay"
+        @close-select-type-click="closeSelectType"
+        @select-click="actionSelectedType"
+      />
       <Edit />
     </v-app-bar>
   </v-card>
@@ -85,14 +96,14 @@
 import { mapActions, mapMutations } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
-import SelectUserType from '@/components/dialog/SelectUserType.vue'
+import SelectType from '@/components/dialog/SelectType.vue'
 import Notice from '@/components/props/Notice.vue'
 import Edit from '@/components/dialog/Edit.vue'
 export default {
   components: {
     SignUp,
     SignIn,
-    SelectUserType,
+    SelectType,
     Notice,
     Edit,
   },
@@ -102,6 +113,10 @@ export default {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
       authItems: [{ title: 'アカウント設定' }, { title: 'ログアウト' }],
+      selectTypeDisplay: false,
+      signInDisplay: false,
+      signUpDisplay: false,
+      sign: null,
     }
   },
   computed: {
@@ -116,18 +131,6 @@ export default {
     },
   },
 
-  async mounted() {
-    if (this.$store.state.info.info.myid) {
-      await this.$axios
-        .get(`/api/${this.$cookies.get('user')}_notices`, {
-          headers: this.$cookies.get('authInfo'),
-        })
-        .then((response) => {
-          this.$store.commit('notices/saveFormedNotices', response.data)
-        })
-    }
-  },
-
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),
@@ -136,13 +139,13 @@ export default {
     clickUnAuthMenu(i) {
       switch (i) {
         case 0:
-          this.$cookies.set('sign', 'in')
-          this.$store.commit('dialog/selectUserType/displaySelectUserType')
+          this.sign = 'in'
+          this.selectTypeDisplay = true
 
           break
         case 1:
-          this.$cookies.set('sign', 'up')
-          this.$store.commit('dialog/selectUserType/displaySelectUserType')
+          this.sign = 'up'
+          this.selectTypeDisplay = true
           break
       }
     },
@@ -157,13 +160,43 @@ export default {
           break
 
         case 1:
-          this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('info/logout')
+          this.$cookies.removeAll()
+          this.$store.dispatch('info/resetAllStores')
           this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
           break
+      }
+    },
+
+    closeSelectType() {
+      this.selectTypeDisplay = false
+    },
+
+    closeSignIn() {
+      this.signInDisplay = false
+    },
+
+    closeSignUp() {
+      this.signUpDisplay = false
+    },
+
+    actionSelectedType() {
+      this.closeSelectType()
+      if (this.sign === 'in') {
+        this.signInDisplay = true
+      } else if (this.sign === 'up') {
+        this.signUpDisplay = true
       }
     },
   },
 }
 </script>
+
+
+<style scoped>
+.bellIcon {
+  position: fixed;
+  top: 13px;
+  right: 33px;
+}
+</style>

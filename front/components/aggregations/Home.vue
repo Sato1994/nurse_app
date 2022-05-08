@@ -1,17 +1,12 @@
 <template>
   <v-card class="mx-auto">
-    <!-- 節約中だよ。v-if="!target.address"に変えてね -->
-    <v-img
-      v-if="target.address"
-      height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-    ></v-img>
-    <!-- 節約中だよ。  v-else に変えてね -->
-    <template v-if="false">
+    {{ target }}
+    <div>
       <GmapMap
+        v-if="!maplocation.lng"
         map-type-id="roadmap"
         :center="maplocation"
-        :zoom="15"
+        :zoom="13"
         :style="{ width: '100%', height: '250px' }"
         :options="mapOptions"
       >
@@ -22,7 +17,7 @@
           :draggable="false"
         />
       </GmapMap>
-    </template>
+    </div>
 
     <v-card-title
       >{{ target.name }}
@@ -32,85 +27,56 @@
     </v-card-title>
 
     <v-card-text>
-      <v-btn
+      <v-row
         v-if="$route.path === `/host/${target.myid}`"
-        text
-        class="pa-0"
-        @click="$router.push(`/host/${target.myid}/rates`)"
+        align="center"
+        class="mx-0"
       >
-        <v-row align="center" class="mx-0">
-          <v-rating
-            :value="4.5"
-            color="amber"
-            dense
-            half-increments
-            readonly
-            size="14"
-          ></v-rating>
+        <v-rating
+          :value="target.rate_average"
+          color="amber"
+          dense
+          smasll
+          half-increments
+          readonly
+          size="14"
+        ></v-rating>
+        <v-btn
+          :to="{
+            path: `/host/${target.myid}/rates`,
+          }"
+          class="pa-0"
+          depressed
+          rounded
+          nuxt
+        >
+          <div class="grey--text ms-4">
+            {{ target.rate_average }} （{{ target.rate_count }}）
+          </div>
+        </v-btn>
+      </v-row>
 
-          <div class="grey--text ms-4">4.5 (413)</div>
-        </v-row>
-      </v-btn>
       <slot name="profile"></slot>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" :wanted="target.wanted" />
-
-    <v-divider class="mx-4"></v-divider>
-
-    <v-card-title>NG技術</v-card-title>
-
-    <v-card-text>
-      <div>
-        <v-chip
-          v-for="(skill, i) in targetSkills"
-          :key="i"
-          class="ma-1"
-          color="warning"
-          small
-        >
-          {{ skill.name }}
-        </v-chip>
-      </div>
-    </v-card-text>
-
-    <v-card-actions
-      v-if="$route.path === `/user/${$store.state.info.info.myid}`"
-    >
-      <v-btn
-        class="ma-2"
-        color="amber lighten-4"
-        small
-        depressed
-        @click="displaySkillList"
-      >
-        <v-icon>mdi-plus-box-multiple-outline</v-icon>
-      </v-btn>
-    </v-card-actions>
-    <SkillList />
   </v-card>
 </template>
 
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import SkillList from '@/components/dialog/SkillList.vue'
 import Calendar from '@/components/aggregations/Calendar.vue'
 export default {
   components: {
-    SkillList,
     Calendar,
   },
 
   props: {
     target: {
       type: Object,
-      default: null,
-    },
-    targetSkills: {
-      type: Array,
       default: null,
     },
     requests: {
@@ -292,7 +258,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dialog/skillList', ['displaySkillList']),
     ...mapMutations('dialog/datePicker', ['displayDatePicker']),
 
     updateTimes(newValue) {

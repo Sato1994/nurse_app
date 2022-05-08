@@ -2,22 +2,6 @@ export const state = () => ({
   rooms: [],
 })
 
-// rooms: [
-//   {
-//     "id": 133,
-//     "created_at": "2022-04-18T17:02:37.858+09:00",
-//     "start_time": "2022-04-20T22:00:00.000+09:00",
-//     "finish_time": "2022-04-21T08:00:00.000+09:00",
-//     "state": "negotiating",
-//     "closed": "na",
-//     "partner": {
-//       "id": 46,
-//       "name": "東京都立孝之協同病院"
-//     }
-//   }
-// ]
-
-
 export const mutations = {
   saveRooms(state, rooms) {
     state.rooms = rooms
@@ -44,6 +28,10 @@ export const mutations = {
   updateState(state, payload) {
     const target = state.rooms.find(room => room.id === payload.id)
     target.state = payload.state
+  },
+
+  reset(state) {
+    state.rooms = []
   }
 }
 

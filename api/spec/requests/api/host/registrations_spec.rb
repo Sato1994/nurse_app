@@ -3,6 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'host登録', type: :request do
+  let(:headers) do
+    { uid: response.headers['uid'], client: response.headers['client'],
+      'access-token': response.headers['access-token'] }
+  end
+
+  let(:json) { JSON.parse(response.body) }
+
   describe 'POST /api/host' do
     it '有効な値を入力した場合ユーザ登録できる' do
       post '/api/host', params: attributes_for(:host)
@@ -20,11 +27,6 @@ RSpec.describe 'host登録', type: :request do
   end
 
   describe 'PUT /api/host' do
-    let(:headers) do
-      { uid: response.headers['uid'], client: response.headers['client'],
-        'access-token': response.headers['access-token'] }
-    end
-
     let(:host) { create(:host) }
 
     xit 'addressを入力していればlat, lngも登録される' do
@@ -47,11 +49,7 @@ RSpec.describe 'host登録', type: :request do
 
     it 'uid,client,access-tokenを送信するとログアウトできる' do
       login
-      delete '/api/host/sign_out', headers: {
-        uid: response.headers['uid'],
-        client: response.headers['client'],
-        'access-token': response.headers['access-token']
-      }
+      delete '/api/host/sign_out', headers: headers
       expect(response.status).to eq(200)
     end
 
@@ -59,6 +57,38 @@ RSpec.describe 'host登録', type: :request do
       login
       delete '/api/host/sign_out'
       expect(response.status).to eq(404)
+    end
+  end
+
+  describe 'DELETE /api/host' do
+    let(:host) { create(:host) }
+
+    describe '有効なrooms,またはagreementsがある場合' do
+      before do
+        login
+        create(:agreement, host: host)
+      end
+
+      it 'status400(bad_request)を返す' do
+        delete '/api/host', headers: headers
+        expect(response.status).to eq(400)
+      end
+
+      it '期待するエラーメッセージを返す' do
+        delete '/api/host', headers: headers
+        expect(json['message'][0]).to eq('有効な交渉、または契約が存在するため退会できません。')
+      end
+    end
+
+    describe '有効なrooms,またはagreementsがない場合' do
+      before do
+        login
+      end
+
+      it 'status200(ok)を返す' do
+        delete '/api/host', headers: headers
+        expect(response.status).to eq(200)
+      end
     end
   end
 

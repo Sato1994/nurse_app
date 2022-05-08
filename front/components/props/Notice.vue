@@ -16,7 +16,7 @@
             offset-x="7"
             offset-y="7"
           >
-            <v-icon>mdi-bell-outline</v-icon>
+            <v-icon size="30">mdi-bell-outline</v-icon>
           </v-badge>
         </v-btn>
       </template>

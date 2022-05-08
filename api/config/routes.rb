@@ -3,10 +3,13 @@
 Rails.application.routes.draw do
   namespace :api do
     mount_devise_token_auth_for 'User', at: 'user', controllers: {
-      registrations: 'api/user/registrations'
+      registrations: 'api/user/registrations',
+      sessions: 'api/user/sessions'
     }
+
     mount_devise_token_auth_for 'Host', at: 'host', controllers: {
-      registrations: 'api/host/registrations'
+      registrations: 'api/host/registrations',
+      sessions: 'api/host/sessions'
     }
 
     scope module: :user do
@@ -48,8 +51,8 @@ Rails.application.routes.draw do
     end
 
     resources :health_checks, only: :index
-    resources :rates, only: [:create, :show]
-    resources :skills, only: %i[index create update destroy] do
+    resources :rates, only: %i[create show]
+    resources :skills, only: %i[index] do
     end
   end
 end

@@ -25,8 +25,14 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn v-if="targets" plain value="distance" v-bind="attrs" v-on="on">
-            <v-icon>mdi-map-marker-distance</v-icon>
+          <v-btn
+            v-if="targets && $cookies.get('user') === 'user'"
+            plain
+            value="distance"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-map-marker</v-icon>
           </v-btn>
         </template>
         <span>距離順</span>
@@ -67,6 +73,21 @@
         <span>リクエスト</span>
       </v-tooltip>
     </v-btn-toggle>
+
+    <v-tooltip bottom>
+      <template #activator="{ on, attrs }">
+        <v-btn
+          v-if="searchButton"
+          plain
+          v-bind="attrs"
+          v-on="on"
+          @click="openSearchDialog"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+      </template>
+      <span>検索</span>
+    </v-tooltip>
   </v-app-bar>
 </template>
 
@@ -91,6 +112,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    searchButton: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -107,6 +133,10 @@ export default {
   methods: {
     changeText(newValue) {
       this.$emit('refine-button-click', newValue)
+    },
+
+    openSearchDialog() {
+      this.$emit('open-search-dialog-click')
     },
   },
 }

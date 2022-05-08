@@ -2,7 +2,6 @@
   <v-container>
     <Home
       :target="target"
-      :targetSkills="targetSkills"
       :requests="requests"
       :offers="offers"
       :agreements="agreements"
@@ -47,12 +46,18 @@
           }}
         </div>
 
+        <div class="pt-3">
+          <v-btn depressed rounded nuxt @click="openSkillList">
+            <div class="grey--text">苦手スキル {{ targetSkills.length }}</div>
+          </v-btn>
+        </div>
+
         <v-btn
           :to="{
             path: `/user/${target.myid}/history`,
           }"
           nuxt
-          class="mt-3"
+          class="mt-3 grey--text"
           rounded
           small
           depressed
@@ -62,14 +67,26 @@
         </v-btn>
       </template>
     </Home>
+    <SkillList
+      :targetSkills="targetSkills"
+      :skillListDisplay="skillListDisplay"
+      @close-skill-list-click="closeSkillList"
+    >
+      <template #description>
+        選択した技術を必須に設定しているお相手は検索されなくなります
+      </template>
+    </SkillList>
   </v-container>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import SkillList from '@/components/dialog/SkillList.vue'
 import Home from '@/components/aggregations/Home.vue'
 
 export default {
   components: {
+    SkillList,
     Home,
   },
 
@@ -101,9 +118,12 @@ export default {
     offers: [],
     requests: [],
     target: [],
+    skillListDisplay: false,
   }),
 
   computed: {
+    ...mapState('info', ['info']),
+
     reloadTimesPath() {
       return '/api/free_times'
     },
@@ -122,6 +142,12 @@ export default {
     },
   },
 
+  watch: {
+    info(newValue) {
+      this.target = newValue
+    },
+  },
+
   methods: {
     updateTimes(newValue) {
       this.times = newValue
@@ -134,8 +160,17 @@ export default {
     updateOffers(newValue) {
       this.offers = newValue
     },
+
     updateAgreements(newValue) {
       this.agreements = newValue
+    },
+
+    openSkillList() {
+      this.skillListDisplay = true
+    },
+
+    closeSkillList() {
+      this.skillListDisplay = false
     },
   },
 }

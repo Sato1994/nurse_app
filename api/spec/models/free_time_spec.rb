@@ -13,7 +13,7 @@ RSpec.describe FreeTime, type: :model do
 
   describe 'start_time' do
     it '作成時点で開始時間まで12時間以上あれば有効' do
-      ft = build(:free_time, start_time: 12.hours.from_now + 1)
+      ft = build(:free_time, start_time: 12.hours.from_now + 2)
       expect(ft).to be_valid
     end
 

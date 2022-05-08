@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  let(:user) { create(:user) }
+
   describe 'name' do
     it 'なければ無効' do
       user = build(:user, name: nil)
@@ -98,7 +100,6 @@ RSpec.describe User, type: :model do
     expect(user).to be_valid
   end
 
-  ########## メソッド ##########
   describe 'year_gt' do
     let!(:user1) { create(:user, year: 0) }
     let!(:user2) { create(:user, year: 1) }
@@ -156,6 +157,167 @@ RSpec.describe User, type: :model do
 
     it '引数のparamsが空なとき全てのuserを返す' do
       expect(described_class.id_include([1, 3], [])).to include(user1, user2, user3)
+    end
+  end
+
+  describe 'soft_delete' do
+    it 'nameが期待した値に変わる' do
+      expect do
+        user.soft_delete
+      end.to change(user, :name).to('退会したユーザー')
+    end
+
+    it 'wantedがfalseに変わる' do
+      expect do
+        user.soft_delete
+      end.to change(user, :wanted).to false
+    end
+
+    it 'deleteed_atが入力される' do
+      expect do
+        user.soft_delete
+      end.to change(user, :deleted_at).to be_truthy
+    end
+
+    it 'free_timesが削除される' do
+      create(:free_time, user: user)
+      expect do
+        user.soft_delete
+      end.to change { user.free_times.count }.from(1).to(0)
+    end
+
+    it 'user_requestsが削除される' do
+      user_request = create(:user_request)
+      user = user_request.user
+      expect do
+        user.soft_delete
+      end.to change { user.user_requests.count }.from(1).to(0)
+    end
+
+    it 'host_requestsが削除される' do
+      host_request = create(:host_request)
+      user = host_request.free_time.user
+      expect do
+        user.soft_delete
+      end.to change { user.host_requests.count }.from(1).to(0)
+    end
+  end
+
+  describe 'active_for_authentication?' do
+    it 'deleted_atが未入力ならtrueを返す' do
+      expect(user.active_for_authentication?).to be(true)
+    end
+
+    it 'delete_atが入力済みならfalseを返す' do
+      user = create(:user, deleted_at: Time.current)
+      expect(user.active_for_authentication?).to be(false)
+    end
+  end
+
+  describe 'valid_agreements_exists?' do
+    it '有効なagreementsが存在すればtrueを返す' do
+      agreement = create(:agreement, user: user)
+      expect(user.valid_agreements_exists?).to be(true)
+    end
+
+    it '有効なagreementsが存在しなければfalseを返す' do
+      expect(user.valid_agreements_exists?).to be(false)
+    end
+  end
+
+  describe 'valid_rooms_exists?' do
+    it '有効なroomsが存在すればtrueを返す' do
+      room = create(:room, user: user)
+      expect(user.valid_rooms_exists?).to be(true)
+    end
+
+    it '有効なroomsが存在しなければfalseを返す' do
+      expect(user.valid_rooms_exists?).to be(false)
+    end
+  end
+
+  describe 'render_user' do
+    it '期待する数のプロパティを返す' do
+      expect(user.render_user.count).to eq(13)
+    end
+  end
+
+  describe 'render_agreements' do
+    it 'agreementが存在すれば期待する数のプロパティを返す' do
+      create(:agreement, user: user)
+
+      expect(user.render_agreements[0].count).to eq(6)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_agreements).to eq([])
+    end
+  end
+
+  describe 'render_rooms' do
+    it 'roomsが存在すれば期待する数のプロパティを返す' do
+      create(:room, user: user)
+      expect(user.render_rooms[0].count).to eq(7)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_rooms).to eq([])
+    end
+  end
+
+  describe 'render_user_requests' do
+    it 'user_requestsが存在すれば期待する数のプロパティを返す' do
+      create(:user_request, user: user)
+      expect(user.render_user_requests[0].count).to eq(4)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_user_requests).to eq([])
+    end
+  end
+
+  describe 'render_host_requests' do
+    it 'host_requestsが存在すれば期待する数のプロパティを返す' do
+      free_time = create(:free_time, user: user)
+      create(:host_request, free_time: free_time)
+      expect(user.render_host_requests[0].count).to eq(4)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_host_requests).to eq([])
+    end
+  end
+
+  describe 'render_user_notices' do
+    it 'user_noticesが存在すれば期待する数のプロパティを返す' do
+      create(:user_notice, user: user)
+      expect(user.render_user_notices[0].count).to eq(7)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_user_notices).to eq([])
+    end
+  end
+
+  describe 'render_free_times' do
+    it 'free_timesが存在すれば期待する数のプロパティを返す' do
+      create(:free_time, user: user)
+      expect(user.render_free_times[0].count).to eq(3)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_free_times).to eq([])
+    end
+  end
+
+  describe 'render_user_skills' do
+    it 'user_skillsが存在すれば期待する数のプロパティを返す' do
+      create(:user_skill, user: user)
+      expect(user.render_user_skills[0].count).to eq(2)
+    end
+
+    it '存在しなければ空の配列を返す' do
+      expect(user.render_user_skills).to eq([])
     end
   end
 end

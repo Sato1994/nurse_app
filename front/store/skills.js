@@ -16,6 +16,10 @@ export const mutations = {
     const index = state.skills.indexOf(target)
     state.skills.splice(index, 1)
   },
+
+  reset(state) {
+    state.skills = []
+  },
 }
 
 export const actions = {

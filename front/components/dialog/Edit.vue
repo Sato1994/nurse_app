@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-dialog
       v-model="$store.state.dialog.edit.editIsDisplay"
-      persistent
+      @click:outside="hideEdit"
       max-width="600px"
     >
       <v-card>
@@ -62,11 +62,20 @@
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="info.address"
+                    v-model="address1"
                     label="住所"
                     required
                     color="warning"
-                    :disabled="$cookies.get('user') === 'user' ? true : false"
+                    disabled
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" v-if="address2Display">
+                  <v-text-field
+                    v-model="address2"
+                    label="住所2"
+                    required
+                    color="warning"
                   ></v-text-field>
                 </v-col>
 
@@ -156,7 +165,7 @@
                   text
                   @click="deleteAccount"
                 >
-                  アカウント削除
+                  退会する
                 </v-btn>
               </v-col>
             </v-row>
@@ -180,7 +189,6 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 export default {
   data: () => ({
     postalCode: '',
@@ -190,6 +198,9 @@ export default {
     ],
     setImageUrl: null,
     deletable: false,
+    address1: null,
+    address2: null,
+    gotAddress: false,
   }),
 
   computed: {
@@ -227,10 +238,28 @@ export default {
         return 'mdi-lock-outline'
       }
     },
+
+    address2Display() {
+      if (this.gotAddress === true && this.$cookies.get('user') === 'host') {
+        return true
+      } else {
+        return false
+      }
+    },
+  },
+
+  created() {
+    this.address1 = this.info.address
   },
 
   methods: {
-    ...mapMutations('dialog/edit', ['hideEdit']),
+    hideEdit() {
+      this.$store.commit('dialog/edit/hideEdit')
+      this.deletable = false
+      this.address2 = ''
+      this.gotAddress = false
+      this.postalCode = ''
+    },
 
     switchDeletable() {
       this.deletable = !this.deletable
@@ -245,23 +274,24 @@ export default {
           this.hideEdit()
           this.$cookies.removeAll()
           this.$router.push('/')
-          this.$store.dispatch('info/logout')
+          this.$store.dispatch('info/resetAllStores')
           this.$store.dispatch('snackbar/setMessage', 'さよなら')
         })
     },
 
-    getAddress() {
-      this.$axios
-        .get(`https://api.zipaddress.net/?zipcode=${this.postalCode}`)
-        .then((response) => {
-          this.info.address = response.data.data.fullAddress
-        })
-        .catch(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            '住所の検索の取得に失敗しました。'
-          )
-        })
+    async getAddress() {
+      try {
+        const { data } = await this.$axios.get(
+          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
+        )
+        this.address1 = data.data.fullAddress
+        this.gotAddress = true
+      } catch {
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          '住所の検索の取得に失敗しました。'
+        )
+      }
     },
 
     // イメージがセットされているならされているurlを代入
@@ -274,39 +304,45 @@ export default {
       }
     },
 
-    editUser() {
-      this.hideEdit()
-      const formData = new FormData()
-      const headers = {
-        'content-type': 'multipart/form-data',
-        'access-token': this.$cookies.get('authInfo')['access-token'],
-        client: this.$cookies.get('authInfo').client,
-        uid: this.$cookies.get('authInfo').uid,
-      }
-      // 入力欄が埋まってるものだけformDataに
-      for (const key in this.info) {
-        if (this.info[key] != null) {
-          formData.append(key, this.info[key])
+    async editUser() {
+      try {
+        this.hideEdit()
+        const formData = new FormData()
+        const headers = {
+          'content-type': 'multipart/form-data',
+          'access-token': this.$cookies.get('authInfo')['access-token'],
+          client: this.$cookies.get('authInfo').client,
+          uid: this.$cookies.get('authInfo').uid,
         }
-      }
+        // 入力欄が埋まってるものだけformDataに
+        for (const key in this.info) {
+          if (this.info[key] != null) formData.append(key, this.info[key])
+        }
 
-      this.$axios
-        .put(`/api/${this.$cookies.get('user')}`, formData, {
-          headers,
-        })
-        .then((response) => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'プロフィールを変更しました。'
-          )
-          this.$store.commit('info/saveInfo', response.data.data)
-        })
-        .catch(() => {
-          this.$store.dispatch(
-            'snackbar/setMessage',
-            'プロフィールの更新に失敗しました。'
-          )
-        })
+        let address2 = this.address2
+        if (this.address2 === undefined) address2 = ''
+
+        formData.set('address', `${this.address1}${address2}`)
+
+        const { data } = await this.$axios.put(
+          `/api/${this.$cookies.get('user')}`,
+          formData,
+          {
+            headers,
+          }
+        )
+
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          'プロフィールを変更しました。'
+        )
+        this.$store.commit('info/saveInfo', data.info)
+      } catch {
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          'プロフィールの更新に失敗しました。'
+        )
+      }
     },
   },
 }

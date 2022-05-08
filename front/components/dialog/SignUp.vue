@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="$store.state.dialog.signUp.signUpIsDisplay"
-      persistent
-      max-width="600px"
-    >
+    <v-dialog :value="signUpDisplay" max-width="600px" @click:outside="close">
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -21,7 +17,7 @@
                   >
                     <v-text-field
                       v-model="info.name"
-                      label="名前（フルネーム）"
+                      :label="nameLabel"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -54,6 +50,48 @@
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
+
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field
+                    v-model="postalCode"
+                    label="郵便番号で検索する"
+                    color="warning"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" sm="6" md="6">
+                  <v-btn color="warning" @click="getAddress">
+                    住所を検索する</v-btn
+                  >
+                </v-col>
+
+                <v-col cols="12">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    rules="required"
+                    name="住所"
+                  >
+                    <v-text-field
+                      v-model="info.address1"
+                      label="住所"
+                      required
+                      color="warning"
+                      disabled
+                    ></v-text-field>
+                    <span class="red--text">{{ errors[0] }}</span>
+                  </ValidationProvider>
+                </v-col>
+
+                <v-col cols="12" v-if="address2Display">
+                  <v-text-field
+                    v-model="info.address2"
+                    label="住所続き"
+                    required
+                    color="warning"
+                  ></v-text-field>
+                </v-col>
+
                 <v-col cols="12">
                   <ValidationProvider
                     v-slot="{ errors }"
@@ -103,14 +141,12 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="hideSignUp">
-              閉じる
-            </v-btn>
+            <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
             <v-btn
               color="warning darken-1"
               text
               :disabled="invalid"
-              @click="signUp(info)"
+              @click="signUp(signUpPayload)"
             >
               登録
             </v-btn>
@@ -122,27 +158,85 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 export default {
+  props: {
+    signUpDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data: () => ({
     info: {},
+    postalCode: '',
+    gotAddress: false,
   }),
 
   computed: {
+    signUpPayload() {
+      let address2 = this.info.address2
+      if (this.info.address2 === undefined) address2 = ''
+
+      return {
+        name: this.info.name,
+        myid: this.info.myid,
+        address: `${this.info.address1}${address2}`,
+        phone: this.info.phone,
+        email: this.info.email,
+        password: this.info.password,
+        password_confirmation: this.info.password_confirmation,
+      }
+    },
+
     nameLengthRule() {
       return this.$cookies.get('user') === 'user'
         ? 'required|max:20'
         : 'required|max:40'
     },
+
+    address2Display() {
+      if (this.gotAddress === true && this.$cookies.get('user') === 'host') {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    nameLabel() {
+      if (this.$cookies.get('user') === 'user') {
+        return '名前（フルネーム）'
+      } else {
+        return '病院名'
+      }
+    },
   },
 
   methods: {
-    ...mapActions('dialog/signUp', ['signUp']),
+    signUp(payload) {
+      this.$emit('close-sign-up-click')
+      this.$store.dispatch('info/signUp', payload)
+    },
 
-    hideSignUp() {
-      this.$store.commit('dialog/signUp/hideSignUp')
+    close() {
       this.$cookies.removeAll()
       this.info = {}
+      this.postalCode = ''
+      this.$emit('close-sign-up-click')
+    },
+
+    async getAddress() {
+      try {
+        const { data } = await this.$axios.get(
+          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
+        )
+        this.info.address1 = data.data.fullAddress
+        this.gotAddress = true
+      } catch {
+        this.$store.dispatch(
+          'snackbar/setMessage',
+          '住所の検索の取得に失敗しました。'
+        )
+      }
     },
   },
 }

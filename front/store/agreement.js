@@ -15,12 +15,33 @@ export const state = () => ({
     hour: null,
     minute: null,
   },
+  rate: {
+    comment: null,
+    star: null,
+  },
+  cancellComment: {
+    comment: null,
+  }
 })
 
 export const mutations = {
   saveAgreement(state, payload) {
     state.id = payload.id
     state.state = payload.state
+
+    if (payload.rate) {
+      state.rate.comment = payload.rate.comment
+      state.rate.star = payload.rate.star
+    } else {
+      state.rate.comment = null
+      state.rate.star = null
+    }
+
+    if (payload.cancell_comment) {
+      state.cancellComment.comment = payload.cancell_comment.comment
+    } else {
+      state.cancellComment.comment = null
+    }
 
     const startTime = new Date(payload.start_time)
     state.startTime.year = startTime.getFullYear()
@@ -41,6 +62,9 @@ export const mutations = {
     state.id = null
     state.state = null
 
+    state.rate.comment = null
+    state.rate.star = null
+
     state.startTime.year = null
     state.startTime.month = null
     state.startTime.day = null
@@ -56,6 +80,15 @@ export const mutations = {
 
   updateState(state, payload) {
     state.state = payload.state
+  },
+
+  saveRate(state, payload) {
+    state.rate.comment = payload.comment
+    state.rate.star = payload.star
+  },
+
+  saveCancellComment(state, payload) {
+    state.cancellComment.comment = payload.comment
   },
 }
 

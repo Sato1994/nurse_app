@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Host < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
@@ -36,8 +34,6 @@ class Host < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 40 }
   validates :email, presence: true, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
-  # validates :address,
-  # validates :image,
   validates :phone, presence: true, length: { maximum: 13 }
   validates :wanted, exclusion: { in: [nil] }
   validates :profile, length: { maximum: 300 }
@@ -48,4 +44,146 @@ class Host < ApplicationRecord
   scope :address_like, ->(address) { where('address LIKE ?', "%#{address}%") if address.present? }
   scope :wanted_true, ->(wanted) { where(wanted: true) if wanted.present? }
   scope :id_include, ->(ids, params) { where(id: ids) if ids.present? && params.present? }
+
+  def star_average
+    stars_sum = 0
+    rates.each do |rate|
+      stars_sum += rate.star
+    end
+
+    rate_average = if rates.count.zero?
+                     0
+                   else
+                     (stars_sum / rates.count.to_f).round(1)
+                   end
+  end
+
+  def soft_delete
+    transaction do
+      update_attribute(:name, '退会したユーザー')
+      update_attribute(:wanted, false)
+      update_attribute(:deleted_at, Time.current)
+      recruitment_times.destroy_all
+      user_requests.destroy_all
+      host_requests.destroy_all
+    end
+  end
+
+  def active_for_authentication?
+    super && !deleted_at
+  end
+
+  def valid_agreements_exists?
+    agreements.exists?(state: %i[before during requesting])
+  end
+
+  def valid_rooms_exists?
+    rooms.exists?(state: %i[negotiating user host conclusion])
+  end
+
+  def render_host
+    as_json(
+      only: %i[id myid name address lat lng image wanted phone profile created_at rate_count rate_average]
+    )
+  end
+
+  def render_agreements
+    render_agreements = agreements.in_progress.order(:start_time).as_json(
+      only: %i[id start_time finish_time state],
+      include: {
+        room: {
+          only: %i[id]
+        },
+        user: {
+          only: %i[name myid]
+        }
+      }
+    )
+
+    change_property_to_partner render_agreements
+  end
+
+  def render_rooms
+    render_rooms = rooms
+                   .host_have_not_exited
+                   .related_agreement_is_not_in_progress
+                   .order(:start_time)
+                   .as_json(
+                     only: %i[id state closed start_time finish_time created_at],
+                     include: {
+                       user: {
+                         only: %i[id name]
+                       }
+                     }
+                   )
+
+    change_property_to_partner render_rooms
+  end
+
+  def render_host_requests
+    render_host_requests = host_requests.order(:start_time).as_json(
+      only: %i[id start_time finish_time],
+      include: {
+        user: {
+          only: %i[id name image myid]
+        }
+      }
+    )
+
+    change_property_to_partner render_host_requests
+  end
+
+  def render_user_requests
+    render_user_requests = user_requests.order(:start_time).as_json(
+      only: %i[id start_time finish_time],
+      include: {
+        user: {
+          only: %i[id name image myid]
+        }
+      }
+    )
+
+    change_property_to_partner render_user_requests
+  end
+
+  def render_host_notices
+    render_host_notices = host_notices.order(created_at: :desc).as_json(
+      only: %i[action checked created_at id source_id source_type],
+      include: {
+        source: {
+          only: [],
+          include: {
+            user: {
+              only: %i[name myid image]
+            }
+          }
+        }
+      }
+    )
+
+    render_host_notices.each do |notice|
+      notice['source']['partner'] = notice['source'].delete('user')
+      if notice['source_type'] === 'Agreement'
+        notice['source']['room'] = { id: @resource.host_notices.find(notice['id']).source.room.id }
+      end
+    end
+  end
+
+  def render_recruitment_times
+    recruitment_times.order(:start_time).as_json(
+      only: %i[id start_time finish_time]
+    )
+  end
+
+  def render_host_skills
+    skills.as_json(
+      only: %i[id name]
+    )
+  end
+
+  def change_property_to_partner(resources)
+    resources.each do |resource|
+      resource['partner'] = resource.delete('user')
+    end
+  end
 end

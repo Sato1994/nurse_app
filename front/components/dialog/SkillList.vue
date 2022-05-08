@@ -1,91 +1,103 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="skillListIsDisplay" persistent max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span>登録済みスキル</span>
-        </v-card-title>
-        <v-container>
-          <v-sheet color="orange lighten-5">
-            <v-card-text>
-              <div class="text-center">
-                <v-chip
-                  v-for="skill in skills"
-                  :key="skill.id"
-                  class="ma-1"
-                  color="orange"
-                  text-color="white"
-                  @click="removeSkill(skill)"
-                >
-                  {{ skill.name }}
-                </v-chip>
-              </div>
-            </v-card-text>
-          </v-sheet>
-        </v-container>
+  <v-dialog :value="skillListDisplay" @click:outside="close">
+    <v-card :min-height="400">
+      <div class="py-3" align="center">
+        <v-btn depressed rounded nuxt @click="switchPage = 1">
+          <div class="grey--text">登録済み {{ targetSkills.length }}</div>
+        </v-btn>
 
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-card-title>
-                <span>未登録スキル</span>
-              </v-card-title>
-            </v-col>
+        <v-btn
+          v-if="switchClickable"
+          depressed
+          rounded
+          nuxt
+          @click="switchPage = 2"
+        >
+          <div class="grey--text">スキル一覧</div>
+        </v-btn>
 
-            <v-col cols="12">
-              <v-text-field
-                v-model="inputValue"
-                label="スキルを検索"
-                prepend-icon="mdi-magnify"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-card-text class="grey--text">
+          <slot name="description"></slot
+        ></v-card-text>
+      </div>
 
-        <v-container>
-          <v-sheet color="orange lighten-5">
-            <v-card-text>
-              <div class="text-center">
-                <v-chip
-                  v-for="unselectedSkill in unselectedSkills"
-                  :key="unselectedSkill.id"
-                  class="ma-1"
-                  color="orange"
-                  text-color="white"
-                  @click="addSkill(unselectedSkill)"
-                >
-                  {{ unselectedSkill.name }}
-                </v-chip>
-              </div>
-            </v-card-text>
-          </v-sheet>
-        </v-container>
+      <template v-if="switchPage === 1">
+        <v-sheet min-height="400" color="orange lighten-5">
+          <div class="text-center">
+            <v-chip
+              v-for="skill in targetSkills"
+              :key="skill.id"
+              small
+              class="ma-1"
+              color="orange"
+              text-color="white"
+              :disabled="!switchClickable"
+              @click="removeSkill(skill)"
+            >
+              {{ skill.name }}
+            </v-chip>
+          </div>
+        </v-sheet>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="hideSkillList">
-            閉じる
-          </v-btn>
+          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+      </template>
+      <template v-if="switchPage === 2">
+        <v-text-field
+          v-model="inputValue"
+          label="スキルを検索"
+          prepend-icon="mdi-magnify"
+        ></v-text-field>
+        <v-sheet min-height="400" color="orange lighten-5">
+          <div class="text-center">
+            <v-chip
+              v-for="skill in unselectedSkills"
+              :key="skill.id"
+              class="ma-1"
+              color="orange"
+              text-color="white"
+              small
+              @click="addSkill(skill)"
+            >
+              {{ skill.name }}
+            </v-chip>
+          </div>
+        </v-sheet>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+        </v-card-actions>
+      </template>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
+  props: {
+    skillListDisplay: {
+      type: Boolean,
+      default: false,
+    },
+    targetSkills: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data: () => ({
     allSkills: [],
     inputValue: '',
+    switchPage: 1,
   }),
 
   computed: {
-    ...mapState('dialog/skillList', ['skillListIsDisplay']),
-
     unselectedSkills() {
       const unselectedSkills = this.allSkills.filter(
-        (obj) => !this.skills.map((obj) => obj.id).includes(obj.id)
+        (obj) => !this.targetSkills.map((obj) => obj.id).includes(obj.id)
       )
       const searchedSkills = unselectedSkills.filter((obj) =>
         obj.name.includes(this.inputValue)
@@ -96,48 +108,34 @@ export default {
     skills() {
       return this.$store.getters['skills/skills']
     },
+
+    switchClickable() {
+      if (
+        this.$route.path ===
+        `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
+      ) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 
-  created() {
+  mounted() {
     this.$axios.get('/api/skills').then((response) => {
-      this.allSkills = response.data
+      this.allSkills = response.data.skills
     })
   },
 
   methods: {
-    // 試す
     ...mapActions('skills', ['addSkill']),
     ...mapActions('skills', ['removeSkill']),
-    ...mapMutations('dialog/skillList', ['hideSkillList']),
 
-    // モジュールの階層分け中
-    // 現在はskill追加ボタンを押すとエラーが出てきている
-
-    // addSkill(skill) {
-    //   this.$axios
-    //     .post(
-    //       `/api/skills/${skill.id}/${this.$cookies.get('user')}_skills`,
-    //       {},
-    //       {
-    //         headers: this.$cookies.get('authInfo'),
-    //       }
-    //     )
-    //     .then((response) => {
-    //       this.$emit('add-button-click', skill)
-    //       this.$store.commit('skills/addSkill', response.data)
-    //     })
-    // },
-
-    // removeSkill(skill) {
-    //   this.$axios
-    //     .delete(`/api/${this.$cookies.get('user')}_skills/${skill.id}`, {
-    //       headers: this.$cookies.get('authInfo'),
-    //     })
-    //     .then((response) => {
-    //       this.$emit('remove-button-click', skill)
-    //       this.$store.commit('skills/removeSkill', response.data)
-    //     })
-    // },
+    close() {
+      this.$emit('close-skill-list-click')
+      this.inputValue = ''
+      this.switchPage = 1
+    },
   },
 }
 </script>

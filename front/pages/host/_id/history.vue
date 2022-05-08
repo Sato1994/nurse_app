@@ -21,11 +21,11 @@
 
           <v-data-table
             v-if="agreements !== null"
-            @click:row="clickTable"
             :headers="headers"
             :items="agreements"
             :search="search"
             class="table"
+            @click:row="clickTable"
           >
             <template #[`item.state`]="{ item }">
               <v-chip :color="getStateColor(item.state)" dark small>

@@ -32,6 +32,9 @@
             <v-card-subtitle v-if="room.state === 'cancelled'">
               キャンセル
             </v-card-subtitle>
+            <v-card-subtitle v-if="room.state === 'conclusion'">
+              終了
+            </v-card-subtitle>
           </template>
 
           >
@@ -60,9 +63,8 @@ export default {
         case 'host':
           return 'warning'
         case 'cancelled':
+        case 'conclusion':
           return 'grey'
-        default:
-          return 'black'
       }
     },
   },

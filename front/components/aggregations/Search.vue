@@ -1,9 +1,11 @@
 <template>
   <v-container>
     <RefineSearch
-      :targets="true"
+      :targets="refineSearchTargets"
       :text="text"
+      :searchButton="true"
       @refine-button-click="refineSearch"
+      @open-search-dialog-click="openSearchDialog"
     />
     <v-row class="pt-5">
       <v-col
@@ -17,19 +19,12 @@
         <TargetCard :target="target" />
       </v-col>
 
-      <v-btn
-        fixed
-        fab
-        bottom
-        right
-        small
-        color="warning"
-        style="bottom: 50px"
-        @click="openSearchDialog"
-      >
-        <v-icon color="white">mdi-magnify</v-icon>
-      </v-btn>
-      <SearchDialog ref="search" @search-button-click="searchUser" />
+      <SearchDialog
+        ref="search"
+        :searchDisplay="searchDisplay"
+        @search-button-click="searchUser"
+        @close-button-click="closeSearchDialog"
+      />
     </v-row>
     <infinite-loading
       :identifier="infiniteId"
@@ -62,9 +57,10 @@ export default {
     nextPage: 1,
     name: '',
     address: '',
-    lowerYear: 0,
+    lowerYear: null,
     wanted: true,
     infiniteId: 0,
+    searchDisplay: false,
   }),
 
   computed: {
@@ -84,6 +80,10 @@ export default {
       } else {
         return null
       }
+    },
+
+    refineSearchTargets() {
+      return this.$cookies.get('user') !== 'host'
     },
   },
 
@@ -128,7 +128,8 @@ export default {
       this.$refs.search.address = this.address
       this.$refs.search.lowerYear = this.lowerYear
       this.$refs.search.wanted = this.wanted
-      this.$refs.search.isDisplay = true
+
+      this.searchDisplay = true
     },
 
     searchUser(name, address, lowerYear, wanted) {
@@ -156,6 +157,10 @@ export default {
           this.$router.push('/search/rate')
           break
       }
+    },
+
+    closeSearchDialog() {
+      this.searchDisplay = false
     },
   },
 }
