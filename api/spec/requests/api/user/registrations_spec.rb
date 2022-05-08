@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'user登録', type: :request do
+RSpec.describe 'Api::User::Registrations', type: :request do
   let(:headers) do
     { uid: response.headers['uid'], client: response.headers['client'],
       'access-token': response.headers['access-token'] }
