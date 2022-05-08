@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import ja from 'vuetify/es5/locale/ja'
 
 export default {
 
@@ -93,7 +94,11 @@ export default {
           success: colors.green.accent3
         }
       }
-    }
+    },
+    lang: {
+      locales: { ja },
+      current: 'ja'
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
