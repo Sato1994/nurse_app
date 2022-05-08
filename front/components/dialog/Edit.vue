@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-dialog
       v-model="$store.state.dialog.edit.editIsDisplay"
-      persistent
+      @click:outside="hideEdit"
       max-width="600px"
     >
       <v-card>
@@ -62,11 +62,20 @@
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="address"
+                    v-model="address1"
                     label="住所"
                     required
                     color="warning"
-                    :disabled="$cookies.get('user') === 'user' ? true : false"
+                    disabled
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" v-if="address2Display">
+                  <v-text-field
+                    v-model="address2"
+                    label="住所2"
+                    required
+                    color="warning"
                   ></v-text-field>
                 </v-col>
 
@@ -180,7 +189,6 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 export default {
   data: () => ({
     postalCode: '',
@@ -190,7 +198,9 @@ export default {
     ],
     setImageUrl: null,
     deletable: false,
-    address: '',
+    address1: null,
+    address2: null,
+    gotAddress: false,
   }),
 
   computed: {
@@ -228,14 +238,28 @@ export default {
         return 'mdi-lock-outline'
       }
     },
+
+    address2Display() {
+      if (this.gotAddress === true && this.$cookies.get('user') === 'host') {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 
-  mounted() {
-    this.address = this.info.address
+  created() {
+    this.address1 = this.info.address
   },
 
   methods: {
-    ...mapMutations('dialog/edit', ['hideEdit']),
+    hideEdit() {
+      this.$store.commit('dialog/edit/hideEdit')
+      this.deletable = false
+      this.address2 = ''
+      this.gotAddress = false
+      this.postalCode = ''
+    },
 
     switchDeletable() {
       this.deletable = !this.deletable
@@ -260,7 +284,8 @@ export default {
         const { data } = await this.$axios.get(
           `https://api.zipaddress.net/?zipcode=${this.postalCode}`
         )
-        this.address = data.data.fullAddress
+        this.address1 = data.data.fullAddress
+        this.gotAddress = true
       } catch {
         this.$store.dispatch(
           'snackbar/setMessage',
@@ -293,7 +318,11 @@ export default {
         for (const key in this.info) {
           if (this.info[key] != null) formData.append(key, this.info[key])
         }
-        formData.set('address', this.address)
+
+        let address2 = this.address2
+        if (this.address2 === undefined) address2 = ''
+
+        formData.set('address', `${this.address1}${address2}`)
 
         const { data } = await this.$axios.put(
           `/api/${this.$cookies.get('user')}`,
@@ -307,7 +336,7 @@ export default {
           'snackbar/setMessage',
           'プロフィールを変更しました。'
         )
-        this.$store.commit('info/saveInfo', data.data)
+        this.$store.commit('info/saveInfo', data.info)
       } catch {
         this.$store.dispatch(
           'snackbar/setMessage',

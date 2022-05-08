@@ -1,5 +1,6 @@
 <template>
   <v-card class="mx-auto">
+    {{ target }}
     <div>
       <GmapMap
         v-if="!maplocation.lng"

@@ -84,4 +84,112 @@ class Host < ApplicationRecord
   def valid_rooms_exists?
     rooms.exists?(state: %i[negotiating user host conclusion])
   end
+
+  def render_host
+    as_json(
+      only: %i[id myid name address lat lng image wanted phone profile created_at rate_count rate_average]
+    )
+  end
+
+  def render_agreements
+    render_agreements = agreements.in_progress.order(:start_time).as_json(
+      only: %i[id start_time finish_time state],
+      include: {
+        room: {
+          only: %i[id]
+        },
+        user: {
+          only: %i[name myid]
+        }
+      }
+    )
+
+    render_agreements.each do |agreement|
+      agreement['partner'] = agreement.delete('user')
+    end
+  end
+
+  def render_rooms
+    render_rooms = rooms
+                   .host_have_not_exited
+                   .related_agreement_is_not_in_progress
+                   .order(:start_time)
+                   .as_json(
+                     only: %i[id state closed start_time finish_time created_at],
+                     include: {
+                       user: {
+                         only: %i[id name]
+                       }
+                     }
+                   )
+
+    render_rooms.each do |room|
+      room['partner'] = room.delete('user')
+    end
+  end
+
+  def render_host_requests
+    render_host_requests = host_requests.order(:start_time).as_json(
+      only: %i[id start_time finish_time],
+      include: {
+        user: {
+          only: %i[id name image myid]
+        }
+      }
+    )
+
+    render_host_requests.each do |request|
+      request['partner'] = request.delete('user')
+    end
+  end
+
+  def render_user_requests
+    render_user_requests = user_requests.order(:start_time).as_json(
+      only: %i[id start_time finish_time],
+      include: {
+        user: {
+          only: %i[id name image myid]
+        }
+      }
+    )
+
+    render_user_requests.each do |request|
+      request['partner'] = request.delete('user')
+    end
+  end
+
+  def render_host_notices
+    render_host_notices = host_notices.order(created_at: :desc).as_json(
+      only: %i[action checked created_at id source_id source_type],
+      include: {
+        source: {
+          only: [],
+          include: {
+            user: {
+              only: %i[name myid image]
+            }
+          }
+        }
+      }
+    )
+
+    render_host_notices.each do |notice|
+      notice['source']['partner'] = notice['source'].delete('user')
+      if notice['source_type'] === 'Agreement'
+        notice['source']['room'] = { id: @resource.host_notices.find(notice['id']).source.room.id }
+      end
+    end
+  end
+
+  def render_recruitment_times
+    recruitment_times.order(:start_time).as_json(
+      only: %i[id start_time finish_time]
+    )
+  end
+
+  def render_host_skills
+    skills.as_json(
+      only: %i[id name]
+    )
+  end
 end
