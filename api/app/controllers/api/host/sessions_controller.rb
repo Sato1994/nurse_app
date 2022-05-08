@@ -24,7 +24,12 @@ class Api::Host::SessionsController < DeviseTokenAuth::SessionsController
 
       sign_in(:user, @resource, store: false, bypass: false)
 
-      render_host = @resource.render_host
+      render_host = {
+        id: @resource.id, myid: @resource.myid, name: @resource.name, address: @resource.address, lat: @resource.lat, lng: @resource.lng,
+        image: @resource.image, wanted: @resource.wanted, phone: @resource.phone, profile: @resource.profile,
+        created_at: @resource.created_at, rate_count: @resource.rates.count, rate_average: @resource.star_average
+      }
+
       render_agreements = @resource.render_agreements
       render_rooms = @resource.render_rooms
       render_host_requests = @resource.render_host_requests

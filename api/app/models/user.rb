@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
   include DeviseTokenAuth::Concerns::User
@@ -86,10 +84,7 @@ class User < ApplicationRecord
         }
       }
     )
-
-    render_agreements.each do |agreement|
-      agreement['partner'] = agreement.delete('host')
-    end
+    change_property_to_partner render_agreements
   end
 
   def render_rooms
@@ -106,9 +101,7 @@ class User < ApplicationRecord
              }
            )
 
-    render_rooms.each do |room|
-      room['partner'] = room.delete('host')
-    end
+    change_property_to_partner render_rooms
   end
 
   def render_user_requests
@@ -120,9 +113,8 @@ class User < ApplicationRecord
         }
       }
     )
-    render_user_requests.each do |request|
-      request['partner'] = request.delete('host')
-    end
+
+    change_property_to_partner render_user_requests
   end
 
   def render_host_requests
@@ -135,9 +127,7 @@ class User < ApplicationRecord
       }
     )
 
-    render_host_requests.each do |request|
-      request['partner'] = request.delete('host')
-    end
+    change_property_to_partner render_host_requests
   end
 
   def render_user_notices
@@ -173,5 +163,11 @@ class User < ApplicationRecord
     skills.as_json(
       only: %i[id name]
     )
+  end
+
+  def change_property_to_partner(resources)
+    resources.each do |resource|
+      resource['partner'] = resource.delete('host')
+    end
   end
 end

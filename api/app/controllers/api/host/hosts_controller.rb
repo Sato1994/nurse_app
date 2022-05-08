@@ -82,7 +82,12 @@ class Api::Host::HostsController < ApplicationController
                             recruitment_times: [user_requests: :user],
                             host_skills: :skill]).find(current_api_host.id)
 
-      render_host = host.render_host
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
+
       render_agreements = host.render_agreements
       render_rooms = host.render_rooms
       render_host_requests = host.render_host_requests
@@ -104,7 +109,11 @@ class Api::Host::HostsController < ApplicationController
 
       render_recruitment_times = host.render_recruitment_times
       render_host_skills = host.render_host_skills
-      render_host = host.render_host
+      render_host = {
+        id: host.id, myid: host.myid, name: host.name, address: host.address, lat: host.lat, lng: host.lng,
+        image: host.image, wanted: host.wanted, phone: host.phone, profile: host.profile,
+        created_at: host.created_at, rate_count: host.rates.count, rate_average: host.star_average
+      }
 
       render json: {
         info: render_host, times: render_recruitment_times, skills: render_host_skills
