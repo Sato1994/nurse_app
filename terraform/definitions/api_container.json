@@ -106,10 +106,6 @@
       {
         "name": "DATABASE_URL",
         "valueFrom": "DATABASE_URL"
-      },
-      {
-        "name": "RAILS_MASTER_KEY",
-        "valueFrom": "RAILS_MASTER_KEY"
       }
     ],
     "command": [
@@ -153,10 +149,6 @@
       {
         "name": "DATABASE_URL",
         "valueFrom": "DATABASE_URL"
-      },
-      {
-        "name": "RAILS_MASTER_KEY",
-        "valueFrom": "RAILS_MASTER_KEY"
       }
     ],
     "command": [
