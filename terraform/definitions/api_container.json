@@ -106,10 +106,6 @@
       {
         "name": "DATABASE_URL",
         "valueFrom": "DATABASE_URL"
-      },
-      {
-        "name": "RAILS_MASTER_KEY",
-        "valueFrom": "RAILS_MASTER_KEY"
       }
     ],
     "command": [
@@ -117,6 +113,47 @@
       "exec",
       "rails",
       "db:migrate"
+    ]
+  },
+  {
+    "name": "api_db_seed",
+    "image": "850929304034.dkr.ecr.ap-northeast-1.amazonaws.com/api:latest",
+    "essential": false,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region": "ap-northeast-1",
+        "awslogs-stream-prefix": "api",
+        "awslogs-group": "/ecs/api/db_seed"
+      }
+    },
+    "environment": [
+      {
+        "name": "HOST",
+        "value": "0.0.0.0"
+      },
+      {
+        "name": "PORT",
+        "value": "3000"
+      },
+      {
+        "name": "RAILS_ENV",
+        "value": "production"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "API_DOMAIN",
+        "valueFrom": "API_DOMAIN"
+      },
+      {
+        "name": "DATABASE_URL",
+        "valueFrom": "DATABASE_URL"
+      }
+    ],
+    "command": [
+      "rails",
+      "db:seed"
     ]
   }
 ]
