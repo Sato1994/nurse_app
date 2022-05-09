@@ -8,8 +8,8 @@ resource "aws_ecs_cluster" "cluster" {
 # front
 resource "aws_ecs_task_definition" "front_container" {
   family = "front_container"
-  cpu = "512"
-  memory = "1024"
+  cpu = "1024"
+  memory = "2048"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   container_definitions = file("./definitions/front_container.json")
@@ -19,8 +19,8 @@ resource "aws_ecs_task_definition" "front_container" {
 # api
 resource "aws_ecs_task_definition" "api_container" {
   family = "api_container"
-  cpu = "512"
-  memory = "1024"
+  cpu = "1024"
+  memory = "2048"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   container_definitions = file("./definitions/api_container.json")
