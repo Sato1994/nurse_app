@@ -31,9 +31,9 @@ class ImageUploader < CarrierWave::Uploader::Base
 
     else
       if model.instance_of?(User)
-        'images/default/nurse.png'
+        'https://nurse-hop.com/images/default/nurse.png'
       elsif model.instance_of?(Host)
-        'images/default/hospital.png'
+      'https://nurse-hop.com/images/default/hospital.png'
       end
     end
 
