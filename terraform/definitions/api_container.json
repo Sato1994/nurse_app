@@ -123,6 +123,12 @@
     "name": "api_db_seed",
     "image": "850929304034.dkr.ecr.ap-northeast-1.amazonaws.com/api:latest",
     "essential": false,
+    "dependsOn": [
+      {
+        "containerName": "api_db_migrate_container",
+        "condition": "COMPLETE"
+      }
+    ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
