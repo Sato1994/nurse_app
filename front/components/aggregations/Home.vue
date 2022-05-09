@@ -1,9 +1,8 @@
 <template>
   <v-card class="mx-auto">
-    {{ target }}
     <div>
       <GmapMap
-        v-if="!maplocation.lng"
+        v-if="maplocation.lng"
         map-type-id="roadmap"
         :center="maplocation"
         :zoom="13"
