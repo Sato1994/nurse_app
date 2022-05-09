@@ -152,6 +152,8 @@
       }
     ],
     "command": [
+      "bundle",
+      "exec",
       "rails",
       "db:seed"
     ]
