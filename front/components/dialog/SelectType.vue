@@ -51,12 +51,12 @@ export default {
 
   methods: {
     selectUser() {
-      this.$cookies.set('user', 'user')
+      this.$cookies.set('user', 'user', { secure: true })
       this.$emit('select-click')
     },
 
     selectHost() {
-      this.$cookies.set('user', 'host')
+      this.$cookies.set('user', 'host', { secure: true })
       this.$emit('select-click')
     },
 
