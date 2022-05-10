@@ -21,20 +21,11 @@ class ImageUploader < CarrierWave::Uploader::Base
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   def default_url(*_args)
-    if Rails.env.development? || Rails.env.test?
+    if model.instance_of?(User)
+      '/image/nurse.png'
 
-      if model.instance_of?(User)
-        'http://localhost:3000/images/nurse.png'
-      elsif model.instance_of?(Host)
-        'http://localhost:3000/images/hospital.png'
-      end
-
-    else
-      if model.instance_of?(User)
-        'https://nurse-hop.com/images/default/nurse.png'
-      elsif model.instance_of?(Host)
-      'https://nurse-hop.com/images/default/hospital.png'
-      end
+    elsif model.instance_of?(Host)
+      '/image/hospital.png'
     end
 
     #   # For Rails 3.1+ asset pipeline compatibility:
