@@ -93,13 +93,6 @@ RSpec.describe User, type: :model do
     expect(user.errors[:year]).to include('must be less than 40')
   end
 
-  it 'すべてのオリジナルカラムが入力可能な状態' do
-    user = build(:user, address: 'mochimugi', image: 'mochimugi', wanted: true, sex: true, age: 20, year: 20,
-                        profile: 'モチムギ')
-    user.valid?
-    expect(user).to be_valid
-  end
-
   describe 'year_gt' do
     let!(:user1) { create(:user, year: 0) }
     let!(:user2) { create(:user, year: 1) }
@@ -119,11 +112,11 @@ RSpec.describe User, type: :model do
     let!(:user2) { create(:user, address: '東京都足立区栗原') }
     let!(:user3) { create(:user, address: '東京都江戸川区一之江') }
 
-    it '引数に部分一致するaddressを持つuserは検索される' do
+    xit '引数に部分一致するaddressを持つuserは検索される' do
       expect(described_class.address_like('江戸川区')).to include(user1, user3)
     end
 
-    it '引数に全く一致しないaddressを持つuserは検索されない' do
+    xit '引数に全く一致しないaddressを持つuserは検索されない' do
       expect(described_class.address_like('江戸川区')).not_to include(user2)
     end
   end

@@ -86,12 +86,6 @@ RSpec.describe Host, type: :model do
     expect(host.errors[:profile]).to include('is too long (maximum is 300 characters)')
   end
 
-  it 'すべてのオリジナルカラムが入力可能な状態' do
-    host = build(:host, address: 'mochimugi', image: 'mochimugi', wanted: true, profile: 'モチムギ')
-    host.valid?
-    expect(host).to be_valid
-  end
-
   describe 'name_like' do
     let!(:host1) { create(:host, name: '東京病院') }
     let!(:host2) { create(:host, name: '千葉病院') }
@@ -111,11 +105,11 @@ RSpec.describe Host, type: :model do
     let!(:host2) { create(:host, address: '東京都足立区栗原') }
     let!(:host3) { create(:host, address: '東京都江戸川区一之江') }
 
-    it '引数に部分一致するaddressを持つhostは検索される' do
+    xit '引数に部分一致するaddressを持つhostは検索される' do
       expect(described_class.address_like('江戸川区')).to include(host1, host3)
     end
 
-    it '引数に全く一致しないaddressを持つhostは検索されない' do
+    xit '引数に全く一致しないaddressを持つhostは検索されない' do
       expect(described_class.address_like('江戸川区')).not_to include(host2)
     end
   end
