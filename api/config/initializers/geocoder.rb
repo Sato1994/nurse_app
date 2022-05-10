@@ -11,5 +11,4 @@ if Rails.env.production?
     api_key: ENV['MAPS_API_KEY'],
     use_https: true
   )
-else
 end
