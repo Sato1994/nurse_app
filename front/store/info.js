@@ -62,8 +62,8 @@ export const actions = {
     try {
       const { data, headers } = await this.$axios
         .post('/api/user/sign_in', {
-          email: 'yamada@guest.user',
-          password: 'yamadapass',
+          email: 'guest@user.com',
+          password: 'userpass',
         })
 
       const authInfo = {
@@ -72,9 +72,9 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo)
-      this.$cookies.set('user', 'user')
-      this.$cookies.set('myid', data.info.myid)
+      this.$cookies.set('authInfo', authInfo, { secure: true })
+      this.$cookies.set('user', 'user', { secure: true })
+      this.$cookies.set('myid', data.info.myid, { secure: true })
 
       dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
       dispatch('saveInfo', data.info)
@@ -98,8 +98,8 @@ export const actions = {
     try {
       const { data, headers } = await this.$axios
         .post('/api/host/sign_in', {
-          email: 'takayuki@guest.host',
-          password: 'takayukipass',
+          email: 'guest@host.com',
+          password: 'hostpass',
         })
 
       const authInfo = {
@@ -108,9 +108,9 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('user', 'host')
-      this.$cookies.set('myid', data.info.myid)
-      this.$cookies.set('authInfo', authInfo)
+      this.$cookies.set('user', 'host', { secure: true })
+      this.$cookies.set('myid', data.info.myid, { secure: true })
+      this.$cookies.set('authInfo', authInfo, { secure: true })
 
       dispatch('saveInfo', data.info)
       dispatch('skills/saveSkills', data.skills, { root: true })
@@ -152,8 +152,8 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo)
-      this.$cookies.set('myid', data.info.myid)
+      this.$cookies.set('authInfo', authInfo, { secure: true })
+      this.$cookies.set('myid', data.info.myid, { secure: true })
       dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
       dispatch('skills/saveSkills', data.skills, { root: true })
       dispatch('issues/times/saveTimes', data.times, { root: true })
@@ -187,8 +187,8 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo)
-      this.$cookies.set('myid', data.info.myid)
+      this.$cookies.set('authInfo', authInfo, { secure: true })
+      this.$cookies.set('myid', data.info.myid, { secure: true })
 
       commit('saveInfo', data.info)
       switch (this.$cookies.get('user')) {
