@@ -163,6 +163,10 @@
       {
         "name": "RAILS_MASTER_KEY",
         "valueFrom": "RAILS_MASTER_KEY"
+      },
+      {
+        "name": "MAPS_API_KEY",
+        "valueFrom": "MAPS_API_KEY"
       }
     ],
     "command": [
