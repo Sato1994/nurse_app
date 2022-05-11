@@ -226,22 +226,11 @@ export default {
     },
 
     async getAddress() {
-      try {
-        const { data } = await this.$axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${this.postalCode}&key=${this.$config.MAPS_API_KEY}`
-        )
-        if (data.status === 'OK') {
-          this.address1 = `${data.results[0].address_components[3].long_name}${data.results[0].address_components[2].long_name}${data.results[0].address_components[1].long_name}`
-          this.gotAddress = true
-        } else if (data.status === 'ZERO_RESULTS') {
-          this.$store.dispatch('snackbar/setMessage', '入力を見直してください')
-        }
-      } catch {
-        this.$store.dispatch(
-          'snackbar/setMessage',
-          '住所の検索の取得に失敗しました'
-        )
-      }
+      const data = await this.$store.dispatch('info/getAddress', {
+        postalCode: this.postalCode,
+      })
+      if (data) this.address1 = data.address
+      this.gotAddress = true
     },
   },
 }

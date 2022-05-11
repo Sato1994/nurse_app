@@ -214,6 +214,23 @@ export const actions = {
     }
   },
 
+  async getAddress({ dispatch }, payload) {
+    try {
+      const { data } = await this.$axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.postalCode}&key=${this.$config.MAPS_API_KEY}`
+      )
+      if (data.status === 'OK') {
+        const address = `${data.results[0].address_components[3].long_name}${data.results[0].address_components[2].long_name}${data.results[0].address_components[1].long_name}`
+        return { address }
+      } else if (data.status === 'ZERO_RESULTS') {
+        dispatch('snackbar/setMessage', '入力を見直してください', { root: true })
+
+      }
+    } catch {
+      dispatch('snackbar/setMessage', '住所の検索の取得に失敗しました', { root: true })
+    }
+  },
+
   resetAllStores({ commit }) {
     commit('reset')
     commit('issues/agreements/reset', {}, { root: true })
