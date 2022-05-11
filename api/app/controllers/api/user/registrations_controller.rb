@@ -98,11 +98,11 @@ class Api::User::RegistrationsController < DeviseTokenAuth::RegistrationsControl
   private
 
   def sign_up_params
-    params.permit(:name, :email, :address, :wanted, :sex, :age, :year, :myid, :password, :password_confirmation)
+    params.permit(:name, :email, :address, :wanted, :sex, :age, :year, :myid, :lat, :lng, :password, :password_confirmation)
   end
 
   def account_update_params
-    params.permit(:name, :email, :address, :image, :wanted, :sex, :age, :year, :myid, :profile, :password,
+    params.permit(:name, :email, :address, :image, :wanted, :sex, :age, :year, :myid, :lat, :lng, :profile, :password,
                   :password_confirmation)
   end
 end
