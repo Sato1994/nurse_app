@@ -73,7 +73,7 @@
                     name="住所"
                   >
                     <v-text-field
-                      v-model="info.address1"
+                      v-model="address1"
                       label="住所"
                       required
                       color="warning"
@@ -83,7 +83,7 @@
                   </ValidationProvider>
                 </v-col>
 
-                <v-col cols="12" v-if="address2Display">
+                <v-col v-if="address2Display" cols="12">
                   <v-text-field
                     v-model="info.address2"
                     label="住所続き"
@@ -170,6 +170,7 @@ export default {
     info: {},
     postalCode: '',
     gotAddress: false,
+    address1: null,
   }),
 
   computed: {
@@ -180,7 +181,7 @@ export default {
       return {
         name: this.info.name,
         myid: this.info.myid,
-        address: `${this.info.address1}${address2}`,
+        address: `${this.address1}${address2}`,
         phone: this.info.phone,
         email: this.info.email,
         password: this.info.password,
@@ -225,18 +226,11 @@ export default {
     },
 
     async getAddress() {
-      try {
-        const { data } = await this.$axios.get(
-          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
-        )
-        this.info.address1 = data.data.fullAddress
-        this.gotAddress = true
-      } catch {
-        this.$store.dispatch(
-          'snackbar/setMessage',
-          '住所の検索の取得に失敗しました。'
-        )
-      }
+      const data = await this.$store.dispatch('info/getAddress', {
+        postalCode: this.postalCode,
+      })
+      if (data) this.address1 = data.address
+      this.gotAddress = true
     },
   },
 }

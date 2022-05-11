@@ -2,8 +2,8 @@
   <v-row justify="center">
     <v-dialog
       v-model="$store.state.dialog.edit.editIsDisplay"
-      @click:outside="hideEdit"
       max-width="600px"
+      @click:outside="hideEdit"
     >
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
@@ -70,7 +70,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" v-if="address2Display">
+                <v-col v-if="address2Display" cols="12">
                   <v-text-field
                     v-model="address2"
                     label="住所2"
@@ -280,18 +280,11 @@ export default {
     },
 
     async getAddress() {
-      try {
-        const { data } = await this.$axios.get(
-          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
-        )
-        this.address1 = data.data.fullAddress
-        this.gotAddress = true
-      } catch {
-        this.$store.dispatch(
-          'snackbar/setMessage',
-          '住所の検索の取得に失敗しました。'
-        )
-      }
+      const data = await this.$store.dispatch('info/getAddress', {
+        postalCode: this.postalCode,
+      })
+      if (data) this.address1 = data.address
+      this.gotAddress = true
     },
 
     // イメージがセットされているならされているurlを代入

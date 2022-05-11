@@ -72,9 +72,9 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo, { secure: true })
-      this.$cookies.set('user', 'user', { secure: true })
-      this.$cookies.set('myid', data.info.myid, { secure: true })
+      this.$cookies.set('authInfo', authInfo, { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('user', 'user', { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('myid', data.info.myid, { secure: true, sameSite: 'Lax' })
 
       dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
       dispatch('saveInfo', data.info)
@@ -108,9 +108,9 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('user', 'host', { secure: true })
-      this.$cookies.set('myid', data.info.myid, { secure: true })
-      this.$cookies.set('authInfo', authInfo, { secure: true })
+      this.$cookies.set('user', 'host', { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('myid', data.info.myid, { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('authInfo', authInfo, { secure: true, sameSite: 'Lax' })
 
       dispatch('saveInfo', data.info)
       dispatch('skills/saveSkills', data.skills, { root: true })
@@ -152,8 +152,8 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo, { secure: true })
-      this.$cookies.set('myid', data.info.myid, { secure: true })
+      this.$cookies.set('authInfo', authInfo, { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('myid', data.info.myid, { secure: true, sameSite: 'Lax' })
       dispatch('snackbar/setMessage', 'ログインしました。', { root: true })
       dispatch('skills/saveSkills', data.skills, { root: true })
       dispatch('issues/times/saveTimes', data.times, { root: true })
@@ -187,8 +187,8 @@ export const actions = {
         uid: headers.uid,
       }
 
-      this.$cookies.set('authInfo', authInfo, { secure: true })
-      this.$cookies.set('myid', data.info.myid, { secure: true })
+      this.$cookies.set('authInfo', authInfo, { secure: true, sameSite: 'Lax' })
+      this.$cookies.set('myid', data.info.myid, { secure: true, sameSite: 'Lax' })
 
       commit('saveInfo', data.info)
       switch (this.$cookies.get('user')) {
@@ -211,6 +211,23 @@ export const actions = {
         dispatch('snackbar/setMessage', '入力内容を見直してください。', { root: true })
         this.$cookies.removeAll()
       }
+    }
+  },
+
+  async getAddress({ dispatch }, payload) {
+    try {
+      const { data } = await this.$axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.postalCode}&key=${this.$config.MAPS_API_KEY}`
+      )
+      if (data.status === 'OK') {
+        const address = `${data.results[0].address_components[3].long_name}${data.results[0].address_components[2].long_name}${data.results[0].address_components[1].long_name}`
+        return { address }
+      } else if (data.status === 'ZERO_RESULTS') {
+        dispatch('snackbar/setMessage', '入力を見直してください', { root: true })
+
+      }
+    } catch {
+      dispatch('snackbar/setMessage', '住所の検索の取得に失敗しました', { root: true })
     }
   },
 
