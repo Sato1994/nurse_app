@@ -82,6 +82,8 @@
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
+                <input v-model="info.lat" type="number" style="display: none" />
+                <input v-model="info.lng" type="number" style="display: none" />
 
                 <v-col v-if="address2Display" cols="12">
                   <v-text-field

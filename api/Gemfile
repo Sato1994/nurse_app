@@ -9,7 +9,6 @@ gem 'kaminari'
 gem 'faker'
 gem 'carrierwave'
 gem 'fog-aws'
-gem "geocoder"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.3', '>= 6.0.3.6'
