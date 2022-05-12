@@ -217,17 +217,27 @@ export const actions = {
   async getAddress({ dispatch }, payload) {
     try {
       const { data } = await this.$axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.postalCode}&key=${this.$config.MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.searchSource}&key=${this.$config.MAPS_API_KEY}`
       )
       if (data.status === 'OK') {
-        const address = `${data.results[0].address_components[3].long_name}${data.results[0].address_components[2].long_name}${data.results[0].address_components[1].long_name}`
-        return { address }
+
+        const addressBox = data.results[0].address_components
+        const address = []
+
+        for (let i = addressBox.length - 2; i !== 0; i -= 1) {
+          address.push(addressBox[i].long_name)
+        }
+
+        const lat = data.results[0].geometry.location.lat
+        const lng = data.results[0].geometry.location.lng
+        return { status: 'OK', data: { address: address.join(''), lat, lng } }
       } else if (data.status === 'ZERO_RESULTS') {
-        dispatch('snackbar/setMessage', '入力を見直してください', { root: true })
+        dispatch('snackbar/setMessage', '住所を見直してください', { root: true })
+        return { status: data.status, data: '' }
 
       }
     } catch {
-      dispatch('snackbar/setMessage', '住所の検索の取得に失敗しました', { root: true })
+      dispatch('snackbar/setMessage', '住所検索に失敗しました', { root: true })
     }
   },
 

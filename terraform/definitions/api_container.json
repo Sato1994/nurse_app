@@ -55,10 +55,6 @@
       {
         "name": "AWS_DEFAULT_REGION",
         "valueFrom": "DEFAULT_REGION"
-      },
-      {
-        "name": "MAPS_API_KEY",
-        "valueFrom": "MAPS_API_KEY"
       }
     ],
     "command": [
@@ -163,10 +159,6 @@
       {
         "name": "RAILS_MASTER_KEY",
         "valueFrom": "RAILS_MASTER_KEY"
-      },
-      {
-        "name": "MAPS_API_KEY",
-        "valueFrom": "MAPS_API_KEY"
       }
     ],
     "command": [

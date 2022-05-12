@@ -19,8 +19,6 @@ class Host < ApplicationRecord
   has_many :host_notices, dependent: :destroy
 
   mount_uploader :image, ImageUploader
-  geocoded_by :address, latitude: :lat, longitude: :lng
-  after_validation :geocode
 
   attribute :distance, type: String
   attribute :rate_average, type: String

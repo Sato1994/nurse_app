@@ -158,8 +158,7 @@ export const actions = {
 
           commit('updateState', { state: data.state })
           commit('issues/rooms/removeRoom', { id: room.id }, { root: true })
-        } catch (e) {
-          console.log(e)
+        } catch {
         }
         break
       default:
