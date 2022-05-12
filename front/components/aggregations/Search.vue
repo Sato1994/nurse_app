@@ -112,7 +112,7 @@ export default {
             if (this.nextPage <= response.data.kaminari.pagination.pages) {
               this.nextPage += 1
               this.targets.push(...response.data.partners)
-              $state.loaded()
+              if ($state !== undefined) $state.loaded()
             } else {
               $state.complete()
             }
