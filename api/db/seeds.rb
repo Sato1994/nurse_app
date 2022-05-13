@@ -122,8 +122,7 @@ end
 ##################################################################################################################################
 
 # hosts ##########################################################################################################################
-# CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
-CSV.foreach("db/csv/host_min.csv", headers: true) do |row|
+CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
   hosts = Host.create(
     name: row['name'],
     email: Faker::Internet.email,
@@ -144,8 +143,7 @@ end
 ##################################################################################################################################
 
 # users ##########################################################################################################################
-# CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
-CSV.foreach("db/csv/user_min.csv", headers: true) do |row|
+CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
   User.create(
     name: Faker::Name.name,
     email: Faker::Internet.email,
