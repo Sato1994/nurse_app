@@ -28,28 +28,29 @@ export const actions = {
   },
 
 
-  addSkill({ commit }, payload) {
-    this.$axios
-      .post(
-        `/api/${this.$cookies.get('user')}_skills`,
-        { skill_id: payload.id },
-        {
-          headers: this.$cookies.get('authInfo'),
-        }
-      )
-      .then((response) => {
-        commit('addSkill', response.data)
-      })
+  async addSkill({ commit }, payload) {
+    try {
+
+      const { data } = await this.$axios
+        .post(
+          `/api/${this.$cookies.get('user')}_skills`,
+          { skill_id: payload.id },
+          {
+            headers: this.$cookies.get('authInfo'),
+          }
+        )
+      commit('addSkill', data)
+    } catch { }
   },
 
-  removeSkill({ commit }, payload) {
-    this.$axios
-      .delete(`/api/${this.$cookies.get('user')}_skills/${payload.id}`, {
-        headers: this.$cookies.get('authInfo'),
-      })
-      .then((response) => {
-        commit('removeSkill', response.data)
-      })
+  async removeSkill({ commit }, payload) {
+    try {
+      const { data } = await this.$axios
+        .delete(`/api/${this.$cookies.get('user')}_skills/${payload.id}`, {
+          headers: this.$cookies.get('authInfo'),
+        })
+      commit('removeSkill', data)
+    } catch { }
   },
 }
 

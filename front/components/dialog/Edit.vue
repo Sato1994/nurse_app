@@ -283,18 +283,17 @@ export default {
       this.deletable = !this.deletable
     },
 
-    deleteAccount() {
-      this.$axios
-        .delete(`/api/${this.$cookies.get('user')}`, {
+    async deleteAccount() {
+      try {
+        await this.$axios.delete(`/api/${this.$cookies.get('user')}`, {
           headers: this.$cookies.get('authInfo'),
         })
-        .then(() => {
-          this.closeEdit()
-          this.$cookies.removeAll()
-          this.$router.push('/')
-          this.$store.dispatch('info/resetAllStores')
-          this.$store.dispatch('snackbar/setMessage', 'さよなら')
-        })
+        this.closeEdit()
+        this.$cookies.removeAll()
+        this.$router.push('/')
+        this.$store.dispatch('info/resetAllStores')
+        this.$store.dispatch('snackbar/setMessage', 'さよなら')
+      } catch {}
     },
 
     pushEditButton() {
