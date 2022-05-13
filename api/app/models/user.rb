@@ -146,7 +146,7 @@ class User < ApplicationRecord
     render_user_notices.each do |notice|
       notice['source']['partner'] = notice['source'].delete('host')
       if notice['source_type'] === 'Agreement'
-        notice['source']['room'] = { id: @resource.user_notices.find(notice['id']).source.room.id }
+        notice['source']['room'] = { id: user_notices.find(notice['id']).source.room.id }
       end
     end
   end
