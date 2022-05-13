@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="$store.state.dialog.edit.editIsDisplay"
-      max-width="600px"
-      @click:outside="hideEdit"
-    >
+    <v-dialog :value="editDisplay" max-width="600px" @click:outside="closeEdit">
       <v-card>
         <ValidationObserver v-slot="{ invalid }">
           <v-card-title>
@@ -20,7 +16,7 @@
                     name="名前"
                   >
                     <v-text-field
-                      v-model="info.name"
+                      v-model="copiedInfo.name"
                       :label="nameLabel"
                       color="warning"
                       required
@@ -66,7 +62,7 @@
 
                 <v-col cols="12">
                   <v-text-field
-                    v-model="address1"
+                    v-model="copiedInfo.address"
                     label="住所"
                     required
                     color="warning"
@@ -83,13 +79,21 @@
                   ></v-text-field>
                 </v-col>
 
-                <input v-model="info.lat" type="number" style="display: none" />
-                <input v-model="info.lng" type="number" style="display: none" />
+                <input
+                  v-model="copiedInfo.lat"
+                  type="number"
+                  style="display: none"
+                />
+                <input
+                  v-model="copiedInfo.lng"
+                  type="number"
+                  style="display: none"
+                />
 
                 <v-col cols="12">
                   <ValidationProvider rules="max:300" name="プロフィール">
                     <v-textarea
-                      v-model="info.profile"
+                      v-model="copiedInfo.profile"
                       label="プロフィール"
                       :counter="300"
                       required
@@ -109,7 +113,7 @@
                     name="年齢"
                   >
                     <v-text-field
-                      v-model="info.age"
+                      v-model="copiedInfo.age"
                       label="年齢"
                       type="number"
                       color="warning"
@@ -130,7 +134,7 @@
                     name="経験年数"
                   >
                     <v-text-field
-                      v-model="info.year"
+                      v-model="copiedInfo.year"
                       label="経験年数"
                       type="number"
                       color="warning"
@@ -141,7 +145,7 @@
                 </v-col>
                 <v-col v-if="$cookies.get('user') === 'user'" cols="12">
                   <v-select
-                    v-model="info.sex"
+                    v-model="copiedInfo.sex"
                     :items="sex"
                     label="性別"
                     color="warning"
@@ -150,7 +154,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-switch
-                    v-model="info.wanted"
+                    v-model="copiedInfo.wanted"
                     label="お相手からのリクエストを受け付けますか？"
                     color="warning"
                   ></v-switch>
@@ -177,7 +181,7 @@
               </v-col>
             </v-row>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="hideEdit">
+            <v-btn color="warning darken-1" text @click="closeEdit">
               閉じる
             </v-btn>
             <v-btn
@@ -197,23 +201,34 @@
 
 <script>
 export default {
+  props: {
+    editDisplay: {
+      type: Boolean,
+      default: false,
+    },
+
+    info: {
+      type: Object,
+      default: null,
+    },
+  },
+
   data: () => ({
-    postalCode: '',
+    postalCode: null,
     sex: [
       { text: '女性', value: true },
       { text: '男性', value: false },
     ],
     setImageUrl: null,
     deletable: false,
-    address1: null,
     address2: null,
     gotAddress: false,
   }),
 
   computed: {
-    info: {
+    copiedInfo: {
       get() {
-        return Object.assign({}, this.$store.getters['info/info'])
+        return Object.assign({}, this.info)
       },
     },
 
@@ -228,7 +243,7 @@ export default {
       if (this.setImageUrl) {
         return this.setImageUrl
       } else {
-        return this.$store.getters['info/info'].image.url
+        return this.info.image.url
       }
     },
 
@@ -255,35 +270,30 @@ export default {
     },
   },
 
-  created() {
-    this.address1 = this.info.address
-  },
-
   methods: {
-    hideEdit() {
-      this.$store.commit('dialog/edit/hideEdit')
+    closeEdit() {
       this.deletable = false
-      this.address2 = ''
+      this.address2 = null
       this.gotAddress = false
-      this.postalCode = ''
+      this.postalCode = null
+      this.$emit('click-close-button')
     },
 
     switchDeletable() {
       this.deletable = !this.deletable
     },
 
-    deleteAccount() {
-      this.$axios
-        .delete(`/api/${this.$cookies.get('user')}`, {
+    async deleteAccount() {
+      try {
+        await this.$axios.delete(`/api/${this.$cookies.get('user')}`, {
           headers: this.$cookies.get('authInfo'),
         })
-        .then(() => {
-          this.hideEdit()
-          this.$cookies.removeAll()
-          this.$router.push('/')
-          this.$store.dispatch('info/resetAllStores')
-          this.$store.dispatch('snackbar/setMessage', 'さよなら')
-        })
+        this.closeEdit()
+        this.$cookies.removeAll()
+        this.$router.push('/')
+        this.$store.dispatch('info/resetAllStores')
+        this.$store.dispatch('snackbar/setMessage', 'さよなら')
+      } catch {}
     },
 
     pushEditButton() {
@@ -298,11 +308,11 @@ export default {
     async getLatLng() {
       try {
         const { data, status } = await this.$store.dispatch('info/getAddress', {
-          searchSource: `${this.address1}${this.address2}`,
+          searchSource: `${this.copiedInfo.address}${this.address2}`,
         })
         if (status === 'OK') {
-          this.info.lat = data.lat
-          this.info.lng = data.lng
+          this.copiedInfo.lat = data.lat
+          this.copiedInfo.lng = data.lng
 
           this.editUser()
         } else if (data.status === 'ZERO_RESULTS') {
@@ -318,16 +328,16 @@ export default {
         const { data, status } = await this.$store.dispatch('info/getAddress', {
           searchSource: this.postalCode,
         })
-        if (status === 'OK') this.address1 = data.address
+        if (status === 'OK') this.copiedInfo.address = data.address
         this.gotAddress = true
-        this.info.lat = data.lat
-        this.info.lng = data.lng
+        this.copiedInfo.lat = data.lat
+        this.copiedInfo.lng = data.lng
       } catch {}
     },
 
     // イメージがセットされているならされているurlを代入
     setImage(image) {
-      this.info.image = image
+      this.copiedInfo.image = image
       if (image) {
         this.setImageUrl = URL.createObjectURL(image)
       } else {
@@ -345,14 +355,13 @@ export default {
           uid: this.$cookies.get('authInfo').uid,
         }
         // 入力欄が埋まってるものだけformDataに
-        for (const key in this.info) {
-          if (this.info[key] != null) formData.append(key, this.info[key])
+        for (const key in this.copiedInfo) {
+          if (this.copiedInfo[key] != null)
+            formData.append(key, this.copiedInfo[key])
         }
 
-        let address2 = this.address2
-        if (this.address2 === undefined) address2 = ''
-
-        formData.set('address', `${this.address1}${address2}`)
+        if (this.address2)
+          formData.set('address', `${this.copiedInfo.address}${this.address2}`)
 
         const { data } = await this.$axios.put(
           `/api/${this.$cookies.get('user')}`,
@@ -362,7 +371,7 @@ export default {
           }
         )
 
-        this.hideEdit()
+        this.closeEdit()
 
         this.$store.dispatch(
           'snackbar/setMessage',

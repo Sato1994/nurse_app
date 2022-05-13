@@ -23,6 +23,19 @@
       <v-chip small class="ma-2" text-color="white" :color="wantedChipColor">{{
         target.wanted === true ? '募集中' : '募集していません'
       }}</v-chip>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        v-if="
+          $route.path ===
+          `/${$cookies.get('user')}/${$store.state.info.info.myid}`
+        "
+        icon
+        @click="editDisplay = true"
+      >
+        <v-icon color="warning" size="35">mdi-account-cog-outline</v-icon>
+      </v-btn>
     </v-card-title>
 
     <v-card-text>
@@ -61,6 +74,11 @@
     <v-divider class="mx-4"></v-divider>
 
     <Calendar :events="events" :wanted="target.wanted" />
+    <Edit
+      :editDisplay="editDisplay"
+      :info="target"
+      @click-close-button="closeEdit"
+    />
   </v-card>
 </template>
 
@@ -68,9 +86,11 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 import Calendar from '@/components/aggregations/Calendar.vue'
+import Edit from '@/components/dialog/Edit.vue'
 export default {
   components: {
     Calendar,
+    Edit,
   },
 
   props: {
@@ -120,6 +140,8 @@ export default {
       mapTypeControl: false,
       zoomControl: false,
     },
+
+    editDisplay: false,
   }),
 
   head() {
@@ -270,6 +292,9 @@ export default {
     },
     updateAgreements(newValue) {
       this.$emit('update-agreements', newValue)
+    },
+    closeEdit() {
+      this.editDisplay = false
     },
   },
 }

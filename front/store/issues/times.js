@@ -39,22 +39,22 @@ export const actions = {
       })
   },
 
-  createTime({ commit, dispatch }, payload) {
+  async createTime({ commit, dispatch }, payload) {
     const startTime = `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}:00`
     const finsihTime = `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}:00`
-    this.$axios
-      .post(
-        `/api/${this.$cookies.get('user') === 'user' ? 'free' : 'recruitment'}_times`,
-        {
-          start_time: startTime,
-          finish_time: finsihTime,
-        },
-        { headers: this.$cookies.get('authInfo') }
-      )
-      .then((response) => {
-        commit('addTime', response.data)
-        dispatch('snackbar/setMessage', '募集時間を登録しました。', { root: true })
-      })
+    try {
+      const { data } = await this.$axios
+        .post(
+          `/api/${this.$cookies.get('user') === 'user' ? 'free' : 'recruitment'}_times`,
+          {
+            start_time: startTime,
+            finish_time: finsihTime,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      commit('addTime', data)
+      dispatch('snackbar/setMessage', '募集時間を登録しました。', { root: true })
+    } catch { }
   },
 }
 

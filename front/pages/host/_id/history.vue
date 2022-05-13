@@ -24,7 +24,14 @@
             :headers="headers"
             :items="agreements"
             :search="search"
+            :footer-props="{
+              'items-per-page-text': '',
+
+              'disable-items-per-page': true,
+            }"
             class="table"
+            :items-per-page="5"
+            no-data-text="データがありません。"
             @click:row="clickTable"
           >
             <template #[`item.state`]="{ item }">

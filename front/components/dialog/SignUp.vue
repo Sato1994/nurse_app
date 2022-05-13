@@ -77,7 +77,7 @@
                     name="住所"
                   >
                     <v-text-field
-                      v-model="address1"
+                      v-model="info.address"
                       label="住所"
                       required
                       color="warning"
@@ -91,7 +91,7 @@
 
                 <v-col v-if="address2Display" cols="12">
                   <v-text-field
-                    v-model="info.address2"
+                    v-model="address2"
                     label="住所続き"
                     required
                     color="warning"
@@ -174,9 +174,9 @@ export default {
 
   data: () => ({
     info: {},
-    postalCode: '',
+    address2: null,
+    postalCode: null,
     gotAddress: false,
-    address1: null,
   }),
 
   computed: {
@@ -205,13 +205,17 @@ export default {
 
   methods: {
     signUp() {
-      let address2 = this.info.address2
-      if (this.info.address2 === undefined) address2 = ''
+      let address = ''
+      if (this.address2) {
+        address = `${this.info.address}${this.address2}`
+      } else {
+        address = this.info.address
+      }
 
       const payload = {
         name: this.info.name,
         myid: this.info.myid,
-        address: `${this.address1}${address2}`,
+        address,
         phone: this.info.phone,
         email: this.info.email,
         lat: this.info.lat,
@@ -227,12 +231,13 @@ export default {
     close() {
       this.$cookies.removeAll()
       this.info = {}
-      this.postalCode = ''
+      this.address2 = null
+      this.postalCode = null
       this.$emit('close-sign-up-click')
     },
 
     pushSignUpButton() {
-      if (!this.info.address2) {
+      if (!this.address2) {
         this.signUp()
       } else {
         // 第二addressがあればより詳細なlat lng取得
@@ -243,7 +248,7 @@ export default {
     async getLatLng() {
       try {
         const { data, status } = await this.$store.dispatch('info/getAddress', {
-          searchSource: `${this.address1}${this.info.address2}`,
+          searchSource: `${this.info.address}${this.address2}`,
         })
         if (status === 'OK') {
           this.info.lat = data.lat
@@ -263,7 +268,7 @@ export default {
         const { data, status } = await this.$store.dispatch('info/getAddress', {
           searchSource: this.postalCode,
         })
-        if (status === 'OK') this.address1 = data.address
+        if (status === 'OK') this.info.address = data.address
         this.gotAddress = true
         this.info.lat = data.lat
         this.info.lng = data.lng
