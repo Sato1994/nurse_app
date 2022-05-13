@@ -19,8 +19,6 @@ class Host < ApplicationRecord
   has_many :host_notices, dependent: :destroy
 
   mount_uploader :image, ImageUploader
-  geocoded_by :address, latitude: :lat, longitude: :lng
-  after_validation :geocode
 
   attribute :distance, type: String
   attribute :rate_average, type: String
@@ -164,7 +162,7 @@ class Host < ApplicationRecord
     render_host_notices.each do |notice|
       notice['source']['partner'] = notice['source'].delete('user')
       if notice['source_type'] === 'Agreement'
-        notice['source']['room'] = { id: @resource.host_notices.find(notice['id']).source.room.id }
+        notice['source']['room'] = { id: host_notices.find(notice['id']).source.room.id }
       end
     end
   end

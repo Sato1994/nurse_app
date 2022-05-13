@@ -54,15 +54,19 @@
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field
                     v-model="postalCode"
-                    label="郵便番号で検索する"
+                    label="郵便番号を入力"
                     color="warning"
                     required
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="6" md="6">
-                  <v-btn color="warning" @click="getAddress">
-                    住所を検索する</v-btn
+                  <v-btn
+                    color="warning"
+                    :disabled="!postalCode"
+                    @click="getAddress"
+                  >
+                    住所を検索</v-btn
                   >
                 </v-col>
 
@@ -73,7 +77,7 @@
                     name="住所"
                   >
                     <v-text-field
-                      v-model="info.address1"
+                      v-model="address1"
                       label="住所"
                       required
                       color="warning"
@@ -82,8 +86,10 @@
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
+                <input v-model="info.lat" type="number" style="display: none" />
+                <input v-model="info.lng" type="number" style="display: none" />
 
-                <v-col cols="12" v-if="address2Display">
+                <v-col v-if="address2Display" cols="12">
                   <v-text-field
                     v-model="info.address2"
                     label="住所続き"
@@ -146,7 +152,7 @@
               color="warning darken-1"
               text
               :disabled="invalid"
-              @click="signUp(signUpPayload)"
+              @click="pushSignUpButton"
             >
               登録
             </v-btn>
@@ -170,24 +176,10 @@ export default {
     info: {},
     postalCode: '',
     gotAddress: false,
+    address1: null,
   }),
 
   computed: {
-    signUpPayload() {
-      let address2 = this.info.address2
-      if (this.info.address2 === undefined) address2 = ''
-
-      return {
-        name: this.info.name,
-        myid: this.info.myid,
-        address: `${this.info.address1}${address2}`,
-        phone: this.info.phone,
-        email: this.info.email,
-        password: this.info.password,
-        password_confirmation: this.info.password_confirmation,
-      }
-    },
-
     nameLengthRule() {
       return this.$cookies.get('user') === 'user'
         ? 'required|max:20'
@@ -212,7 +204,22 @@ export default {
   },
 
   methods: {
-    signUp(payload) {
+    signUp() {
+      let address2 = this.info.address2
+      if (this.info.address2 === undefined) address2 = ''
+
+      const payload = {
+        name: this.info.name,
+        myid: this.info.myid,
+        address: `${this.address1}${address2}`,
+        phone: this.info.phone,
+        email: this.info.email,
+        lat: this.info.lat,
+        lng: this.info.lng,
+        password: this.info.password,
+        password_confirmation: this.info.password_confirmation,
+      }
+
       this.$emit('close-sign-up-click')
       this.$store.dispatch('info/signUp', payload)
     },
@@ -224,19 +231,43 @@ export default {
       this.$emit('close-sign-up-click')
     },
 
+    pushSignUpButton() {
+      if (!this.info.address2) {
+        this.signUp()
+      } else {
+        // 第二addressがあればより詳細なlat lng取得
+        this.getLatLng()
+      }
+    },
+
+    async getLatLng() {
+      try {
+        const { data, status } = await this.$store.dispatch('info/getAddress', {
+          searchSource: `${this.address1}${this.info.address2}`,
+        })
+        if (status === 'OK') {
+          this.info.lat = data.lat
+          this.info.lng = data.lng
+
+          this.signUp()
+        } else if (data.status === 'ZERO_RESULTS') {
+          this.$store.dispatch('snackbar/setMessage', '住所を見直してください')
+        }
+      } catch {
+        this.$store.dispatch('snackbar/setMessage', '住所検索に失敗しました')
+      }
+    },
+
     async getAddress() {
       try {
-        const { data } = await this.$axios.get(
-          `https://api.zipaddress.net/?zipcode=${this.postalCode}`
-        )
-        this.info.address1 = data.data.fullAddress
+        const { data, status } = await this.$store.dispatch('info/getAddress', {
+          searchSource: this.postalCode,
+        })
+        if (status === 'OK') this.address1 = data.address
         this.gotAddress = true
-      } catch {
-        this.$store.dispatch(
-          'snackbar/setMessage',
-          '住所の検索の取得に失敗しました。'
-        )
-      }
+        this.info.lat = data.lat
+        this.info.lng = data.lng
+      } catch {}
     },
   },
 }
