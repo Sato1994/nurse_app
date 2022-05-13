@@ -18,7 +18,7 @@
 
         <v-list v-if="$store.state.info.info.myid" dense>
           <v-list-item v-for="(item, i) in authItems" :key="i" link>
-            <v-list-item-title @click="clickAuthMenu(i)">{{
+            <v-list-item-title @click="clickAuthMenu">{{
               item.title
             }}</v-list-item-title>
           </v-list-item>
@@ -87,32 +87,29 @@
         @close-select-type-click="closeSelectType"
         @select-click="actionSelectedType"
       />
-      <Edit />
     </v-app-bar>
   </v-card>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 import SignUp from '@/components/dialog/SignUp.vue'
 import SignIn from '@/components/dialog/SignIn.vue'
 import SelectType from '@/components/dialog/SelectType.vue'
 import Notice from '@/components/props/Notice.vue'
-import Edit from '@/components/dialog/Edit.vue'
 export default {
   components: {
     SignUp,
     SignIn,
     SelectType,
     Notice,
-    Edit,
   },
 
   data() {
     return {
       tabs: null,
       unAuthItems: [{ title: 'ログイン' }, { title: '新規登録' }],
-      authItems: [{ title: 'アカウント設定' }, { title: 'ログアウト' }],
+      authItems: [{ title: 'ログアウト' }],
       selectTypeDisplay: false,
       signInDisplay: false,
       signUpDisplay: false,
@@ -125,16 +122,13 @@ export default {
     },
 
     authIcon() {
-      return this.$store.state.info.info.myid
-        ? 'mdi-account-cog-outline'
-        : 'mdi-login'
+      return this.$store.state.info.info.myid ? 'mdi-logout' : 'mdi-login'
     },
   },
 
   methods: {
     ...mapActions('info', ['loginAsGuestUser']),
     ...mapActions('info', ['loginAsGuestHost']),
-    ...mapMutations('dialog/edit', ['displayEdit']),
 
     clickUnAuthMenu(i) {
       switch (i) {
@@ -150,22 +144,11 @@ export default {
       }
     },
 
-    clickAuthMenu(i) {
-      switch (i) {
-        case 0:
-          this.$router.push(
-            `/${this.$cookies.get('user')}/${this.$store.state.info.info.myid}`
-          )
-          this.displayEdit()
-          break
-
-        case 1:
-          this.$router.push('/')
-          this.$cookies.removeAll()
-          this.$store.dispatch('info/resetAllStores')
-          this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
-          break
-      }
+    clickAuthMenu() {
+      this.$router.push('/')
+      this.$cookies.removeAll()
+      this.$store.dispatch('info/resetAllStores')
+      this.$store.dispatch('snackbar/setMessage', 'Good Bye!')
     },
 
     closeSelectType() {
