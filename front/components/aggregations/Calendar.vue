@@ -54,13 +54,7 @@
             :removeTimeButton="freeTimeCardConfig.removeTimeButton"
             :createRequestButton="freeTimeCardConfig.createRequestButton"
             color="green darken-3"
-            @remove-time-button-click="
-              displayAsRemoveTime({
-                startTime: selectedEvent.startTime,
-                finishTime: selectedEvent.finishTime,
-                timeId: selectedEvent.id,
-              })
-            "
+            @remove-time-button-click="displayAsRemoveTime"
             @create-request-button-click="
               openDatePickerAsCreateRequest({
                 startTime: selectedEvent.startTime,
@@ -292,10 +286,9 @@ export default {
       this.timeId = payload.timeId
     },
 
-    displayAsRemoveTime(payload) {
+    displayAsRemoveTime() {
       this.confirmDisplay = true
       this.$store.commit('dialog/confirm/displayAsRemoveTime')
-      this.timeId = payload.timeId
     },
 
     displayAsRemoveRequest(requestId) {
