@@ -89,8 +89,101 @@ user_sixth = [
 rate_comment = [
   '忙しくてナースコール頻回の病棟でしたが、皆がせっせと働くのでチーム医療は充実してました。向上心もありいい職場でした。バイトなので委員会などで忙しそうにしている常勤の看護師をみるとこのサイトを教えてあげたくなります。',
   'とても素敵な病院です。 皆さん仲良くて、すごくわきあいあいとしています。 患者さんにもとても優しくて働くには最適なところだと思います。急性期病院でなんでも受け入れる方針なので、症例は多くとても勉強になります。 急性期看護が好きな人はICU、救命で働けばとても充実した毎日を送れそうです。暇な時間も多くて将棋ばかりやっています。',
-  '雰囲気が良いところもあれば、全体的にピリピリしている所もあります。どっちかと言うと雰囲気が悪いところの方が多い印象です。子供のいるママさんでも働きやすい印象を受けています。病棟ごとに忙しさや人間関係は異なります。',
+  '雰囲気が良いところもあれば、全体的にピリピリしている所もあります。どっちかと言うと雰囲気が悪いところの方が多い印象です。子供のいるママさんでも働きやすい印象を受けています。病棟ごとに忙しさや人間関係は異なります。'
 ]
+
+# userが作ったroomのmessages
+user_room_user_message_1 = [
+  'リクエストありがとうございます。',
+  'こんにちはお元気ですか？',
+  '私も同じ日にリクエストをしようと思っていました。',
+  '条件が良かったら勤務しますよ。'
+
+]
+
+user_room_host_message_1 = [
+  'はい。消化器外科病棟に勤務いただける方を探しておりまして、あたなのこれまでのご経験を踏まえてもこんなにピッタリ当てはまる方はいません。',
+  'わが病院では急性期看護のノウハウを学べますよ。常勤で働くのはいやだけど経験してみたいという方におすすめです。',
+  '勤務頂けるようであれば経験を積みたい科で勤務してもいいですよ。',
+  'この病院では初めて勤務する方には、実際に患者さんを担当して頂いくか、見学だけしてみるか選んで頂いております。'
+
+]
+
+user_room_user_message_2 = [
+
+  '前向きに検討させて頂きます。あとは時間帯についてですね。',
+  'なるほど、良い病院ですね。',
+  '経験を積めそうな病院で嬉しいです。',
+  'ありがとうございます。私もそちらの病院の力になれるように頑張りたいと思います。'
+
+]
+
+user_room_host_message_2 = [
+  'はい。時間を変更しておきましたのでこの時間でどうでしょうか',
+  '時間は現在設定してある時間でよろしいですか？',
+  '時間帯については看護師さんの決めて頂いています。なにせ人手不足ですので'
+]
+
+user_room_user_message_3 = [
+  'いいですね。確定します。',
+  'よろしいです。私は同意しましたので確定おねがいします。',
+  'ワクワクしてきました。',
+  'ぞわぞわしてきました。'
+
+]
+
+user_room_host_message_3 = [
+  'ありがとうございます。当日はよろしくお願いします。質問があれば遠慮なく聞いてくださいね。',
+  '遅刻せずに来てね',
+  '仕事楽しみましょう。'
+
+]
+
+# hostが作ったroomのmessages
+host_room_host_message_1 = [
+  'リクエストありがとうございます。',
+  'こんにちはお元気ですか？',
+  'こちらも同じ日にリクエストをしようと思っていました。',
+  'こんにちは、我が病院は素晴らしい病院です。'
+]
+
+host_room_user_message_1 = [
+  'はい。心臓血管外科に勤務できる病院を探しておりまして、たくさんの病院のプロフィールを見てきましたが、こんなにピッタリ当てはまる病院はありません。',
+  '急性期看護のノウハウを学べそうなので申請しました。常勤で働くのは躊躇ってしまいますが経験してみたいです。',
+  'とりあえず昔の感覚を取り戻したいのでどこの科でもいいですよ。',
+  'もし勤務できるなら初めてですので、最初はオリエンテーションなどをして頂きたいです。'
+
+]
+
+host_room_host_message_2 = [
+  '前向きに検討させて頂きます。あとは時間帯についてですね。',
+  'なるほど、良い方ですね。',
+  '即戦力になりそうな方で嬉しいです。',
+  'ありがとうございます。こちらも力になれるように頑張りたいと思います。'
+
+]
+
+host_room_user_message_2 = [
+  'はい。時間を変更しておきましたのでこの時間でどうでしょうか',
+  '時間は現在設定してある時間でよろしいですか？',
+  '時間帯についてはそちらのほうで決めて頂いて大丈夫です。なにせ暇ですので'
+
+]
+
+host_room_host_message_3 = [
+  'いいですね。確定します。',
+  'よろしいです。こちらは同意しましたので確定おねがいします。',
+  'ワクワクしてきました。',
+  'ぞわぞわしてきました。'
+
+]
+
+host_room_user_message_3 = [
+  'ありがとうございます。当日はよろしくお願いします。質問があればまたメッセージしますね。',
+  '遅刻せずに行きますね',
+  '仕事楽しみます。'
+]
+
 ##################################################################################################################################
 
 # skills #########################################################################################################################
@@ -132,7 +225,7 @@ CSV.foreach("db/csv/host_#{Rails.env}.csv", headers: true) do |row|
     address: row['address'],
     lat: row['lat'],
     lng: row['lng'],
-    wanted: [true, false].sample,
+    wanted: [true, true, false].sample,
     profile: "#{first.sample} #{second.sample} #{third.sample} #{fourth.sample} #{fifth.sample}"
   )
 end
@@ -152,7 +245,7 @@ CSV.foreach("db/csv/user_#{Rails.env}.csv", headers: true) do |row|
     address: row['address'],
     lat: row['lat'],
     lng: row['lng'],
-    wanted: [true, false].sample,
+    wanted: [true, true, false].sample,
     sex: [true, false].sample,
     age: rand(20..60),
     year: rand(0..39),
@@ -463,87 +556,92 @@ Agreement.create(
 
 # messages #######################################################################################################################
 # room_1
-HostMessage.create(
-  room_id: room_1.id,
-  message: 'いきなり申請失礼します。今提示してあります時間帯で勤務いかがでしょうか。',
-  created_at: a = Time.current.ago(7.days)
-)
-UserMessage.create(
-  room_id: room_1.id,
-  message: 'すみません。少し用事が入ってしまいまして、12時からなら可能なのですが、、、',
-  created_at: a + 20.minutes
-)
-HostMessage.create(
-  room_id: room_1.id,
-  message: '12時からでもありがたいです。時間を変更しておきましたので契約お願いします。',
-  created_at: a + 40.minutes
-)
-UserMessage.create(
-  room_id: room_1.id,
-  message: '契約しました。よろしくお願いします！',
-  created_at: a + 60.minutes
-)
+
+message_initial_time = Time.current.ago(7.days)
+# 最初にメッセージする人が送るmessagesのcreated_time
+message_minutes_later_for_creater = [0, 40, 75]
+# そのメッセージを受ける人が送るmessagesのcreated_time
+message_minutes_later_for_recipienter = [20, 60, 100]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_1.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_1.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 # room_2
-UserMessage.create(
-  room_id: room_2.id,
-  message: 'このあたりの時間で夜勤入れませんか？',
-  created_at: a = Time.current.ago(5.days)
-)
-HostMessage.create(
-  room_id: room_2.id,
-  message: '忙しくなるので覚悟してよ～。こっちは申請してくれた時間で許可したからね。',
-  created_at: a + 30.minutes
-)
-UserMessage.create(
-  room_id: room_2.id,
-  message: '忙しいのは嫌いじゃありません。よろしくお願いします。',
-  created_at: a + 45.minutes
-)
+
+message_initial_time = Time.current.ago(5.days)
+# 最初にメッセージする人が送るmessagesのcreated_time
+message_minutes_later_for_creater = [0, 54, 89]
+# そのメッセージを受ける人が送るmessagesのcreated_time
+message_minutes_later_for_recipienter = [37, 77, 100]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_2.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_2.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 # room_3
-UserMessage.create(
-  room_id: room_3.id,
-  message: 'どうしてもこの日に入りたいんです。',
-  created_at: a = Time.current.ago(3.days)
-)
-HostMessage.create(
-  room_id: room_3.id,
-  message: 'そんな日もありますね。8時30分から勤務できないですか？',
-  created_at: a + 70.minutes
-)
-UserMessage.create(
-  room_id: room_3.id,
-  message: '朝は必ず寝坊してしまうので10時以降でお願いします。',
-  created_at: a + 100.minutes
-)
-HostMessage.create(
-  room_id: room_3.id,
-  message: '分かりました。では10時でいいですね？',
-  created_at: a + 120.minutes
-)
-UserMessage.create(
-  room_id: room_3.id,
-  message: 'お願いします。',
-  created_at: a + 135.minutes
-)
 
-# room4
-UserMessage.create(
-  room_id: room_4.id,
-  message: '夜勤はできないですけど22時くらいまでとかでできませんか？',
-  created_at: a = Time.current.ago(4.days)
-)
-HostMessage.create(
-  room_id: room_4.id,
-  message: 'まぁしょうがないからいいかー。',
-  created_at: a + 155.minutes
-)
-UserMessage.create(
-  room_id: room_4.id,
-  message: 'やったー',
-  created_at: a + 200.minutes
-)
+message_initial_time = Time.current.ago(3.days)
+# 最初にメッセージする人が送るmessagesのcreated_time
+message_minutes_later_for_creater = [0, 100, 135]
+# そのメッセージを受ける人が送るmessagesのcreated_time
+message_minutes_later_for_recipienter = [70, 120, 145]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_3.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_3.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
+# room_4
+
+message_initial_time = Time.current.ago(4.days)
+# 最初にメッセージする人が送るmessagesのcreated_time
+message_minutes_later_for_creater = [100, 155, 262]
+# そのメッセージを受ける人が送るmessagesのcreated_time
+message_minutes_later_for_recipienter = [125, 200, 355]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_4.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_4.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 ##################################################################################################################################
 
 # guest user, guest host の skills ###############################################################################################
@@ -651,7 +749,7 @@ rate_15_days_ago = Rate.create(
 # host seeds の rates ############################################################################################################
 hosts_ids.each do |id|
   rand(1..5).times do
-   Room.new(
+    Room.new(
       user_id: users_ids.sample,
       host_id: id,
       start_time: a = Time.current.ago(rand(0..100)).beginning_of_day,
@@ -687,13 +785,33 @@ end
 Room.new(
   user_id: guest_user.id,
   host_id: guest_host.id,
-  start_time: Time.current - 3.hours,
-  finish_time: Time.current + 5.hours,
+  start_time: 3.hours.ago,
+  finish_time: 5.hours.from_now,
   state: 'conclusion',
   closed: 'na'
 ).save(validate: false)
 
 room = Room.last
+
+message_initial_time = Time.current.ago(7.days)
+# 最初にメッセージする人が送るmessagesのcreated_time
+message_minutes_later_for_creater = [0, 35, 80]
+# そのメッセージを受ける人が送るmessagesのcreated_time
+message_minutes_later_for_recipienter = [20, 60, 120]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: guest_user.id,
@@ -708,8 +826,8 @@ Agreement.new(
 Room.new(
   user_id: users_ids.sample,
   host_id: guest_host.id,
-  start_time: Time.current - 4.hours,
-  finish_time: Time.current + 7.hours,
+  start_time: 4.hours.ago,
+  finish_time: 7.hours.from_now,
   state: 'conclusion',
   closed: 'na'
 ).save(validate: false)
@@ -724,4 +842,5 @@ Agreement.new(
   state: 'during',
   room_id: room.id
 ).save(validate: false)
+
 ##################################################################################################################################
