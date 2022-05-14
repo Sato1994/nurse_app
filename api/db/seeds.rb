@@ -294,7 +294,7 @@ end
 # host ###########################################################################################################################
 # guest host
 guest_host = Host.create(
-  name: '昭和大学附属烏山病院',
+  name: '東京げすと病院',
   email: 'guest@host.com',
   address: '東京都世田谷区北烏山6丁目11-11',
   lat: 35.6722457,
@@ -324,7 +324,7 @@ other_host = Host.create(
 # user ###########################################################################################################################
 # guest user
 guest_user = User.create(
-  name: '山田 孝之',
+  name: '山田 げす斗',
   email: 'guest@user.com',
   myid: 'guestuser',
   password: 'userpass',
@@ -489,7 +489,7 @@ HostRequest.create([
                    ])
 ##################################################################################################################################
 
-# rooms, agreement ###############################################################################################################
+# agreementとそのメッセージ ###############################################################################################################
 # (guest user - guest host)
 room_1 = Room.create(
   user_id: guest_user.id,
@@ -552,15 +552,10 @@ Agreement.create(
   start_time: room_4.start_time,
   finish_time: room_4.finish_time
 )
-##################################################################################################################################
 
-# messages #######################################################################################################################
 # room_1
-
 message_initial_time = Time.current.ago(7.days)
-# 最初にメッセージする人が送るmessagesのcreated_time
 message_minutes_later_for_creater = [0, 40, 75]
-# そのメッセージを受ける人が送るmessagesのcreated_time
 message_minutes_later_for_recipienter = [20, 60, 100]
 
 3.times do |i|
@@ -578,11 +573,8 @@ message_minutes_later_for_recipienter = [20, 60, 100]
 end
 
 # room_2
-
 message_initial_time = Time.current.ago(5.days)
-# 最初にメッセージする人が送るmessagesのcreated_time
 message_minutes_later_for_creater = [0, 54, 89]
-# そのメッセージを受ける人が送るmessagesのcreated_time
 message_minutes_later_for_recipienter = [37, 77, 100]
 
 3.times do |i|
@@ -600,11 +592,8 @@ message_minutes_later_for_recipienter = [37, 77, 100]
 end
 
 # room_3
-
 message_initial_time = Time.current.ago(3.days)
-# 最初にメッセージする人が送るmessagesのcreated_time
 message_minutes_later_for_creater = [0, 100, 135]
-# そのメッセージを受ける人が送るmessagesのcreated_time
 message_minutes_later_for_recipienter = [70, 120, 145]
 
 3.times do |i|
@@ -622,11 +611,8 @@ message_minutes_later_for_recipienter = [70, 120, 145]
 end
 
 # room_4
-
 message_initial_time = Time.current.ago(4.days)
-# 最初にメッセージする人が送るmessagesのcreated_time
 message_minutes_later_for_creater = [100, 155, 262]
-# そのメッセージを受ける人が送るmessagesのcreated_time
 message_minutes_later_for_recipienter = [125, 200, 355]
 
 3.times do |i|
@@ -643,6 +629,11 @@ message_minutes_later_for_recipienter = [125, 200, 355]
   )
 end
 ##################################################################################################################################
+
+# roomとそのメッセージ ###############################################################################################################
+# (guest user - guest host)
+# (guest user - other host)
+# (guest host - other user)
 
 # guest user, guest host の skills ###############################################################################################
 %w[user host].each do |me|
@@ -794,9 +785,7 @@ Room.new(
 room = Room.last
 
 message_initial_time = Time.current.ago(7.days)
-# 最初にメッセージする人が送るmessagesのcreated_time
 message_minutes_later_for_creater = [0, 35, 80]
-# そのメッセージを受ける人が送るmessagesのcreated_time
 message_minutes_later_for_recipienter = [20, 60, 120]
 
 3.times do |i|
@@ -833,6 +822,24 @@ Room.new(
 ).save(validate: false)
 
 room = Room.last
+
+message_initial_time = Time.current.ago(8.days)
+message_minutes_later_for_creater = [0, 78, 120]
+message_minutes_later_for_recipienter = [36, 99, 156]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: room.user_id,
