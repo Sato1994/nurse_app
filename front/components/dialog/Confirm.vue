@@ -2,37 +2,46 @@
   <v-row justify="center">
     <v-dialog v-model="confirmIsDisplay" persistent max-width="290">
       <v-card>
-        <v-card-title class="text-h5">
-          {{ title }}
-        </v-card-title>
-        <v-card-text style="white-space: pre-wrap">{{
-          description
-        }}</v-card-text>
+        <ValidationObserver v-slot="{ invalid }">
+          <v-card-title class="text-h5">
+            {{ title }}
+          </v-card-title>
+          <v-card-text style="white-space: pre-wrap">{{
+            description
+          }}</v-card-text>
 
-        <v-row v-if="commentIsDisplay">
-          <v-col cols="12">
-            <v-card-title class="justify-center">
-              <v-icon>mdi-phone</v-icon><a :href="phoneLink">{{ phone }}</a>
-            </v-card-title>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              v-model="comment"
-              label="理由を入力して下さい。"
-              :counter="50"
-              solo
+          <v-row v-if="commentIsDisplay">
+            <v-col cols="12">
+              <v-card-title class="justify-center">
+                <v-icon>mdi-phone</v-icon><a :href="phoneLink">{{ phone }}</a>
+              </v-card-title>
+            </v-col>
+            <v-col cols="12">
+              <ValidationProvider rules="required|max:50">
+                <v-text-field
+                  v-model="comment"
+                  label="理由を入力して下さい。"
+                  :counter="50"
+                  solo
+                >
+                </v-text-field>
+              </ValidationProvider>
+            </v-col>
+          </v-row>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="disAgree"> 戻る </v-btn>
+            <v-btn
+              color="red darken-1"
+              text
+              :disabled="invalid && commentIsDisplay"
+              @click="agree"
             >
-            </v-text-field>
-          </v-col>
-        </v-row>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="disAgree"> 戻る </v-btn>
-          <v-btn color="red darken-1" text @click="agree">
-            {{ agreeButtonText }}
-          </v-btn>
-        </v-card-actions>
+              {{ agreeButtonText }}
+            </v-btn>
+          </v-card-actions>
+        </ValidationObserver>
       </v-card>
     </v-dialog>
   </v-row>

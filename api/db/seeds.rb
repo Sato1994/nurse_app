@@ -494,7 +494,7 @@ HostRequest.create([
 room_1 = Room.create(
   user_id: guest_user.id,
   host_id: guest_host.id,
-  start_time: a = Time.current.since(7.days).beginning_of_day + 12.hours,
+  start_time: a = Time.current.since(1.days).beginning_of_day + 12.hours,
   finish_time: a + 5.hours,
   state: 'conclusion'
 )
