@@ -661,6 +661,24 @@ Room.new(
 
 room_2_days_ago = Room.last
 
+message_initial_time = Time.current.ago(5.days)
+message_minutes_later_for_creater = [33, 92, 200]
+message_minutes_later_for_recipienter = [58, 116, 260]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_2_days_ago.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_2_days_ago.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
 Agreement.new(
   user_id: room_2_days_ago.user_id,
   host_id: room_2_days_ago.host_id,
@@ -684,27 +702,44 @@ Room.new(
   host_id: guest_host.id,
   start_time: a = Time.current.ago(10.days).beginning_of_day + 12.hours,
   finish_time: a + 9.hours,
-  state: 'conclusion',
+  state: 'cancelled',
   closed: 'both'
 ).save(validate: false)
 
 room_10_days_ago = Room.last
+
+message_initial_time = Time.current.ago(16.days)
+message_minutes_later_for_creater = [40, 155, 225]
+message_minutes_later_for_recipienter = [110, 200, 250]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_10_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_10_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: room_10_days_ago.user_id,
   host_id: room_10_days_ago.host_id,
   start_time: room_10_days_ago.start_time,
   finish_time: room_10_days_ago.finish_time,
-  state: 'finished',
+  state: 'cancelled',
   room_id: room_10_days_ago.id
 ).save(validate: false)
 
 agreement_10_days_ago = Agreement.last
 
-rate_10_days_ago = Rate.create(
-  star: rand(1..5),
-  comment: rate_comment.sample,
-  agreement_id: agreement_10_days_ago.id
+CancellComment.create(
+  agreement_id: agreement_10_days_ago.id,
+  comment: '昨夜から熱を出してしまい今朝になっても下がらないのでキャンセルさせて頂きました。'
 )
 
 # 15日前の18:00~21:00
@@ -718,6 +753,25 @@ Room.new(
 ).save(validate: false)
 
 room_15_days_ago = Room.last
+
+message_initial_time = Time.current.ago(20.days)
+message_minutes_later_for_creater = [66, 1423, 2000]
+message_minutes_later_for_recipienter = [1000, 1467, 2322]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_15_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_15_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
 
 Agreement.new(
   user_id: room_15_days_ago.user_id,
