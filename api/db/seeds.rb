@@ -494,7 +494,7 @@ HostRequest.create([
 room_1 = Room.create(
   user_id: guest_user.id,
   host_id: guest_host.id,
-  start_time: a = Time.current.since(7.days).beginning_of_day + 12.hours,
+  start_time: a = Time.current.since(1.days).beginning_of_day + 12.hours,
   finish_time: a + 5.hours,
   state: 'conclusion'
 )
@@ -630,11 +630,6 @@ message_minutes_later_for_recipienter = [125, 200, 355]
 end
 ##################################################################################################################################
 
-# roomとそのメッセージ ###############################################################################################################
-# (guest user - guest host)
-# (guest user - other host)
-# (guest host - other user)
-
 # guest user, guest host の skills ###############################################################################################
 %w[user host].each do |me|
   copy_array = skills_ids.dup
@@ -648,7 +643,7 @@ end
 end
 ##################################################################################################################################
 
-# guest host rates  ##############################################################################################################
+# guest host 過去のagreements と rates  ##########################################################################################
 # 2日前の8:00~17:00
 Room.new(
   user_id: guest_user.id,
@@ -660,6 +655,24 @@ Room.new(
 ).save(validate: false)
 
 room_2_days_ago = Room.last
+
+message_initial_time = Time.current.ago(5.days)
+message_minutes_later_for_creater = [33, 92, 200]
+message_minutes_later_for_recipienter = [58, 116, 260]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_2_days_ago.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_2_days_ago.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: room_2_days_ago.user_id,
@@ -684,27 +697,44 @@ Room.new(
   host_id: guest_host.id,
   start_time: a = Time.current.ago(10.days).beginning_of_day + 12.hours,
   finish_time: a + 9.hours,
-  state: 'conclusion',
+  state: 'cancelled',
   closed: 'both'
 ).save(validate: false)
 
 room_10_days_ago = Room.last
+
+message_initial_time = Time.current.ago(16.days)
+message_minutes_later_for_creater = [40, 155, 225]
+message_minutes_later_for_recipienter = [110, 200, 250]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_10_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_10_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: room_10_days_ago.user_id,
   host_id: room_10_days_ago.host_id,
   start_time: room_10_days_ago.start_time,
   finish_time: room_10_days_ago.finish_time,
-  state: 'finished',
+  state: 'cancelled',
   room_id: room_10_days_ago.id
 ).save(validate: false)
 
 agreement_10_days_ago = Agreement.last
 
-rate_10_days_ago = Rate.create(
-  star: rand(1..5),
-  comment: rate_comment.sample,
-  agreement_id: agreement_10_days_ago.id
+CancellComment.create(
+  agreement_id: agreement_10_days_ago.id,
+  comment: '昨夜から熱を出してしまい今朝になっても下がらないのでキャンセルさせて頂きました。'
 )
 
 # 15日前の18:00~21:00
@@ -718,6 +748,24 @@ Room.new(
 ).save(validate: false)
 
 room_15_days_ago = Room.last
+
+message_initial_time = Time.current.ago(20.days)
+message_minutes_later_for_creater = [66, 1423, 2000]
+message_minutes_later_for_recipienter = [1000, 1467, 2322]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_15_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_15_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
 
 Agreement.new(
   user_id: room_15_days_ago.user_id,
@@ -735,6 +783,176 @@ rate_15_days_ago = Rate.create(
   comment: rate_comment.sample,
   agreement_id: agreement_15_days_ago.id
 )
+##################################################################################################################################
+
+# guest user 過去のagreements ####################################################################################################
+
+# 5日前の10:00~15:00
+Room.new(
+  user_id: guest_user.id,
+  host_id: hosts_ids.sample,
+  start_time: a = Time.current.ago(5.days).beginning_of_day + 10.hours,
+  finish_time: a + 5.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_5_days_ago = Room.last
+
+message_initial_time = Time.current.ago(10.days)
+message_minutes_later_for_creater = [10, 92, 250]
+message_minutes_later_for_recipienter = [30, 116, 1220]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_5_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_5_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
+Agreement.new(
+  user_id: room_5_days_ago.user_id,
+  host_id: room_5_days_ago.host_id,
+  start_time: room_5_days_ago.start_time,
+  finish_time: room_5_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_5_days_ago.id
+).save(validate: false)
+
+# 27日前の22時～翌9時
+
+Room.new(
+  user_id: guest_user.id,
+  host_id: hosts_ids.sample,
+  start_time: a = Time.current.ago(27.days).beginning_of_day + 22.hours,
+  finish_time: a + 11.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_27_days_ago = Room.last
+
+message_initial_time = Time.current.ago(30.days)
+message_minutes_later_for_creater = [45, 92, 490]
+message_minutes_later_for_recipienter = [60, 300, 1220]
+
+3.times do |i|
+  HostMessage.create(
+    room_id: room_27_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  UserMessage.create(
+    room_id: room_27_days_ago.id,
+    message: eval("host_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
+Agreement.new(
+  user_id: room_27_days_ago.user_id,
+  host_id: room_27_days_ago.host_id,
+  start_time: room_27_days_ago.start_time,
+  finish_time: room_27_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_27_days_ago.id
+).save(validate: false)
+
+# 30日前の15時～21時
+
+Room.new(
+  user_id: guest_user.id,
+  host_id: hosts_ids.sample,
+  start_time: a = Time.current.ago(30.days).beginning_of_day + 15.hours,
+  finish_time: a + 6.hours,
+  state: 'conclusion',
+  closed: 'both'
+).save(validate: false)
+
+room_30_days_ago = Room.last
+
+message_initial_time = Time.current.ago(35.days)
+message_minutes_later_for_creater = [60, 1500, 2700]
+message_minutes_later_for_recipienter = [100, 2400, 3000]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_30_days_ago.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_30_days_ago.id,
+    message: eval("host_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
+Agreement.new(
+  user_id: room_30_days_ago.user_id,
+  host_id: room_30_days_ago.host_id,
+  start_time: room_30_days_ago.start_time,
+  finish_time: room_30_days_ago.finish_time,
+  state: 'finished',
+  room_id: room_30_days_ago.id
+).save(validate: false)
+
+# 60日前の12時～18時 キャンセルコメント付き
+
+Room.new(
+  user_id: guest_user.id,
+  host_id: hosts_ids.sample,
+  start_time: a = Time.current.ago(60.days).beginning_of_day + 12.hours,
+  finish_time: a + 6.hours,
+  state: 'cancelled',
+  closed: 'both'
+).save(validate: false)
+
+room_60_days_ago = Room.last
+
+message_initial_time = Time.current.ago(71.days)
+message_minutes_later_for_creater = [5, 155, 300]
+message_minutes_later_for_recipienter = [40, 250, 1000]
+
+3.times do |i|
+  UserMessage.create(
+    room_id: room_60_days_ago.id,
+    message: eval("user_room_user_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_creater[i].minutes
+  )
+
+  HostMessage.create(
+    room_id: room_60_days_ago.id,
+    message: eval("user_room_host_message_#{i + 1}").sample,
+    created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
+  )
+end
+
+Agreement.new(
+  user_id: room_60_days_ago.user_id,
+  host_id: room_60_days_ago.host_id,
+  start_time: room_60_days_ago.start_time,
+  finish_time: room_60_days_ago.finish_time,
+  state: 'cancelled',
+  room_id: room_60_days_ago.id
+).save(validate: false)
+
+agreement_10_days_ago = Agreement.last
+
+CancellComment.create(
+  agreement_id: agreement_10_days_ago.id,
+  comment: '昨日から胃の調子が悪くて嘔吐しています。キャンセルさせて下さい'
+)
+
 ##################################################################################################################################
 
 # host seeds の rates ############################################################################################################

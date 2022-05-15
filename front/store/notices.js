@@ -11,7 +11,7 @@ export const mutations = {
 
 
   saveNotices(state, notices) {
-    state.notices = notices
+    if (notices) state.notices = notices
   },
 
   reset(state) {

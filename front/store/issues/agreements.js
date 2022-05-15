@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   saveAgreements(state, agreements) {
-    state.agreements = agreements
+    if (agreements) state.agreements = agreements
   },
 
   updateState(state, payload) {

@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   saveRequests(state, requests) {
-    state.requests = requests
+    if (requests) state.requests = requests
   },
 
   addRequest(state, request) {

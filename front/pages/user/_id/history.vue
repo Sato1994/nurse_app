@@ -97,7 +97,7 @@
       <v-btn
         :to="`/${routeConfig.me}/${routeConfig.myid}`"
         nuxt
-        class="mt-3"
+        class="mt-3 grey--text"
         rounded
         small
         depressed

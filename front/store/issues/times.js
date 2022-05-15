@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   saveTimes(state, times) {
-    state.times = times
+    if (times) state.times = times
   },
 
   addTime(state, time) {

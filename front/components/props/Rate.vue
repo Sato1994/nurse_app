@@ -3,34 +3,44 @@
     <div v-if="inputRateDisplay" class="rateArea">
       <v-stepper v-model="page">
         <v-stepper-items>
-          <v-stepper-content step="1">
-            <v-textarea
-              background-color="blue lighten-5"
-              v-model="comment"
-              filled
-              rows="4"
-              label="匿名で病院の評価をしてください！"
-              auto-grow
-              :counter="300"
-            ></v-textarea>
+          <ValidationObserver v-slot="{ invalid }">
+            <v-stepper-content step="1">
+              <ValidationProvider rules="required|max:300">
+                <v-textarea
+                  background-color="blue lighten-5"
+                  v-model="comment"
+                  filled
+                  rows="4"
+                  label="匿名で病院の評価をしてください！"
+                  auto-grow
+                  :counter="300"
+                ></v-textarea>
+              </ValidationProvider>
 
-            <v-btn color="warning" @click="page = 2"> 次へ </v-btn>
+              <v-btn color="warning" @click="page = 2"> 次へ </v-btn>
 
-            <v-btn text> キャンセル</v-btn>
-          </v-stepper-content>
+              <v-btn text> キャンセル</v-btn>
+            </v-stepper-content>
 
-          <v-stepper-content step="2">
-            <div>
-              <v-card-text>
-                <v-row align="center" class="mx-0">
-                  <v-rating v-model="star" color="amber" size="35"></v-rating>
-                </v-row>
-              </v-card-text>
-              <v-btn color="warning" @click="agree"> 送信 </v-btn>
+            <v-stepper-content step="2">
+              <div>
+                <v-card-text>
+                  <v-row align="center" class="mx-0">
+                    <v-rating v-model="star" color="amber" size="35"></v-rating>
+                  </v-row>
+                </v-card-text>
+                <v-btn
+                  color="warning"
+                  :disabled="invalid || !star"
+                  @click="agree"
+                >
+                  送信
+                </v-btn>
 
-              <v-btn text @click="page = 1"> 戻る</v-btn>
-            </div>
-          </v-stepper-content>
+                <v-btn text @click="page = 1"> 戻る</v-btn>
+              </div>
+            </v-stepper-content>
+          </ValidationObserver>
         </v-stepper-items>
       </v-stepper>
     </div>
