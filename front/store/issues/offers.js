@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   saveOffers(state, offers) {
-    state.offers = offers
+    if (offers) state.offers = offers
   },
 
   removeOffer(state, id) {

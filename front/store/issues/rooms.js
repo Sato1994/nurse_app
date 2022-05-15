@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   saveRooms(state, rooms) {
-    state.rooms = rooms
+    if (rooms) state.rooms = rooms
   },
 
   addRoom(state, payload) {
