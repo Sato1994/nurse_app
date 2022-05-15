@@ -60,7 +60,13 @@ class Api::Issue::RoomsController < ApplicationController
       render_room['partner'] = render_room.delete('user')
 
       render_agreement = room.agreement.as_json(
-        only: %i[id start_time finish_time state]
+        only: %i[id start_time finish_time state],
+        include: {
+
+          cancell_comment: {
+            only: %i[comment]
+          }
+        }
       )
 
       render json: { room: render_room, agreement: render_agreement }
