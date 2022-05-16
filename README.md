@@ -108,7 +108,7 @@ CI、CDはGithub Actionsを使用しデプロイまでに必要な作業をGitHu
 
 <br>
 
-<details>
+<details open>
 <summary>サービスの一連の流れを紹介</summary>
 
 <br>
