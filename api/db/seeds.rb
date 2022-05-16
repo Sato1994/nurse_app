@@ -892,7 +892,7 @@ message_minutes_later_for_recipienter = [100, 2400, 3000]
 
   HostMessage.create(
     room_id: room_30_days_ago.id,
-    message: eval("host_room_host_message_#{i + 1}").sample,
+    message: eval("user_room_host_message_#{i + 1}").sample,
     created_at: message_initial_time + message_minutes_later_for_recipienter[i].minutes
   )
 end
