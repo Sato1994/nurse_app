@@ -76,39 +76,44 @@ export const actions = {
   },
 
   async sendMessage({ commit, rootState }, payload) {
-    const { data } = await this.$axios
-      .post(
-        `/api/${this.$cookies.get('user')}_messages`,
+    try {
+      const { data } = await this.$axios
+        .post(
+          `/api/${this.$cookies.get('user')}_messages`,
 
-        {
-          message: payload.message,
-          room_id: payload.roomId
-        },
-        { headers: this.$cookies.get('authInfo') }
-      )
-    rootState.info.me === 'user'
-      ? commit('addUserMessage', { user_message: data.user_message })
-      : commit('addHostMessage', { host_message: data.host_message })
+          {
+            message: payload.message,
+            room_id: payload.roomId
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      rootState.info.me === 'user'
+        ? commit('addUserMessage', { user_message: data.user_message })
+        : commit('addHostMessage', { host_message: data.host_message })
+    } catch { }
   },
 
-  async updateTime({ commit, dispatch }, payload) {
-    const { data } = await this.$axios
-      .patch(
-        `/api/rooms/update_room_time`,
-        {
-          room_id: payload.roomId,
-          start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
-          finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
-        },
-        { headers: this.$cookies.get('authInfo') }
-      )
-    commit('updateTime', data)
-    commit('issues/rooms/updateTime', data, { root: true })
 
-    dispatch(
-      'snackbar/setMessage',
-      '希望時間を変更しました。', { root: true }
-    )
+  async updateTime({ commit, dispatch }, payload) {
+    try {
+      const { data } = await this.$axios
+        .patch(
+          `/api/rooms/update_room_time`,
+          {
+            room_id: payload.roomId,
+            start_time: `${payload.startTime.year}-${payload.startTime.month}-${payload.startTime.day}T${payload.startTime.hour}:${payload.startTime.minute}`,
+            finish_time: `${payload.finishTime.year}-${payload.finishTime.month}-${payload.finishTime.day}T${payload.finishTime.hour}:${payload.finishTime.minute}`,
+          },
+          { headers: this.$cookies.get('authInfo') }
+        )
+      commit('updateTime', data)
+      commit('issues/rooms/updateTime', data, { root: true })
+
+      dispatch(
+        'snackbar/setMessage',
+        '希望時間を変更しました。', { root: true }
+      )
+    } catch { }
   },
 
   async updateState({ commit, getters }) {
