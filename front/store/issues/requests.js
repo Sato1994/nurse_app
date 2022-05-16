@@ -53,17 +53,19 @@ export const actions = {
         return
     }
 
-    const { data } = await this.$axios
-      .post(
-        `/api/${this.$cookies.get('user')}_requests`,
-        config,
-        { headers: this.$cookies.get('authInfo') }
+    try {
+      const { data } = await this.$axios
+        .post(
+          `/api/${this.$cookies.get('user')}_requests`,
+          config,
+          { headers: this.$cookies.get('authInfo') }
+        )
+      dispatch(
+        'snackbar/setMessage',
+        'リクエストを送信しました。', { root: true }
       )
-    dispatch(
-      'snackbar/setMessage',
-      'リクエストを送信しました。', { root: true }
-    )
-    commit('addRequest', data)
+      commit('addRequest', data)
+    } catch { }
   },
 
   removeRequest({ commit, dispatch }, requestId) {
