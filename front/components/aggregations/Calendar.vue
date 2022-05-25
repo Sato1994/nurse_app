@@ -53,7 +53,7 @@
             :finishTime="selectedEvent.finishTime"
             :removeTimeButton="freeTimeCardConfig.removeTimeButton"
             :createRequestButton="freeTimeCardConfig.createRequestButton"
-            color="green darken-3"
+            color="#7DCE82"
             @remove-time-button-click="displayAsRemoveTime"
             @create-request-button-click="
               openDatePickerAsCreateRequest({
@@ -66,7 +66,7 @@
 
           <TimeCard
             v-if="selectedEvent.name == '契約済み'"
-            color="red darken-3"
+            color="#F26157"
             :partnerLink="`/rooms/${selectedEvent.roomId}`"
             :partnerName="selectedEvent.partner.name"
             :startTime="selectedEvent.startTime"
@@ -79,7 +79,7 @@
 
           <TimeCard
             v-if="selectedEvent.name == 'オファーがあります'"
-            color="blue darken-3"
+            color="#48B8D0"
             :partnerLink="`/${
               $cookies.get('user') === 'user' ? 'host' : 'user'
             }/${selectedEvent.partnerMyid}`"
@@ -93,7 +93,7 @@
           />
           <TimeCard
             v-if="selectedEvent.name == 'リクエスト中'"
-            color="lime darken-3"
+            color="#D3AB9E"
             :partnerLink="`/${
               $cookies.get('user') === 'user' ? 'host' : 'user'
             }/${selectedEvent.partnerMyid}`"

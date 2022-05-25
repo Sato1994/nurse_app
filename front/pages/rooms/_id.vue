@@ -31,7 +31,6 @@
         :leaveButton="leaveButton"
         :cancellRoomButton="cancellRoomButton"
         :color="timeCardColor"
-        :shaped="false"
         :tile="true"
         :lockButton="lockButton"
         @update-state-button-click="updateState"
@@ -80,7 +79,7 @@
             やむを得ない理由により交渉がキャンセルされました。</v-card-subtitle
           >
 
-          <v-card-subtitle v-if="timeCardColor === 'teal'" class="pb-0">
+          <v-card-subtitle v-if="timeCardColor === '#2EC4B6'" class="pb-0">
             {{
               agreement6HoursLater
             }}までに確定されない場合、契約は破棄されます。
@@ -171,20 +170,20 @@ export default {
 
     timeCardColor() {
       if (this.agreement.state === 'requesting') {
-        return 'teal'
+        return '#2EC4B6'
       } else if (
         this.agreement.state === 'before' ||
         this.agreement.state === 'during'
       ) {
-        return 'red'
+        return '#F26157'
       } else if (
         this.agreement.state === 'cancelled' ||
         this.room.state === 'cancelled' ||
         this.agreement.state === 'finished'
       ) {
-        return 'grey'
+        return '#89A7A7'
       } else {
-        return 'warning'
+        return '#FCAF58'
       }
     },
 

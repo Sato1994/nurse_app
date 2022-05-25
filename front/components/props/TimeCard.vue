@@ -1,5 +1,11 @@
 <template>
-  <v-card :tile="tile" :class="{ pointer: cardIsHover }" :color="color" dark>
+  <v-card
+    outlined
+    :tile="tile"
+    :class="{ pointer: cardIsHover }"
+    :color="color"
+    dark
+  >
     <v-card-actions class="pb-0 pt-2 text-truncate">
       <v-btn v-if="partnerName" :to="partnerLink" text class="text-h6">
         {{ partnerName }}
