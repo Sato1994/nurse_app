@@ -1,12 +1,5 @@
 <template>
-  <v-card
-    elevation="10"
-    :shaped="shaped"
-    :tile="tile"
-    :class="{ pointer: cardIsHover }"
-    :color="color"
-    dark
-  >
+  <v-card :tile="tile" :class="{ pointer: cardIsHover }" :color="color" dark>
     <v-card-actions class="pb-0 pt-2 text-truncate">
       <v-btn v-if="partnerName" :to="partnerLink" text class="text-h6">
         {{ partnerName }}
@@ -136,10 +129,6 @@
 <script>
 export default {
   props: {
-    shaped: {
-      type: Boolean,
-      default: true,
-    },
     tile: {
       type: Boolean,
       default: false,
