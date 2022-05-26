@@ -18,7 +18,7 @@
                     <v-text-field
                       v-model="copiedInfo.name"
                       :label="nameLabel"
-                      color="warning"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -45,14 +45,14 @@
                   <v-text-field
                     v-model="postalCode"
                     label="郵便番号を入力"
-                    color="warning"
+                    color="#B0C4B1"
                     required
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="6" md="6">
                   <v-btn
-                    color="warning"
+                    color="#B0C4B1"
                     :disabled="!postalCode"
                     @click="getAddress"
                   >
@@ -65,7 +65,7 @@
                     v-model="copiedInfo.address"
                     label="住所"
                     required
-                    color="warning"
+                    color="#B0C4B1"
                     disabled
                   ></v-text-field>
                 </v-col>
@@ -75,7 +75,7 @@
                     v-model="address2"
                     label="住所続き"
                     required
-                    color="warning"
+                    color="#B0C4B1"
                   ></v-text-field>
                 </v-col>
 
@@ -97,7 +97,7 @@
                       label="プロフィール"
                       :counter="300"
                       required
-                      color="warning"
+                      color="#B0C4B1"
                     ></v-textarea>
                   </ValidationProvider>
                 </v-col>
@@ -116,7 +116,7 @@
                       v-model="copiedInfo.age"
                       label="年齢"
                       type="number"
-                      color="warning"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -137,7 +137,7 @@
                       v-model="copiedInfo.year"
                       label="経験年数"
                       type="number"
-                      color="warning"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -148,7 +148,7 @@
                     v-model="copiedInfo.sex"
                     :items="sex"
                     label="性別"
-                    color="warning"
+                    color="#B0C4B1"
                     required
                   ></v-select>
                 </v-col>
@@ -156,7 +156,7 @@
                   <v-switch
                     v-model="copiedInfo.wanted"
                     label="お相手からのリクエストを受け付けますか？"
-                    color="warning"
+                    color="#B0C4B1"
                   ></v-switch>
                 </v-col>
               </v-row>
@@ -165,7 +165,7 @@
           <v-card-actions>
             <v-row>
               <v-col class="d-flex justify-space-around py-3">
-                <v-btn color="warning darken-1" text @click="switchDeletable">
+                <v-btn color="#B0C4B1" text @click="switchDeletable">
                   <v-icon>{{ lockIcon }}</v-icon>
                 </v-btn>
               </v-col>
@@ -181,11 +181,9 @@
               </v-col>
             </v-row>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="closeEdit">
-              閉じる
-            </v-btn>
+            <v-btn color="#B0C4B1" text @click="closeEdit"> 閉じる </v-btn>
             <v-btn
-              color="warning darken-1"
+              color="#EF6461"
               text
               :disabled="invalid"
               @click="pushEditButton"

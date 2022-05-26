@@ -34,7 +34,7 @@
         <v-calendar
           ref="calendar"
           v-model="focus"
-          color="primary"
+          color="#EEE3AB"
           :events="events"
           type="month"
           @click:event="showEvent"

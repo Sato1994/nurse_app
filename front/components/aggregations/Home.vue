@@ -34,7 +34,7 @@
         icon
         @click="editDisplay = true"
       >
-        <v-icon color="warning" size="35">mdi-account-cog-outline</v-icon>
+        <v-icon color="#B0C4B1" size="35">mdi-account-cog-outline</v-icon>
       </v-btn>
     </v-card-title>
 
@@ -152,7 +152,7 @@ export default {
 
   computed: {
     wantedChipColor() {
-      return this.target.wanted === true ? 'green' : 'red'
+      return this.target.wanted === true ? '#B0C4B1' : '#DEDBD2'
     },
 
     ...mapGetters('issues/times', ['timesOnCalendar']),

@@ -31,9 +31,9 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="green darken-1" text @click="disAgree"> 戻る </v-btn>
+            <v-btn color="#B0C4B1" text @click="disAgree"> 戻る </v-btn>
             <v-btn
-              color="red darken-1"
+              color="#EF6461"
               text
               :disabled="invalid && commentIsDisplay"
               @click="agree"

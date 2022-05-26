@@ -203,9 +203,9 @@ export default {
     getStateColor(state) {
       switch (state) {
         case '終了':
-          return 'green'
+          return '#B0C4B1'
         case 'キャンセル':
-          return 'red'
+          return '#DEDBD2'
       }
     },
     clickTable(selected) {
