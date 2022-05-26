@@ -6,6 +6,7 @@
         append-icon="mdi-email-fast-outline"
         filled
         rows="2"
+        color="#B0C4B1"
         label="メッセージ"
         auto-grow
         :counter="500"

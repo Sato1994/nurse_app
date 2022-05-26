@@ -29,7 +29,7 @@
               :key="skill.id"
               small
               class="ma-1"
-              color="orange"
+              color="#B0C4B1"
               text-color="white"
               :disabled="!switchClickable"
               @click="removeSkill(skill)"
@@ -41,7 +41,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+          <v-btn color="#B0C4B1" text @click="close"> 閉じる </v-btn>
         </v-card-actions>
       </template>
       <template v-if="switchPage === 2">
@@ -56,7 +56,7 @@
               v-for="skill in unselectedSkills"
               :key="skill.id"
               class="ma-1"
-              color="orange"
+              color="#B0C4B1"
               text-color="white"
               small
               @click="addSkill(skill)"
@@ -68,7 +68,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+          <v-btn color="#B0C4B1" text @click="close"> 閉じる </v-btn>
         </v-card-actions>
       </template>
     </v-card>

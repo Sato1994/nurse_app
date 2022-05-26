@@ -10,7 +10,7 @@
         lg="6"
       >
         <TimeCard
-          color="blue darken-3"
+          color="#48B8D0"
           :partnerLink="`/${
             $cookies.get('user') === 'user' ? 'host' : 'user'
           }/${offer.partnerMyid}`"

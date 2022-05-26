@@ -84,10 +84,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="hideDatePicker">
-            閉じる
-          </v-btn>
-          <v-btn color="warning darken-1" text @click="register"> 決定 </v-btn>
+          <v-btn color="#B0C4B1" text @click="hideDatePicker"> 閉じる </v-btn>
+          <v-btn color="#EF6461" text @click="register"> 決定 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

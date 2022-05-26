@@ -10,7 +10,7 @@
         lg="6"
       >
         <TimeCard
-          color="green darken-3"
+          color="#7DCE82"
           :startTime="time.startTime"
           :finishTime="time.finishTime"
           :removeTimeButton="true"

@@ -18,7 +18,7 @@
                 sm="6"
                 md="6"
               >
-                <v-btn color="warning" x-large @click="selectUser">
+                <v-btn color="#B0C4B1" dark x-large @click="selectUser">
                   看護師 <v-icon>mdi-human-male-female</v-icon>
                 </v-btn>
               </v-col>
@@ -28,7 +28,7 @@
                 sm="6"
                 md="6"
               >
-                <v-btn color="warning" x-large @click="selectHost">
+                <v-btn color="#B0C4B1" dark x-large @click="selectHost">
                   病院 <v-icon>mdi-hospital-box-outline</v-icon>
                 </v-btn>
               </v-col>

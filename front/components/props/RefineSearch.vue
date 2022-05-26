@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="red" class="bar" dark flat dense>
+  <v-app-bar color="#B0C4B1" class="bar" dark flat dense>
     <v-btn-toggle v-model="copiedText" group mandatory>
       <v-btn v-if="rates || targets || issues" plain value="all">
         すべて
