@@ -7,17 +7,17 @@
             <v-stepper-content step="1">
               <ValidationProvider rules="required|max:300">
                 <v-textarea
-                  background-color="blue lighten-5"
                   v-model="comment"
                   filled
                   rows="4"
+                  color="#B0C4B1"
                   label="匿名で病院の評価をしてください！"
                   auto-grow
                   :counter="300"
                 ></v-textarea>
               </ValidationProvider>
 
-              <v-btn color="warning" @click="page = 2"> 次へ </v-btn>
+              <v-btn color="#B0C4B1" @click="page = 2"> 次へ </v-btn>
 
               <v-btn text> キャンセル</v-btn>
             </v-stepper-content>
@@ -30,7 +30,7 @@
                   </v-row>
                 </v-card-text>
                 <v-btn
-                  color="warning"
+                  color="#B0C4B1"
                   :disabled="invalid || !star"
                   @click="agree"
                 >

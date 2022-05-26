@@ -55,9 +55,9 @@ export default {
       switch (state) {
         case 'before':
         case 'during':
-          return 'red'
+          return '#F26157'
         case 'requesting':
-          return 'teal'
+          return '#2EC4B6'
         default:
           return 'black'
       }

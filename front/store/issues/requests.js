@@ -135,7 +135,7 @@ export const getters = {
         end: `${f.getFullYear()}-${f.getMonth() + 1
           }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
         name: 'リクエスト中',
-        color: 'lime',
+        color: '#D3AB9E',
         dislayStart: `${s.getMonth() + 1
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
         displayFinish: `${f.getMonth() + 1

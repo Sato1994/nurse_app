@@ -1,7 +1,6 @@
 <template>
   <v-card
-    elevation="10"
-    :shaped="shaped"
+    outlined
     :tile="tile"
     :class="{ pointer: cardIsHover }"
     :color="color"
@@ -136,10 +135,6 @@
 <script>
 export default {
   props: {
-    shaped: {
-      type: Boolean,
-      default: true,
-    },
     tile: {
       type: Boolean,
       default: false,

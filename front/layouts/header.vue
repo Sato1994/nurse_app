@@ -49,27 +49,27 @@
         <Notice />
       </div>
       <template #extension>
-        <v-tabs v-model="tabs" fixed-tabs>
-          <v-tabs-slider></v-tabs-slider>
+        <v-tabs color="#80A1C1" v-model="tabs" fixed-tabs>
+          <v-tabs-slider color="#80A1C1"></v-tabs-slider>
 
           <v-tab
             v-if="$store.state.info.info.myid"
-            class="primary--text"
+            class="#80A1C1--text"
             nuxt
             :to="myPageURL"
           >
             <v-icon>mdi-home-outline</v-icon>
           </v-tab>
 
-          <v-tab class="primary--text" nuxt to="/search">
+          <v-tab class="#80A1C1--text" nuxt to="/search">
             <v-icon>mdi-magnify</v-icon>
           </v-tab>
 
-          <v-tab class="primary--text" nuxt to="/issues">
+          <v-tab class="#80A1C1--text" nuxt to="/issues">
             <v-icon>mdi-text-box-check-outline</v-icon>
           </v-tab>
 
-          <v-tab class="primary--text" nuxt to="/rooms">
+          <v-tab class="#80A1C1--text" nuxt to="/rooms">
             <v-icon>mdi-handshake-outline</v-icon>
           </v-tab>
         </v-tabs>

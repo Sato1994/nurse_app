@@ -13,7 +13,7 @@
                   v-if="$cookies.get('user') != 'host'"
                   v-model="name"
                   label="病院名"
-                  color="warning"
+                  color="#B0C4B1"
                 ></v-text-field>
               </v-col>
               <v-col v-if="$cookies.get('user') === 'host'" cols="6">
@@ -21,7 +21,7 @@
                   v-model="lowerYear"
                   label="経験年数下限"
                   :items="yearItems"
-                  color="warning"
+                  color="#B0C4B1"
                 ></v-select>
                 <p>年以上</p>
               </v-col>
@@ -31,7 +31,7 @@
                   v-model="address"
                   label="住所"
                   required
-                  color="warning"
+                  color="#B0C4B1"
                 ></v-text-field>
               </v-col>
 
@@ -39,7 +39,7 @@
                 <v-switch
                   v-model="wanted"
                   label="リクエスト募集中のお相手のみ表示"
-                  color="warning"
+                  color="#B0C4B1"
                 ></v-switch>
               </v-col>
             </v-row>
@@ -47,8 +47,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
-          <v-btn color="warning darken-1" text @click="search"> 検索 </v-btn>
+          <v-btn color="#B0C4B1" text @click="close"> 閉じる </v-btn>
+          <v-btn color="#EF6461" text @click="search"> 検索 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

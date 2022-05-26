@@ -28,7 +28,7 @@
 
     <v-card-text v-if="target.distance">
       <div class="grey--text ms-4">
-        <v-icon color="blue">mdi-map-marker</v-icon>{{ target.distance }}キロ
+        <v-icon color="#DEDBD2">mdi-map-marker</v-icon>{{ target.distance }}キロ
       </div>
     </v-card-text>
 
@@ -37,7 +37,7 @@
     }}</v-chip>
 
     <v-card-actions>
-      <v-btn color="orange lighten-2" text :to="targetPageURL" nuxt>
+      <v-btn color="#DEDBD2" text :to="targetPageURL" nuxt>
         お相手のページへ移動
       </v-btn>
 
@@ -82,7 +82,7 @@ export default {
     },
 
     wantedChipColor() {
-      return this.target.wanted === true ? 'green' : 'red'
+      return this.target.wanted === true ? '#B0C4B1' : '#DEDBD2'
     },
   },
 }

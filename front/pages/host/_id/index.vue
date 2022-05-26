@@ -102,7 +102,7 @@ export default {
             f.getMonth() + 1
           }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
           name: '募集中',
-          color: 'green',
+          color: '#7DCE82',
           dislayStart: `${
             s.getMonth() + 1
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,

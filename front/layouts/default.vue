@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <Header />
-    <v-main class="warning lighten-2">
+    <v-main class="background">
       <v-container>
         <v-row>
           <v-col>

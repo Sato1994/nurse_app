@@ -1,5 +1,5 @@
 <template>
-  <v-card align="center" height="350" flat tile color="green" dark>
+  <v-card align="center" height="350" flat tile color="#B0C4B1" dark>
     <v-card-text class="body-1 pb-0 pt-2"> welcome</v-card-text>
 
     <v-card-text class="text-h3 py-0"> nurse-hop.com</v-card-text>

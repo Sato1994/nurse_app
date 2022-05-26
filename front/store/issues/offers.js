@@ -93,7 +93,7 @@ export const getters = {
         end: `${f.getFullYear()}-${(f.getMonth() + 1).toString().padStart(2, '0')
           }-${(f.getDate()).toString().padStart(2, '0')}T${(f.getHours()).toString().padStart(2, '0')}:${(f.getMinutes()).toString().padStart(2, '0')}`,
         name: "オファーがあります",
-        color: 'blue',
+        color: '#48B8D0',
         dislayStart: `${s.getMonth() + 1
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
         displayFinish: `${f.getMonth() + 1

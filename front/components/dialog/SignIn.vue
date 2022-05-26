@@ -14,6 +14,7 @@
                     <v-text-field
                       v-model="info.email"
                       label="メールアドレス"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                   </ValidationProvider>
@@ -23,6 +24,7 @@
                     <v-text-field
                       v-model="info.password"
                       label="パスワード"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                   </ValidationProvider>
@@ -32,9 +34,9 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+            <v-btn color="#B0C4B1" text @click="close"> 閉じる </v-btn>
             <v-btn
-              color="warning darken-1"
+              color="#EF6461"
               text
               :disabled="invalid"
               @click="signIn(info)"

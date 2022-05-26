@@ -61,10 +61,10 @@ export default {
         case 'negotiating':
         case 'user':
         case 'host':
-          return 'warning'
+          return '#FCAF58'
         case 'cancelled':
         case 'conclusion':
-          return 'grey'
+          return '#89A7A7'
       }
     },
   },

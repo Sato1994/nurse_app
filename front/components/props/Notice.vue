@@ -11,7 +11,7 @@
             :value="value"
             bordered
             bottom
-            color="warning"
+            color="#FCAF58"
             dot
             offset-x="7"
             offset-y="7"

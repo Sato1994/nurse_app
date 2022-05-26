@@ -18,6 +18,7 @@
                     <v-text-field
                       v-model="info.name"
                       :label="nameLabel"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -32,6 +33,7 @@
                     <v-text-field
                       v-model="info.myid"
                       label="サイト内ID"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -46,6 +48,7 @@
                     <v-text-field
                       v-model="info.phone"
                       label="電話番号"
+                      color="#B0C4B1"
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
@@ -55,14 +58,14 @@
                   <v-text-field
                     v-model="postalCode"
                     label="郵便番号を入力"
-                    color="warning"
+                    color="#B0C4B1"
                     required
                   ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="6" md="6">
                   <v-btn
-                    color="warning"
+                    color="#B0C4B1"
                     :disabled="!postalCode"
                     @click="getAddress"
                   >
@@ -80,7 +83,7 @@
                       v-model="info.address"
                       label="住所"
                       required
-                      color="warning"
+                      color="#B0C4B1"
                       disabled
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -94,7 +97,7 @@
                     v-model="address2"
                     label="住所続き"
                     required
-                    color="warning"
+                    color="#B0C4B1"
                   ></v-text-field>
                 </v-col>
 
@@ -107,6 +110,7 @@
                     <v-text-field
                       v-model="info.email"
                       label="メールアドレス"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
 
@@ -123,6 +127,7 @@
                     <v-text-field
                       v-model="info.password"
                       label="パスワード"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -137,6 +142,7 @@
                     <v-text-field
                       v-model="info.password_confirmation"
                       label="パスワード確認用"
+                      color="#B0C4B1"
                       required
                     ></v-text-field>
                     <span class="red--text">{{ errors[0] }}</span>
@@ -147,9 +153,9 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="warning darken-1" text @click="close"> 閉じる </v-btn>
+            <v-btn color="#B0C4B1" text @click="close"> 閉じる </v-btn>
             <v-btn
-              color="warning darken-1"
+              color="#EF6461"
               text
               :disabled="invalid"
               @click="pushSignUpButton"

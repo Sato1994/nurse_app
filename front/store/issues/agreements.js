@@ -148,7 +148,7 @@ export const getters = {
         end: `${f.getFullYear()}-${f.getMonth() + 1
           }-${f.getDate()}T${f.getHours()}:${f.getMinutes()}`,
         name: "契約済み",
-        color: 'red',
+        color: '#F26157',
         dislayStart: `${s.getMonth() + 1
           }/${s.getDate()}  ${s.getHours()}:${s.getMinutes()}`,
         displayFinish: `${f.getMonth() + 1
