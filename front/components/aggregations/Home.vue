@@ -31,9 +31,9 @@
           $route.path ===
           `/${$cookies.get('user')}/${$store.state.info.info.myid}`
         "
-        icon
         @click="editDisplay = true"
-      >
+        outlined
+        >プロフィール編集
         <v-icon color="#B0C4B1" size="35">mdi-account-cog-outline</v-icon>
       </v-btn>
     </v-card-title>

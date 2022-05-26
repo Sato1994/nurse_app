@@ -76,20 +76,14 @@
             nuxt
             :to="myPageURL"
           >
-            <v-icon>mdi-home-outline</v-icon>
+            ホーム
           </v-tab>
 
-          <v-tab class="#80A1C1--text" nuxt to="/search">
-            <v-icon>mdi-magnify</v-icon>
-          </v-tab>
+          <v-tab class="#80A1C1--text" nuxt to="/search"> 検索 </v-tab>
 
-          <v-tab class="#80A1C1--text" nuxt to="/issues">
-            <v-icon>mdi-text-box-check-outline</v-icon>
-          </v-tab>
+          <v-tab class="#80A1C1--text" nuxt to="/issues"> カード </v-tab>
 
-          <v-tab class="#80A1C1--text" nuxt to="/rooms">
-            <v-icon>mdi-handshake-outline</v-icon>
-          </v-tab>
+          <v-tab class="#80A1C1--text" nuxt to="/rooms"> 契約 </v-tab>
         </v-tabs>
       </template>
       <SignUp
