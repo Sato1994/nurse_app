@@ -235,7 +235,14 @@ export default {
     },
 
     lockButton() {
-      return this.agreement.state !== 'during'
+      return (
+        this.updateStateButton ||
+        this.updateTimeButton ||
+        this.editAgreementButton ||
+        this.cancellAgreementButton ||
+        this.leaveButton ||
+        this.cancellRoomButton
+      )
     },
 
     mapDisplay() {
