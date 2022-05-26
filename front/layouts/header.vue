@@ -27,7 +27,16 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestUser">
+          <v-btn
+            icon
+            v-bind="attrs"
+            :disabled="
+              $store.state.info.me === 'user' &&
+              $store.state.info.info.myid === 'guestuser'
+            "
+            v-on="on"
+            @click="loginAsGuestUser"
+          >
             <v-icon size="30">mdi-doctor</v-icon>
           </v-btn>
         </template>
@@ -35,7 +44,16 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" @click="loginAsGuestHost">
+          <v-btn
+            icon
+            v-bind="attrs"
+            :disabled="
+              $store.state.info.me === 'host' &&
+              $store.state.info.info.myid === 'guesthost'
+            "
+            v-on="on"
+            @click="loginAsGuestHost"
+          >
             <v-icon size="30">mdi-hospital-building</v-icon>
           </v-btn>
         </template>
