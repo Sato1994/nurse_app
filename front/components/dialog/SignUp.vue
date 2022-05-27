@@ -39,7 +39,7 @@
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
-                <v-col v-if="$cookies.get('user') === 'host'" cols="12">
+                <v-col v-if="isHost" cols="12">
                   <ValidationProvider
                     v-slot="{ errors }"
                     rules="required|numeric"
@@ -176,10 +176,25 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    isHost: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
-    info: {},
+    info: {
+      name: null,
+      myid: null,
+      phone: null,
+      address: null,
+      lat: null,
+      lng: null,
+      email: null,
+      password: null,
+      password_confirmation: null,
+    },
     address2: null,
     postalCode: null,
     gotAddress: false,
@@ -187,13 +202,11 @@ export default {
 
   computed: {
     nameLengthRule() {
-      return this.$cookies.get('user') === 'user'
-        ? 'required|max:20'
-        : 'required|max:40'
+      return !this.isHost ? 'required|max:20' : 'required|max:40'
     },
 
     address2Display() {
-      if (this.gotAddress === true && this.$cookies.get('user') === 'host') {
+      if (this.gotAddress && this.isHost) {
         return true
       } else {
         return false
@@ -201,10 +214,10 @@ export default {
     },
 
     nameLabel() {
-      if (this.$cookies.get('user') === 'user') {
-        return '名前（フルネーム）'
-      } else {
+      if (this.isHost) {
         return '病院名'
+      } else {
+        return '名前（フルネーム）'
       }
     },
   },
@@ -236,9 +249,21 @@ export default {
 
     close() {
       this.$cookies.removeAll()
-      this.info = {}
+      this.info = {
+        name: null,
+        myid: null,
+        phone: null,
+        address: null,
+        lat: null,
+        lng: null,
+        email: null,
+        password: null,
+        password_confirmation: null,
+      }
+
       this.address2 = null
       this.postalCode = null
+      this.gotAddress = false
       this.$emit('close-sign-up-click')
     },
 

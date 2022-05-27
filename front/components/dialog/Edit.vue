@@ -112,13 +112,13 @@
                     rules="between:20,60"
                     name="年齢"
                   >
-                    <v-text-field
+                    <v-select
                       v-model="copiedInfo.age"
                       label="年齢"
-                      type="number"
+                      :items="ageList"
                       color="#B0C4B1"
                       required
-                    ></v-text-field>
+                    ></v-select>
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
@@ -133,13 +133,13 @@
                     rules="between:0,39"
                     name="経験年数"
                   >
-                    <v-text-field
+                    <v-select
                       v-model="copiedInfo.year"
                       label="経験年数"
-                      type="number"
+                      :items="yearList"
                       color="#B0C4B1"
                       required
-                    ></v-text-field>
+                    ></v-select>
                     <span class="red--text">{{ errors[0] }}</span>
                   </ValidationProvider>
                 </v-col>
@@ -221,6 +221,8 @@ export default {
     deletable: false,
     address2: null,
     gotAddress: false,
+    ageList: Array.from(new Array(41)).map((v, i) => i + 20),
+    yearList: [...Array(40).keys()],
   }),
 
   computed: {
