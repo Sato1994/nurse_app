@@ -92,6 +92,10 @@
       {
         "name": "RAILS_ENV",
         "value": "production"
+      },
+      {
+        "name": "DISABLE_DATABASE_ENVIRONMENT_CHECK",
+        "value": "1"
       }
     ],
     "secrets": [
@@ -112,7 +116,7 @@
       "bundle",
       "exec",
       "rails",
-      "db:migrate"
+      "db:migrate:reset"
     ]
   },
   {
