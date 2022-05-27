@@ -112,7 +112,7 @@
       "bundle",
       "exec",
       "rails",
-      "db:migrate"
+      "db:migrate:reset"
     ]
   },
   {
