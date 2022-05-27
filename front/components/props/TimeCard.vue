@@ -1,5 +1,6 @@
 <template>
   <v-card
+    v-click-outside="onClickOutside"
     outlined
     :tile="tile"
     :class="{ pointer: cardIsHover }"
@@ -245,6 +246,9 @@ export default {
   },
 
   methods: {
+    onClickOutside() {
+      this.clickable = false
+    },
     switchClickable() {
       this.clickable = !this.clickable
     },
