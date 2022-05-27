@@ -14,12 +14,17 @@
       <v-img width="150" src="/image/nurse_hop_logo.png"></v-img>
     </div>
 
-    <SignUp :signUpDisplay="signUpDisplay" @close-sign-up-click="closeSignUp" />
+    <SignUp
+      :signUpDisplay="signUpDisplay"
+      :isHost="isHost"
+      @close-sign-up-click="closeSignUp"
+    />
     <SignIn :signInDisplay="signInDisplay" @close-sign-in-click="closeSignIn" />
     <SelectType
       :selectTypeDisplay="selectTypeDisplay"
       @close-select-type-click="closeSelectType"
-      @select-click="actionSelectedType"
+      @select-user="selectUser"
+      @select-host="selectHost"
     />
   </v-card>
 </template>
@@ -44,6 +49,7 @@ export default {
       signInDisplay: false,
       signUpDisplay: false,
       sign: null,
+      isHost: false,
     }
   },
 
@@ -70,8 +76,19 @@ export default {
       this.signUpDisplay = false
     },
 
-    actionSelectedType() {
+    selectUser() {
       this.closeSelectType()
+      this.isHost = false
+      if (this.sign === 'in') {
+        this.signInDisplay = true
+      } else if (this.sign === 'up') {
+        this.signUpDisplay = true
+      }
+    },
+
+    selectHost() {
+      this.closeSelectType()
+      this.isHost = true
       if (this.sign === 'in') {
         this.signInDisplay = true
       } else if (this.sign === 'up') {
