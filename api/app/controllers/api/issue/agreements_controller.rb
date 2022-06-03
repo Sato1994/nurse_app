@@ -221,17 +221,21 @@ class Api::Issue::AgreementsController < ApplicationController
   private
 
   # プロを目指すためのruby p57 default values can be set for arguments
-  def agreement_user_signed_in_params(start_time = Time.zone.parse(params[:start_time]), finish_time = Time.zone.parse(params[:finish_time]))
+  def agreement_user_signed_in_params(start_time = parsed_time(params[:start_time]), finish_time = parsed_time(params[:finish_time]))
     params.permit(:host_id, :room_id).merge(state: 'before', user_id: current_api_user.id, start_time: start_time,
                                             finish_time: finish_time)
   end
 
-  def agreement_host_signed_in_params(start_time = Time.zone.parse(params[:start_time]), finish_time = Time.zone.parse(params[:finish_time]))
+  def agreement_host_signed_in_params(start_time = parsed_time(params[:start_time]), finish_time = parsed_time(params[:finish_time]))
     params.permit(:user_id, :room_id).merge(state: 'before', host_id: current_api_host.id, start_time: start_time,
                                             finish_time: finish_time)
   end
 
   def cancell_comment_params
     params.permit(:comment).merge(agreement_id: params[:id])
+  end
+
+  def parsed_time(time)
+    Time.zone.parse(time)
   end
 end
