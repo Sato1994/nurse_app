@@ -4,31 +4,15 @@ class Api::User::UsersController < ApplicationController
   include Pagination
 
   def index
-    # host_skill_ids = []
-    # current_api_host.host_skills.map { |skill| host_skill_ids.push(skill.skill_id) }
-
     # skillが被っていないuserのidの配列の作成
-
-    host_skill_ids = []
-    host_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
-
+    target_users_id = []
+    host_skill_ids = params[:skillsId].map(&:to_i) if params[:skillsId].present?
     all_users = User.includes(:user_skills)
 
-    target_users_id = []
-
     all_users.each do |user|
-      skills = user.user_skills
-      user_skill_ids = []
-
-      skills.each do |skill|
-        user_skill_ids.push(skill.skill_id)
-      end
-
-      user_skill_ids.push(host_skill_ids)
-      user_skill_ids.flatten!
-      mixed_skill_ids = user_skill_ids.uniq
-
-      target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length
+      user_skill_ids = user.user_skills.map(&:skill_id)
+      mixed_skill_ids = user_skill_ids.push(*host_skill_ids).uniq
+      target_users_id << user.id if mixed_skill_ids.length == user_skill_ids.length
     end
 
     all_users = all_users.order('RAND()').year_gt(params[:lowerYear]).address_like(params[:address]).wanted_true(params[:wanted]).id_include(
