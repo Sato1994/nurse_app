@@ -45,10 +45,8 @@ class Host < ApplicationRecord
 
   def star_average
     stars_sum = 0
-    rates.each do |rate|
-      stars_sum += rate.star
-    end
-
+    # プロを目指すためのruby p95 Short blocks are easier to read if they are replaced with {}'s.
+    rates.each { |rate| stars_sum += rate.star }
     rate_average = if rates.count.zero?
                      0
                    else
