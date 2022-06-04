@@ -5,26 +5,15 @@ class Api::Host::HostsController < ApplicationController
 
   def index
     # skillが被っていないhostのidの配列の作成
-    user_skill_ids = []
-    user_skill_ids.push(params[:skillsId].map(&:to_i)).flatten! if params[:skillsId].present?
-
+    target_hosts_id = []
+    user_skill_ids = params[:skillsId].map(&:to_i) if params[:skillsId].present?
     all_hosts = Host.includes(:host_skills, [agreements: :rate])
 
-    target_hosts_id = []
-
     all_hosts.each do |host|
-      skills = host.host_skills
-      host_skill_ids = []
-
-      skills.each do |skill|
-        host_skill_ids.push(skill.skill_id)
-      end
-      
+      host_skill_ids = host.host_skills.map(&:skill_id)
       # プロを目指すためのruby p102 splat operator
-      host_skill_ids.push(*user_skill_ids)
-      mixed_skill_ids = host_skill_ids.uniq
-
-      target_hosts_id.push(host.id) if mixed_skill_ids.length == host_skill_ids.length
+      mixed_skill_ids = host_skill_ids.push(*user_skill_ids).uniq
+      target_hosts_id << host.id if mixed_skill_ids.length == host_skill_ids.length
     end
 
     # host検索
