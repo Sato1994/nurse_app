@@ -24,8 +24,7 @@ class Api::User::UsersController < ApplicationController
         user_skill_ids.push(skill.skill_id)
       end
 
-      user_skill_ids.push(host_skill_ids)
-      user_skill_ids.flatten!
+      user_skill_ids.push(*host_skill_ids)
       mixed_skill_ids = user_skill_ids.uniq
 
       target_users_id.push(user.id) if mixed_skill_ids.length == user_skill_ids.length

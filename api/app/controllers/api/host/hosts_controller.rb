@@ -19,9 +19,9 @@ class Api::Host::HostsController < ApplicationController
       skills.each do |skill|
         host_skill_ids.push(skill.skill_id)
       end
-
-      host_skill_ids.push(user_skill_ids)
-      host_skill_ids.flatten!
+      
+      # プロを目指すためのruby p102 splat operator
+      host_skill_ids.push(*user_skill_ids)
       mixed_skill_ids = host_skill_ids.uniq
 
       target_hosts_id.push(host.id) if mixed_skill_ids.length == host_skill_ids.length
